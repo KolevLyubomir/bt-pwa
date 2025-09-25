@@ -6,12 +6,12 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v15</title>
-  <link rel="manifest" href="manifest.webmanifest?v=15">
+  <title>BT — Тегло v16</title>
+  <link rel="manifest" href="manifest.webmanifest?v=16">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=15">
+  <link rel="icon" href="assets/icons/icon-192.png?v=16">
   <style>
-    :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--accent-soft:#10b98133;--danger:#ef4444;}
+    :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
          background:linear-gradient(180deg,#071013,#0b1215);color:var(--text)}
@@ -41,7 +41,7 @@
     .page-size select{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;border-radius:10px;padding:6px 8px}
     .error{color:#ef4444;font-size:13px;margin-top:6px}
 
-    /* Календар (вграден) */
+    /* Календар */
     .cal-wrap{position:relative}
     .calendar{position:absolute; top:100%; left:0; z-index:20; background:#0d171b; border:1px solid #2a3e41;
               border-radius:12px; padding:10px; margin-top:6px; box-shadow:0 10px 30px #00000055; width:270px; display:none}
@@ -55,15 +55,16 @@
     .cal-day{ background:#0f1a1f; border:1px solid #20343a; cursor:pointer }
     .cal-day.dis{ opacity:.35; cursor:not-allowed }
     .cal-day.sel{ border-color:#10b981; outline:2px solid #10b98166 }
-    .cal-day.hasdata{ background:var(--accent-soft); border-color:#10b98166 }
+    /* по-светло зелено (бяло-зелено) за дни с данни */
+    .cal-day.hasdata{ background:#f0fff7; color:#063; border-color:#c6f7df }
     .cal-foot{ display:flex; justify-content:flex-end; margin-top:8px }
     .cal-foot button{ background:#10b981; color:#06241b; border:none; border-radius:8px; padding:6px 10px; font-weight:700 }
   </style>
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=15" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v15</span></h1>
+    <img src="assets/icons/icon-192.png?v=16" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v16</span></h1>
   </header>
 
   <main>
@@ -75,7 +76,6 @@
           <input id="dateText" type="text" inputmode="none" placeholder="ДД.ММ.ГГГГ" autocomplete="off" readonly>
           <div id="dateErr" class="error" style="display:none"></div>
 
-          <!-- Календар -->
           <div class="calendar" id="calendar">
             <div class="cal-head">
               <button id="calPrev">‹</button>
@@ -108,12 +108,11 @@
       <h2 style="margin:0 0 8px">Графика</h2>
       <div class="row">
         <div>
-          <label for="span">Период / агрегация</label>
+          <label for="span">Агрегация</label>
           <select id="span">
-            <option value="100d" selected>Дни (последни 100)</option>
+            <option value="daily" selected>Дни (всички)</option>
             <option value="weekly">Седмици (средно)</option>
             <option value="monthly">Месеци (средно)</option>
-            <option value="all">Всички дни</option>
           </select>
         </div>
       </div>
@@ -135,12 +134,11 @@
     function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     const TODAY = todayISO();
     const MONTHS_BG = ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"];
-
     const isoToBG = iso => /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.split("-").reverse().join(".") : "";
     function bgToISO(bg){ const m=/^(\d{2})\.(\d{2})\.(\d{4})$/.exec(bg); return m?`${m[3]}-${m[2]}-${m[1]}`:""; }
     const clampToTodayISO = iso => iso && iso > TODAY ? TODAY : iso;
 
-    /* === Състояние/хранилище === */
+    /* === Състояние === */
     function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
     function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
     function sortDescByDate(arr){ return [...arr].sort((a,b)=> b.date.localeCompare(a.date)); }
@@ -148,22 +146,34 @@
     const getSavedDateISO = ()=> localStorage.getItem("bt-last-date") || TODAY;
     const saveLastDateISO = iso => localStorage.setItem("bt-last-date", iso);
 
-    /* === Мини графика === */
+    /* === Мини графика с прекъсвания === */
     class MiniChart{
-      constructor(ctx){ this.ctx=ctx; this.data=[]; }
+      constructor(ctx){ this.ctx=ctx; this.data=[]; } // this.data: масив от числа или null
       render(){
         const c=this.ctx.canvas, w=c.width=c.clientWidth, h=c.height=320;
         const ctx=this.ctx; ctx.clearRect(0,0,w,h);
-        const vals=this.data.filter(v=>typeof v==='number');
+
+        const nums=this.data.filter(v=>typeof v==='number');
         ctx.fillStyle="#9fb4ad"; ctx.font="14px system-ui";
-        if(vals.length<2){ ctx.fillText("Добави поне 2 записа за графика", 10, 24); return; }
-        const min=Math.min(...vals), max=Math.max(...vals), pad=24;
+        if(nums.length<2){ ctx.fillText("Добави поне 2 записа за графика", 10, 24); return; }
+
+        const min=Math.min(...nums), max=Math.max(...nums), pad=24;
+        const n=this.data.length;
+        const xAt=i=> pad + (w-2*pad)*(i/(n-1));
+        const yAt=v=> h-pad - ((v-min)/((max-min)||1))*(h-2*pad);
+
         ctx.strokeStyle="#87f3c5"; ctx.lineWidth=2; ctx.beginPath();
-        this.data.forEach((v,i)=>{
-          const x=pad + (w-2*pad)*(i/(this.data.length-1));
-          const y=h-pad - ((v-min)/((max-min)||1))*(h-2*pad);
-          i?ctx.lineTo(x,y):ctx.moveTo(x,y);
-        });
+        let penDown=false;
+        for(let i=0;i<n;i++){
+          const v=this.data[i];
+          if(typeof v==='number'){
+            const x=xAt(i), y=yAt(v);
+            if(!penDown){ ctx.moveTo(x,y); penDown=true; }
+            else ctx.lineTo(x,y);
+          }else{
+            penDown=false; // прекъсване при празни стойности
+          }
+        }
         ctx.stroke();
       }
     }
@@ -177,7 +187,7 @@
     const pager    = document.getElementById("pager");
     const spanSel  = document.getElementById("span");
 
-    // Пейджинг настройки
+    // Пейджинг
     const PAGE_SIZES = [10,20,50,100,"all"];
     const getSavedPageSize=()=>{ const v=localStorage.getItem("bt-page-size"); if(v==="all")return"all"; const n=Number(v); return PAGE_SIZES.includes(n)?n:20; };
     const savePageSize=v=>localStorage.setItem("bt-page-size", v);
@@ -272,7 +282,7 @@
       // pager
       pager.innerHTML="";
       const infoWrap = document.createElement("div");
-      infoWrap.style.display="flex"; infoWrap.style.alignItems="center"; infoWrap.style.gap="8px"; infoWrap.style.marginRight="auto";
+      infoWrap.style.display="flex"; infoWrap.style.alignItems="center"; infoWrap.style.gап="8px"; infoWrap.style.marginRight="auto";
       const info = document.createElement("span"); info.className="muted";
       const from = total ? start+1 : 0; const to = Math.min(start + effectivePageSize, total);
       info.textContent = `${from}-${to} от ${total}`; infoWrap.appendChild(info);
@@ -292,10 +302,8 @@
       sizeSel.addEventListener("change", ()=>{ const v=sizeSel.value==="all"?"all":Number(sizeSel.value); pageSize=v; savePageSize(v); currentPage=1; renderTable(); });
     }
 
-    /* === Агрегация за графика === */
-    function startOfDay(d){ d.setHours(0,0,0,0); return d; }
-    function addDays(d,n){ const dd=new Date(d); dd.setDate(dd.getDate()+n); return dd; }
-    function isoWeekYear(d){ // ISO week-numbering year
+    /* === Агрегации за графика === */
+    function isoWeekYear(d){
       const tmp=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
       tmp.setUTCDate(tmp.getUTCDate()+4-(tmp.getUTCDay()||7));
       return tmp.getUTCFullYear();
@@ -309,18 +317,9 @@
     }
 
     function aggregate(mode){
-      const data = sortAscByDate(load()); // [{date:'YYYY-MM-DD', weight}]
-      if(mode==="100d"){
-        const end = startOfDay(new Date()); const start = addDays(end, -99);
-        const out = [];
-        for(let d=new Date(start); d<=end; d=addDays(d,1)){
-          const iso = d.toISOString().slice(0,10);
-          const rec = data.find(r=>r.date===iso);
-          out.push(rec && typeof rec.weight==="number" ? rec.weight : null);
-        }
-        return out;
-      }
-      if(mode==="all"){
+      const data = sortAscByDate(load()); // [{date, weight}]
+      if(mode==="daily"){
+        // само реално въведените дни, без запълване на празнини
         return data.map(r=> typeof r.weight==="number" ? r.weight : null);
       }
       if(mode==="weekly"){
