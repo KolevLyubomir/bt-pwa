@@ -6,10 +6,10 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v12</title>
-  <link rel="manifest" href="manifest.webmanifest?v=12">
+  <title>BT — Тегло v13</title>
+  <link rel="manifest" href="manifest.webmanifest?v=13">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=12">
+  <link rel="icon" href="assets/icons/icon-192.png?v=13">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
     *{box-sizing:border-box}
@@ -39,13 +39,12 @@
     .pagination .muted{color:#9fb4ad;margin-right:auto}
     .page-size select{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;border-radius:10px;padding:6px 8px}
     .error{color:#ef4444;font-size:13px;margin-top:6px}
-    .muted{color:#9fb4ad;font-size:12px;margin-top:6px}
   </style>
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=12" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v12</span></h1>
+    <img src="assets/icons/icon-192.png?v=13" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v13</span></h1>
   </header>
 
   <main>
@@ -55,7 +54,6 @@
         <div style="flex:1;min-width:220px">
           <label for="date">Дата</label>
           <input id="date" type="date">
-          <div id="dateUS" class="muted"></div>
           <div id="dateErr" class="error" style="display:none"></div>
         </div>
         <div style="flex:1;min-width:140px">
@@ -123,12 +121,32 @@
     const $ = s=>document.querySelector(s);
     const dateInput=$("#date"), weightInput=$("#weight");
     const dateErr=$("#dateErr"), weightErr=$("#weightErr");
-    const dateUS=$("#dateUS");
     const tbody = document.querySelector("#table tbody");
     const pager = $("#pager");
-    const spanSelect=$("#span");
 
-    // ---- Настройки на странициране (запомняне)
+    // ---- Помощни функции за дати
+    function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
+    const TODAY = todayISO();
+    function getSavedDate(){ return localStorage.getItem("bt-last-date") || TODAY; }
+    function saveLastDate(dStr){ localStorage.setItem("bt-last-date", dStr); }
+    function clampToToday(dStr){ return dStr > TODAY ? TODAY : dStr; }
+    function fmtBG(dStr){ // ISO -> ДД.ММ.ГГГГ
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(dStr)) return dStr;
+      const [y,m,d]=dStr.split("-");
+      return `${d}.${m}.${y}`;
+    }
+
+    // ---- Инициализация на датата
+    dateInput.value = clampToToday(getSavedDate());
+    dateInput.max = TODAY;
+
+    // ---- Четене/запис
+    function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
+    function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
+    function sortDescByDate(arr){ return [...arr].sort((a,b)=> b.date.localeCompare(a.date)); }
+    function sortAscByDate(arr){ return [...arr].sort((a,b)=> a.date.localeCompare(b.date)); }
+
+    // ---- Пейджинг
     const PAGE_SIZES = [10,20,50,100,"all"];
     function getSavedPageSize(){
       const v = localStorage.getItem("bt-page-size");
@@ -139,29 +157,6 @@
     function savePageSize(v){ localStorage.setItem("bt-page-size", v); }
     let pageSize = getSavedPageSize();
     let currentPage = 1;
-
-    // ---- Дата
-    function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
-    const TODAY = todayISO();
-    function getSavedDate(){ return localStorage.getItem("bt-last-date") || TODAY; }
-    function saveLastDate(dStr){ localStorage.setItem("bt-last-date", dStr); }
-    function clampToToday(dStr){ return dStr > TODAY ? TODAY : dStr; }
-    function toUS(dStr){ if(!/^\d{4}-\d{2}-\d{2}$/.test(dStr)) return ""; const [y,m,d]=dStr.split("-"); return `${m}/${d}/${y}`; }
-
-    // инициализация
-    dateInput.value = clampToToday(getSavedDate());
-    dateInput.max = TODAY;
-    dateUS.textContent = toUS(dateInput.value);
-
-    // отваряме календара при клик/фокус (ако браузърът поддържа showPicker)
-    function maybeOpenPicker(){ if(typeof dateInput.showPicker==="function") dateInput.showPicker(); }
-    dateInput.addEventListener("focus", maybeOpenPicker);
-    dateInput.addEventListener("click", maybeOpenPicker);
-
-    function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
-    function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
-    function sortDescByDate(arr){ return [...arr].sort((a,b)=> b.date.localeCompare(a.date)); }
-    function sortAscByDate(arr){ return [...arr].sort((a,b)=> a.date.localeCompare(b.date)); }
 
     // ---- Таблица + странициране
     function renderTable(){
@@ -177,7 +172,7 @@
       tbody.innerHTML="";
       slice.forEach((r, idx)=>{
         const tr=document.createElement("tr");
-        tr.innerHTML = `<td>${r.date}</td><td>${r.weight??""}</td>
+        tr.innerHTML = `<td>${fmtBG(r.date)}</td><td>${r.weight??""}</td>
         <td class="right"><button class="ghost" data-edit="${start+idx}">Редакция</button>
         <button class="danger" data-del="${start+idx}">Изтрий</button></td>`;
         tbody.appendChild(tr);
@@ -202,7 +197,7 @@
       sizeWrap.className="page-size";
       const sizeSel = document.createElement("select");
       sizeSel.id = "pageSize";
-      [10,20,50,100,"all"].forEach(opt=>{
+      PAGE_SIZES.forEach(opt=>{
         const o = document.createElement("option");
         o.value = String(opt);
         o.textContent = (opt==="all" ? "Всички" : opt);
@@ -214,8 +209,7 @@
       pager.appendChild(infoWrap);
 
       const pagesToShow = 7;
-      const pagesCount = Math.max(1, Math.ceil(total / (pageSize==="all"? (total||1) : pageSize)));
-      if(pagesCount > 1){
+      if(pages > 1){
         if(currentPage > 1){
           const prev = document.createElement("button");
           prev.textContent = "←";
@@ -249,6 +243,7 @@
       });
     }
 
+    // ---- Графика
     function renderChart(){
       const allAsc = sortAscByDate(load());
       let filtered = allAsc;
@@ -286,7 +281,7 @@
         return;
       }
 
-      const rec={ date: dStr, weight: wVal };
+      const rec={ date: dStr, weight: wVal }; // пазим ISO вътрешно
       const data=load();
       const idx=data.findIndex(r=>r.date===rec.date);
       if(idx>=0) data[idx]=rec; else data.push(rec);
@@ -309,21 +304,68 @@
         const rec = allDesc[iDesc];
         dateInput.value = clampToToday(rec.date);
         dateInput.max = TODAY;
-        dateUS.textContent = toUS(dateInput.value);
         weightInput.value = rec.weight ?? "";
         window.scrollTo({top:0, behavior:"smooth"});
       }
     });
 
-    // актуализиране на US формата и запазване при промяна
+    // ---- Експорт / Импорт / Изтриване
+    document.getElementById("export").addEventListener("click", ()=>{
+      const data = load();
+      const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "bt-progress-export.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+    });
+
+    document.getElementById("importBtn").addEventListener("click", ()=>{
+      document.getElementById("importFile").click();
+    });
+    document.getElementById("importFile").addEventListener("change", async (ev)=>{
+      const file = ev.target.files?.[0];
+      if(!file) return;
+      try{
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        if(!Array.isArray(parsed)) throw new Error("Очаквам масив от записи.");
+        // валидация и нормализация
+        const cleaned = [];
+        for(const r of parsed){
+          const date = typeof r.date==="string" ? r.date : "";
+          const weight = (typeof r.weight==="number" && r.weight>0) ? r.weight : null;
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue; // очакваме ISO дата
+          cleaned.push({date, weight});
+        }
+        save(cleaned);
+        renderTable(); renderChart();
+        ev.target.value = ""; // reset
+        alert("Импортът е успешен.");
+      }catch(err){
+        console.error(err);
+        alert("Грешка при импорт. Увери се, че файлът е валиден JSON (масив от {date: 'YYYY-MM-DD', weight: number}).");
+      }
+    });
+
+    document.getElementById("wipe").addEventListener("click", ()=>{
+      if(confirm("Наистина ли да изтрия всички записи?")){
+        save([]); renderTable(); renderChart();
+      }
+    });
+
+    // запазваме последната дата при промяна
     dateInput.addEventListener("change", ()=>{
       const v = clampToToday(dateInput.value || TODAY);
       dateInput.value = v;
-      dateUS.textContent = toUS(v);
       saveLastDate(v);
       dateErr.style.display="none";
     });
 
+    // първо рендериране
     renderTable(); renderChart();
   </script>
 </body>
