@@ -6,10 +6,10 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v6</title>
-  <link rel="manifest" href="manifest.webmanifest?v=6">
+  <title>BT — Тегло v7</title>
+  <link rel="manifest" href="manifest.webmanifest?v=7">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=6">
+  <link rel="icon" href="assets/icons/icon-192.png?v=7">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
     *{box-sizing:border-box}
@@ -37,12 +37,13 @@
     .pagination button{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;padding:6px 10px;border-radius:10px;cursor:pointer}
     .pagination button.active{background:#10b981;color:#06241b;border-color:#10b981}
     .pagination .muted{color:#9fb4ad;margin-right:auto}
+    .error{color:#ef4444;font-size:13px;margin-top:6px}
   </style>
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=6" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v6</span></h1>
+    <img src="assets/icons/icon-192.png?v=7" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v7</span></h1>
   </header>
 
   <main>
@@ -52,6 +53,7 @@
         <div style="flex:1;min-width:160px">
           <label for="date">Дата</label>
           <input id="date" type="date">
+          <div id="dateErr" class="error" style="display:none"></div>
         </div>
         <div style="flex:1;min-width:140px">
           <label for="weight">Тегло (kg)</label>
@@ -93,10 +95,30 @@
     </section>
   </main>
 
-  <script src="chart.local.js?v=6"></script>
   <script>
+    /* Мини графика */
+    class MiniChart{
+      constructor(ctx){ this.ctx=ctx; this.data=[]; }
+      render(){
+        const c=this.ctx.canvas, w=c.width=c.clientWidth, h=c.height=320;
+        const ctx=this.ctx; ctx.clearRect(0,0,w,h);
+        const vals=this.data.filter(v=>typeof v==='number');
+        ctx.fillStyle="#9fb4ad"; ctx.font="14px system-ui";
+        if(vals.length<2){ ctx.fillText("Добави поне 2 записа за графика", 10, 24); return; }
+        const min=Math.min(...vals), max=Math.max(...vals), pad=24;
+        ctx.strokeStyle="#87f3c5"; ctx.lineWidth=2; ctx.beginPath();
+        this.data.forEach((v,i)=>{
+          const x=pad + (w-2*pad)*(i/(this.data.length-1));
+          const y=h-pad - ((v-min)/((max-min)||1))*(h-2*pad);
+          i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+        });
+        ctx.stroke();
+      }
+    }
+
     const $ = s=>document.querySelector(s);
     const dateInput=$("#date"), weightInput=$("#weight");
+    const dateErr=$("#dateErr");
     const tbody = document.querySelector("#table tbody");
     const pager = $("#pager");
     const spanSelect=$("#span");
@@ -105,7 +127,9 @@
     let currentPage = 1;
 
     function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
-    dateInput.value = todayISO();
+    const TODAY = todayISO();
+    dateInput.value = TODAY;
+    dateInput.max = TODAY;                   // 🔒 не позволява избор на бъдеща дата
 
     function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
     function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
@@ -179,10 +203,26 @@
       const mini=new MiniChart(ctx); mini.data=vals; mini.render();
     }
 
-    function clearForm(){ weightInput.value=""; }
+    function clearForm(){
+      weightInput.value="";
+      dateErr.style.display="none";
+      dateErr.textContent="";
+    }
+
+    function isFuture(dStr){ return dStr > TODAY; } // ISO yyyy-mm-dd сравнение по стринг е коректно
 
     document.getElementById("add").addEventListener("click",()=>{
-      const rec={ date: dateInput.value||todayISO(), weight: weightInput.value?Number(weightInput.value):null };
+      const dStr = dateInput.value || TODAY;
+      const wVal = weightInput.value ? Number(weightInput.value) : null;
+
+      // ⛔ Валидация за бъдеща дата
+      if(isFuture(dStr)){
+        dateErr.textContent = "Датата е в бъдещето. Моля, избери днешна или минала дата.";
+        dateErr.style.display = "block";
+        return;
+      }
+
+      const rec={ date: dStr, weight: wVal };
       const data=load();
       const idx=data.findIndex(r=>r.date===rec.date);
       if(idx>=0) data[idx]=rec; else data.push(rec);
@@ -202,12 +242,13 @@
         const iDesc = +t.getAttribute("data-edit");
         const rec = allDesc[iDesc];
         dateInput.value = rec.date;
+        dateInput.max = TODAY; // пазим ограничението
         weightInput.value = rec.weight ?? "";
         window.scrollTo({top:0, behavior:"smooth"});
       }
     });
 
-    // НЯМА service worker → браузърът винаги взема свежо
+    // НЯМА service worker → винаги взема свежо
     renderTable(); renderChart();
   </script>
 </body>
