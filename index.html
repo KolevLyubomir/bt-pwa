@@ -6,10 +6,10 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v13</title>
-  <link rel="manifest" href="manifest.webmanifest?v=13">
+  <title>BT — Тегло v14</title>
+  <link rel="manifest" href="manifest.webmanifest?v=14">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=13">
+  <link rel="icon" href="assets/icons/icon-192.png?v=14">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
     *{box-sizing:border-box}
@@ -39,23 +39,56 @@
     .pagination .muted{color:#9fb4ad;margin-right:auto}
     .page-size select{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;border-radius:10px;padding:6px 8px}
     .error{color:#ef4444;font-size:13px;margin-top:6px}
+
+    /* Календар (вграден) */
+    .cal-wrap{position:relative}
+    .calendar{position:absolute; top:100%; left:0; z-index:20; background:#0d171b; border:1px solid #2a3e41;
+              border-radius:12px; padding:10px; margin-top:6px; box-shadow:0 10px 30px #00000055; width:270px; display:none}
+    .calendar.open{display:block}
+    .cal-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:8px}
+    .cal-head button{background:#0f1a1f; border:1px solid #2a3e41; color:#e6f2ef; padding:4px 8px; border-radius:8px; cursor:pointer}
+    .cal-title{font-weight:700; color:#e6f2ef}
+    .cal-grid{display:grid; grid-template-columns:repeat(7, 1fr); gap:4px}
+    .cal-dow, .cal-day{ text-align:center; padding:6px 0; border-radius:8px; }
+    .cal-dow{ color:#9fb4ad; font-size:12px }
+    .cal-day{ background:#0f1a1f; border:1px solid #20343a; cursor:pointer }
+    .cal-day.dis{ opacity:.35; cursor:not-allowed }
+    .cal-day.sel{ border-color:#10b981; outline:2px solid #10b98166 }
+    .cal-foot{ display:flex; justify-content:flex-end; margin-top:8px }
+    .cal-foot button{ background:#10b981; color:#06241b; border:none; border-radius:8px; padding:6px 10px; font-weight:700 }
   </style>
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=13" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v13</span></h1>
+    <img src="assets/icons/icon-192.png?v=14" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v14</span></h1>
   </header>
 
   <main>
     <section class="card">
       <h2 style="margin:0 0 8px">Нов запис</h2>
       <div class="row">
-        <div style="flex:1;min-width:220px">
-          <label for="date">Дата</label>
-          <input id="date" type="date">
+        <div style="flex:1;min-width:220px" class="cal-wrap">
+          <label for="dateText">Дата</label>
+          <input id="dateText" type="text" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off">
           <div id="dateErr" class="error" style="display:none"></div>
+
+          <!-- Календар -->
+          <div class="calendar" id="calendar">
+            <div class="cal-head">
+              <button id="calPrev">‹</button>
+              <div class="cal-title" id="calTitle">Септември 2025</div>
+              <button id="calNext">›</button>
+            </div>
+            <div class="cal-grid" id="calGrid">
+              <!-- дни се генерират динамично -->
+            </div>
+            <div class="cal-foot">
+              <button id="calToday">Днес</button>
+            </div>
+          </div>
         </div>
+
         <div style="flex:1;min-width:140px">
           <label for="weight">Тегло (kg)</label>
           <input id="weight" type="number" step="0.1" min="0.1">
@@ -98,7 +131,34 @@
   </main>
 
   <script>
-    /* Мини графика */
+    /* === Формати и дати === */
+    function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
+    const TODAY = todayISO();
+
+    // YYYY-MM-DD -> DD.MM.YYYY
+    function isoToBG(iso){
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+      const [y,m,d]=iso.split("-");
+      return `${d}.${m}.${y}`;
+    }
+    // DD.MM.YYYY -> YYYY-MM-DD
+    function bgToISO(bg){
+      const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(bg);
+      if(!m) return "";
+      const [_, dd, mm, yyyy] = m;
+      return `${yyyy}-${mm}-${dd}`;
+    }
+    function clampToTodayISO(iso){ return iso && iso > TODAY ? TODAY : iso; }
+
+    // локално състояние
+    function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
+    function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
+    function sortDescByDate(arr){ return [...arr].sort((a,b)=> b.date.localeCompare(a.date)); }
+    function sortAscByDate(arr){ return [...arr].sort((a,b)=> a.date.localeCompare(b.date)); }
+    function getSavedDateISO(){ return localStorage.getItem("bt-last-date") || TODAY; }
+    function saveLastDateISO(iso){ localStorage.setItem("bt-last-date", iso); }
+
+    /* === Мини графика === */
     class MiniChart{
       constructor(ctx){ this.ctx=ctx; this.data=[]; }
       render(){
@@ -118,35 +178,15 @@
       }
     }
 
-    const $ = s=>document.querySelector(s);
-    const dateInput=$("#date"), weightInput=$("#weight");
-    const dateErr=$("#dateErr"), weightErr=$("#weightErr");
-    const tbody = document.querySelector("#table tbody");
-    const pager = $("#pager");
+    /* === Елементи === */
+    const dateText = document.getElementById("dateText");
+    const dateErr  = document.getElementById("dateErr");
+    const weight   = document.getElementById("weight");
+    const weightErr= document.getElementById("weightErr");
+    const tbody    = document.querySelector("#table tbody");
+    const pager    = document.getElementById("pager");
 
-    // ---- Помощни функции за дати
-    function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
-    const TODAY = todayISO();
-    function getSavedDate(){ return localStorage.getItem("bt-last-date") || TODAY; }
-    function saveLastDate(dStr){ localStorage.setItem("bt-last-date", dStr); }
-    function clampToToday(dStr){ return dStr > TODAY ? TODAY : dStr; }
-    function fmtBG(dStr){ // ISO -> ДД.ММ.ГГГГ
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(dStr)) return dStr;
-      const [y,m,d]=dStr.split("-");
-      return `${d}.${m}.${y}`;
-    }
-
-    // ---- Инициализация на датата
-    dateInput.value = clampToToday(getSavedDate());
-    dateInput.max = TODAY;
-
-    // ---- Четене/запис
-    function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
-    function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
-    function sortDescByDate(arr){ return [...arr].sort((a,b)=> b.date.localeCompare(a.date)); }
-    function sortAscByDate(arr){ return [...arr].sort((a,b)=> a.date.localeCompare(b.date)); }
-
-    // ---- Пейджинг
+    // Пейджинг настройки
     const PAGE_SIZES = [10,20,50,100,"all"];
     function getSavedPageSize(){
       const v = localStorage.getItem("bt-page-size");
@@ -158,10 +198,137 @@
     let pageSize = getSavedPageSize();
     let currentPage = 1;
 
-    // ---- Таблица + странициране
+    /* === Инициализация на дата (поле + календар) === */
+    let currentISO = clampToTodayISO(getSavedDateISO());
+    dateText.value = isoToBG(currentISO);
+
+    // Календар
+    const cal      = document.getElementById("calendar");
+    const calGrid  = document.getElementById("calGrid");
+    const calTitle = document.getElementById("calTitle");
+    const calPrev  = document.getElementById("calPrev");
+    const calNext  = document.getElementById("calNext");
+    const calToday = document.getElementById("calToday");
+
+    const MONTHS_BG = ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"];
+    let view = (function(){
+      const [y,m] = currentISO.split("-").map(Number);
+      return {year:y, month:m-1}; // 0-based
+    })();
+
+    function buildCalendar(){
+      // заглавие
+      calTitle.textContent = `${MONTHS_BG[view.month]} ${view.year}`;
+
+      // мрежа: Mon..Sun
+      calGrid.innerHTML = "";
+      const dow = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
+      dow.forEach(d=>{
+        const el=document.createElement("div");
+        el.className="cal-dow";
+        el.textContent=d;
+        calGrid.appendChild(el);
+      });
+
+      const first = new Date(view.year, view.month, 1);
+      const last  = new Date(view.year, view.month+1, 0);
+      // JS: Неделя=0 → искаме Понеделник=0
+      let startIdx = (first.getDay()+6)%7;
+      const daysInMonth = last.getDate();
+
+      // предходни празни (или числа от предния месец)
+      for(let i=0; i<startIdx; i++){
+        const el=document.createElement("div");
+        el.className="cal-day dis";
+        el.textContent=" ";
+        calGrid.appendChild(el);
+      }
+
+      const todayISO = TODAY;
+      for(let d=1; d<=daysInMonth; d++){
+        const el=document.createElement("div");
+        el.className="cal-day";
+        el.textContent = d;
+
+        const iso = `${view.year}-${String(view.month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+        // маркирай избраната
+        if(iso===currentISO) el.classList.add("sel");
+        // забрани бъдещи
+        if(iso > todayISO) el.classList.add("dis");
+
+        el.addEventListener("click", ()=>{
+          if(el.classList.contains("dis")) return;
+          currentISO = iso;
+          dateText.value = isoToBG(currentISO);
+          saveLastDateISO(currentISO);
+          closeCalendar();
+          // презареди евентуални грешки
+          dateErr.style.display="none";
+        });
+
+        calGrid.appendChild(el);
+      }
+    }
+
+    function openCalendar(){
+      cal.classList.add("open");
+      buildCalendar();
+    }
+    function closeCalendar(){
+      cal.classList.remove("open");
+    }
+
+    // отваряне при фокус/клик
+    dateText.addEventListener("focus", openCalendar);
+    dateText.addEventListener("click", openCalendar);
+
+    // навигация
+    calPrev.addEventListener("click", ()=>{
+      if(view.month===0){ view.month=11; view.year--; } else view.month--;
+      buildCalendar();
+    });
+    calNext.addEventListener("click", ()=>{
+      if(view.month===11){ view.month=0; view.year++; } else view.month++;
+      buildCalendar();
+    });
+    calToday.addEventListener("click", ()=>{
+      const t = TODAY.split("-");
+      view.year = Number(t[0]); view.month = Number(t[1])-1;
+      currentISO = TODAY;
+      dateText.value = isoToBG(currentISO);
+      saveLastDateISO(currentISO);
+      buildCalendar();
+      closeCalendar();
+    });
+
+    // въвеждане на ръка (ДД.ММ.ГГГГ)
+    dateText.addEventListener("input", ()=>{
+      const iso = bgToISO(dateText.value.trim());
+      if(iso){
+        currentISO = clampToTodayISO(iso);
+      }
+    });
+    dateText.addEventListener("change", ()=>{
+      // нормализирай стойността (ако е бъдеща → TODAY)
+      const iso = bgToISO(dateText.value.trim());
+      const norm = clampToTodayISO(iso || TODAY);
+      currentISO = norm;
+      dateText.value = isoToBG(currentISO);
+      saveLastDateISO(currentISO);
+      dateErr.style.display="none";
+    });
+
+    // клик извън календара → затваряне
+    document.addEventListener("click", (e)=>{
+      if(cal.contains(e.target) || e.target===dateText) return;
+      closeCalendar();
+    });
+
+    /* === Таблица + странициране === */
     function renderTable(){
       const allDesc = sortDescByDate(load());
       const total = allDesc.length;
+
       const effectivePageSize = pageSize==="all" ? total||1 : pageSize;
       const pages = Math.max(1, Math.ceil(total / effectivePageSize));
       if(currentPage > pages) currentPage = pages;
@@ -172,13 +339,13 @@
       tbody.innerHTML="";
       slice.forEach((r, idx)=>{
         const tr=document.createElement("tr");
-        tr.innerHTML = `<td>${fmtBG(r.date)}</td><td>${r.weight??""}</td>
+        tr.innerHTML = `<td>${isoToBG(r.date)}</td><td>${r.weight??""}</td>
         <td class="right"><button class="ghost" data-edit="${start+idx}">Редакция</button>
         <button class="danger" data-del="${start+idx}">Изтрий</button></td>`;
         tbody.appendChild(tr);
       });
 
-      // --- pager
+      // pager
       pager.innerHTML="";
       const infoWrap = document.createElement("div");
       infoWrap.style.display="flex";
@@ -243,7 +410,7 @@
       });
     }
 
-    // ---- Графика
+    /* === Графика === */
     function renderChart(){
       const allAsc = sortAscByDate(load());
       let filtered = allAsc;
@@ -259,21 +426,22 @@
     }
 
     function clearForm(){
-      weightInput.value="";
+      weight.value="";
       dateErr.style.display="none"; dateErr.textContent="";
       weightErr.style.display="none"; weightErr.textContent="";
     }
 
-    // ---- Добавяне / редакция / триене
+    /* === Добавяне / редакция / триене === */
     document.getElementById("add").addEventListener("click",()=>{
-      const TODAY_NOW = todayISO();
-      let dStr = dateInput.value || TODAY_NOW;
-      if(dStr > TODAY_NOW){
+      let iso = bgToISO(dateText.value.trim());
+      if(!iso) iso = TODAY;
+      if(iso > TODAY){
         dateErr.textContent = "Датата е в бъдещето. Моля, избери днешна или минала дата.";
         dateErr.style.display = "block";
         return;
       }
-      const wRaw = weightInput.value.trim();
+
+      const wRaw = weight.value.trim();
       const wVal = wRaw === "" ? NaN : Number(wRaw);
       if(!(wVal > 0)){
         weightErr.textContent = "Моля, въведи тегло > 0.";
@@ -281,12 +449,14 @@
         return;
       }
 
-      const rec={ date: dStr, weight: wVal }; // пазим ISO вътрешно
+      const rec={ date: iso, weight: wVal };
       const data=load();
       const idx=data.findIndex(r=>r.date===rec.date);
       if(idx>=0) data[idx]=rec; else data.push(rec);
       save(data);
-      saveLastDate(dStr);
+      saveLastDateISO(iso);
+      currentISO = iso;
+      dateText.value = isoToBG(currentISO);
       renderTable(); renderChart(); clearForm();
     });
 
@@ -302,52 +472,47 @@
       } else if(t.matches("button[data-edit]")){
         const iDesc = +t.getAttribute("data-edit");
         const rec = allDesc[iDesc];
-        dateInput.value = clampToToday(rec.date);
-        dateInput.max = TODAY;
-        weightInput.value = rec.weight ?? "";
+        currentISO = clampToTodayISO(rec.date);
+        dateText.value = isoToBG(currentISO);
+        weight.value = rec.weight ?? "";
         window.scrollTo({top:0, behavior:"smooth"});
       }
     });
 
-    // ---- Експорт / Импорт / Изтриване
+    /* === Експорт / Импорт / Изтриване === */
     document.getElementById("export").addEventListener("click", ()=>{
       const data = load();
       const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
-      a.href = url;
-      a.download = "bt-progress-export.json";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      a.href = url; a.download = "bt-progress-export.json";
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     });
 
     document.getElementById("importBtn").addEventListener("click", ()=>{
       document.getElementById("importFile").click();
     });
     document.getElementById("importFile").addEventListener("change", async (ev)=>{
-      const file = ev.target.files?.[0];
-      if(!file) return;
+      const file = ev.target.files?.[0]; if(!file) return;
       try{
         const text = await file.text();
         const parsed = JSON.parse(text);
         if(!Array.isArray(parsed)) throw new Error("Очаквам масив от записи.");
-        // валидация и нормализация
         const cleaned = [];
         for(const r of parsed){
           const date = typeof r.date==="string" ? r.date : "";
           const weight = (typeof r.weight==="number" && r.weight>0) ? r.weight : null;
-          if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue; // очакваме ISO дата
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
+          if(date > TODAY) continue; // игнорирай бъдещи
           cleaned.push({date, weight});
         }
         save(cleaned);
         renderTable(); renderChart();
-        ev.target.value = ""; // reset
+        ev.target.value = "";
         alert("Импортът е успешен.");
       }catch(err){
         console.error(err);
-        alert("Грешка при импорт. Увери се, че файлът е валиден JSON (масив от {date: 'YYYY-MM-DD', weight: number}).");
+        alert("Грешка при импорт. Файлът трябва да е JSON масив от {date:'YYYY-MM-DD', weight:number>0}.");
       }
     });
 
@@ -355,14 +520,6 @@
       if(confirm("Наистина ли да изтрия всички записи?")){
         save([]); renderTable(); renderChart();
       }
-    });
-
-    // запазваме последната дата при промяна
-    dateInput.addEventListener("change", ()=>{
-      const v = clampToToday(dateInput.value || TODAY);
-      dateInput.value = v;
-      saveLastDate(v);
-      dateErr.style.display="none";
     });
 
     // първо рендериране
