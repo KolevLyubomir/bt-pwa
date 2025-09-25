@@ -6,10 +6,10 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v7</title>
-  <link rel="manifest" href="manifest.webmanifest?v=7">
+  <title>BT — Тегло v8</title>
+  <link rel="manifest" href="manifest.webmanifest?v=8">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=7">
+  <link rel="icon" href="assets/icons/icon-192.png?v=8">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
     *{box-sizing:border-box}
@@ -37,13 +37,13 @@
     .pagination button{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;padding:6px 10px;border-radius:10px;cursor:pointer}
     .pagination button.active{background:#10b981;color:#06241b;border-color:#10b981}
     .pagination .muted{color:#9fb4ad;margin-right:auto}
-    .error{color:#ef4444;font-size:13px;margin-top:6px}
+    .page-size{display:flex;align-items:center;gap:8px;margin-left:12px}
   </style>
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=7" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v7</span></h1>
+    <img src="assets/icons/icon-192.png?v=8" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v8</span></h1>
   </header>
 
   <main>
@@ -53,7 +53,7 @@
         <div style="flex:1;min-width:160px">
           <label for="date">Дата</label>
           <input id="date" type="date">
-          <div id="dateErr" class="error" style="display:none"></div>
+          <div id="dateErr" class="error" style="color:#ef4444;font-size:13px;margin-top:6px;display:none"></div>
         </div>
         <div style="flex:1;min-width:140px">
           <label for="weight">Тегло (kg)</label>
@@ -123,28 +123,44 @@
     const pager = $("#pager");
     const spanSelect=$("#span");
 
-    const PAGE_SIZE = 20;
+    // ---- Настройки на странициране (запомняме в localStorage)
+    const PAGE_SIZES = [10,20,50,100,"all"];
+    function getSavedPageSize(){
+      const v = localStorage.getItem("bt-page-size");
+      if(v==="all") return "all";
+      const n = Number(v);
+      return PAGE_SIZES.includes(n) ? n : 20;
+    }
+    function savePageSize(v){
+      localStorage.setItem("bt-page-size", v);
+    }
+    let pageSize = getSavedPageSize();
     let currentPage = 1;
 
+    // ---- Дата и валидация
     function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     const TODAY = todayISO();
     dateInput.value = TODAY;
-    dateInput.max = TODAY;                   // 🔒 не позволява избор на бъдеща дата
+    dateInput.max = TODAY;
 
     function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
     function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
 
     function sortDescByDate(arr){ return [...arr].sort((a,b)=> b.date.localeCompare(a.date)); }
     function sortAscByDate(arr){ return [...arr].sort((a,b)=> a.date.localeCompare(b.date)); }
+    function isFuture(dStr){ return dStr > TODAY; } // ISO yyyy-mm-dd сравнение
 
+    // ---- Таблица + странициране
     function renderTable(){
       const allDesc = sortDescByDate(load());
       const total = allDesc.length;
-      const pages = Math.max(1, Math.ceil(total / PAGE_SIZE));
+
+      const effectivePageSize = pageSize==="all" ? total||1 : pageSize;
+      const pages = Math.max(1, Math.ceil(total / effectivePageSize));
       if(currentPage > pages) currentPage = pages;
 
-      const start = (currentPage - 1) * PAGE_SIZE;
-      const slice = allDesc.slice(start, start + PAGE_SIZE);
+      const start = (currentPage - 1) * effectivePageSize;
+      const slice = allDesc.slice(start, start + effectivePageSize);
 
       tbody.innerHTML="";
       slice.forEach((r, idx)=>{
@@ -155,21 +171,51 @@
         tbody.appendChild(tr);
       });
 
-      // pager
+      // --- pager
       pager.innerHTML="";
+
+      // инфо + избор на страница размер
+      const infoWrap = document.createElement("div");
+      infoWrap.style.display="flex";
+      infoWrap.style.alignItems="center";
+      infoWrap.style.gap="8px";
+      infoWrap.style.marginRight="auto";
+
       const info = document.createElement("span");
       info.className="muted";
       const from = total? start+1 : 0;
-      const to = Math.min(start + PAGE_SIZE, total);
+      const to = Math.min(start + effectivePageSize, total);
       info.textContent = `Показани ${from}-${to} от ${total}`;
-      pager.appendChild(info);
+      infoWrap.appendChild(info);
 
+      const sizeWrap = document.createElement("div");
+      sizeWrap.className="page-size";
+      const sizeLbl = document.createElement("span");
+      sizeLbl.className="muted";
+      sizeLbl.textContent = "На страница:";
+      const sizeSel = document.createElement("select");
+      sizeSel.id = "pageSize";
+      PAGE_SIZES.forEach(opt=>{
+        const o = document.createElement("option");
+        o.value = String(opt);
+        o.textContent = (opt==="all" ? "Всички" : opt);
+        if(opt===pageSize) o.selected = true;
+        sizeSel.appendChild(o);
+      });
+      sizeWrap.appendChild(sizeLbl);
+      sizeWrap.appendChild(sizeSel);
+      infoWrap.appendChild(sizeWrap);
+
+      pager.appendChild(infoWrap);
+
+      // бутон ←
       const prev = document.createElement("button");
       prev.textContent = "←";
       prev.disabled = currentPage===1;
       prev.onclick = ()=>{ currentPage=Math.max(1,currentPage-1); renderTable(); };
       pager.appendChild(prev);
 
+      // номера
       const pagesToShow = 7;
       let first = Math.max(1, currentPage - Math.floor(pagesToShow/2));
       let last = Math.min(pages, first + pagesToShow - 1);
@@ -182,11 +228,21 @@
         pager.appendChild(btn);
       }
 
+      // бутон →
       const next = document.createElement("button");
       next.textContent = "→";
       next.disabled = currentPage===pages;
       next.onclick = ()=>{ currentPage=Math.min(pages,currentPage+1); renderTable(); };
       pager.appendChild(next);
+
+      // слушател за смяна на размера на страница
+      sizeSel.addEventListener("change", ()=>{
+        const v = sizeSel.value === "all" ? "all" : Number(sizeSel.value);
+        pageSize = v;
+        savePageSize(v);
+        currentPage = 1;
+        renderTable();
+      });
     }
 
     function renderChart(){
@@ -209,14 +265,11 @@
       dateErr.textContent="";
     }
 
-    function isFuture(dStr){ return dStr > TODAY; } // ISO yyyy-mm-dd сравнение по стринг е коректно
-
     document.getElementById("add").addEventListener("click",()=>{
       const dStr = dateInput.value || TODAY;
       const wVal = weightInput.value ? Number(weightInput.value) : null;
 
-      // ⛔ Валидация за бъдеща дата
-      if(isFuture(dStr)){
+      if(dStr > TODAY){
         dateErr.textContent = "Датата е в бъдещето. Моля, избери днешна или минала дата.";
         dateErr.style.display = "block";
         return;
@@ -242,13 +295,13 @@
         const iDesc = +t.getAttribute("data-edit");
         const rec = allDesc[iDesc];
         dateInput.value = rec.date;
-        dateInput.max = TODAY; // пазим ограничението
+        dateInput.max = TODAY;
         weightInput.value = rec.weight ?? "";
         window.scrollTo({top:0, behavior:"smooth"});
       }
     });
 
-    // НЯМА service worker → винаги взема свежо
+    // НЯМА service worker → винаги свежо
     renderTable(); renderChart();
   </script>
 </body>
