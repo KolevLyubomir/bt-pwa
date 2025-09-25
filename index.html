@@ -6,12 +6,12 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v14</title>
-  <link rel="manifest" href="manifest.webmanifest?v=14">
+  <title>BT — Тегло v15</title>
+  <link rel="manifest" href="manifest.webmanifest?v=15">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=14">
+  <link rel="icon" href="assets/icons/icon-192.png?v=15">
   <style>
-    :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
+    :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--accent-soft:#10b98133;--danger:#ef4444;}
     *{box-sizing:border-box}
     body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,'Helvetica Neue',Arial,'Noto Sans',sans-serif;
          background:linear-gradient(180deg,#071013,#0b1215);color:var(--text)}
@@ -25,6 +25,7 @@
     label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
     input,select,button{border-radius:12px;border:1px solid #254046;background:#0d171b;color:var(--text);
                         padding:10px 12px;font-size:14px}
+    input[readonly]{cursor:pointer}
     button{background:var(--accent);border:none;color:#06241b;font-weight:700;cursor:pointer}
     button.ghost{background:#0d171b;color:#e6f2ef;border:1px solid #2a3e41}
     button.danger{background:#ef4444;color:white}
@@ -54,14 +55,15 @@
     .cal-day{ background:#0f1a1f; border:1px solid #20343a; cursor:pointer }
     .cal-day.dis{ opacity:.35; cursor:not-allowed }
     .cal-day.sel{ border-color:#10b981; outline:2px solid #10b98166 }
+    .cal-day.hasdata{ background:var(--accent-soft); border-color:#10b98166 }
     .cal-foot{ display:flex; justify-content:flex-end; margin-top:8px }
     .cal-foot button{ background:#10b981; color:#06241b; border:none; border-radius:8px; padding:6px 10px; font-weight:700 }
   </style>
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=14" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v14</span></h1>
+    <img src="assets/icons/icon-192.png?v=15" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v15</span></h1>
   </header>
 
   <main>
@@ -70,7 +72,7 @@
       <div class="row">
         <div style="flex:1;min-width:220px" class="cal-wrap">
           <label for="dateText">Дата</label>
-          <input id="dateText" type="text" inputmode="numeric" placeholder="ДД.ММ.ГГГГ" autocomplete="off">
+          <input id="dateText" type="text" inputmode="none" placeholder="ДД.ММ.ГГГГ" autocomplete="off" readonly>
           <div id="dateErr" class="error" style="display:none"></div>
 
           <!-- Календар -->
@@ -80,9 +82,7 @@
               <div class="cal-title" id="calTitle">Септември 2025</div>
               <button id="calNext">›</button>
             </div>
-            <div class="cal-grid" id="calGrid">
-              <!-- дни се генерират динамично -->
-            </div>
+            <div class="cal-grid" id="calGrid"></div>
             <div class="cal-foot">
               <button id="calToday">Днес</button>
             </div>
@@ -108,12 +108,12 @@
       <h2 style="margin:0 0 8px">Графика</h2>
       <div class="row">
         <div>
-          <label for="span">Период</label>
+          <label for="span">Период / агрегация</label>
           <select id="span">
-            <option value="30">30 дни</option>
-            <option value="90">90 дни</option>
-            <option value="365">1 година</option>
-            <option value="all">Всички</option>
+            <option value="100d" selected>Дни (последни 100)</option>
+            <option value="weekly">Седмици (средно)</option>
+            <option value="monthly">Месеци (средно)</option>
+            <option value="all">Всички дни</option>
           </select>
         </div>
       </div>
@@ -131,32 +131,22 @@
   </main>
 
   <script>
-    /* === Формати и дати === */
+    /* === Дати и формати === */
     function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     const TODAY = todayISO();
+    const MONTHS_BG = ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"];
 
-    // YYYY-MM-DD -> DD.MM.YYYY
-    function isoToBG(iso){
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
-      const [y,m,d]=iso.split("-");
-      return `${d}.${m}.${y}`;
-    }
-    // DD.MM.YYYY -> YYYY-MM-DD
-    function bgToISO(bg){
-      const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(bg);
-      if(!m) return "";
-      const [_, dd, mm, yyyy] = m;
-      return `${yyyy}-${mm}-${dd}`;
-    }
-    function clampToTodayISO(iso){ return iso && iso > TODAY ? TODAY : iso; }
+    const isoToBG = iso => /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.split("-").reverse().join(".") : "";
+    function bgToISO(bg){ const m=/^(\d{2})\.(\d{2})\.(\d{4})$/.exec(bg); return m?`${m[3]}-${m[2]}-${m[1]}`:""; }
+    const clampToTodayISO = iso => iso && iso > TODAY ? TODAY : iso;
 
-    // локално състояние
+    /* === Състояние/хранилище === */
     function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
     function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
     function sortDescByDate(arr){ return [...arr].sort((a,b)=> b.date.localeCompare(a.date)); }
     function sortAscByDate(arr){ return [...arr].sort((a,b)=> a.date.localeCompare(b.date)); }
-    function getSavedDateISO(){ return localStorage.getItem("bt-last-date") || TODAY; }
-    function saveLastDateISO(iso){ localStorage.setItem("bt-last-date", iso); }
+    const getSavedDateISO = ()=> localStorage.getItem("bt-last-date") || TODAY;
+    const saveLastDateISO = iso => localStorage.setItem("bt-last-date", iso);
 
     /* === Мини графика === */
     class MiniChart{
@@ -185,24 +175,19 @@
     const weightErr= document.getElementById("weightErr");
     const tbody    = document.querySelector("#table tbody");
     const pager    = document.getElementById("pager");
+    const spanSel  = document.getElementById("span");
 
     // Пейджинг настройки
     const PAGE_SIZES = [10,20,50,100,"all"];
-    function getSavedPageSize(){
-      const v = localStorage.getItem("bt-page-size");
-      if(v==="all") return "all";
-      const n = Number(v);
-      return PAGE_SIZES.includes(n) ? n : 20;
-    }
-    function savePageSize(v){ localStorage.setItem("bt-page-size", v); }
+    const getSavedPageSize=()=>{ const v=localStorage.getItem("bt-page-size"); if(v==="all")return"all"; const n=Number(v); return PAGE_SIZES.includes(n)?n:20; };
+    const savePageSize=v=>localStorage.setItem("bt-page-size", v);
     let pageSize = getSavedPageSize();
     let currentPage = 1;
 
-    /* === Инициализация на дата (поле + календар) === */
+    /* === Дата/календар === */
     let currentISO = clampToTodayISO(getSavedDateISO());
     dateText.value = isoToBG(currentISO);
 
-    // Календар
     const cal      = document.getElementById("calendar");
     const calGrid  = document.getElementById("calGrid");
     const calTitle = document.getElementById("calTitle");
@@ -210,125 +195,64 @@
     const calNext  = document.getElementById("calNext");
     const calToday = document.getElementById("calToday");
 
-    const MONTHS_BG = ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"];
-    let view = (function(){
-      const [y,m] = currentISO.split("-").map(Number);
-      return {year:y, month:m-1}; // 0-based
-    })();
+    let view = (function(){ const [y,m]=currentISO.split("-").map(Number); return {year:y, month:m-1}; })();
+
+    function getDataDateSet(){
+      const set = new Set();
+      for(const r of load()){ if(/^\d{4}-\d{2}-\d{2}$/.test(r.date)) set.add(r.date); }
+      return set;
+    }
 
     function buildCalendar(){
-      // заглавие
       calTitle.textContent = `${MONTHS_BG[view.month]} ${view.year}`;
-
-      // мрежа: Mon..Sun
       calGrid.innerHTML = "";
       const dow = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
-      dow.forEach(d=>{
-        const el=document.createElement("div");
-        el.className="cal-dow";
-        el.textContent=d;
-        calGrid.appendChild(el);
-      });
+      dow.forEach(d=>{ const el=document.createElement("div"); el.className="cal-dow"; el.textContent=d; calGrid.appendChild(el); });
 
       const first = new Date(view.year, view.month, 1);
       const last  = new Date(view.year, view.month+1, 0);
-      // JS: Неделя=0 → искаме Понеделник=0
       let startIdx = (first.getDay()+6)%7;
       const daysInMonth = last.getDate();
-
-      // предходни празни (или числа от предния месец)
-      for(let i=0; i<startIdx; i++){
-        const el=document.createElement("div");
-        el.className="cal-day dis";
-        el.textContent=" ";
-        calGrid.appendChild(el);
-      }
-
       const todayISO = TODAY;
+      const withData = getDataDateSet();
+
+      for(let i=0;i<startIdx;i++){ const el=document.createElement("div"); el.className="cal-day dis"; el.textContent=" "; calGrid.appendChild(el); }
+
       for(let d=1; d<=daysInMonth; d++){
-        const el=document.createElement("div");
-        el.className="cal-day";
-        el.textContent = d;
-
+        const el=document.createElement("div"); el.className="cal-day"; el.textContent=d;
         const iso = `${view.year}-${String(view.month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-        // маркирай избраната
         if(iso===currentISO) el.classList.add("sel");
-        // забрани бъдещи
         if(iso > todayISO) el.classList.add("dis");
-
+        if(withData.has(iso)) el.classList.add("hasdata");
         el.addEventListener("click", ()=>{
           if(el.classList.contains("dis")) return;
           currentISO = iso;
           dateText.value = isoToBG(currentISO);
           saveLastDateISO(currentISO);
           closeCalendar();
-          // презареди евентуални грешки
           dateErr.style.display="none";
         });
-
         calGrid.appendChild(el);
       }
     }
 
-    function openCalendar(){
-      cal.classList.add("open");
-      buildCalendar();
-    }
-    function closeCalendar(){
-      cal.classList.remove("open");
-    }
-
-    // отваряне при фокус/клик
+    function openCalendar(){ cal.classList.add("open"); buildCalendar(); }
+    function closeCalendar(){ cal.classList.remove("open"); }
     dateText.addEventListener("focus", openCalendar);
     dateText.addEventListener("click", openCalendar);
-
-    // навигация
-    calPrev.addEventListener("click", ()=>{
-      if(view.month===0){ view.month=11; view.year--; } else view.month--;
-      buildCalendar();
-    });
-    calNext.addEventListener("click", ()=>{
-      if(view.month===11){ view.month=0; view.year++; } else view.month++;
-      buildCalendar();
-    });
+    document.addEventListener("click", (e)=>{ if(cal.contains(e.target)||e.target===dateText) return; closeCalendar(); });
+    calPrev.addEventListener("click", ()=>{ if(view.month===0){view.month=11;view.year--;} else view.month--; buildCalendar(); });
+    calNext.addEventListener("click", ()=>{ if(view.month===11){view.month=0;view.year++;} else view.month++; buildCalendar(); });
     calToday.addEventListener("click", ()=>{
-      const t = TODAY.split("-");
-      view.year = Number(t[0]); view.month = Number(t[1])-1;
-      currentISO = TODAY;
-      dateText.value = isoToBG(currentISO);
-      saveLastDateISO(currentISO);
-      buildCalendar();
-      closeCalendar();
-    });
-
-    // въвеждане на ръка (ДД.ММ.ГГГГ)
-    dateText.addEventListener("input", ()=>{
-      const iso = bgToISO(dateText.value.trim());
-      if(iso){
-        currentISO = clampToTodayISO(iso);
-      }
-    });
-    dateText.addEventListener("change", ()=>{
-      // нормализирай стойността (ако е бъдеща → TODAY)
-      const iso = bgToISO(dateText.value.trim());
-      const norm = clampToTodayISO(iso || TODAY);
-      currentISO = norm;
-      dateText.value = isoToBG(currentISO);
-      saveLastDateISO(currentISO);
-      dateErr.style.display="none";
-    });
-
-    // клик извън календара → затваряне
-    document.addEventListener("click", (e)=>{
-      if(cal.contains(e.target) || e.target===dateText) return;
-      closeCalendar();
+      const t = TODAY.split("-"); view.year=+t[0]; view.month=+t[1]-1;
+      currentISO = TODAY; dateText.value = isoToBG(currentISO); saveLastDateISO(currentISO);
+      buildCalendar(); closeCalendar();
     });
 
     /* === Таблица + странициране === */
     function renderTable(){
       const allDesc = sortDescByDate(load());
       const total = allDesc.length;
-
       const effectivePageSize = pageSize==="all" ? total||1 : pageSize;
       const pages = Math.max(1, Math.ceil(total / effectivePageSize));
       if(currentPage > pages) currentPage = pages;
@@ -348,79 +272,84 @@
       // pager
       pager.innerHTML="";
       const infoWrap = document.createElement("div");
-      infoWrap.style.display="flex";
-      infoWrap.style.alignItems="center";
-      infoWrap.style.gap="8px";
-      infoWrap.style.marginRight="auto";
+      infoWrap.style.display="flex"; infoWrap.style.alignItems="center"; infoWrap.style.gap="8px"; infoWrap.style.marginRight="auto";
+      const info = document.createElement("span"); info.className="muted";
+      const from = total ? start+1 : 0; const to = Math.min(start + effectivePageSize, total);
+      info.textContent = `${from}-${to} от ${total}`; infoWrap.appendChild(info);
 
-      const info = document.createElement("span");
-      info.className="muted";
-      const from = total ? start+1 : 0;
-      const to = Math.min(start + effectivePageSize, total);
-      info.textContent = `${from}-${to} от ${total}`;
-      infoWrap.appendChild(info);
+      const sizeWrap = document.createElement("div"); sizeWrap.className="page-size";
+      const sizeSel = document.createElement("select"); sizeSel.id="pageSize";
+      PAGE_SIZES.forEach(opt=>{ const o=document.createElement("option"); o.value=String(opt); o.textContent=(opt==="all"?"Всички":opt); if(opt===pageSize) o.selected=true; sizeSel.appendChild(o); });
+      sizeWrap.appendChild(sizeSel); infoWrap.appendChild(sizeWrap); pager.appendChild(infoWrap);
 
-      const sizeWrap = document.createElement("div");
-      sizeWrap.className="page-size";
-      const sizeSel = document.createElement("select");
-      sizeSel.id = "pageSize";
-      PAGE_SIZES.forEach(opt=>{
-        const o = document.createElement("option");
-        o.value = String(opt);
-        o.textContent = (opt==="all" ? "Всички" : opt);
-        if(opt===pageSize) o.selected = true;
-        sizeSel.appendChild(o);
-      });
-      sizeWrap.appendChild(sizeSel);
-      infoWrap.appendChild(sizeWrap);
-      pager.appendChild(infoWrap);
-
-      const pagesToShow = 7;
       if(pages > 1){
-        if(currentPage > 1){
-          const prev = document.createElement("button");
-          prev.textContent = "←";
-          prev.onclick = ()=>{ currentPage=Math.max(1,currentPage-1); renderTable(); };
-          pager.appendChild(prev);
-        }
-        let first = Math.max(1, currentPage - Math.floor(pagesToShow/2));
-        let last = Math.min(pages, first + pagesToShow - 1);
-        first = Math.max(1, last - pagesToShow + 1);
-        for(let p=first; p<=last; p++){
-          const btn = document.createElement("button");
-          btn.textContent = p;
-          if(p===currentPage) btn.className="active";
-          btn.onclick = ()=>{ currentPage=p; renderTable(); };
-          pager.appendChild(btn);
-        }
-        if(currentPage < pages){
-          const next = document.createElement("button");
-          next.textContent = "→";
-          next.onclick = ()=>{ currentPage=Math.min(pages,currentPage+1); renderTable(); };
-          pager.appendChild(next);
-        }
+        if(currentPage > 1){ const prev=document.createElement("button"); prev.textContent="←"; prev.onclick=()=>{currentPage=Math.max(1,currentPage-1); renderTable();}; pager.appendChild(prev); }
+        const pagesToShow=7; let first=Math.max(1,currentPage-Math.floor(pagesToShow/2)); let last=Math.min(pages,first+pagesToShow-1); first=Math.max(1,last-pagesToShow+1);
+        for(let p=first;p<=last;p++){ const btn=document.createElement("button"); btn.textContent=p; if(p===currentPage) btn.className="active"; btn.onclick=()=>{currentPage=p; renderTable();}; pager.appendChild(btn); }
+        if(currentPage < pages){ const next=document.createElement("button"); next.textContent="→"; next.onclick=()=>{currentPage=Math.min(pages,currentPage+1); renderTable();}; pager.appendChild(next); }
       }
 
-      sizeSel.addEventListener("change", ()=>{
-        const v = sizeSel.value === "all" ? "all" : Number(sizeSel.value);
-        pageSize = v;
-        savePageSize(v);
-        currentPage = 1;
-        renderTable();
-      });
+      sizeSel.addEventListener("change", ()=>{ const v=sizeSel.value==="all"?"all":Number(sizeSel.value); pageSize=v; savePageSize(v); currentPage=1; renderTable(); });
     }
 
-    /* === Графика === */
-    function renderChart(){
-      const allAsc = sortAscByDate(load());
-      let filtered = allAsc;
-      const span=document.getElementById("span").value;
-      if(span!=="all"){
-        const days=parseInt(span,10);
-        const cut=new Date(); cut.setDate(cut.getDate()-days);
-        filtered = allAsc.filter(r=> new Date(r.date)>=cut );
+    /* === Агрегация за графика === */
+    function startOfDay(d){ d.setHours(0,0,0,0); return d; }
+    function addDays(d,n){ const dd=new Date(d); dd.setDate(dd.getDate()+n); return dd; }
+    function isoWeekYear(d){ // ISO week-numbering year
+      const tmp=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      tmp.setUTCDate(tmp.getUTCDate()+4-(tmp.getUTCDay()||7));
+      return tmp.getUTCFullYear();
+    }
+    function isoWeekNumber(d){
+      const tmp=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
+      const dayNr = (tmp.getUTCDay()||7);
+      tmp.setUTCDate(tmp.getUTCDate()+4-dayNr);
+      const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
+      return Math.ceil((((tmp - yearStart) / 86400000) + 1)/7);
+    }
+
+    function aggregate(mode){
+      const data = sortAscByDate(load()); // [{date:'YYYY-MM-DD', weight}]
+      if(mode==="100d"){
+        const end = startOfDay(new Date()); const start = addDays(end, -99);
+        const out = [];
+        for(let d=new Date(start); d<=end; d=addDays(d,1)){
+          const iso = d.toISOString().slice(0,10);
+          const rec = data.find(r=>r.date===iso);
+          out.push(rec && typeof rec.weight==="number" ? rec.weight : null);
+        }
+        return out;
       }
-      const vals = filtered.map(r=> Number(r.weight) || null);
+      if(mode==="all"){
+        return data.map(r=> typeof r.weight==="number" ? r.weight : null);
+      }
+      if(mode==="weekly"){
+        const map=new Map(); // key = YYYY-Www
+        for(const r of data){
+          const d=new Date(r.date+"T00:00:00");
+          const key=`${isoWeekYear(d)}-W${String(isoWeekNumber(d)).padStart(2,"0")}`;
+          const arr = map.get(key) || [];
+          if(typeof r.weight==="number") arr.push(r.weight);
+          map.set(key, arr);
+        }
+        return [...map.values()].map(arr=> arr.length? (arr.reduce((a,b)=>a+b,0)/arr.length) : null);
+      }
+      if(mode==="monthly"){
+        const map=new Map(); // key = YYYY-MM
+        for(const r of data){
+          const key=r.date.slice(0,7);
+          const arr = map.get(key) || [];
+          if(typeof r.weight==="number") arr.push(r.weight);
+          map.set(key, arr);
+        }
+        return [...map.values()].map(arr=> arr.length? (arr.reduce((a,b)=>a+b,0)/arr.length) : null);
+      }
+      return [];
+    }
+
+    function renderChart(){
+      const mode = spanSel.value;
+      const vals = aggregate(mode);
       const ctx=document.getElementById("chart").getContext("2d");
       const mini=new MiniChart(ctx); mini.data=vals; mini.render();
     }
@@ -435,23 +364,12 @@
     document.getElementById("add").addEventListener("click",()=>{
       let iso = bgToISO(dateText.value.trim());
       if(!iso) iso = TODAY;
-      if(iso > TODAY){
-        dateErr.textContent = "Датата е в бъдещето. Моля, избери днешна или минала дата.";
-        dateErr.style.display = "block";
-        return;
-      }
+      if(iso > TODAY){ dateErr.textContent="Датата е в бъдещето. Моля, избери днешна или минала дата."; dateErr.style.display="block"; return; }
+      const wRaw = weight.value.trim(); const wVal = wRaw==="" ? NaN : Number(wRaw);
+      if(!(wVal > 0)){ weightErr.textContent="Моля, въведи тегло > 0."; weightErr.style.display="block"; return; }
 
-      const wRaw = weight.value.trim();
-      const wVal = wRaw === "" ? NaN : Number(wRaw);
-      if(!(wVal > 0)){
-        weightErr.textContent = "Моля, въведи тегло > 0.";
-        weightErr.style.display = "block";
-        return;
-      }
-
+      const data=load(); const idx=data.findIndex(r=>r.date===iso);
       const rec={ date: iso, weight: wVal };
-      const data=load();
-      const idx=data.findIndex(r=>r.date===rec.date);
       if(idx>=0) data[idx]=rec; else data.push(rec);
       save(data);
       saveLastDateISO(iso);
@@ -464,14 +382,11 @@
       const t=e.target; if(!t.closest("#table")) return;
       const allDesc = sortDescByDate(load());
       if(t.matches("button[data-del]")){
-        const iDesc = +t.getAttribute("data-del");
-        const rec = allDesc[iDesc];
-        let data = load();
-        const i = data.findIndex(r=> r.date===rec.date);
+        const iDesc = +t.getAttribute("data-del"); const rec = allDesc[iDesc];
+        let data = load(); const i = data.findIndex(r=> r.date===rec.date);
         if(i>=0){ data.splice(i,1); save(data); renderTable(); renderChart(); }
       } else if(t.matches("button[data-edit]")){
-        const iDesc = +t.getAttribute("data-edit");
-        const rec = allDesc[iDesc];
+        const iDesc = +t.getAttribute("data-edit"); const rec = allDesc[iDesc];
         currentISO = clampToTodayISO(rec.date);
         dateText.value = isoToBG(currentISO);
         weight.value = rec.weight ?? "";
@@ -484,36 +399,28 @@
       const data = load();
       const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
       const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url; a.download = "bt-progress-export.json";
+      const a = document.createElement("a"); a.href = url; a.download = "bt-progress-export.json";
       document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
     });
 
-    document.getElementById("importBtn").addEventListener("click", ()=>{
-      document.getElementById("importFile").click();
-    });
+    document.getElementById("importBtn").addEventListener("click", ()=> document.getElementById("importFile").click());
     document.getElementById("importFile").addEventListener("change", async (ev)=>{
       const file = ev.target.files?.[0]; if(!file) return;
       try{
-        const text = await file.text();
-        const parsed = JSON.parse(text);
+        const text = await file.text(); const parsed = JSON.parse(text);
         if(!Array.isArray(parsed)) throw new Error("Очаквам масив от записи.");
         const cleaned = [];
         for(const r of parsed){
           const date = typeof r.date==="string" ? r.date : "";
           const weight = (typeof r.weight==="number" && r.weight>0) ? r.weight : null;
           if(!/^\d{4}-\d{2}-\d{2}$/.test(date)) continue;
-          if(date > TODAY) continue; // игнорирай бъдещи
+          if(date > TODAY) continue;
           cleaned.push({date, weight});
         }
         save(cleaned);
         renderTable(); renderChart();
-        ev.target.value = "";
-        alert("Импортът е успешен.");
-      }catch(err){
-        console.error(err);
-        alert("Грешка при импорт. Файлът трябва да е JSON масив от {date:'YYYY-MM-DD', weight:number>0}.");
-      }
+        ev.target.value = ""; alert("Импортът е успешен.");
+      }catch(err){ console.error(err); alert("Грешка при импорт. Очаквам JSON масив от {date:'YYYY-MM-DD', weight:number>0}."); }
     });
 
     document.getElementById("wipe").addEventListener("click", ()=>{
