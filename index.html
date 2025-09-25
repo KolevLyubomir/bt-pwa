@@ -6,10 +6,10 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v11</title>
-  <link rel="manifest" href="manifest.webmanifest?v=11">
+  <title>BT — Тегло v12</title>
+  <link rel="manifest" href="manifest.webmanifest?v=12">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=11">
+  <link rel="icon" href="assets/icons/icon-192.png?v=12">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
     *{box-sizing:border-box}
@@ -39,12 +39,13 @@
     .pagination .muted{color:#9fb4ad;margin-right:auto}
     .page-size select{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;border-radius:10px;padding:6px 8px}
     .error{color:#ef4444;font-size:13px;margin-top:6px}
+    .muted{color:#9fb4ad;font-size:12px;margin-top:6px}
   </style>
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=11" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v11</span></h1>
+    <img src="assets/icons/icon-192.png?v=12" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v12</span></h1>
   </header>
 
   <main>
@@ -54,9 +55,7 @@
         <div style="flex:1;min-width:220px">
           <label for="date">Дата</label>
           <input id="date" type="date">
-          <div style="margin-top:8px">
-            <button id="openCal" class="ghost">Календар</button>
-          </div>
+          <div id="dateUS" class="muted"></div>
           <div id="dateErr" class="error" style="display:none"></div>
         </div>
         <div style="flex:1;min-width:140px">
@@ -124,6 +123,7 @@
     const $ = s=>document.querySelector(s);
     const dateInput=$("#date"), weightInput=$("#weight");
     const dateErr=$("#dateErr"), weightErr=$("#weightErr");
+    const dateUS=$("#dateUS");
     const tbody = document.querySelector("#table tbody");
     const pager = $("#pager");
     const spanSelect=$("#span");
@@ -140,17 +140,23 @@
     let pageSize = getSavedPageSize();
     let currentPage = 1;
 
-    // ---- Дата и валидация
+    // ---- Дата
     function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     const TODAY = todayISO();
-
     function getSavedDate(){ return localStorage.getItem("bt-last-date") || TODAY; }
     function saveLastDate(dStr){ localStorage.setItem("bt-last-date", dStr); }
     function clampToToday(dStr){ return dStr > TODAY ? TODAY : dStr; }
+    function toUS(dStr){ if(!/^\d{4}-\d{2}-\d{2}$/.test(dStr)) return ""; const [y,m,d]=dStr.split("-"); return `${m}/${d}/${y}`; }
 
-    // инициализация на датата: последната запомнена (или днес)
+    // инициализация
     dateInput.value = clampToToday(getSavedDate());
     dateInput.max = TODAY;
+    dateUS.textContent = toUS(dateInput.value);
+
+    // отваряме календара при клик/фокус (ако браузърът поддържа showPicker)
+    function maybeOpenPicker(){ if(typeof dateInput.showPicker==="function") dateInput.showPicker(); }
+    dateInput.addEventListener("focus", maybeOpenPicker);
+    dateInput.addEventListener("click", maybeOpenPicker);
 
     function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
     function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
@@ -192,7 +198,6 @@
       info.textContent = `${from}-${to} от ${total}`;
       infoWrap.appendChild(info);
 
-      // селектор за размер (без етикет)
       const sizeWrap = document.createElement("div");
       sizeWrap.className="page-size";
       const sizeSel = document.createElement("select");
@@ -260,10 +265,8 @@
 
     function clearForm(){
       weightInput.value="";
-      dateErr.style.display="none";
-      dateErr.textContent="";
-      weightErr.style.display="none";
-      weightErr.textContent="";
+      dateErr.style.display="none"; dateErr.textContent="";
+      weightErr.style.display="none"; weightErr.textContent="";
     }
 
     // ---- Добавяне / редакция / триене
@@ -288,7 +291,7 @@
       const idx=data.findIndex(r=>r.date===rec.date);
       if(idx>=0) data[idx]=rec; else data.push(rec);
       save(data);
-      saveLastDate(dStr);                 // 💾 запомняме последната дата
+      saveLastDate(dStr);
       renderTable(); renderChart(); clearForm();
     });
 
@@ -306,24 +309,17 @@
         const rec = allDesc[iDesc];
         dateInput.value = clampToToday(rec.date);
         dateInput.max = TODAY;
+        dateUS.textContent = toUS(dateInput.value);
         weightInput.value = rec.weight ?? "";
         window.scrollTo({top:0, behavior:"smooth"});
       }
     });
 
-    // ---- Календар бутон
-    document.getElementById("openCal").addEventListener("click", ()=>{
-      if(typeof dateInput.showPicker === "function"){
-        dateInput.showPicker();
-      }else{
-        dateInput.focus();
-      }
-    });
-
-    // запомняме последната дата при ръчна промяна
+    // актуализиране на US формата и запазване при промяна
     dateInput.addEventListener("change", ()=>{
       const v = clampToToday(dateInput.value || TODAY);
       dateInput.value = v;
+      dateUS.textContent = toUS(v);
       saveLastDate(v);
       dateErr.style.display="none";
     });
