@@ -6,10 +6,10 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v17</title>
-  <link rel="manifest" href="manifest.webmanifest?v=17">
+  <title>BT — Тегло v18</title>
+  <link rel="manifest" href="manifest.webmanifest?v=18">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=17">
+  <link rel="icon" href="assets/icons/icon-192.png?v=18">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
     *{box-sizing:border-box}
@@ -33,13 +33,20 @@
     th,td{padding:10px;border-bottom:1px solid #20343a;text-align:left;font-size:14px}
     th{color:#9fb4ad;font-weight:600}
     .right{text-align:right}
-    canvas{max-width:100%;height:320px}
+    canvas{max-width:100%;height:340px}
     .pagination{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-top:10px}
     .pagination button{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;padding:6px 10px;border-radius:10px;cursor:pointer}
     .pagination button.active{background:#10b981;color:#06241b;border-color:#10b981}
     .pagination .muted{color:#9fb4ad;margin-right:auto}
     .page-size select{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;border-radius:10px;padding:6px 8px}
     .error{color:#ef4444;font-size:13px;margin-top:6px}
+
+    /* Иконки бутони */
+    .icon-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1px solid #2a3e41;background:#0d171b;color:#e6f2ef}
+    .icon-btn svg{width:18px;height:18px;display:block}
+    .icon-only{padding:6px 8px}
+    .icon-only svg{width:16px;height:16px}
+    .icon-btn.danger{border-color:#3a2222;background:#161112;color:#ffd5d5}
 
     /* Календар */
     .cal-wrap{position:relative}
@@ -55,6 +62,7 @@
     .cal-day{ background:#0f1a1f; border:1px solid #20343a; cursor:pointer }
     .cal-day.dis{ opacity:.35; cursor:not-allowed }
     .cal-day.sel{ border-color:#10b981; outline:2px solid #10b98166 }
+    /* по-светло зелено (бяло-зелено) за дни с данни */
     .cal-day.hasdata{ background:#f0fff7; color:#063; border-color:#c6f7df }
     .cal-foot{ display:flex; justify-content:flex-end; margin-top:8px }
     .cal-foot button{ background:#10b981; color:#06241b; border:none; border-radius:8px; padding:6px 10px; font-weight:700 }
@@ -62,8 +70,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=17" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v17</span></h1>
+    <img src="assets/icons/icon-192.png?v=18" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v18</span></h1>
   </header>
 
   <main>
@@ -96,10 +104,24 @@
       </div>
       <div class="row" style="margin-top:14px">
         <button id="add">Добави</button>
-        <button class="ghost" id="export">Експорт (JSON)</button>
+        <button class="icon-btn" id="export" title="Експорт (JSON)">
+          <!-- download -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg>
+          Експорт
+        </button>
         <input type="file" id="importFile" accept="application/json" style="display:none">
-        <button class="ghost" id="importBtn">Импорт</button>
-        <button class="danger" id="wipe">Изтрий всички</button>
+        <button class="icon-btn" id="importBtn" title="Импорт от JSON">
+          <!-- upload -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9m0 0l4 4m-4-4L8 13"/><path d="M5 3h14"/></svg>
+          Импорт
+        </button>
+
+        <button class="icon-btn danger" id="wipe" title="Изтрий всички">
+          <!-- три кошчета -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px"><path d="M3 6h18M8 6V4h8v2m-9 0l1 14h8l1-14"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:2px"><path d="M3 6h18M8 6V4h8v2m-9 0l1 14h8l1-14"/></svg>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-9 0l1 14h8l1-14"/></svg>
+        </button>
       </div>
     </section>
 
@@ -145,23 +167,34 @@
     const getSavedDateISO = ()=> localStorage.getItem("bt-last-date") || TODAY;
     const saveLastDateISO = iso => localStorage.setItem("bt-last-date", iso);
 
-    /* === Мини графика с прекъсвания === */
+    /* === Мини графика с прекъсвания + етикети === */
     class MiniChart{
-      constructor(ctx){ this.ctx=ctx; this.data=[]; }
+      constructor(ctx){ this.ctx=ctx; this.series=[]; this.labels=[]; } // series: [num|null], labels: strings
       render(){
-        const c=this.ctx.canvas, w=c.width=c.clientWidth, h=c.height=320;
+        const c=this.ctx.canvas, w=c.width=c.clientWidth, h=c.height=340;
         const ctx=this.ctx; ctx.clearRect(0,0,w,h);
-        const nums=this.data.filter(v=>typeof v==='number');
-        ctx.fillStyle="#9fb4ad"; ctx.font="14px system-ui";
-        if(nums.length<2){ ctx.fillText("Добави поне 2 записа за графика", 10, 24); return; }
-        const min=Math.min(...nums), max=Math.max(...nums), pad=24;
-        const n=this.data.length;
-        const xAt=i=> pad + (w-2*pad)*(i/(n-1));
-        const yAt=v=> h-pad - ((v-min)/((max-min)||1))*(h-2*pad);
+
+        const vals=this.series.filter(v=>typeof v==='number');
+        ctx.fillStyle="#9fb4ad"; ctx.font="13px system-ui";
+        if(vals.length<2){ ctx.fillText("Добави поне 2 записа за графика", 10, 24); return; }
+
+        const padLeft=28, padRight=12, padTop=18, padBottom=46;
+        const min=Math.min(...vals), max=Math.max(...vals);
+        const n=this.series.length;
+        const xAt=i=> padLeft + (w-padLeft-padRight)*(n<=1?0:(i/(n-1)));
+        const yAt=v=> h-padBottom - ((v-min)/((max-min)||1))*(h-padTop-padBottom);
+
+        // оси (леки водачи)
+        ctx.strokeStyle="#20343a"; ctx.lineWidth=1; ctx.beginPath();
+        ctx.moveTo(padLeft, h-padBottom); ctx.lineTo(w-padRight, h-padBottom);
+        ctx.moveTo(padLeft, padTop); ctx.lineTo(padLeft, h-padBottom);
+        ctx.stroke();
+
+        // линия с прекъсвания
         ctx.strokeStyle="#87f3c5"; ctx.lineWidth=2; ctx.beginPath();
         let penDown=false;
         for(let i=0;i<n;i++){
-          const v=this.data[i];
+          const v=this.series[i];
           if(typeof v==='number'){
             const x=xAt(i), y=yAt(v);
             if(!penDown){ ctx.moveTo(x,y); penDown=true; }
@@ -171,6 +204,24 @@
           }
         }
         ctx.stroke();
+
+        // етикети X (рядко, за да не са натъпкани)
+        const maxLabels=8;
+        const step = Math.max(1, Math.floor(n / maxLabels));
+        ctx.fillStyle="#9fb4ad";
+        for(let i=0;i<n;i+=step){
+          const txt=this.labels[i]; if(!txt) continue;
+          const x=xAt(i);
+          ctx.fillText(txt, x-ctx.measureText(txt).width/2, h-22);
+          // малък маркер
+          ctx.beginPath(); ctx.arc(x, h-padBottom, 2, 0, Math.PI*2); ctx.fill();
+        }
+
+        // етикети Y (min/max)
+        ctx.fillStyle="#9fb4ad";
+        const minTxt=String(min), maxTxt=String(max);
+        ctx.fillText(maxTxt, 4, yAt(max)+4);
+        ctx.fillText(minTxt, 4, yAt(min)+4);
       }
     }
 
@@ -237,6 +288,7 @@
           saveLastDateISO(currentISO);
           closeCalendar();
           dateErr.style.display="none";
+          renderChart(); // за да обнови "hasdata" ако се промени месец
         });
         calGrid.appendChild(el);
       }
@@ -270,8 +322,16 @@
       slice.forEach((r, idx)=>{
         const tr=document.createElement("tr");
         tr.innerHTML = `<td>${isoToBG(r.date)}</td><td>${r.weight??""}</td>
-        <td class="right"><button class="ghost" data-edit="${start+idx}">Редакция</button>
-        <button class="danger" data-del="${start+idx}">Изтрий</button></td>`;
+        <td class="right">
+          <button class="icon-btn icon-only" title="Редакция" data-edit="${start+idx}">
+            <!-- pencil -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18l-1 3z"/><path d="M14 5l5 5"/></svg>
+          </button>
+          <button class="icon-btn icon-only danger" title="Изтрий" data-del="${start+idx}">
+            <!-- trash -->
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2m-9 0l1 14h8l1-14"/></svg>
+          </button>
+        </td>`;
         tbody.appendChild(tr);
       });
 
@@ -298,7 +358,7 @@
       sizeSel.addEventListener("change", ()=>{ const v=sizeSel.value==="all"?"all":Number(sizeSel.value); pageSize=v; savePageSize(v); currentPage=1; renderTable(); });
     }
 
-    /* === Агрегации за графика === */
+    /* === Агрегации за графика + етикети === */
     function isoWeekYear(d){
       const tmp=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
       tmp.setUTCDate(tmp.getUTCDate()+4-(tmp.getUTCDay()||7));
@@ -315,8 +375,9 @@
     function aggregate(mode){
       const data = sortAscByDate(load()); // [{date, weight}]
       if(mode==="daily"){
-        // само въведените дни
-        return data.map(r=> typeof r.weight==="number" ? r.weight : null);
+        const values = data.map(r=> typeof r.weight==="number" ? r.weight : null);
+        const labels = data.map(r=> isoToBG(r.date)); // ще редуцираме при рендер
+        return {values, labels};
       }
       if(mode==="weekly"){
         const map=new Map(); // key = YYYY-Www
@@ -327,7 +388,13 @@
           if(typeof r.weight==="number") arr.push(r.weight);
           map.set(key, arr);
         }
-        return [...map.values()].map(arr=> arr.length? (arr.reduce((a,b)=>a+b,0)/arr.length) : null);
+        const values=[]; const labels=[];
+        for(const [key, arr] of map.entries()){
+          values.push(arr.length? (arr.reduce((a,b)=>a+b,0)/arr.length) : null);
+          const ww = key.split("-W")[1];
+          labels.push(`С${ww}`); // С38, С39…
+        }
+        return {values, labels};
       }
       if(mode==="monthly"){
         const map=new Map(); // key = YYYY-MM
@@ -337,19 +404,27 @@
           if(typeof r.weight==="number") arr.push(r.weight);
           map.set(key, arr);
         }
-        return [...map.values()].map(arr=> arr.length? (arr.reduce((a,b)=>a+b,0)/arr.length) : null);
+        const values=[]; const labels=[];
+        for(const [key, arr] of map.entries()){
+          values.push(arr.length? (arr.reduce((a,b)=>a+b,0)/arr.length) : null);
+          const [y,m] = key.split("-");
+          labels.push(`${m}.${String(y).slice(2)}`); // 09.25, 08.25…
+        }
+        return {values, labels};
       }
-      return [];
+      return {values:[], labels:[]};
     }
 
     function renderChart(){
       const mode = spanSel.value;
-      const vals = aggregate(mode);
+      const {values, labels} = aggregate(mode);
       const ctx=document.getElementById("chart").getContext("2d");
-      const mini=new MiniChart(ctx); mini.data=vals; mini.render();
+      const mini=new MiniChart(ctx);
+      mini.series = values;
+      mini.labels = labels;
+      mini.render();
     }
 
-    // 🔧 ключовото липсващо: ререндер при избор на агрегация
     spanSel.addEventListener("change", renderChart);
 
     function clearForm(){
