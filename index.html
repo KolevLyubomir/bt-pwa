@@ -6,10 +6,10 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v21</title>
-  <link rel="manifest" href="manifest.webmanifest?v=21">
+  <title>BT — Тегло v22</title>
+  <link rel="manifest" href="manifest.webmanifest?v=22">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=21">
+  <link rel="icon" href="assets/icons/icon-192.png?v=22">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
     *{box-sizing:border-box}
@@ -47,6 +47,13 @@
     .icon-only svg{width:16px;height:16px}
     .icon-btn.danger{border-color:#3a2222;background:#161112;color:#ffd5d5}
 
+    /* Показвай надписа само при hover/focus */
+    .icon-btn .label{display:none}
+    @media (hover:hover){
+      .icon-btn:hover .label{display:inline}
+    }
+    .icon-btn:focus .label, .icon-btn:focus-visible .label{display:inline}
+
     .cal-wrap{position:relative}
     .calendar{position:absolute; top:100%; left:0; z-index:20; background:#0d171b; border:1px solid #2a3e41;
               border-radius:12px; padding:10px; margin-top:6px; box-shadow:0 10px 30px #00000055; width:270px; display:none}
@@ -67,8 +74,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=21" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v21</span></h1>
+    <img src="assets/icons/icon-192.png?v=22" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v22</span></h1>
   </header>
 
   <main>
@@ -102,19 +109,20 @@
       <div class="row" style="margin-top:14px">
         <button id="add">Добави</button>
 
-        <button class="icon-btn" id="export" title="Експорт (JSON)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg>
-          Експорт
+        <!-- Иконки само, надпис при hover/focus -->
+        <button class="icon-btn" id="export" title="Експорт (JSON)" aria-label="Експорт">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg>
+          <span class="label">Експорт</span>
         </button>
         <input type="file" id="importFile" accept="application/json" style="display:none">
-        <button class="icon-btn" id="importBtn" title="Импорт от JSON">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9m0 0l4 4m-4-4L8 13"/><path d="M5 3h14"/></svg>
-          Импорт
+        <button class="icon-btn" id="importBtn" title="Импорт от JSON" aria-label="Импорт">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21V9m0 0l4 4m-4-4L8 13"/><path d="M5 3h14"/></svg>
+          <span class="label">Импорт</span>
         </button>
 
-        <button class="icon-btn danger" id="wipe" title="Изтрий всички">
-          <!-- 3 кошчета плътно -->
-          <svg viewBox="0 0 72 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:18px">
+        <!-- 3 кошчета плътно -->
+        <button class="icon-btn danger" id="wipe" title="Изтрий всички" aria-label="Изтрий всички">
+          <svg viewBox="0 0 72 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:18px" aria-hidden="true">
             <g transform="translate(0,0)"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"/></g>
             <g transform="translate(24,0)"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"/></g>
             <g transform="translate(48,0)"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"/></g>
@@ -172,8 +180,13 @@
       for(const r of data){ if(r.date < iso && typeof r.weight==="number") return r; }
       return null;
     }
+    function firstRecordAfter(iso){
+      const data = sortAscByDate(load());
+      for(const r of data){ if(r.date > iso && typeof r.weight==="number") return r; }
+      return null;
+    }
 
-    /* === Мини графика с прекъсвания + вертикални етикети === */
+    /* === Мини графика с прекъсвания + вертикални етикети (с показване само първия ден от седмица за "Дни") === */
     class MiniChart{
       constructor(ctx){ this.ctx=ctx; this.series=[]; this.labels=[]; }
       render(){
@@ -342,16 +355,16 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18l-1 3z"/><path d="M14 5l5 5"/></svg>
           </button>
           <button class="icon-btn icon-only danger" title="Изтрий" data-del="${start+idx}">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"/></svg>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6л1 14h8л1-14"/></svg>
           </button>
         </td>`;
         tbody.appendChild(tr);
       });
 
       // pager
-      pager.innerHTML="";
+      const pager=document.getElementById("pager"); pager.innerHTML="";
       const infoWrap = document.createElement("div");
-      infoWrap.style.display="flex"; infoWrap.style.alignItems="center"; infoWrap.style.gап="8px"; infoWrap.style.marginRight="auto";
+      infoWrap.style.display="flex"; infoWrap.style.alignItems="center"; infoWrap.style.gap="8px"; infoWrap.style.marginRight="auto";
       const info = document.createElement("span"); info.className="muted";
       const from = total ? start+1 : 0; const to = Math.min(start + effectivePageSize, total);
       info.textContent = `${from}-${to} от ${total}`; infoWrap.appendChild(info);
@@ -361,11 +374,12 @@
       [10,20,50,100,"all"].forEach(opt=>{ const o=document.createElement("option"); o.value=String(opt); o.textContent=(opt==="all"?"Всички":opt); if(opt===pageSize) o.selected=true; sizeSel.appendChild(o); });
       sizeWrap.appendChild(sizeSel); infoWrap.appendChild(sizeWrap); pager.appendChild(infoWrap);
 
-      if(pages > 1){
+      const totalPages = Math.max(1, Math.ceil(total / (pageSize==="all"? total||1 : pageSize)));
+      if(totalPages > 1){
         if(currentPage > 1){ const prev=document.createElement("button"); prev.textContent="←"; prev.onclick=()=>{currentPage=Math.max(1,currentPage-1); renderTable();}; pager.appendChild(prev); }
-        const pagesToShow=7; let first=Math.max(1,currentPage-Math.floor(pagesToShow/2)); let last=Math.min(pages,first+pagesToShow-1); first=Math.max(1,last-pagesToShow+1);
+        const pagesToShow=7; let first=Math.max(1,currentPage-Math.floor(pagesToShow/2)); let last=Math.min(totalPages,first+pagesToShow-1); first=Math.max(1,last-pagesToShow+1);
         for(let p=first;p<=last;p++){ const btn=document.createElement("button"); btn.textContent=p; if(p===currentPage) btn.className="active"; btn.onclick=()=>{currentPage=p; renderTable();}; pager.appendChild(btn); }
-        if(currentPage < pages){ const next=document.createElement("button"); next.textContent="→"; next.onclick=()=>{currentPage=Math.min(pages,currentPage+1); renderTable();}; pager.appendChild(next); }
+        if(currentPage < totalPages){ const next=document.createElement("button"); next.textContent="→"; next.onclick=()=>{currentPage=Math.min(totalPages,currentPage+1); renderTable();}; pager.appendChild(next); }
       }
       sizeSel.addEventListener("change", ()=>{ const v=sizeSel.value==="all"?"all":Number(sizeSel.value); pageSize=v; savePageSize(v); currentPage=1; renderTable(); });
     }
@@ -437,14 +451,27 @@
     }
     spanSel.addEventListener("change", renderChart);
 
-    /* === Валидация ±5% спрямо предишен запис === */
-    function validateWeightAgainstPrev(iso, weightNum){
+    /* === Валидация ±5% спрямо ПРЕДИШЕН и СЛЕДВАЩ запис === */
+    function validateWeightNeighbors(iso, weightNum){
       const prev = lastRecordBefore(iso);
-      if(!prev) return {ok:true};
-      const min = prev.weight * 0.95;
-      const max = prev.weight * 1.05;
-      const ok = (weightNum >= min && weightNum <= max);
-      return { ok, min, max, prevDate: prev.date, prevWeight: prev.weight };
+      const next = firstRecordAfter(iso);
+      let ok = true, messages=[];
+
+      if(prev){
+        const min = prev.weight*0.95, max = prev.weight*1.05;
+        if(weightNum < min || weightNum > max){
+          messages.push(`спрямо предишния ${isoToBG(prev.date)}: позволено ${min.toFixed(1)}–${max.toFixed(1)} kg`);
+          ok = false;
+        }
+      }
+      if(next){
+        const min = next.weight*0.95, max = next.weight*1.05;
+        if(weightNum < min || weightNum > max){
+          messages.push(`спрямо следващия ${isoToBG(next.date)}: позволено ${min.toFixed(1)}–${max.toFixed(1)} kg`);
+          ok = false;
+        }
+      }
+      return {ok, messages};
     }
 
     function clearForm(){
@@ -461,12 +488,10 @@
       const wRaw = weight.value.trim(); const wVal = wRaw==="" ? NaN : Number(wRaw);
       if(!(wVal > 0)){ weightErr.textContent="Моля, въведи тегло > 0."; weightErr.style.display="block"; return; }
 
-      // ±5% валидатор спрямо предходния наличен запис
-      const check = validateWeightAgainstPrev(iso, wVal);
+      // двустранна ±5% валидация
+      const check = validateWeightNeighbors(iso, wVal);
       if(!check.ok){
-        const range = `${check.min.toFixed(1)}–${check.max.toFixed(1)} kg`;
-        const prevStr = `${isoToBG(check.prevDate)} (${check.prevWeight})`;
-        weightErr.textContent = `Теглото трябва да е в рамките на ±5% (${range}) спрямо предишния запис ${prevStr}.`;
+        weightErr.textContent = "Извън допустимите граници: " + check.messages.join(" | ");
         weightErr.style.display="block";
         return;
       }
@@ -479,7 +504,7 @@
       currentISO = iso;
       dateText.value = isoToBG(currentISO);
       renderTable(); renderChart();
-      // оставяме weight стойността (удобно за поредни дни)
+      // оставяме weight (удобно за поредни дни)
     });
 
     document.addEventListener("click",(e)=>{
