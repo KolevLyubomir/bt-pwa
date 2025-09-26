@@ -6,10 +6,10 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="0" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>BT — Тегло v19</title>
-  <link rel="manifest" href="manifest.webmanifest?v=19">
+  <title>BT — Тегло v20</title>
+  <link rel="manifest" href="manifest.webmanifest?v=20">
   <meta name="theme_color" content="#10b981">
-  <link rel="icon" href="assets/icons/icon-192.png?v=19">
+  <link rel="icon" href="assets/icons/icon-192.png?v=20">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--danger:#ef4444;}
     *{box-sizing:border-box}
@@ -33,7 +33,7 @@
     th,td{padding:10px;border-bottom:1px solid #20343a;text-align:left;font-size:14px}
     th{color:#9fb4ad;font-weight:600}
     .right{text-align:right}
-    canvas{max-width:100%;height:360px}
+    canvas{max-width:100%;height:380px}
     .pagination{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-top:10px}
     .pagination button{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;padding:6px 10px;border-radius:10px;cursor:pointer}
     .pagination button.active{background:#10b981;color:#06241b;border-color:#10b981}
@@ -41,14 +41,12 @@
     .page-size select{background:#0d171b;border:1px solid #2a3e41;color:#e6f2ef;border-radius:10px;padding:6px 8px}
     .error{color:#ef4444;font-size:13px;margin-top:6px}
 
-    /* Иконки бутони */
     .icon-btn{display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;border:1px solid #2a3e41;background:#0d171b;color:#e6f2ef}
     .icon-btn svg{width:18px;height:18px;display:block}
     .icon-only{padding:6px 8px}
     .icon-only svg{width:16px;height:16px}
     .icon-btn.danger{border-color:#3a2222;background:#161112;color:#ffd5d5}
 
-    /* Календар */
     .cal-wrap{position:relative}
     .calendar{position:absolute; top:100%; left:0; z-index:20; background:#0d171b; border:1px solid #2a3e41;
               border-radius:12px; padding:10px; margin-top:6px; box-shadow:0 10px 30px #00000055; width:270px; display:none}
@@ -62,15 +60,15 @@
     .cal-day{ background:#0f1a1f; border:1px solid #20343a; cursor:pointer }
     .cal-day.dis{ opacity:.35; cursor:not-allowed }
     .cal-day.sel{ border-color:#10b981; outline:2px solid #10b98166 }
-    .cal-day.hasdata{ background:#f0fff7; color:#063; border-color:#c6f7df } /* бяло-зелено */
+    .cal-day.hasdata{ background:#f0fff7; color:#063; border-color:#c6f7df }
     .cal-foot{ display:flex; justify-content:flex-end; margin-top:8px }
     .cal-foot button{ background:#10b981; color:#06241b; border:none; border-radius:8px; padding:6px 10px; font-weight:700 }
   </style>
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=19" width="28" height="28" alt="BT">
-    <h1>Безопасно Тегло — Тракер <span class="badge">v19</span></h1>
+    <img src="assets/icons/icon-192.png?v=20" width="28" height="28" alt="BT">
+    <h1>Безопасно Тегло — Тракер <span class="badge">v20</span></h1>
   </header>
 
   <main>
@@ -103,7 +101,6 @@
       </div>
       <div class="row" style="margin-top:14px">
         <button id="add">Добави</button>
-
         <button class="icon-btn" id="export" title="Експорт (JSON)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M5 21h14"/></svg>
           Експорт
@@ -113,9 +110,8 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21V9m0 0l4 4m-4-4L8 13"/><path d="M5 3h14"/></svg>
           Импорт
         </button>
-
-        <!-- Три кошчета, плътно едно до друго (едно SVG) -->
         <button class="icon-btn danger" id="wipe" title="Изтрий всички">
+          <!-- 3 кошчета плътно -->
           <svg viewBox="0 0 72 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px;height:18px">
             <g transform="translate(0,0)"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"/></g>
             <g transform="translate(24,0)"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"/></g>
@@ -151,20 +147,14 @@
   </main>
 
   <script>
-    /* === Дати и формати === */
     function todayISO(){ const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     const TODAY = todayISO();
     const MONTHS_BG = ["Януари","Февруари","Март","Април","Май","Юни","Юли","Август","Септември","Октомври","Ноември","Декември"];
     const isoToBG = iso => /^\d{4}-\d{2}-\d{2}$/.test(iso) ? iso.split("-").reverse().join(".") : "";
-    const isoToBGYY = iso => { // DD.MM.YY
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
-      const [y,m,d] = iso.split("-");
-      return `${d}.${m}.${y.slice(2)}`;
-    };
+    const isoToBGYY = iso => { if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; const [y,m,d] = iso.split("-"); return `${d}.${m}.${y.slice(2)}`; };
     function bgToISO(bg){ const m=/^(\d{2})\.(\d{2})\.(\d{4})$/.exec(bg); return m?`${m[3]}-${m[2]}-${m[1]}`:""; }
     const clampToTodayISO = iso => iso && iso > TODAY ? TODAY : iso;
 
-    /* === Състояние === */
     function load(){ try{return JSON.parse(localStorage.getItem("bt-progress")||"[]");}catch{return [];} }
     function save(d){ localStorage.setItem("bt-progress", JSON.stringify(d)); }
     function sortDescByDate(arr){ return [...arr].sort((a,b)=> b.date.localeCompare(a.date)); }
@@ -173,24 +163,20 @@
     const saveLastDateISO = iso => localStorage.setItem("bt-last-date", iso);
 
     function findRecord(iso){ return load().find(r=>r.date===iso); }
-    function lastWeightBefore(iso){
-      const data = sortDescByDate(load());
-      for(const r of data){ if(r.date < iso && typeof r.weight==="number") return r.weight; }
-      return "";
-    }
+    function lastWeightBefore(iso){ const data = sortDescByDate(load()); for(const r of data){ if(r.date < iso && typeof r.weight==="number") return r.weight; } return ""; }
 
-    /* === Мини графика с прекъсвания + вертикални етикети === */
+    /* === Мини графика с прекъсвания + ВИДИМИ вертикални етикети === */
     class MiniChart{
       constructor(ctx){ this.ctx=ctx; this.series=[]; this.labels=[]; }
       render(){
-        const c=this.ctx.canvas, w=c.width=c.clientWidth, h=c.height=360;
+        const c=this.ctx.canvas, w=c.width=c.clientWidth, h=c.height=380;
         const ctx=this.ctx; ctx.clearRect(0,0,w,h);
 
         const vals=this.series.filter(v=>typeof v==='number');
-        ctx.fillStyle="#9fb4ad"; ctx.font="13px system-ui";
+        ctx.fillStyle="#9fb4ad"; ctx.font="12px system-ui";
         if(vals.length<2){ ctx.fillText("Добави поне 2 записа за графика", 10, 24); return; }
 
-        const padLeft=32, padRight=12, padTop=18, padBottom=64;
+        const padLeft=36, padRight=14, padTop=18, padBottom=96; // ⬅ по-голямо дъно за вертикалните етикети
         const min=Math.min(...vals), max=Math.max(...vals);
         const n=this.series.length;
         const xAt=i=> padLeft + (w-padLeft-padRight)*(n<=1?0:(i/(n-1)));
@@ -211,37 +197,38 @@
             const x=xAt(i), y=yAt(v);
             if(!penDown){ ctx.moveTo(x,y); penDown=true; }
             else ctx.lineTo(x,y);
-          }else{
-            penDown=false;
-          }
+          }else{ penDown=false; }
         }
         ctx.stroke();
 
         // Y етикети (min/max)
         ctx.fillStyle="#9fb4ad";
-        ctx.fillText(String(max), 4, yAt(max)+4);
-        ctx.fillText(String(min), 4, yAt(min)+4);
+        ctx.textBaseline="middle";
+        ctx.fillText(String(max), 6, yAt(max));
+        ctx.fillText(String(min), 6, yAt(min));
 
-        // X етикети — вертикални
-        const maxLabels=10;
+        // X етикети — вертикални и ВИДИМИ
+        const maxLabels = Math.min(14, n);        // до 14 етикета
         const step = Math.max(1, Math.floor(n / maxLabels));
+        ctx.fillStyle="#9fb4ad";
         for(let i=0;i<n;i+=step){
           const txt=this.labels[i]; if(!txt) continue;
-          const x=xAt(i), y=h-10;
+          const x=xAt(i), y=h - padBottom + 74; // ⬅ достатъчно надолу, да не се реже
+          // маркер на оста
+          ctx.beginPath(); ctx.arc(x, h-padBottom, 2, 0, Math.PI*2); ctx.fill();
+          // вертикален текст
           ctx.save();
           ctx.translate(x, y);
           ctx.rotate(-Math.PI/2);
-          ctx.textAlign="right";
+          ctx.textAlign="left";
+          ctx.textBaseline="middle";
           ctx.fillText(txt, 0, 0);
           ctx.restore();
-
-          // маркер
-          ctx.beginPath(); ctx.arc(x, h-padBottom, 2, 0, Math.PI*2); ctx.fill();
         }
       }
     }
 
-    /* === Елементи === */
+    // Елементи
     const dateText = document.getElementById("dateText");
     const dateErr  = document.getElementById("dateErr");
     const weight   = document.getElementById("weight");
@@ -250,31 +237,24 @@
     const pager    = document.getElementById("pager");
     const spanSel  = document.getElementById("span");
 
-    // Пейджинг
     const PAGE_SIZES = [10,20,50,100,"all"];
     const getSavedPageSize=()=>{ const v=localStorage.getItem("bt-page-size"); if(v==="all")return"all"; const n=Number(v); return PAGE_SIZES.includes(n)?n:20; };
     const savePageSize=v=>localStorage.setItem("bt-page-size", v);
     let pageSize = getSavedPageSize();
     let currentPage = 1;
 
-    /* === Дата/календар === */
     let currentISO = clampToTodayISO(getSavedDateISO());
     dateText.value = isoToBG(currentISO);
 
-    const cal      = document.getElementById("calendar");
-    const calGrid  = document.getElementById("calGrid");
+    const cal = document.getElementById("calendar");
+    const calGrid = document.getElementById("calGrid");
     const calTitle = document.getElementById("calTitle");
     const calPrev  = document.getElementById("calPrev");
     const calNext  = document.getElementById("calNext");
     const calToday = document.getElementById("calToday");
-
     let view = (function(){ const [y,m]=currentISO.split("-").map(Number); return {year:y, month:m-1}; })();
 
-    function getDataDateSet(){
-      const set = new Set();
-      for(const r of load()){ if(/^\d{4}-\d{2}-\d{2}$/.test(r.date)) set.add(r.date); }
-      return set;
-    }
+    function getDataDateSet(){ const set=new Set(); for(const r of load()){ if(/^\d{4}-\d{2}-\d{2}$/.test(r.date)) set.add(r.date);} return set; }
 
     function prefillWeightForDate(iso){
       const rec = findRecord(iso);
@@ -309,7 +289,7 @@
           currentISO = iso;
           dateText.value = isoToBG(currentISO);
           saveLastDateISO(currentISO);
-          prefillWeightForDate(currentISO);  // 🔸 авто-попълване
+          prefillWeightForDate(currentISO);
           closeCalendar();
           dateErr.style.display="none";
         });
@@ -327,11 +307,10 @@
     calToday.addEventListener("click", ()=>{
       const t = TODAY.split("-"); view.year=+t[0]; view.month=+t[1]-1;
       currentISO = TODAY; dateText.value = isoToBG(currentISO); saveLastDateISO(currentISO);
-      prefillWeightForDate(currentISO); // 🔸
+      prefillWeightForDate(currentISO);
       buildCalendar(); closeCalendar();
     });
 
-    /* === Таблица + странициране === */
     function renderTable(){
       const allDesc = sortDescByDate(load());
       const total = allDesc.length;
@@ -342,6 +321,7 @@
       const start = (currentPage - 1) * effectivePageSize;
       const slice = allDesc.slice(start, start + effectivePageSize);
 
+      const tbody = document.querySelector("#table tbody");
       tbody.innerHTML="";
       slice.forEach((r, idx)=>{
         const tr=document.createElement("tr");
@@ -357,8 +337,7 @@
         tbody.appendChild(tr);
       });
 
-      // pager
-      pager.innerHTML="";
+      const pager=document.getElementById("pager"); pager.innerHTML="";
       const infoWrap = document.createElement("div");
       infoWrap.style.display="flex"; infoWrap.style.alignItems="center"; infoWrap.style.gap="8px"; infoWrap.style.marginRight="auto";
       const info = document.createElement("span"); info.className="muted";
@@ -376,33 +355,20 @@
         for(let p=first;p<=last;p++){ const btn=document.createElement("button"); btn.textContent=p; if(p===currentPage) btn.className="active"; btn.onclick=()=>{currentPage=p; renderTable();}; pager.appendChild(btn); }
         if(currentPage < pages){ const next=document.createElement("button"); next.textContent="→"; next.onclick=()=>{currentPage=Math.min(pages,currentPage+1); renderTable();}; pager.appendChild(next); }
       }
-
       sizeSel.addEventListener("change", ()=>{ const v=sizeSel.value==="all"?"all":Number(sizeSel.value); pageSize=v; savePageSize(v); currentPage=1; renderTable(); });
     }
 
-    /* === Агрегации за графика + вертикални етикети === */
-    function isoWeekYear(d){
-      const tmp=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      tmp.setUTCDate(tmp.getUTCDate()+4-(tmp.getUTCDay()||7));
-      return tmp.getUTCFullYear();
-    }
-    function isoWeekNumber(d){
-      const tmp=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
-      const dayNr = (tmp.getUTCDay()||7);
-      tmp.setUTCDate(tmp.getUTCDate()+4-dayNr);
-      const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1));
-      return Math.ceil((((tmp - yearStart) / 86400000) + 1)/7);
-    }
+    function isoWeekYear(d){ const tmp=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); tmp.setUTCDate(tmp.getUTCDate()+4-(tmp.getUTCDay()||7)); return tmp.getUTCFullYear(); }
+    function isoWeekNumber(d){ const tmp=new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())); const dayNr=(tmp.getUTCDay()||7); tmp.setUTCDate(tmp.getUTCDate()+4-dayNr); const yearStart=new Date(Date.UTC(tmp.getUTCFullYear(),0,1)); return Math.ceil((((tmp-yearStart)/86400000)+1)/7); }
 
     function aggregate(mode){
-      const data = sortAscByDate(load()); // [{date, weight}]
+      const data = sortAscByDate(load());
       if(mode==="daily"){
-        const values = data.map(r=> typeof r.weight==="number" ? r.weight : null);
-        const labels = data.map(r=> isoToBGYY(r.date)); // DD.MM.YY
-        return {values, labels};
+        return {values: data.map(r=> typeof r.weight==="number" ? r.weight : null),
+                labels: data.map(r=> isoToBGYY(r.date))};
       }
       if(mode==="weekly"){
-        const map=new Map(); // key = YYYY-Www
+        const map=new Map();
         for(const r of data){
           const d=new Date(r.date+"T00:00:00");
           const key=`${isoWeekYear(d)}-W${String(isoWeekNumber(d)).padStart(2,"0")}`;
@@ -410,27 +376,27 @@
           if(typeof r.weight==="number") arr.push(r.weight);
           map.set(key, arr);
         }
-        const values=[]; const labels=[];
+        const values=[], labels=[];
         for(const [key, arr] of map.entries()){
-          const [yy, wwRaw] = key.split("-W");
+          const [yy, ww] = key.split("-W");
           values.push(arr.length? (arr.reduce((a,b)=>a+b,0)/arr.length) : null);
-          labels.push(`С${wwRaw}.${String(yy).slice(2)}`); // С38.25
+          labels.push(`С${ww}.${String(yy).slice(2)}`);
         }
         return {values, labels};
       }
       if(mode==="monthly"){
-        const map=new Map(); // key = YYYY-MM
+        const map=new Map();
         for(const r of data){
           const key=r.date.slice(0,7);
           const arr = map.get(key) || [];
           if(typeof r.weight==="number") arr.push(r.weight);
           map.set(key, arr);
         }
-        const values=[]; const labels=[];
+        const values=[], labels=[];
         for(const [key, arr] of map.entries()){
           values.push(arr.length? (arr.reduce((a,b)=>a+b,0)/arr.length) : null);
           const [y,m] = key.split("-");
-          labels.push(`${m}.${String(y).slice(2)}`); // 09.25
+          labels.push(`${m}.${String(y).slice(2)}`);
         }
         return {values, labels};
       }
@@ -446,16 +412,10 @@
       mini.labels = labels;
       mini.render();
     }
-
     spanSel.addEventListener("change", renderChart);
 
-    function clearForm(){
-      // не чистим теглото — логиката вече го попълва спрямо датата
-      dateErr.style.display="none"; dateErr.textContent="";
-      weightErr.style.display="none"; weightErr.textContent="";
-    }
+    function clearForm(){ dateErr.style.display="none"; dateErr.textContent=""; weightErr.style.display="none"; weightErr.textContent=""; }
 
-    /* === Добавяне / редакция / триене === */
     document.getElementById("add").addEventListener("click",()=>{
       let iso = bgToISO(dateText.value.trim());
       if(!iso) iso = TODAY;
@@ -471,7 +431,6 @@
       currentISO = iso;
       dateText.value = isoToBG(currentISO);
       renderTable(); renderChart();
-      // оставяме weight стойността (за бързи поредни дни може да смениш само датата)
     });
 
     document.addEventListener("click",(e)=>{
@@ -490,7 +449,6 @@
       }
     });
 
-    /* === Експорт / Импорт / Изтриване === */
     document.getElementById("export").addEventListener("click", ()=>{
       const data = load();
       const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
@@ -525,8 +483,8 @@
       }
     });
 
-    // първо рендериране + авто-попълване на теглото за началната дата
-    prefillWeightForDate(currentISO);
+    // първо рендериране
+    prefillWeightForDate(getSavedDateISO());
     renderTable(); renderChart();
   </script>
 </body>
