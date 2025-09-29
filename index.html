@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Безопасно Тегло — v28r1</title>
-  <link rel="manifest" href="manifest.webmanifest?v=28r1">
-  <link rel="icon" href="assets/icons/icon-192.png?v=28r1">
+  <title>Безопасно Тегло — v29</title>
+  <link rel="manifest" href="manifest.webmanifest?v=29">
+  <link rel="icon" href="assets/icons/icon-192.png?v=29">
   <meta name="theme-color" content="#0b1215">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--border:#1e2b30;--danger:#ef4444}
@@ -17,13 +17,18 @@
 
     main{max-width:980px;margin:20px auto;padding:0 16px 40px;display:grid;gap:16px}
     .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}
-    .row{display:flex;gap:10px;flex-wrap:wrap}
+    .row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
     .row.end{justify-content:flex-end;align-items:center}
     label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
     input,select,button{background:#0d171b;border:1px solid #254046;color:var(--text);border-radius:10px;padding:8px 10px;font-size:14px}
     input[readonly]{cursor:pointer}
     button{cursor:pointer}
     button.primary{background:var(--accent);border-color:var(--accent);color:#06241b;font-weight:700}
+
+    /* Компактен ред за Дата + Тегло */
+    .field{display:flex;flex-direction:column}
+    .field.date{min-width:220px}
+    .field.weight{min-width:140px}
 
     /* Таблица */
     table{width:100%;border-collapse:collapse;table-layout:fixed}
@@ -39,11 +44,15 @@
     .icon svg{width:16px;height:16px;stroke:currentColor}
     .icon.danger{border-color:#3a2222;background:#161112;color:#ffd5d5}
 
-    /* Пагинация – разменен ред: първо селекторът, после „1–10 от N“ */
+    /* Хедър на „Записи“: селекторът вляво, експорт/импорт вдясно */
+    .records-bar{display:flex;align-items:center;gap:8px;justify-content:space-between;margin:8px 0}
+    .left-group{display:flex;align-items:center;gap:8px}
+    .right-group{display:flex;align-items:center;gap:8px}
+
+    /* Пагинация – вдясно */
     .pager{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-top:8px}
-    .pager select{background:#0d171b;border:1px solid #2a3e41;color:var(--text);padding:4px 8px;border-radius:8px;font-size:13px}
     .pager .info{color:var(--muted);font-size:12px;margin:0 8px}
-    .pager button{background:#0d171b;border:1px solid #2a3e41;color:var(--text);padding:4px 8px;border-radius:8px;font-size:13px}
+    .pager button, .pager select{background:#0d171b;border:1px solid #2a3e41;color:var(--text);padding:4px 8px;border-radius:8px;font-size:13px}
     .pager button.active{background:var(--accent);color:#06241b;border-color:var(--accent)}
 
     /* Графика */
@@ -52,46 +61,30 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=28r1" alt="BT" width="28" height="28">
-    <h1>Безопасно Тегло — Тракер <span class="ver">v28r1</span></h1>
+    <img src="assets/icons/icon-192.png?v=29" alt="BT" width="28" height="28">
+    <h1>Безопасно Тегло — Тракер <span class="ver">v29</span></h1>
   </header>
 
   <main>
+    <!-- Нов запис -->
     <section class="card">
       <h2 style="margin:0 0 10px">Нов запис</h2>
-      <div class="row">
-        <div style="flex:1;min-width:220px">
+      <div class="row" style="align-items:flex-start">
+        <div class="field date">
           <label for="dateText">Дата</label>
           <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ">
-          <!-- ↓ бутонът „Добави“ е точно под Датата -->
-          <div style="margin-top:10px">
+          <div style="margin-top:8px">
             <button id="addBtn" class="primary">Добави</button>
           </div>
         </div>
-        <div style="flex:1;min-width:140px">
+        <div class="field weight">
           <label for="weight">Тегло (kg)</label>
-          <input id="weight" type="number" step="0.1" min="0.1" placeholder="например 86.4">
+          <input id="weight" type="number" step="0.1" min="0.1" placeholder="напр. 86.4">
         </div>
-      </div>
-      <div class="row end" style="margin-top:10px;gap:8px">
-        <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт">
-          <!-- upload/export icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-            <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
-            <path d="M4 20h16" />
-          </svg>
-        </button>
-        <input id="importFile" type="file" accept="application/json" style="display:none">
-        <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт">
-          <!-- download/import icon -->
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-            <path d="M12 8v12M12 20l-4-4M12 20l4-4" />
-            <path d="M4 4h16" />
-          </svg>
-        </button>
       </div>
     </section>
 
+    <!-- Графика -->
     <section class="card">
       <h2 style="margin:0 0 10px">Графика</h2>
       <div class="row">
@@ -107,8 +100,39 @@
       <canvas id="chart"></canvas>
     </section>
 
+    <!-- Записи -->
     <section class="card">
-      <h2 style="margin:0 0 10px">Записи</h2>
+      <h2 style="margin:0">Записи</h2>
+
+      <!-- Лента: селектор вляво, експорт/импорт вдясно -->
+      <div class="records-bar">
+        <div class="left-group">
+          <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
+          <select id="pageSize">
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+            <option value="all">Всички</option>
+          </select>
+        </div>
+        <div class="right-group">
+          <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
+              <path d="M4 20h16" />
+            </svg>
+          </button>
+          <input id="importFile" type="file" accept="application/json" style="display:none">
+          <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+              <path d="M12 8v12M12 20l-4-4M12 20l4-4" />
+              <path d="M4 4h16" />
+            </svg>
+          </button>
+        </div>
+      </div>
+
       <table id="tbl">
         <thead>
           <tr>
@@ -119,6 +143,8 @@
         </thead>
         <tbody></tbody>
       </table>
+
+      <!-- Пагинация вдясно -->
       <div class="pager" id="pager"></div>
     </section>
   </main>
@@ -148,6 +174,7 @@
     const pager=document.getElementById("pager");
     const aggSel=document.getElementById("aggSel");
     const chart=document.getElementById("chart");
+    const pageSizeSel=document.getElementById("pageSize");
 
     // скрит date input (нативен календар)
     const hiddenDate=document.createElement("input");
@@ -207,6 +234,19 @@
     function setPS(v){ localStorage.setItem("bt-page-size", v); }
     let pageSize=getPS(), currentPage=1;
 
+    // при първоначално зареждане — синхронизирай селектора
+    (function syncPageSizeUI(){
+      const v = (pageSize==="all") ? "all" : String(pageSize);
+      if(pageSizeSel.querySelector(`option[value="${v}"]`)) pageSizeSel.value=v;
+    })();
+    pageSizeSel.addEventListener("change", ()=>{
+      const v=pageSizeSel.value;
+      pageSize = (v==="all") ? "all" : Number(v);
+      setPS(v);
+      currentPage=1;
+      renderTable();
+    });
+
     function renderTable(){
       const all=sortDesc(load());
       const total=all.length;
@@ -254,31 +294,36 @@
         };
       });
 
-      // Пейджър: първо селекторът, после „x–y от N“, после бутони
+      // Пейджър: вдясно; инфо „x–y от N“ в средата
       pager.innerHTML="";
-      const sel=document.createElement("select");
-      [10,20,50,100,"all"].forEach(v=>{
-        const opt=document.createElement("option");
-        opt.value=v; opt.textContent=(v==="all"?"Всички":v);
-        if(v===pageSize) opt.selected=true;
-        sel.appendChild(opt);
-      });
-      sel.onchange=()=>{ pageSize=sel.value==="all"?"all":Number(sel.value); setPS(sel.value); currentPage=1; renderTable(); };
-      pager.appendChild(sel);
-
       const from= total? start+1 : 0, to=Math.min(start+eff,total);
       const info=document.createElement("span"); info.className="info"; info.textContent=`${from}-${to} от ${total}`;
-      pager.appendChild(info);
 
       const pagesTotal=Math.max(1, Math.ceil(total/(pageSize==="all"? total||1 : pageSize)));
+
+      // бутони
+      const frag=document.createDocumentFragment();
+      if(pagesTotal>1 && currentPage>1){
+        const p=document.createElement("button"); p.textContent="←";
+        p.onclick=()=>{currentPage--;renderTable();};
+        frag.appendChild(p);
+      }
       if(pagesTotal>1){
-        if(currentPage>1){ const p=document.createElement("button"); p.textContent="←"; p.onclick=()=>{currentPage--;renderTable();}; pager.appendChild(p); }
         for(let p=Math.max(1,currentPage-3); p<=Math.min(pagesTotal,currentPage+3); p++){
           const btn=document.createElement("button"); btn.textContent=p; if(p===currentPage) btn.className="active";
-          btn.onclick=()=>{currentPage=p; renderTable();}; pager.appendChild(btn);
+          btn.onclick=()=>{currentPage=p; renderTable();};
+          frag.appendChild(btn);
         }
-        if(currentPage<pagesTotal){ const n=document.createElement("button"); n.textContent="→"; n.onclick=()=>{currentPage++;renderTable();}; pager.appendChild(n); }
       }
+      if(pagesTotal>1 && currentPage<pagesTotal){
+        const n=document.createElement("button"); n.textContent="→";
+        n.onclick=()=>{currentPage++;renderTable();};
+        frag.appendChild(n);
+      }
+
+      // подредба: [info] [buttons...] — всичко вдясно
+      pager.appendChild(info);
+      pager.appendChild(frag);
     }
 
     /* ===== Експорт / Импорт ===== */
@@ -374,6 +419,8 @@
 
     // първоначален рендър
     renderTable(); renderChart();
+
+    function renderTable(){ /* обявена по-горе, за да не скролиш много */ }
   </script>
 </body>
 </html>
