@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Безопасно Тегло — v29b</title>
-  <link rel="manifest" href="manifest.webmanifest?v=29b">
-  <link rel="icon" href="assets/icons/icon-192.png?v=29b">
+  <title>Безопасно Тегло — v29c</title>
+  <link rel="manifest" href="manifest.webmanifest?v=29c">
+  <link rel="icon" href="assets/icons/icon-192.png?v=29c">
   <meta name="theme-color" content="#0b1215">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--border:#1e2b30}
@@ -27,29 +27,25 @@
     /* Компактен ред за Дата + Тегло */
     .field{display:flex;flex-direction:column}
     .field.date{min-width:220px}
-    .field.weight{min-width:140px}
+    .date-input-wrap{display:flex;gap:6px;align-items:center}
+    .cal-btn{display:inline-flex;align-items:center;justify-content:center;border:1px solid #2a3e41;background:#0d171b;border-radius:8px;padding:6px}
+    .cal-btn svg{width:16px;height:16px;stroke:currentColor}
 
     /* Таблица */
-    table{width:100%;border-collapse:collapse;table-layout:auto} /* ← auto, не fixed, за да не реже иконите */
+    table{width:100%;border-collapse:collapse;table-layout:auto}
     th,td{
       padding:6px 8px;border-bottom:1px solid #20343a;font-size:13px;line-height:1.15;
-      white-space:nowrap; /* оставяме nowrap за компактност */
-      text-align:left
+      white-space:nowrap;text-align:left
     }
     th{color:var(--muted);font-weight:600}
     th.date,td.date{width:92px}
     th.w,td.w{width:92px}
-
-    /* Колона Действия – стабилна ширина + без рязане */
     th.actions, td.actions{width:130px}
     td.actions{overflow:visible}
     .actions{display:inline-flex;gap:6px;align-items:center;justify-content:flex-start}
 
     /* Икон бутони */
-    .icon{
-      display:inline-flex;align-items:center;justify-content:center;
-      border:1px solid #2a3e41;background:#0d171b;border-radius:8px;padding:4px 6px;color:var(--text)
-    }
+    .icon{display:inline-flex;align-items:center;justify-content:center;border:1px solid #2a3e41;background:#0d171b;border-radius:8px;padding:4px 6px;color:var(--text)}
     .icon svg{width:16px;height:16px;stroke:currentColor}
     .icon.danger{border-color:#3a2222;background:#161112;color:#ffd5d5}
 
@@ -58,7 +54,7 @@
     .left-group{display:flex;align-items:center;gap:8px}
     .right-group{display:flex;align-items:center;gap:8px}
 
-    /* Пагинация – ВЛЯВО (по заявка) */
+    /* Пагинация – вляво */
     .pager{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-start;margin-top:8px}
     .pager .info{color:var(--muted);font-size:12px;margin:0 8px}
     .pager button, .pager select{background:#0d171b;border:1px solid #2a3e41;color:var(--text);padding:4px 8px;border-radius:8px;font-size:13px}
@@ -70,8 +66,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=29b" alt="BT" width="28" height="28">
-    <h1>Безопасно Тегло — Тракер <span class="ver">v29b</span></h1>
+    <img src="assets/icons/icon-192.png?v=29c" alt="BT" width="28" height="28">
+    <h1>Безопасно Тегло — Тракер <span class="ver">v29c</span></h1>
   </header>
 
   <main>
@@ -81,7 +77,15 @@
       <div class="row" style="align-items:flex-start">
         <div class="field date">
           <label for="dateText">Дата</label>
-          <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ">
+          <div class="date-input-wrap">
+            <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ">
+            <button id="calendarBtn" class="cal-btn" title="Календар" aria-label="Календар">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <rect x="3" y="5" width="18" height="16" rx="2"/>
+                <path d="M16 3v4M8 3v4M3 9h18"/>
+              </svg>
+            </button>
+          </div>
           <div style="margin-top:8px">
             <button id="addBtn" class="primary">Добави</button>
           </div>
@@ -113,7 +117,6 @@
     <section class="card">
       <h2 style="margin:0">Записи</h2>
 
-      <!-- Лента: селектор вляво, експорт/импорт вдясно -->
       <div class="records-bar">
         <div class="left-group">
           <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
@@ -153,7 +156,6 @@
         <tbody></tbody>
       </table>
 
-      <!-- Пагинация ВЛЯВО -->
       <div class="pager" id="pager"></div>
     </section>
   </main>
@@ -162,11 +164,7 @@
     /* ===== Помощни: дати ===== */
     function todayISO(){const d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10);}
     const TODAY=todayISO();
-    function isoToBG_YY(iso){ // YYYY-MM-DD -> DD.MM.YY
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
-      const [y,m,d]=iso.split("-");
-      return d+"."+m+"."+y.slice(2);
-    }
+    function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; const [y,m,d]=iso.split("-"); return d+"."+m+"."+y.slice(2); }
 
     /* ===== Хранилище ===== */
     const KEY="bt-progress";
@@ -184,20 +182,34 @@
     const aggSel=document.getElementById("aggSel");
     const chart=document.getElementById("chart");
     const pageSizeSel=document.getElementById("pageSize");
+    const calendarBtn=document.getElementById("calendarBtn");
 
-    // скрит date input (нативен календар)
+    // скрит date input (нативен календар) — държим го фокусируем и видим за браузъра
     const hiddenDate=document.createElement("input");
-    hiddenDate.type="date"; hiddenDate.style.position="fixed"; hiddenDate.style.left="-9999px";
+    hiddenDate.type="date";
+    hiddenDate.style.position="absolute";
+    hiddenDate.style.left="-9999px"; // извън екрана, но не display:none
+    hiddenDate.tabIndex="-1";
     document.body.appendChild(hiddenDate);
 
     let currentISO = localStorage.getItem("bt-last-date") || TODAY;
     if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO = TODAY;
     dateText.value = isoToBG_YY(currentISO);
 
-    dateText.addEventListener("click", ()=>{
+    function openCalendar(){
       hiddenDate.value=currentISO;
-      if(hiddenDate.showPicker) hiddenDate.showPicker(); else hiddenDate.focus();
-    });
+      if(typeof hiddenDate.showPicker === "function"){
+        hiddenDate.showPicker();
+      }else{
+        // Fallback за браузъри без showPicker (или когато е блокиран)
+        hiddenDate.click();     // пробвай да отвориш нативния picker
+        hiddenDate.focus();     // за всеки случай
+      }
+    }
+
+    dateText.addEventListener("click", openCalendar);
+    calendarBtn.addEventListener("click", openCalendar);
+
     hiddenDate.addEventListener("change", ()=>{
       if(!hiddenDate.value) return;
       currentISO=hiddenDate.value;
@@ -243,7 +255,6 @@
     function setPS(v){ localStorage.setItem("bt-page-size", v); }
     let pageSize=getPS(), currentPage=1;
 
-    // синхронизирай селектора при зареждане
     (function syncPageSizeUI(){
       const v = (pageSize==="all") ? "all" : String(pageSize);
       if(pageSizeSel.querySelector(`option[value="${v}"]`)) pageSizeSel.value=v;
@@ -265,6 +276,7 @@
       const start=(currentPage-1)*eff;
       const slice=all.slice(start, start+eff);
 
+      const tb=document.querySelector("#tbl tbody");
       tb.innerHTML="";
       slice.forEach((r)=>{
         const tr=document.createElement("tr");
@@ -305,7 +317,8 @@
         };
       });
 
-      // Пейджър (ВЛЯВО)
+      // Пейджър (вляво)
+      const pager=document.getElementById("pager");
       pager.innerHTML="";
       const from= total? start+1 : 0, to=Math.min(start+eff,total);
       const info=document.createElement("span"); info.className="info"; info.textContent=`${from}-${to} от ${total}`;
