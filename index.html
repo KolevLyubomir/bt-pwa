@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Безопасно Тегло — v28</title>
-  <link rel="manifest" href="manifest.webmanifest?v=28">
-  <link rel="icon" href="assets/icons/icon-192.png?v=28">
+  <title>Безопасно Тегло — v28r1</title>
+  <link rel="manifest" href="manifest.webmanifest?v=28r1">
+  <link rel="icon" href="assets/icons/icon-192.png?v=28r1">
   <meta name="theme-color" content="#0b1215">
   <style>
-    :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--border:#1e2b30}
+    :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--border:#1e2b30;--danger:#ef4444}
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,'Noto Sans',sans-serif}
     header{position:sticky;top:0;z-index:5;background:#071013cc;backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px}
@@ -33,12 +33,16 @@
     th.w,td.w{width:92px}
     td.actions{width:1%}
     .actions{display:inline-flex;gap:6px;align-items:center;justify-content:flex-start}
-    .icon{border:1px solid #2a3e41;background:#0d171b;border-radius:8px;padding:4px 6px}
+
+    /* Икон бутони */
+    .icon{display:inline-flex;align-items:center;justify-content:center;border:1px solid #2a3e41;background:#0d171b;border-radius:8px;padding:4px 6px;color:var(--text)}
+    .icon svg{width:16px;height:16px;stroke:currentColor}
     .icon.danger{border-color:#3a2222;background:#161112;color:#ffd5d5}
 
-    /* Пагинация */
+    /* Пагинация – разменен ред: първо селекторът, после „1–10 от N“ */
     .pager{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-top:8px}
-    .pager .info{margin-right:auto;color:var(--muted);font-size:12px}
+    .pager select{background:#0d171b;border:1px solid #2a3e41;color:var(--text);padding:4px 8px;border-radius:8px;font-size:13px}
+    .pager .info{color:var(--muted);font-size:12px;margin:0 8px}
     .pager button{background:#0d171b;border:1px solid #2a3e41;color:var(--text);padding:4px 8px;border-radius:8px;font-size:13px}
     .pager button.active{background:var(--accent);color:#06241b;border-color:var(--accent)}
 
@@ -48,8 +52,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=28" alt="BT" width="28" height="28">
-    <h1>Безопасно Тегло — Тракер <span class="ver">v28</span></h1>
+    <img src="assets/icons/icon-192.png?v=28r1" alt="BT" width="28" height="28">
+    <h1>Безопасно Тегло — Тракер <span class="ver">v28r1</span></h1>
   </header>
 
   <main>
@@ -59,6 +63,10 @@
         <div style="flex:1;min-width:220px">
           <label for="dateText">Дата</label>
           <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ">
+          <!-- ↓ бутонът „Добави“ е точно под Датата -->
+          <div style="margin-top:10px">
+            <button id="addBtn" class="primary">Добави</button>
+          </div>
         </div>
         <div style="flex:1;min-width:140px">
           <label for="weight">Тегло (kg)</label>
@@ -66,10 +74,21 @@
         </div>
       </div>
       <div class="row end" style="margin-top:10px;gap:8px">
-        <button id="exportBtn" class="icon" title="Експорт">📤</button>
+        <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт">
+          <!-- upload/export icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M12 16V4M12 4l-4 4M12 4l4 4" />
+            <path d="M4 20h16" />
+          </svg>
+        </button>
         <input id="importFile" type="file" accept="application/json" style="display:none">
-        <button id="importBtn" class="icon" title="Импорт">📥</button>
-        <button id="addBtn" class="primary">Добави</button>
+        <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт">
+          <!-- download/import icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <path d="M12 8v12M12 20l-4-4M12 20l4-4" />
+            <path d="M4 4h16" />
+          </svg>
+        </button>
       </div>
     </section>
 
@@ -113,12 +132,6 @@
       const [y,m,d]=iso.split("-");
       return d+"."+m+"."+y.slice(2);
     }
-    function bgYYToISO(s){ // DD.MM.YY -> YYYY-MM-DD (текущ век)
-      if(!/^\d{2}\.\d{2}\.\d{2}$/.test(s)) return null;
-      const [d,m,yy]=s.split(".");
-      const y=(+yy<50? "20":"19")+yy;
-      return `${y}-${m}-${d}`;
-    }
 
     /* ===== Хранилище ===== */
     const KEY="bt-progress";
@@ -160,7 +173,6 @@
     function prefillWeight(iso){
       const rec = load().find(r=>r.date===iso);
       if(rec) { weight.value = typeof rec.weight==="number"? rec.weight : ""; return; }
-      // иначе вземи предходното тегло ако има
       const prev = sortDesc(load()).find(r=>r.date<iso);
       weight.value = prev? prev.weight : "";
     }
@@ -173,7 +185,7 @@
       const w = Number(weight.value);
       if(!(w>0)){ alert("Въведи тегло > 0."); return; }
 
-      // ±5% спрямо съседни дни (ако има)
+      // ±5% спрямо съседни дни
       const data=load();
       const prev = sortDesc(data).find(r=>r.date<iso);
       const next = sortAsc(data).find(r=>r.date>iso);
@@ -211,13 +223,21 @@
           <td class="date">${isoToBG_YY(r.date)}</td>
           <td class="w">${(typeof r.weight==="number")? r.weight.toFixed(1):""}</td>
           <td class="actions">
-            <button class="icon" title="Редактирай" data-edit="${r.date}">✎</button>
-            <button class="icon danger" title="Изтрий" data-del="${r.date}">🗑</button>
+            <button class="icon" title="Редакция" data-edit="${r.date}" aria-label="Редакция">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M3 21l3-1 11-11-2-2L4 18z"/><path d="M14 5l5 5"/>
+              </svg>
+            </button>
+            <button class="icon danger" title="Изтрий" data-del="${r.date}" aria-label="Изтрий">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"/>
+              </svg>
+            </button>
           </td>`;
         tb.appendChild(tr);
       });
 
-      // обработка на действията
+      // действия
       tb.querySelectorAll('button[data-edit]').forEach(b=>{
         b.onclick=()=>{
           const iso=b.getAttribute('data-edit');
@@ -234,13 +254,8 @@
         };
       });
 
-      // пейджър
+      // Пейджър: първо селекторът, после „x–y от N“, после бутони
       pager.innerHTML="";
-      const info=document.createElement("span"); info.className="info";
-      const from= total? start+1 : 0, to=Math.min(start+eff,total);
-      info.textContent=`${from}-${to} от ${total}`;
-      pager.appendChild(info);
-
       const sel=document.createElement("select");
       [10,20,50,100,"all"].forEach(v=>{
         const opt=document.createElement("option");
@@ -250,6 +265,10 @@
       });
       sel.onchange=()=>{ pageSize=sel.value==="all"?"all":Number(sel.value); setPS(sel.value); currentPage=1; renderTable(); };
       pager.appendChild(sel);
+
+      const from= total? start+1 : 0, to=Math.min(start+eff,total);
+      const info=document.createElement("span"); info.className="info"; info.textContent=`${from}-${to} от ${total}`;
+      pager.appendChild(info);
 
       const pagesTotal=Math.max(1, Math.ceil(total/(pageSize==="all"? total||1 : pageSize)));
       if(pagesTotal>1){
@@ -279,7 +298,7 @@
         const cleaned=[];
         for(const r of arr){
           if(typeof r.date==="string" && /^\d{4}-\d{2}-\d{2}$/.test(r.date) &&
-             typeof r.weight==="number" && r.weight>0 && r.date<=TODAY){
+             typeof r.weight==="number" && r.weight>0 && r.date<=todayISO()){
             cleaned.push({date:r.date, weight:r.weight});
           }
         }
@@ -288,7 +307,7 @@
       ev.target.value="";
     });
 
-    /* ===== Графика (канвас, без външни библиотеки) ===== */
+    /* ===== Графика (канвас) ===== */
     function weekKey(iso){
       const d=new Date(iso); d.setUTCHours(0,0,0,0);
       d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
@@ -343,7 +362,7 @@
       ctx.fillText(String(max.toFixed(1)),6,Y(max));
       ctx.fillText(String(min.toFixed(1)),6,Y(min));
 
-      // маркери + етикети (вертикално)
+      // маркери + вертикални етикети
       const maxLabels=Math.min(14,n), step=Math.max(1,Math.floor(n/maxLabels));
       ctx.fillStyle="#9fb4ad";
       for(let i=0;i<n;i+=step){
