@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Безопасно Тегло — v29a-fix</title>
-  <link rel="manifest" href="manifest.webmanifest?v=29a">
-  <link rel="icon" href="assets/icons/icon-192.png?v=29a">
+  <title>Безопасно Тегло — v29b</title>
+  <link rel="manifest" href="manifest.webmanifest?v=29b">
+  <link rel="icon" href="assets/icons/icon-192.png?v=29b">
   <meta name="theme-color" content="#0b1215">
   <style>
-    :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--border:#1e2b30;--danger:#ef4444}
+    :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--border:#1e2b30}
     *{box-sizing:border-box}
     body{margin:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,'Noto Sans',sans-serif}
     header{position:sticky;top:0;z-index:5;background:#071013cc;backdrop-filter:blur(6px);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:10px}
@@ -18,7 +18,6 @@
     main{max-width:980px;margin:20px auto;padding:0 16px 40px;display:grid;gap:16px}
     .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px}
     .row{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
-    .row.end{justify-content:flex-end;align-items:center}
     label{font-size:12px;color:var(--muted);display:block;margin-bottom:6px}
     input,select,button{background:#0d171b;border:1px solid #254046;color:var(--text);border-radius:10px;padding:8px 10px;font-size:14px}
     input[readonly]{cursor:pointer}
@@ -31,16 +30,26 @@
     .field.weight{min-width:140px}
 
     /* Таблица */
-    table{width:100%;border-collapse:collapse;table-layout:fixed}
-    th,td{padding:6px 8px;border-bottom:1px solid #20343a;font-size:13px;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:left}
+    table{width:100%;border-collapse:collapse;table-layout:auto} /* ← auto, не fixed, за да не реже иконите */
+    th,td{
+      padding:6px 8px;border-bottom:1px solid #20343a;font-size:13px;line-height:1.15;
+      white-space:nowrap; /* оставяме nowrap за компактност */
+      text-align:left
+    }
     th{color:var(--muted);font-weight:600}
     th.date,td.date{width:92px}
     th.w,td.w{width:92px}
-    td.actions{width:1%}
+
+    /* Колона Действия – стабилна ширина + без рязане */
+    th.actions, td.actions{width:130px}
+    td.actions{overflow:visible}
     .actions{display:inline-flex;gap:6px;align-items:center;justify-content:flex-start}
 
     /* Икон бутони */
-    .icon{display:inline-flex;align-items:center;justify-content:center;border:1px solid #2a3e41;background:#0d171b;border-radius:8px;padding:4px 6px;color:var(--text)}
+    .icon{
+      display:inline-flex;align-items:center;justify-content:center;
+      border:1px solid #2a3e41;background:#0d171b;border-radius:8px;padding:4px 6px;color:var(--text)
+    }
     .icon svg{width:16px;height:16px;stroke:currentColor}
     .icon.danger{border-color:#3a2222;background:#161112;color:#ffd5d5}
 
@@ -49,8 +58,8 @@
     .left-group{display:flex;align-items:center;gap:8px}
     .right-group{display:flex;align-items:center;gap:8px}
 
-    /* Пагинация – вдясно */
-    .pager{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-end;margin-top:8px}
+    /* Пагинация – ВЛЯВО (по заявка) */
+    .pager{display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:flex-start;margin-top:8px}
     .pager .info{color:var(--muted);font-size:12px;margin:0 8px}
     .pager button, .pager select{background:#0d171b;border:1px solid #2a3e41;color:var(--text);padding:4px 8px;border-radius:8px;font-size:13px}
     .pager button.active{background:var(--accent);color:#06241b;border-color:var(--accent)}
@@ -61,8 +70,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=29a" alt="BT" width="28" height="28">
-    <h1>Безопасно Тегло — Тракер <span class="ver">v29a-fix</span></h1>
+    <img src="assets/icons/icon-192.png?v=29b" alt="BT" width="28" height="28">
+    <h1>Безопасно Тегло — Тракер <span class="ver">v29b</span></h1>
   </header>
 
   <main>
@@ -144,7 +153,7 @@
         <tbody></tbody>
       </table>
 
-      <!-- Пагинация вдясно -->
+      <!-- Пагинация ВЛЯВО -->
       <div class="pager" id="pager"></div>
     </section>
   </main>
@@ -263,16 +272,18 @@
           <td class="date">${isoToBG_YY(r.date)}</td>
           <td class="w">${(typeof r.weight==="number")? r.weight.toFixed(1):""}</td>
           <td class="actions">
-            <button class="icon" title="Редакция" data-edit="${r.date}" aria-label="Редакция">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-                <path d="M3 21l3-1 11-11-2-2L4 18z"/><path d="M14 5l5 5"/>
-              </svg>
-            </button>
-            <button class="icon danger" title="Изтрий" data-del="${r.date}" aria-label="Изтрий">
-              <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-                <path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"/>
-              </svg>
-            </button>
+            <div class="actions">
+              <button class="icon" title="Редакция" data-edit="${r.date}" aria-label="Редакция">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                  <path d="M3 21l3-1 11-11-2-2L4 18z"/><path d="M14 5l5 5"/>
+                </svg>
+              </button>
+              <button class="icon danger" title="Изтрий" data-del="${r.date}" aria-label="Изтрий">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                  <path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"/>
+                </svg>
+              </button>
+            </div>
           </td>`;
         tb.appendChild(tr);
       });
@@ -294,7 +305,7 @@
         };
       });
 
-      // Пейджър (вдясно)
+      // Пейджър (ВЛЯВО)
       pager.innerHTML="";
       const from= total? start+1 : 0, to=Math.min(start+eff,total);
       const info=document.createElement("span"); info.className="info"; info.textContent=`${from}-${to} от ${total}`;
