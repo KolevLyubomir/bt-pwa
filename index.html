@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Безопасно Тегло — v29</title>
-  <link rel="manifest" href="manifest.webmanifest?v=29">
-  <link rel="icon" href="assets/icons/icon-192.png?v=29">
+  <title>Безопасно Тегло — v29a-fix</title>
+  <link rel="manifest" href="manifest.webmanifest?v=29a">
+  <link rel="icon" href="assets/icons/icon-192.png?v=29a">
   <meta name="theme-color" content="#0b1215">
   <style>
     :root{--bg:#0b1215;--card:#111a1f;--text:#e6f2ef;--muted:#9fb4ad;--accent:#10b981;--border:#1e2b30;--danger:#ef4444}
@@ -61,8 +61,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=29" alt="BT" width="28" height="28">
-    <h1>Безопасно Тегло — Тракер <span class="ver">v29</span></h1>
+    <img src="assets/icons/icon-192.png?v=29a" alt="BT" width="28" height="28">
+    <h1>Безопасно Тегло — Тракер <span class="ver">v29a-fix</span></h1>
   </header>
 
   <main>
@@ -234,7 +234,7 @@
     function setPS(v){ localStorage.setItem("bt-page-size", v); }
     let pageSize=getPS(), currentPage=1;
 
-    // при първоначално зареждане — синхронизирай селектора
+    // синхронизирай селектора при зареждане
     (function syncPageSizeUI(){
       const v = (pageSize==="all") ? "all" : String(pageSize);
       if(pageSizeSel.querySelector(`option[value="${v}"]`)) pageSizeSel.value=v;
@@ -294,14 +294,12 @@
         };
       });
 
-      // Пейджър: вдясно; инфо „x–y от N“ в средата
+      // Пейджър (вдясно)
       pager.innerHTML="";
       const from= total? start+1 : 0, to=Math.min(start+eff,total);
       const info=document.createElement("span"); info.className="info"; info.textContent=`${from}-${to} от ${total}`;
 
       const pagesTotal=Math.max(1, Math.ceil(total/(pageSize==="all"? total||1 : pageSize)));
-
-      // бутони
       const frag=document.createDocumentFragment();
       if(pagesTotal>1 && currentPage>1){
         const p=document.createElement("button"); p.textContent="←";
@@ -320,8 +318,6 @@
         n.onclick=()=>{currentPage++;renderTable();};
         frag.appendChild(n);
       }
-
-      // подредба: [info] [buttons...] — всичко вдясно
       pager.appendChild(info);
       pager.appendChild(frag);
     }
@@ -419,8 +415,6 @@
 
     // първоначален рендър
     renderTable(); renderChart();
-
-    function renderTable(){ /* обявена по-горе, за да не скролиш много */ }
   </script>
 </body>
 </html>
