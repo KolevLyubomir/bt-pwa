@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Безопасно Тегло — v1.35</title>
+  <title>Безопасно Тегло — v1.36</title>
 
-  <link rel="manifest" href="manifest.webmanifest?v=1.35"/>
-  <link rel="icon" href="assets/icons/icon-192.png?v=1.35"/>
+  <link rel="manifest" href="manifest.webmanifest?v=1.36"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=1.36"/>
   <meta name="theme-color" content="#0b1215"/>
 
   <style>
     :root{
       --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
       --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
-      /* още една идея по-едри */
-      --chart-label:18px;   /* дати под графиката */
-      --chart-values:20px;  /* числа по y (min/max) */
+      /* +2px спрямо v1.35 */
+      --chart-label:20px;   /* дати под графиката */
+      --chart-values:22px;  /* числа по y (min/max) */
     }
     *{ box-sizing:border-box }
     html,body{ height:100% }
@@ -48,7 +48,7 @@
     .field.weight input{ font-weight:700; font-size:18px }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
-    /* Таблица — по-стегната: Тегло близо до Дата, Действия по-далеч */
+    /* Таблица — Дата и Тегло още по-близо; Действия по-далеч */
     table{ width:100%; border-collapse:collapse; table-layout:auto }
     th,td{
       padding:4px 6px; border-bottom:1px solid #20343a;
@@ -56,10 +56,10 @@
       text-align:left; vertical-align:middle;
     }
     th{ color:var(--muted); font-weight:600 }
-    th.date,td.date{ width:86px }
-    th.w,td.w{ width:86px; text-align:right }         /* по-тясно => по-близо до Дата */
-    th.actions,td.actions{ width:170px }              /* по-широко => по-далеч от Тегло */
-    td.actions{ overflow:visible; padding-left:16px } /* визуално отдалечаване */
+    th.date,td.date{ width:84px; padding-right:6px }   /* малка дясна междина */
+    th.w,td.w{ width:84px; text-align:right; padding-left:6px } /* плътно до датата */
+    th.actions,td.actions{ width:220px }               /* по-широко => видимо „по-далеч“ */
+    td.actions{ overflow:visible; padding-left:22px }  /* доп. отстояние от теглото */
     .wCell{ text-align:right }
     .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
 
@@ -67,7 +67,7 @@
     .icon{
       display:inline-flex; align-items:center; justify-content:center;
       border:1px solid #2a3e41; background:#0d171b;
-      border-radius:8px; padding:4px 6px; color:var(--text);
+      border-radius:8px; padding:4px 6px; color:#fff;
     }
     .icon svg{ width:16px; height:16px; stroke:currentColor }
     .icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
@@ -109,8 +109,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=1.35" alt="BT" width="28" height="28"/>
-    <h1>Безопасно Тегло — Тракер <span class="ver">v1.35</span></h1>
+    <img src="assets/icons/icon-192.png?v=1.36" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v1.36</span></h1>
   </header>
 
   <main>
@@ -454,7 +454,7 @@
               '</button>'+
               '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
                 '<svg viewBox="0 0 24 24" fill="none" stroke-width="2">'+
-                  '<path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path>'+
+                  '<path d="M3 6h18M8 6В4h8v2M7 6l1 14h8l1-14"></path>'+
                 '</svg>'+
               '</button>'+
             '</div>'+
