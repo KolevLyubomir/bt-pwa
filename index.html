@@ -3,47 +3,32 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Безопасно Тегло — v31</title>
+  <title>Безопасно Тегло — v31b</title>
 
-  <!-- (по желание остави своя manifest/sw) -->
-  <link rel="manifest" href="manifest.webmanifest?v=31"/>
-  <link rel="icon" href="assets/icons/icon-192.png?v=31"/>
+  <!-- ако имаш manifest/sw.js – остави си твоите; query версията само помага срещу кеш -->
+  <link rel="manifest" href="manifest.webmanifest?v=31b"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=31b"/>
   <meta name="theme-color" content="#0b1215"/>
 
   <style>
     :root{
-      --bg:#0b1215;
-      --card:#111a1f;
-      --text:#e6f2ef;
-      --muted:#9fb4ad;
-      --accent:#10b981;
-      --border:#1e2b30;
-      --has:#c7f5df;      /* ден с данни в календара */
-      --danger:#ef4444;
+      --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
+      --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
     }
     *{ box-sizing:border-box }
     html,body{ height:100% }
     body{
-      margin:0;
-      background:var(--bg);
-      color:var(--text);
+      margin:0; background:var(--bg); color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif;
     }
-
     header{
-      position:sticky; top:0; z-index:5;
-      background:#071013cc; backdrop-filter:blur(6px);
-      border-bottom:1px solid var(--border);
-      padding:12px 16px;
-      display:flex; align-items:center; gap:10px;
+      position:sticky; top:0; z-index:5; background:#071013cc; backdrop-filter:blur(6px);
+      border-bottom:1px solid var(--border); padding:12px 16px; display:flex; align-items:center; gap:10px;
     }
     header h1{ margin:0; font-size:18px; font-weight:700 }
     header .ver{ background:#22c55e; color:#06241b; border-radius:10px; padding:2px 8px; margin-left:6px }
 
-    main{
-      max-width:980px; margin:20px auto; padding:0 16px 40px;
-      display:grid; gap:16px; align-content:start;
-    }
+    main{ max-width:980px; margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
     .row{ display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end }
@@ -83,40 +68,21 @@
     .icon svg{ width:16px; height:16px; stroke:currentColor }
     .icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
 
-    /* Лента над таблицата */
-    .records-bar{
-      display:flex; align-items:center; gap:8px; justify-content:space-between;
-      margin:8px 0; flex-wrap:wrap;
-    }
+    .records-bar{ display:flex; align-items:center; gap:8px; justify-content:space-between; margin:8px 0; flex-wrap:wrap }
     .left-group,.right-group{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
 
-    /* Пагинация — вляво, прозорец от 5 */
-    .pager{
-      display:flex; gap:6px; flex-wrap:wrap; align-items:center;
-      justify-content:flex-start; margin-top:8px;
-    }
+    .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
     .pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
-    .pager button{
-      background:#0d171b; border:1px solid #2a3e41; color:var(--text);
-      padding:4px 8px; border-radius:8px; font-size:13px;
-    }
+    .pager button{ background:#0d171b; border:1px solid #2a3e41; color:var(--text); padding:4px 8px; border-radius:8px; font-size:13px }
     .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
 
-    /* Графика */
-    canvas{
-      max-width:100%; height:320px; margin-top:8px;
-      background:#0b1215; border:1px solid #1a2a2f; border-radius:8px;
-    }
+    canvas{ max-width:100%; height:320px; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
 
-    /* Календар */
     .date-wrap{ position:relative }
     #dateText[readonly]{ cursor:pointer }
-
     .cal{
-      position:absolute; z-index:10; top:42px; left:0;
-      background:#0e1518; border:1px solid #20343a; border-radius:12px;
-      box-shadow:0 8px 30px rgba(0,0,0,.35);
-      padding:10px; width:auto; display:none;
+      position:absolute; z-index:10; top:42px; left:0; background:#0e1518; border:1px solid #20343a; border-radius:12px;
+      box-shadow:0 8px 30px rgba(0,0,0,.35); padding:10px; width:auto; display:none;
     }
     .cal.show{ display:block }
     .cal .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px }
@@ -124,10 +90,7 @@
     .cal .cal-title{ font-weight:700; text-transform:capitalize }
     .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
     .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
-    .cal .day{
-      width:36px; height:36px; display:flex; align-items:center; justify-content:center;
-      border-radius:8px; border:1px solid transparent;
-    }
+    .cal .day{ width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid transparent }
     .cal .day:hover{ border-color:#27454a }
     .cal .day.disabled{ opacity:.35; pointer-events:none }
     .cal .day.has{ background:var(--has); color:#092218 }
@@ -137,8 +100,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=31" alt="BT" width="28" height="28"/>
-    <h1>Безопасно Тегло — Тракер <span class="ver">v31</span></h1>
+    <img src="assets/icons/icon-192.png?v=31b" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v31b</span></h1>
   </header>
 
   <main>
@@ -201,15 +164,13 @@
         <div class="right-group">
           <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-              <path d="M12 16V4M12 4l-4 4M12 4l4 4"></path>
-              <path d="M4 20h16"></path>
+              <path d="M12 16V4M12 4l-4 4M12 4l4 4"></path><path d="M4 20h16"></path>
             </svg>
           </button>
           <input id="importFile" type="file" accept="application/json" style="display:none"/>
           <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
             <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-              <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path>
-              <path d="M4 4h16"></path>
+              <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
             </svg>
           </button>
         </div>
@@ -233,37 +194,57 @@
   <script>
     "use strict";
 
-    /* -------- Дати и формат -------- */
+    /* =================== Дата/формати =================== */
     function todayISO(){
       var d = new Date();
-      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
       return d.toISOString().slice(0,10); // YYYY-MM-DD
     }
     var TODAY = todayISO();
 
     function isoToBG_YY(iso){
-      if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(iso)) return "";
-      var y = iso.slice(0,4), m = iso.slice(5,7), d = iso.slice(8,10);
-      return d + "." + m + "." + y.slice(2);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+      var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10);
+      return d+"."+m+"."+y.slice(2);
     }
-    function bgYYToISO(bg){
-      // ДД.ММ.ГГ → YYYY-MM-DD (при нужда)
-      var m = bg.match(/^(\\d{2})\\.(\\d{2})\\.(\\d{2})$/);
-      if(!m) return "";
-      var d = m[1], mon = m[2], yy = m[3];
-      // хак: година — текущ век (20xx)
-      var yyyy = (yy.length===2?("20"+yy):yy);
-      return yyyy + "-" + mon + "-" + d;
+    function bgToISO_any(bg){
+      // приема ДД.ММ.ГГ или ДД.ММ.ГГГГ
+      var m2 = bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/);
+      if(m2){
+        var d=m2[1], mon=m2[2], yy=m2[3];
+        return "20"+yy+"-"+mon+"-"+d;
+      }
+      var m4 = bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+      if(m4){
+        var d4=m4[1], mon4=m4[2], yyyy=m4[3];
+        return yyyy+"-"+mon4+"-"+d4;
+      }
+      return "";
     }
 
-    /* -------- Storage -------- */
+    /* =================== Storage =================== */
     var KEY="bt-progress";
     function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(e){ return []; } }
     function save(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
     function sortDesc(a){ return a.slice().sort(function(x,y){ return y.date.localeCompare(x.date); }); }
     function sortAsc(a){ return a.slice().sort(function(x,y){ return x.date.localeCompare(y.date); }); }
 
-    /* -------- DOM -------- */
+    // миграция: ако има записи с дата не в ISO, конвертирай
+    function migrateDates(){
+      var arr = load(); var changed=false;
+      for(var i=0;i<arr.length;i++){
+        var r=arr[i];
+        if(typeof r.date==="string" && !/^\d{4}-\d{2}-\d{2}$/.test(r.date)){
+          var iso = bgToISO_any(r.date);
+          if(iso){
+            r.date = iso; changed=true;
+          }
+        }
+      }
+      if(changed) save(arr);
+    }
+
+    /* =================== DOM =================== */
     var dateText = document.getElementById("dateText");
     var calEl    = document.getElementById("cal");
     var weight   = document.getElementById("weight");
@@ -274,9 +255,9 @@
     var chart    = document.getElementById("chart");
     var pageSizeSel = document.getElementById("pageSize");
 
-    /* -------- Текуща дата + предпопълване на тегло -------- */
+    /* =================== Текуща дата + предпопълване =================== */
     var currentISO = localStorage.getItem("bt-last-date") || TODAY;
-    if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(currentISO)) currentISO = TODAY;
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO = TODAY;
     dateText.value = isoToBG_YY(currentISO);
 
     function prefillWeight(iso){
@@ -288,18 +269,13 @@
     }
     prefillWeight(currentISO);
 
-    /* -------- Календар -------- */
+    /* =================== Календар =================== */
     var calYear=+currentISO.slice(0,4), calMonth=+currentISO.slice(5,7);
     function ymd(y,m,d){
-      var yy=String(y).padStart(4,"0");
-      var mm=String(m).padStart(2,"0");
-      var dd=String(d).padStart(2,"0");
-      return yy+"-"+mm+"-"+dd;
+      return String(y).padStart(4,"0")+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
     }
     function hasDataSet(){
-      var s=new Set();
-      load().forEach(function(r){ s.add(r.date); });
-      return s;
+      var s=new Set(); load().forEach(function(r){ s.add(r.date); }); return s;
     }
     function renderCalendar(){
       var set=hasDataSet(), y=calYear, m=calMonth;
@@ -307,22 +283,15 @@
       var startDow=(first.getUTCDay()+6)%7; // Monday=0
       var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
       var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
-      var html="";
-      html+='<div class="cal-head">';
-      html+='<button id="calPrev" type="button">←</button>';
-      html+='<div class="cal-title">'+title+'</div>';
-      html+='<button id="calNext" type="button">→</button>';
-      html+='</div>';
+      var html='';
+      html+='<div class="cal-head"><button id="calPrev" type="button">←</button><div class="cal-title">'+title+'</div><button id="calNext" type="button">→</button></div>';
       html+='<div class="cal-grid">';
       ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"].forEach(function(x){ html+='<div class="dow">'+x+'</div>'; });
       for(var i=0;i<startDow;i++) html+='<div class="day disabled"></div>';
       for(var d=1; d<=daysInMonth; d++){
         var iso=ymd(y,m,d), future=(iso>TODAY);
-        var cls=["day"];
-        if(iso===currentISO) cls.push("sel");
-        if(iso===TODAY) cls.push("today");
-        if(set.has(iso)) cls.push("has");
-        if(future) cls.push("disabled");
+        var cls=["day"]; if(iso===currentISO) cls.push("sel"); if(iso===TODAY) cls.push("today");
+        if(set.has(iso)) cls.push("has"); if(future) cls.push("disabled");
         html+='<button type="button" class="'+cls.join(" ")+'" data-iso="'+iso+'">'+d+'</button>';
       }
       html+='</div>';
@@ -332,14 +301,10 @@
     function hideCalendar(){ calEl.classList.remove("show"); }
 
     dateText.addEventListener("click", function(e){
-      e.stopPropagation();
-      calYear=+currentISO.slice(0,4);
-      calMonth=+currentISO.slice(5,7);
-      showCalendar();
+      e.stopPropagation(); calYear=+currentISO.slice(0,4); calMonth=+currentISO.slice(5,7); showCalendar();
     });
     calEl.addEventListener("click", function(e){
-      e.stopPropagation();
-      var t=e.target;
+      e.stopPropagation(); var t=e.target;
       if(t && t.id==="calPrev"){ calMonth--; if(calMonth===0){calMonth=12; calYear--; } renderCalendar(); return; }
       if(t && t.id==="calNext"){ calMonth++; if(calMonth===13){calMonth=1; calYear++; } renderCalendar(); return; }
       var btn = t.closest ? t.closest(".day[data-iso]") : null;
@@ -355,7 +320,7 @@
       if(!calEl.contains(e.target) && e.target!==dateText) hideCalendar();
     });
 
-    /* -------- Добавяне / редакция с ±5% защита -------- */
+    /* =================== Добавяне с ±5% защита =================== */
     addBtn.addEventListener("click", function(){
       var iso=currentISO;
       if(iso>TODAY){ alert("Датата е в бъдещето."); return; }
@@ -384,7 +349,7 @@
       renderTable(); renderChart();
     });
 
-    /* -------- Пагинация -------- */
+    /* =================== Пагинация =================== */
     var PAGE_SIZES=[7,14,28,84,112,168,336,"all"];
     function getPS(){
       var v=localStorage.getItem("bt-page-size");
@@ -393,7 +358,6 @@
       return (PAGE_SIZES.indexOf(n)>=0)?n:28;
     }
     function setPS(v){ localStorage.setItem("bt-page-size",v); }
-
     var pageSize=getPS(), currentPage=1;
     (function syncPS(){
       var v=(pageSize==="all")?"all":String(pageSize);
@@ -408,7 +372,7 @@
       renderTable();
     });
 
-    /* -------- Таблица -------- */
+    /* =================== Таблица =================== */
     function renderTable(){
       var all=sortDesc(load()), total=all.length;
       var eff=(pageSize==="all")?(total||1):pageSize;
@@ -464,7 +428,7 @@
         });
       });
 
-      // Пейджър
+      // Пейджър (прозорец 5)
       pager.innerHTML="";
       var from=total?start+1:0, to=Math.min(start+eff,total);
       var info=document.createElement("span");
@@ -481,13 +445,11 @@
         btn.addEventListener("click", function(){ currentPage=n; renderTable(); });
         return btn;
       }
-
       if(pagesTotal>1 && currentPage>1){
         var prev=document.createElement("button"); prev.textContent="←";
         prev.addEventListener("click", function(){ currentPage=Math.max(1,currentPage-1); renderTable(); });
         frag.appendChild(prev);
       }
-
       if(pagesTotal<=5){
         for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage));
       }else{
@@ -496,17 +458,15 @@
         if(startPage+4>pagesTotal) startPage=pagesTotal-4;
         for(var pp=startPage; pp<=startPage+4; pp++) frag.appendChild(pageBtn(pp, pp===currentPage));
       }
-
       if(pagesTotal>1 && currentPage<pagesTotal){
         var next=document.createElement("button"); next.textContent="→";
         next.addEventListener("click", function(){ currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); });
         frag.appendChild(next);
       }
-
       pager.appendChild(frag);
     }
 
-    /* -------- Експорт / Импорт -------- */
+    /* =================== Експорт / Импорт =================== */
     document.getElementById("exportBtn").addEventListener("click", function(){
       var data=load();
       var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
@@ -527,8 +487,10 @@
           if(!Array.isArray(arr)) throw 0;
           var cleaned=[];
           arr.forEach(function(r){
-            if(r && typeof r.date==="string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(r.date) &&
-               typeof r.weight==="number" && r.weight>0 && r.date<=todayISO()){
+            if(
+              r && typeof r.date==="string" && /^\d{4}-\d{2}-\d{2}$/.test(r.date) &&
+              typeof r.weight==="number" && r.weight>0 && r.date<=todayISO()
+            ){
               cleaned.push({date:r.date, weight:r.weight});
             }
           });
@@ -539,7 +501,7 @@
       reader.readAsText(f);
     });
 
-    /* -------- Графика -------- */
+    /* =================== Графика =================== */
     function weekKey(iso){
       var d=new Date(iso);
       d.setUTCHours(0,0,0,0);
@@ -555,20 +517,22 @@
     function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
     function labelMonth(k){ var s=k.split("-");  return s[1]+"."+String(s[0]).slice(2); }
 
-    aggSel.addEventListener("change", renderChart);
+    var chartEl=document.getElementById("chart");
+    var aggSelEl=document.getElementById("aggSel");
+    aggSelEl.addEventListener("change", renderChart);
 
     function renderChart(){
-      var ctx=chart.getContext("2d");
-      var w=(chart.width=chart.clientWidth), h=(chart.height=320);
+      var ctx=chartEl.getContext("2d");
+      var w=(chartEl.width=chartEl.clientWidth), h=(chartEl.height=320);
       ctx.clearRect(0,0,w,h);
 
       var raw=sortAsc(load());
       if(!raw.length){ ctx.fillStyle="#9fb4ad"; ctx.fillText("Няма данни",10,22); return; }
 
       var pts=[];
-      if(aggSel.value==="daily"){
+      if(aggSelEl.value==="daily"){
         pts=raw.map(function(r){ return {x:r.date,y:r.weight,label:isoToBG_YY(r.date)}; });
-      }else if(aggSel.value==="weekly"){
+      }else if(aggSelEl.value==="weekly"){
         var wm=new Map();
         raw.forEach(function(r){ var k=weekKey(r.date); var arr=wm.get(k); if(!arr){arr=[]; wm.set(k,arr);} arr.push(r.weight); });
         wm.forEach(function(a,k){ var s=0; for(var i=0;i<a.length;i++) s+=a[i]; pts.push({x:k,y:s/a.length,label:labelWeek(k)}); });
@@ -615,8 +579,13 @@
       }
     }
 
-    /* -------- Init -------- */
-    function initialRender(){ prefillWeight(currentISO); renderTable(); renderChart(); }
+    /* =================== Init =================== */
+    function initialRender(){
+      migrateDates();                   // <- миграция на стари дати
+      prefillWeight(currentISO);
+      renderTable();
+      renderChart();
+    }
     initialRender();
   </script>
 </body>
