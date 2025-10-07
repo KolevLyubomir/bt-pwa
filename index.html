@@ -3,19 +3,22 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Безопасно Тегло — v31c</title>
+  <title>Безопасно Тегло — v1.32</title>
 
-  <!-- ако ползваш PWA: остави си manifest/sw; версията в query помага срещу кеш -->
-  <link rel="manifest" href="manifest.webmanifest?v=31c"/>
-  <link rel="icon" href="assets/icons/icon-192.png?v=31c"/>
+  <link rel="manifest" href="manifest.webmanifest?v=1.32"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=1.32"/>
   <meta name="theme-color" content="#0b1215"/>
 
   <style>
     :root{
       --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
       --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
-      --chart-label:14px;    /* дати под графиката */
-      --chart-values:15px;   /* стойности kg (min/max) */
+      --w-big:18px;     /* голяма част на теглото */
+      --w-dec:12px;     /* десетичната част */
+      --w-big-table:16px;
+      --w-dec-table:11px;
+      --chart-label-px:18;  /* размер на етикетите по X (дати) */
+      --chart-values-px:18; /* размер на стойностите по Y (kg) */
     }
     *{ box-sizing:border-box }
     html,body{ height:100% }
@@ -45,8 +48,16 @@
     .field.weight{ min-width:160px; max-width:220px }
     .field.weight input{ font-weight:700; font-size:18px }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
+    .weight-preview{ margin-top:6px; color:#d8eee8 }
 
-    /* Таблица — компактна, ляво подравнена */
+    /* мини-типография за тегло: голямо + малко */
+    .wfmt .big{ font-size:var(--w-big); font-weight:800; letter-spacing:0.2px }
+    .wfmt .dec{ font-size:var(--w-dec); opacity:.9; margin-left:1px }
+
+    .wfmt-table .big{ font-size:var(--w-big-table); font-weight:800; letter-spacing:0.2px }
+    .wfmt-table .dec{ font-size:var(--w-dec-table); opacity:.9; margin-left:1px }
+
+    /* Таблица — компактна, ляво подравненa, тегло вдясно */
     table{ width:100%; border-collapse:collapse; table-layout:auto }
     th,td{
       padding:6px 8px; border-bottom:1px solid #20343a;
@@ -54,8 +65,8 @@
       text-align:left; vertical-align:middle;
     }
     th{ color:var(--muted); font-weight:600 }
-    th.date,td.date{ width:92px }
-    th.w,td.w{ width:92px }
+    th.date,td.date{ width:92px; text-align:left }
+    th.w,td.w{ width:110px; text-align:right } /* <- дясно подравняване на „Тегло“ */
     th.actions,td.actions{ width:130px }
     td.actions{ overflow:visible }
     .actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
@@ -77,7 +88,7 @@
 
     /* Графика */
     canvas{
-      max-width:100%; height:320px; margin-top:8px;
+      max-width:100%; height:340px; margin-top:8px;
       background:#0b1215; border:1px solid #1a2a2f; border-radius:8px;
     }
 
@@ -104,8 +115,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=31c" alt="BT" width="28" height="28"/>
-    <h1>Безопасно Тегло — Тракер <span class="ver">v31c</span></h1>
+    <img src="assets/icons/icon-192.png?v=1.32" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v1.32</span></h1>
   </header>
 
   <main>
@@ -119,13 +130,15 @@
             <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ"/>
             <div id="cal" class="cal" role="dialog" aria-label="Календар"></div>
           </div>
-          <div style="margin-top:8px">
-            <button id="addBtn" class="primary" type="button">Добави</button>
-          </div>
         </div>
         <div class="field weight">
           <label for="weight">Тегло (kg)</label>
           <input id="weight" type="number" step="0.1" min="0.1" placeholder="напр. 86.4"/>
+          <!-- живо превю с голяма цяла и малка десетична част -->
+          <div id="weightPreview" class="weight-preview wfmt" aria-hidden="true"></div>
+          <div style="margin-top:8px">
+            <button id="addBtn" class="primary" type="button">Добави</button>
+          </div>
         </div>
       </div>
     </section>
@@ -135,7 +148,6 @@
       <h2 style="margin:0 0 10px">Графика</h2>
       <div class="row">
         <div>
-          <!-- махнат текстовият label; оставяме само селекта -->
           <select id="aggSel" title="Агрегация">
             <option value="daily" selected>Дни (всички)</option>
             <option value="weekly">Седмици (средно)</option>
@@ -198,14 +210,17 @@
   <script>
     "use strict";
 
-    /* ============ Дата/формати ============ */
-    function todayISO(){
-      var d = new Date();
-      d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
-      return d.toISOString().slice(0,10);
+    /* ===== помощни за тегло: HTML с голяма и малка част ===== */
+    function formatWeightHTML(w, cls){
+      if(!(w>0)) return "";
+      var t = Number(w).toFixed(1);
+      var parts = t.split(".");
+      return '<span class="'+cls+'"><span class="big">'+parts[0]+'</span><span class="dec">.'+parts[1]+'</span></span>';
     }
-    var TODAY = todayISO();
 
+    /* ===== Дати ===== */
+    function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
+    var TODAY = todayISO();
     function isoToBG_YY(iso){
       if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
       var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10);
@@ -219,7 +234,7 @@
       return "";
     }
 
-    /* ============ Storage ============ */
+    /* ===== Storage ===== */
     var KEY="bt-progress";
     function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(e){ return []; } }
     function save(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
@@ -238,10 +253,11 @@
       if(changed) save(arr);
     }
 
-    /* ============ DOM ============ */
+    /* ===== DOM ===== */
     var dateText = document.getElementById("dateText");
     var calEl    = document.getElementById("cal");
     var weight   = document.getElementById("weight");
+    var weightPreview = document.getElementById("weightPreview");
     var addBtn   = document.getElementById("addBtn");
     var tb       = document.querySelector("#tbl tbody");
     var pager    = document.getElementById("pager");
@@ -249,7 +265,7 @@
     var chart    = document.getElementById("chart");
     var pageSizeSel = document.getElementById("pageSize");
 
-    /* ============ Текуща дата + предпопълване ============ */
+    /* ===== Текуща дата + предпопълване ===== */
     var currentISO = localStorage.getItem("bt-last-date") || TODAY;
     if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO = TODAY;
     dateText.value = isoToBG_YY(currentISO);
@@ -257,20 +273,25 @@
     function prefillWeight(iso){
       var data = load();
       var rec = data.find(function(r){ return r.date===iso; });
-      if(rec){ weight.value = (typeof rec.weight==="number")?rec.weight:""; return; }
-      var prev = sortDesc(data).find(function(r){ return r.date<iso; });
-      weight.value = prev ? prev.weight : "";
+      var val = rec ? (typeof rec.weight==="number"?rec.weight:"") : (function(){
+        var prev = sortDesc(data).find(function(r){ return r.date<iso; });
+        return prev ? prev.weight : "";
+      })();
+      weight.value = val!=="" ? Number(val) : "";
+      updateWeightPreview();
     }
     prefillWeight(currentISO);
 
-    /* ============ Календар ============ */
+    function updateWeightPreview(){
+      var w = Number(weight.value);
+      weightPreview.innerHTML = (w>0) ? formatWeightHTML(w, "wfmt") : "";
+    }
+    weight.addEventListener("input", updateWeightPreview);
+
+    /* ===== Календар ===== */
     var calYear=+currentISO.slice(0,4), calMonth=+currentISO.slice(5,7);
-    function ymd(y,m,d){
-      return String(y).padStart(4,"0")+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
-    }
-    function hasDataSet(){
-      var s=new Set(); load().forEach(function(r){ s.add(r.date); }); return s;
-    }
+    function ymd(y,m,d){ return String(y).padStart(4,"0")+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0"); }
+    function hasDataSet(){ var s=new Set(); load().forEach(function(r){ s.add(r.date); }); return s; }
     function renderCalendar(){
       var set=hasDataSet(), y=calYear, m=calMonth;
       var first=new Date(Date.UTC(y,m-1,1));
@@ -298,8 +319,8 @@
     });
     calEl.addEventListener("click", function(e){
       e.stopPropagation(); var t=e.target;
-      if(t && t.id==="calPrev"){ calMonth--; if(calMonth===0){calMonth=12; calYear--; } renderCalendar(); return; }
-      if(t && t.id==="calNext"){ calMonth++; if(calMonth===13){calMonth=1; calYear++; } renderCalendar(); return; }
+      if(t && t.id==="calPrev"){ calMonth--; if(calMonth===0){calMonth=12; calYear--;} renderCalendar(); return; }
+      if(t && t.id==="calNext"){ calMonth++; if(calMonth===13){calMonth=1; calYear++;} renderCalendar(); return; }
       var btn = t.closest ? t.closest(".day[data-iso]") : null;
       if(btn){
         var iso = btn.getAttribute("data-iso");
@@ -313,7 +334,7 @@
       if(!calEl.contains(e.target) && e.target!==dateText) hideCalendar();
     });
 
-    /* ============ Добавяне / редакция с ±5% защита ============ */
+    /* ===== Добавяне / редакция с ±5% защита ===== */
     addBtn.addEventListener("click", function(){
       var iso=currentISO;
       if(iso>TODAY){ alert("Датата е в бъдещето."); return; }
@@ -342,46 +363,20 @@
       renderTable(); renderChart();
     });
 
-    /* ============ Пагинация ============ */
+    /* ===== Пагинация ===== */
     var PAGE_SIZES=[7,14,28,84,112,168,336,"all"];
-    function getPS(){
-      var v=localStorage.getItem("bt-page-size");
-      if(v==="all") return "all";
-      var n=Number(v);
-      return (PAGE_SIZES.indexOf(n)>=0)?n:28;
-    }
+    function getPS(){ var v=localStorage.getItem("bt-page-size"); if(v==="all") return "all"; var n=Number(v); return (PAGE_SIZES.indexOf(n)>=0)?n:28; }
     function setPS(v){ localStorage.setItem("bt-page-size",v); }
     var pageSize=getPS(), currentPage=1;
-    (function syncPS(){
-      var v=(pageSize==="all")?"all":String(pageSize);
-      var opt=pageSizeSel.querySelector('option[value="'+v+'"]');
-      if(opt) pageSizeSel.value=v;
-    })();
+    (function syncPS(){ var v=(pageSize==="all")?"all":String(pageSize); var opt=pageSizeSel.querySelector('option[value="'+v+'"]'); if(opt) pageSizeSel.value=v; })();
     pageSizeSel.addEventListener("change", function(){
-      var v=pageSizeSel.value;
-      pageSize=(v==="all")?"all":Number(v);
-      setPS(v);
-      currentPage=1;
-      renderTable(); renderChart();     // <- графиката да следва страницата
+      var v=pageSizeSel.value; pageSize=(v==="all")?"all":Number(v); setPS(v); currentPage=1; renderTable(); renderChart();
     });
 
-    /* текущият срез (записите в тази страница) – ползва се от графиката */
+    /* текущият срез за графиката */
     var __currentSlice = [];
 
-    function computePageSlice(){
-      var all = sortDesc(load());
-      if(pageSize==="all"){
-        __currentSlice = all.slice();
-        return;
-      }
-      var eff = pageSize;
-      var pages = Math.max(1, Math.ceil(all.length / eff));
-      if(currentPage > pages) currentPage = pages;
-      var start = (currentPage - 1) * eff;
-      __currentSlice = all.slice(start, start + eff);
-    }
-
-    /* ============ Таблица ============ */
+    /* ===== Таблица ===== */
     function renderTable(){
       var all=sortDesc(load()), total=all.length;
       var eff=(pageSize==="all")?(total||1):pageSize;
@@ -390,14 +385,14 @@
 
       var start=(currentPage-1)*eff;
       var slice=all.slice(start, start+eff);
-      __currentSlice = slice.slice(); // <- публикуваме среза за графиката
+      __currentSlice = slice.slice();
 
       tb.innerHTML="";
       slice.forEach(function(r){
         var tr=document.createElement("tr");
         tr.innerHTML =
           '<td class="date">'+isoToBG_YY(r.date)+'</td>'+
-          '<td class="w">'+(typeof r.weight==="number"?r.weight.toFixed(1):"")+'</td>'+
+          '<td class="w">'+formatWeightHTML(r.weight, "wfmt-table")+'</td>'+
           '<td class="actions">'+
             '<div class="actions">'+
               '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
@@ -438,7 +433,7 @@
         });
       });
 
-      // Пейджър (прозорец 5) — стрелките и номерата вече ще обновяват и графиката
+      // Пейджър (прозорец 5)
       pager.innerHTML="";
       var from=total?start+1:0, to=Math.min(start+eff,total);
       var info=document.createElement("span");
@@ -447,42 +442,33 @@
 
       var pagesTotal=Math.max(1, Math.ceil(total/eff));
       var frag=document.createDocumentFragment();
-
       function pageBtn(n,active){
         var btn=document.createElement("button");
         btn.textContent=String(n);
         if(active) btn.className="active";
-        btn.addEventListener("click", function(){
-          currentPage=n; renderTable(); renderChart();
-        });
+        btn.addEventListener("click", function(){ currentPage=n; renderTable(); renderChart(); });
         return btn;
       }
       if(pagesTotal>1 && currentPage>1){
         var prev=document.createElement("button"); prev.textContent="←";
-        prev.addEventListener("click", function(){
-          currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();
-        });
+        prev.addEventListener("click", function(){ currentPage=Math.max(1,currentPage-1); renderTable(); renderChart(); });
         frag.appendChild(prev);
       }
       if(pagesTotal<=5){
         for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage));
       }else{
-        var startPage=currentPage-2;
-        if(startPage<1) startPage=1;
-        if(startPage+4>pagesTotal) startPage=pagesTotal-4;
+        var startPage=currentPage-2; if(startPage<1) startPage=1; if(startPage+4>pagesTotal) startPage=pagesTotal-4;
         for(var pp=startPage; pp<=startPage+4; pp++) frag.appendChild(pageBtn(pp, pp===currentPage));
       }
       if(pagesTotal>1 && currentPage<pagesTotal){
         var next=document.createElement("button"); next.textContent="→";
-        next.addEventListener("click", function(){
-          currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();
-        });
+        next.addEventListener("click", function(){ currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart(); });
         frag.appendChild(next);
       }
       pager.appendChild(frag);
     }
 
-    /* ============ Експорт / Импорт ============ */
+    /* ===== Експорт / Импорт ===== */
     document.getElementById("exportBtn").addEventListener("click", function(){
       var data=load();
       var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
@@ -515,39 +501,34 @@
       reader.readAsText(f);
     });
 
-    /* ============ Графика (по текущата страница) ============ */
+    /* ===== Графика (по текущата страница), по-едри етикети ===== */
     function weekKey(iso){
       var d=new Date(iso);
-      d.setUTCHours(0,0,0,0);
-      d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
+      d.setUTCHours(0,0,0,0); d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
       var yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
       var week=Math.ceil((((d-yearStart)/86400000)+1)/7);
       return d.getUTCFullYear()+"-W"+String(week).padStart(2,"0");
     }
-    function monthKey(iso){
-      var d=new Date(iso);
-      return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
-    }
+    function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
     function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
     function labelMonth(k){ var s=k.split("-");  return s[1]+"."+String(s[0]).slice(2); }
 
     aggSel.addEventListener("change", function(){ renderChart(); });
 
     function getChartRawData(){
-      // взимаме само текущата страница; ако е празно (няма записи) – връщаме всички
       var src = (__currentSlice && __currentSlice.length) ? __currentSlice.slice() : sortDesc(load());
-      return sortAsc(src); // графиката работи възходящо
+      return sortAsc(src);
     }
 
     function renderChart(){
       var ctx=chart.getContext("2d");
-      var w=(chart.width=chart.clientWidth), h=(chart.height=320);
+      var w=(chart.width=chart.clientWidth), h=(chart.height=340);
       ctx.clearRect(0,0,w,h);
 
       var raw=getChartRawData();
       if(!raw.length){
-        ctx.fillStyle="#9fb4ad"; ctx.font="600 var(--chart-values) system-ui";
-        ctx.fillText("Няма данни",10,22); return;
+        ctx.fillStyle="#9fb4ad"; ctx.font="600 "+Number(getComputedStyle(document.documentElement).getPropertyValue('--chart-values-px')||18)+"px system-ui";
+        ctx.fillText("Няма данни",10,24); return;
       }
 
       var pts=[];
@@ -566,46 +547,48 @@
 
       var vals=pts.map(function(p){ return p.y; }).filter(function(n){ return typeof n==="number"; });
       if(vals.length<2){
-        ctx.fillStyle="#9fb4ad"; ctx.font="600 var(--chart-values) system-ui";
-        ctx.fillText("Добави поне 2 точки",10,22); return;
+        ctx.fillStyle="#9fb4ad";
+        ctx.font="600 "+Number(getComputedStyle(document.documentElement).getPropertyValue('--chart-values-px')||18)+"px system-ui";
+        ctx.fillText("Добави поне 2 точки",10,24); return;
       }
 
+      var gs = getComputedStyle(document.documentElement);
+      var labPx = Number(gs.getPropertyValue('--chart-label-px')||18);
+      var valPx = Number(gs.getPropertyValue('--chart-values-px')||18);
+
       var min=Math.min.apply(null,vals), max=Math.max.apply(null,vals);
-      var padL=40, padR=18, padT=14, padB=86, n=pts.length;
+      var padL=50, padR=18, padT=16, padB=96, n=pts.length;
       function X(i){ return padL+(w-padL-padR)*(n<=1?0:i/(n-1)); }
       function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
       // оси
-      ctx.strokeStyle="#20343a"; ctx.lineWidth=1;
-      ctx.beginPath();
-      ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB);
-      ctx.moveTo(padL,padT);   ctx.lineTo(padL,h-padB);
-      ctx.stroke();
+      ctx.strokeStyle="#20343a"; ctx.lineWidth=1.2;
+      ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-padB); ctx.stroke();
 
       // линия
-      ctx.strokeStyle="#87f3c5"; ctx.lineWidth=2;
+      ctx.strokeStyle="#87f3c5"; ctx.lineWidth=2.4;
       ctx.beginPath();
       for(var i=0;i<n;i++){ var p=pts[i], x=X(i), y=Y(p.y); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
       ctx.stroke();
 
       // мин/макс (по-голям шрифт)
-      ctx.fillStyle="#9fb4ad"; ctx.textBaseline="middle"; ctx.font="600 var(--chart-values) system-ui";
-      ctx.fillText(String(max.toFixed(1)),8,Y(max));
-      ctx.fillText(String(min.toFixed(1)),8,Y(min));
+      ctx.fillStyle="#cfe6de"; ctx.textBaseline="middle"; ctx.font="700 "+valPx+"px system-ui";
+      ctx.fillText(String(max.toFixed(1)),10,Math.max(padT+10, Y(max)));
+      ctx.fillText(String(min.toFixed(1)),10,Math.min(h-padB-10, Y(min)));
 
-      // вертикални етикети (по-големи)
-      var maxLabels=Math.min(16,n), step=Math.max(1,Math.floor(n/maxLabels));
-      ctx.fillStyle="#cde3dc"; ctx.font="600 var(--chart-label) system-ui";
+      // вертикални етикети (по-големи, леко по-нагъсто)
+      var maxLabels=Math.min(18,n), step=Math.max(1,Math.floor(n/maxLabels));
+      ctx.fillStyle="#e5f4ef"; ctx.font="700 "+labPx+"px system-ui";
       for(var j=0;j<n;j+=step){
         var pe=pts[j], x0=X(j), y0=h-padB;
-        ctx.beginPath(); ctx.arc(x0,y0,2,0,Math.PI*2); ctx.fill();
-        ctx.save(); ctx.translate(x0,y0+60); ctx.rotate(-Math.PI/2);
+        ctx.beginPath(); ctx.arc(x0,y0,2.2,0,Math.PI*2); ctx.fill();
+        ctx.save(); ctx.translate(x0,y0+68); ctx.rotate(-Math.PI/2);
         ctx.fillText(pe.label,0,0);
         ctx.restore();
       }
     }
 
-    /* ============ Init ============ */
+    /* ===== Init ===== */
     function initialRender(){
       migrateDates();
       prefillWeight(currentISO);
