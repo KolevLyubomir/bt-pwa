@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Безопасно Тегло — v1.33</title>
+  <title>Безопасно Тегло — v1.34</title>
 
-  <link rel="manifest" href="manifest.webmanifest?v=1.33"/>
-  <link rel="icon" href="assets/icons/icon-192.png?v=1.33"/>
+  <link rel="manifest" href="manifest.webmanifest?v=1.34"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=1.34"/>
   <meta name="theme-color" content="#0b1215"/>
 
   <style>
     :root{
       --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
       --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
-      /* леко намалени спрямо 1.32 */
-      --chart-label:16px;   /* дати под графиката */
-      --chart-values:18px;  /* числа по y (min/max) */
+      /* малко по-едри от v1.33 */
+      --chart-label:17px;   /* дати под графиката */
+      --chart-values:19px;  /* числа по y (min/max) */
     }
     *{ box-sizing:border-box }
     html,body{ height:100% }
@@ -44,21 +44,21 @@
 
     .field{ display:flex; flex-direction:column }
     .field.date{ min-width:220px; max-width:280px }
-    .field.weight{ min-width:200px; max-width:260px }
+    .field.weight{ min-width:200px; max-width:240px }
     .field.weight input{ font-weight:700; font-size:18px }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
-    /* Таблица — компактна, ляво подравнена, но колоната за тегло е вдясно */
+    /* Таблица — по-стегната, Дата и Тегло по-близо една до друга */
     table{ width:100%; border-collapse:collapse; table-layout:auto }
     th,td{
-      padding:6px 8px; border-bottom:1px solid #20343a;
+      padding:4px 6px; border-bottom:1px solid #20343a;
       font-size:13px; line-height:1.15; white-space:nowrap;
       text-align:left; vertical-align:middle;
     }
     th{ color:var(--muted); font-weight:600 }
-    th.date,td.date{ width:92px }
-    th.w,td.w{ width:110px; text-align:right }   /* <- дясно подравняване */
-    th.actions,td.actions{ width:130px }
+    th.date,td.date{ width:86px }
+    th.w,td.w{ width:96px; text-align:right }   /* <- дясно подравняване */
+    th.actions,td.actions{ width:126px }
     td.actions{ overflow:visible }
     .wCell{ text-align:right }
     .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
@@ -82,7 +82,10 @@
 
     /* Графика */
     canvas{
-      max-width:100%; height:340px; margin-top:8px;
+      width:100%;               /* фиксирана по CSS; JS ползва DPR скалиране */
+      height:340px;
+      display:block;
+      margin-top:8px;
       background:#0b1215; border:1px solid #1a2a2f; border-radius:8px;
     }
 
@@ -109,8 +112,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=1.33" alt="BT" width="28" height="28"/>
-    <h1>Безопасно Тегло — Тракер <span class="ver">v1.33</span></h1>
+    <img src="assets/icons/icon-192.png?v=1.34" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v1.34</span></h1>
   </header>
 
   <main>
@@ -131,7 +134,6 @@
         <div class="field weight">
           <label for="weight">Тегло (kg)</label>
           <input id="weight" type="number" step="0.1" min="0.1" placeholder="напр. 86.4"/>
-          <!-- премахнат преглед под полето -->
         </div>
       </div>
     </section>
@@ -142,9 +144,9 @@
       <div class="row">
         <div>
           <select id="aggSel" title="Агрегация">
-            <option value="daily" selected>Дни (всички)</option>
-            <option value="weekly">Седмици (средно)</option>
-            <option value="monthly">Месеци (средно)</option>
+            <option value="daily" selected>Дни (всички/страница)</option>
+            <option value="weekly">Седмици (средно — всички)</option>
+            <option value="monthly">Месеци (средно — всички)</option>
           </select>
         </div>
       </div>
@@ -503,7 +505,7 @@
       reader.readAsText(f);
     });
 
-    /* ===== Графика (по текущата страница) ===== */
+    /* ===== Графика ===== */
     function weekKey(iso){
       var d=new Date(iso);
       d.setUTCHours(0,0,0,0);
@@ -522,13 +524,27 @@
     aggSel.addEventListener("change", function(){ renderChart(); });
 
     function getChartRawData(){
-      var src = (__currentSlice && __currentSlice.length) ? __currentSlice.slice() : sortDesc(load());
-      return sortAsc(src);
+      var mode = aggSel.value;
+      if(mode==="daily"){
+        // само текущата страница
+        var src = (__currentSlice && __currentSlice.length) ? __currentSlice.slice() : sortDesc(load());
+        return sortAsc(src);
+      }else{
+        // седмици/месеци — всички записи
+        return sortAsc(load());
+      }
     }
 
     function renderChart(){
       var ctx=chart.getContext("2d");
-      var w=(chart.width=chart.clientWidth), h=(chart.height=340);
+      // стабилни размери: CSS width/height -> чертаем в CSS px, скалираме за DPR
+      var rect = chart.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      chart.width  = Math.round(rect.width * dpr);
+      chart.height = Math.round(340 * dpr);
+      ctx.setTransform(dpr,0,0,dpr,0,0); // скалиране
+      var w = rect.width, h = 340;
+
       ctx.clearRect(0,0,w,h);
 
       var raw=getChartRawData();
@@ -537,10 +553,10 @@
         ctx.fillText("Няма данни",10,26); return;
       }
 
-      var pts=[];
-      if(aggSel.value==="daily"){
+      var pts=[], mode=aggSel.value;
+      if(mode==="daily"){
         pts=raw.map(function(r){ return {x:r.date,y:r.weight,label:isoToBG_YY(r.date)}; });
-      }else if(aggSel.value==="weekly"){
+      }else if(mode==="weekly"){
         var wm=new Map();
         raw.forEach(function(r){ var k=weekKey(r.date); var arr=wm.get(k); if(!arr){arr=[]; wm.set(k,arr);} arr.push(r.weight); });
         wm.forEach(function(a,k){ var s=0; for(var i=0;i<a.length;i++) s+=a[i]; pts.push({x:k,y:s/a.length,label:labelWeek(k)}); });
@@ -575,12 +591,12 @@
       for(var i=0;i<n;i++){ var p=pts[i], x=X(i), y=Y(p.y); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
       ctx.stroke();
 
-      // мин/макс – по намален размер
+      // мин/макс
       ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle"; ctx.font="700 var(--chart-values) system-ui";
       ctx.fillText(String(max.toFixed(1)),10,Y(max));
       ctx.fillText(String(min.toFixed(1)),10,Y(min));
 
-      // вертикални етикети — малко по-малки от 1.32
+      // вертикални етикети
       var maxLabels=Math.min(16,n), step=Math.max(1,Math.floor(n/maxLabels));
       ctx.fillStyle="#e7faf4"; ctx.font="700 var(--chart-label) system-ui";
       for(var j=0;j<n;j+=step){
@@ -598,6 +614,8 @@
       prefillWeight(currentISO);
       renderTable();
       renderChart();
+      // рескейл при resize за стабилна ширина
+      window.addEventListener("resize", function(){ renderChart(); }, {passive:true});
     }
     initialRender();
   </script>
