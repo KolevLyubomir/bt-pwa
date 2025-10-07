@@ -3,17 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Безопасно Тегло — v31b</title>
+  <title>Безопасно Тегло — v31c</title>
 
-  <!-- ако имаш manifest/sw.js – остави си твоите; query версията само помага срещу кеш -->
-  <link rel="manifest" href="manifest.webmanifest?v=31b"/>
-  <link rel="icon" href="assets/icons/icon-192.png?v=31b"/>
+  <!-- ако ползваш PWA: остави си manifest/sw; версията в query помага срещу кеш -->
+  <link rel="manifest" href="manifest.webmanifest?v=31c"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=31c"/>
   <meta name="theme-color" content="#0b1215"/>
 
   <style>
     :root{
       --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
       --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
+      --chart-label:14px;    /* дати под графиката */
+      --chart-values:15px;   /* стойности kg (min/max) */
     }
     *{ box-sizing:border-box }
     html,body{ height:100% }
@@ -30,7 +32,6 @@
 
     main{ max-width:980px; margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
-
     .row{ display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end }
     label{ font-size:12px; color:var(--muted); display:block; margin-bottom:6px }
     input,select,button{
@@ -39,7 +40,6 @@
     }
     button{ cursor:pointer }
     button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
-
     .field{ display:flex; flex-direction:column }
     .field.date{ min-width:220px; max-width:280px }
     .field.weight{ min-width:160px; max-width:220px }
@@ -58,7 +58,6 @@
     th.w,td.w{ width:92px }
     th.actions,td.actions{ width:130px }
     td.actions{ overflow:visible }
-
     .actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
     .icon{
       display:inline-flex; align-items:center; justify-content:center;
@@ -76,8 +75,13 @@
     .pager button{ background:#0d171b; border:1px solid #2a3e41; color:var(--text); padding:4px 8px; border-radius:8px; font-size:13px }
     .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
 
-    canvas{ max-width:100%; height:320px; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
+    /* Графика */
+    canvas{
+      max-width:100%; height:320px; margin-top:8px;
+      background:#0b1215; border:1px solid #1a2a2f; border-radius:8px;
+    }
 
+    /* Календар */
     .date-wrap{ position:relative }
     #dateText[readonly]{ cursor:pointer }
     .cal{
@@ -100,8 +104,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=31b" alt="BT" width="28" height="28"/>
-    <h1>Безопасно Тегло — Тракер <span class="ver">v31b</span></h1>
+    <img src="assets/icons/icon-192.png?v=31c" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v31c</span></h1>
   </header>
 
   <main>
@@ -131,8 +135,8 @@
       <h2 style="margin:0 0 10px">Графика</h2>
       <div class="row">
         <div>
-          <label for="aggSel">Агрегация</label>
-          <select id="aggSel">
+          <!-- махнат текстовият label; оставяме само селекта -->
+          <select id="aggSel" title="Агрегация">
             <option value="daily" selected>Дни (всички)</option>
             <option value="weekly">Седмици (средно)</option>
             <option value="monthly">Месеци (средно)</option>
@@ -194,11 +198,11 @@
   <script>
     "use strict";
 
-    /* =================== Дата/формати =================== */
+    /* ============ Дата/формати ============ */
     function todayISO(){
       var d = new Date();
       d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
-      return d.toISOString().slice(0,10); // YYYY-MM-DD
+      return d.toISOString().slice(0,10);
     }
     var TODAY = todayISO();
 
@@ -208,43 +212,33 @@
       return d+"."+m+"."+y.slice(2);
     }
     function bgToISO_any(bg){
-      // приема ДД.ММ.ГГ или ДД.ММ.ГГГГ
       var m2 = bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/);
-      if(m2){
-        var d=m2[1], mon=m2[2], yy=m2[3];
-        return "20"+yy+"-"+mon+"-"+d;
-      }
+      if(m2){ return "20"+m2[3]+"-"+m2[2]+"-"+m2[1]; }
       var m4 = bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-      if(m4){
-        var d4=m4[1], mon4=m4[2], yyyy=m4[3];
-        return yyyy+"-"+mon4+"-"+d4;
-      }
+      if(m4){ return m4[3]+"-"+m4[2]+"-"+m4[1]; }
       return "";
     }
 
-    /* =================== Storage =================== */
+    /* ============ Storage ============ */
     var KEY="bt-progress";
     function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(e){ return []; } }
     function save(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
     function sortDesc(a){ return a.slice().sort(function(x,y){ return y.date.localeCompare(x.date); }); }
     function sortAsc(a){ return a.slice().sort(function(x,y){ return x.date.localeCompare(y.date); }); }
 
-    // миграция: ако има записи с дата не в ISO, конвертирай
     function migrateDates(){
       var arr = load(); var changed=false;
       for(var i=0;i<arr.length;i++){
         var r=arr[i];
         if(typeof r.date==="string" && !/^\d{4}-\d{2}-\d{2}$/.test(r.date)){
           var iso = bgToISO_any(r.date);
-          if(iso){
-            r.date = iso; changed=true;
-          }
+          if(iso){ r.date=iso; changed=true; }
         }
       }
       if(changed) save(arr);
     }
 
-    /* =================== DOM =================== */
+    /* ============ DOM ============ */
     var dateText = document.getElementById("dateText");
     var calEl    = document.getElementById("cal");
     var weight   = document.getElementById("weight");
@@ -255,7 +249,7 @@
     var chart    = document.getElementById("chart");
     var pageSizeSel = document.getElementById("pageSize");
 
-    /* =================== Текуща дата + предпопълване =================== */
+    /* ============ Текуща дата + предпопълване ============ */
     var currentISO = localStorage.getItem("bt-last-date") || TODAY;
     if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO = TODAY;
     dateText.value = isoToBG_YY(currentISO);
@@ -269,7 +263,7 @@
     }
     prefillWeight(currentISO);
 
-    /* =================== Календар =================== */
+    /* ============ Календар ============ */
     var calYear=+currentISO.slice(0,4), calMonth=+currentISO.slice(5,7);
     function ymd(y,m,d){
       return String(y).padStart(4,"0")+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0");
@@ -299,7 +293,6 @@
     }
     function showCalendar(){ renderCalendar(); calEl.classList.add("show"); }
     function hideCalendar(){ calEl.classList.remove("show"); }
-
     dateText.addEventListener("click", function(e){
       e.stopPropagation(); calYear=+currentISO.slice(0,4); calMonth=+currentISO.slice(5,7); showCalendar();
     });
@@ -320,7 +313,7 @@
       if(!calEl.contains(e.target) && e.target!==dateText) hideCalendar();
     });
 
-    /* =================== Добавяне с ±5% защита =================== */
+    /* ============ Добавяне / редакция с ±5% защита ============ */
     addBtn.addEventListener("click", function(){
       var iso=currentISO;
       if(iso>TODAY){ alert("Датата е в бъдещето."); return; }
@@ -349,7 +342,7 @@
       renderTable(); renderChart();
     });
 
-    /* =================== Пагинация =================== */
+    /* ============ Пагинация ============ */
     var PAGE_SIZES=[7,14,28,84,112,168,336,"all"];
     function getPS(){
       var v=localStorage.getItem("bt-page-size");
@@ -369,10 +362,26 @@
       pageSize=(v==="all")?"all":Number(v);
       setPS(v);
       currentPage=1;
-      renderTable();
+      renderTable(); renderChart();     // <- графиката да следва страницата
     });
 
-    /* =================== Таблица =================== */
+    /* текущият срез (записите в тази страница) – ползва се от графиката */
+    var __currentSlice = [];
+
+    function computePageSlice(){
+      var all = sortDesc(load());
+      if(pageSize==="all"){
+        __currentSlice = all.slice();
+        return;
+      }
+      var eff = pageSize;
+      var pages = Math.max(1, Math.ceil(all.length / eff));
+      if(currentPage > pages) currentPage = pages;
+      var start = (currentPage - 1) * eff;
+      __currentSlice = all.slice(start, start + eff);
+    }
+
+    /* ============ Таблица ============ */
     function renderTable(){
       var all=sortDesc(load()), total=all.length;
       var eff=(pageSize==="all")?(total||1):pageSize;
@@ -381,6 +390,7 @@
 
       var start=(currentPage-1)*eff;
       var slice=all.slice(start, start+eff);
+      __currentSlice = slice.slice(); // <- публикуваме среза за графиката
 
       tb.innerHTML="";
       slice.forEach(function(r){
@@ -428,7 +438,7 @@
         });
       });
 
-      // Пейджър (прозорец 5)
+      // Пейджър (прозорец 5) — стрелките и номерата вече ще обновяват и графиката
       pager.innerHTML="";
       var from=total?start+1:0, to=Math.min(start+eff,total);
       var info=document.createElement("span");
@@ -442,12 +452,16 @@
         var btn=document.createElement("button");
         btn.textContent=String(n);
         if(active) btn.className="active";
-        btn.addEventListener("click", function(){ currentPage=n; renderTable(); });
+        btn.addEventListener("click", function(){
+          currentPage=n; renderTable(); renderChart();
+        });
         return btn;
       }
       if(pagesTotal>1 && currentPage>1){
         var prev=document.createElement("button"); prev.textContent="←";
-        prev.addEventListener("click", function(){ currentPage=Math.max(1,currentPage-1); renderTable(); });
+        prev.addEventListener("click", function(){
+          currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();
+        });
         frag.appendChild(prev);
       }
       if(pagesTotal<=5){
@@ -460,13 +474,15 @@
       }
       if(pagesTotal>1 && currentPage<pagesTotal){
         var next=document.createElement("button"); next.textContent="→";
-        next.addEventListener("click", function(){ currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); });
+        next.addEventListener("click", function(){
+          currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();
+        });
         frag.appendChild(next);
       }
       pager.appendChild(frag);
     }
 
-    /* =================== Експорт / Импорт =================== */
+    /* ============ Експорт / Импорт ============ */
     document.getElementById("exportBtn").addEventListener("click", function(){
       var data=load();
       var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
@@ -487,10 +503,8 @@
           if(!Array.isArray(arr)) throw 0;
           var cleaned=[];
           arr.forEach(function(r){
-            if(
-              r && typeof r.date==="string" && /^\d{4}-\d{2}-\d{2}$/.test(r.date) &&
-              typeof r.weight==="number" && r.weight>0 && r.date<=todayISO()
-            ){
+            if(r && typeof r.date==="string" && /^\d{4}-\d{2}-\d{2}$/.test(r.date) &&
+               typeof r.weight==="number" && r.weight>0 && r.date<=todayISO()){
               cleaned.push({date:r.date, weight:r.weight});
             }
           });
@@ -501,7 +515,7 @@
       reader.readAsText(f);
     });
 
-    /* =================== Графика =================== */
+    /* ============ Графика (по текущата страница) ============ */
     function weekKey(iso){
       var d=new Date(iso);
       d.setUTCHours(0,0,0,0);
@@ -517,22 +531,29 @@
     function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
     function labelMonth(k){ var s=k.split("-");  return s[1]+"."+String(s[0]).slice(2); }
 
-    var chartEl=document.getElementById("chart");
-    var aggSelEl=document.getElementById("aggSel");
-    aggSelEl.addEventListener("change", renderChart);
+    aggSel.addEventListener("change", function(){ renderChart(); });
+
+    function getChartRawData(){
+      // взимаме само текущата страница; ако е празно (няма записи) – връщаме всички
+      var src = (__currentSlice && __currentSlice.length) ? __currentSlice.slice() : sortDesc(load());
+      return sortAsc(src); // графиката работи възходящо
+    }
 
     function renderChart(){
-      var ctx=chartEl.getContext("2d");
-      var w=(chartEl.width=chartEl.clientWidth), h=(chartEl.height=320);
+      var ctx=chart.getContext("2d");
+      var w=(chart.width=chart.clientWidth), h=(chart.height=320);
       ctx.clearRect(0,0,w,h);
 
-      var raw=sortAsc(load());
-      if(!raw.length){ ctx.fillStyle="#9fb4ad"; ctx.fillText("Няма данни",10,22); return; }
+      var raw=getChartRawData();
+      if(!raw.length){
+        ctx.fillStyle="#9fb4ad"; ctx.font="600 var(--chart-values) system-ui";
+        ctx.fillText("Няма данни",10,22); return;
+      }
 
       var pts=[];
-      if(aggSelEl.value==="daily"){
+      if(aggSel.value==="daily"){
         pts=raw.map(function(r){ return {x:r.date,y:r.weight,label:isoToBG_YY(r.date)}; });
-      }else if(aggSelEl.value==="weekly"){
+      }else if(aggSel.value==="weekly"){
         var wm=new Map();
         raw.forEach(function(r){ var k=weekKey(r.date); var arr=wm.get(k); if(!arr){arr=[]; wm.set(k,arr);} arr.push(r.weight); });
         wm.forEach(function(a,k){ var s=0; for(var i=0;i<a.length;i++) s+=a[i]; pts.push({x:k,y:s/a.length,label:labelWeek(k)}); });
@@ -544,10 +565,13 @@
       pts.sort(function(a,b){ return a.x.localeCompare(b.x); });
 
       var vals=pts.map(function(p){ return p.y; }).filter(function(n){ return typeof n==="number"; });
-      if(vals.length<2){ ctx.fillStyle="#9fb4ad"; ctx.fillText("Добави поне 2 точки",10,22); return; }
+      if(vals.length<2){
+        ctx.fillStyle="#9fb4ad"; ctx.font="600 var(--chart-values) system-ui";
+        ctx.fillText("Добави поне 2 точки",10,22); return;
+      }
 
       var min=Math.min.apply(null,vals), max=Math.max.apply(null,vals);
-      var padL=36, padR=14, padT=12, padB=72, n=pts.length;
+      var padL=40, padR=18, padT=14, padB=86, n=pts.length;
       function X(i){ return padL+(w-padL-padR)*(n<=1?0:i/(n-1)); }
       function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
@@ -564,24 +588,26 @@
       for(var i=0;i<n;i++){ var p=pts[i], x=X(i), y=Y(p.y); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
       ctx.stroke();
 
-      // мин/макс
-      ctx.fillStyle="#9fb4ad"; ctx.textBaseline="middle";
-      ctx.fillText(String(max.toFixed(1)),6,Y(max));
-      ctx.fillText(String(min.toFixed(1)),6,Y(min));
+      // мин/макс (по-голям шрифт)
+      ctx.fillStyle="#9fb4ad"; ctx.textBaseline="middle"; ctx.font="600 var(--chart-values) system-ui";
+      ctx.fillText(String(max.toFixed(1)),8,Y(max));
+      ctx.fillText(String(min.toFixed(1)),8,Y(min));
 
-      // вертикални етикети (дозирани)
-      var maxLabels=Math.min(14,n), step=Math.max(1,Math.floor(n/maxLabels));
-      ctx.fillStyle="#9fb4ad";
+      // вертикални етикети (по-големи)
+      var maxLabels=Math.min(16,n), step=Math.max(1,Math.floor(n/maxLabels));
+      ctx.fillStyle="#cde3dc"; ctx.font="600 var(--chart-label) system-ui";
       for(var j=0;j<n;j+=step){
         var pe=pts[j], x0=X(j), y0=h-padB;
         ctx.beginPath(); ctx.arc(x0,y0,2,0,Math.PI*2); ctx.fill();
-        ctx.save(); ctx.translate(x0,y0+54); ctx.rotate(-Math.PI/2); ctx.fillText(pe.label,0,0); ctx.restore();
+        ctx.save(); ctx.translate(x0,y0+60); ctx.rotate(-Math.PI/2);
+        ctx.fillText(pe.label,0,0);
+        ctx.restore();
       }
     }
 
-    /* =================== Init =================== */
+    /* ============ Init ============ */
     function initialRender(){
-      migrateDates();                   // <- миграция на стари дати
+      migrateDates();
       prefillWeight(currentISO);
       renderTable();
       renderChart();
