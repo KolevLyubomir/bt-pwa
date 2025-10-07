@@ -3,19 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Безопасно Тегло — v1.34</title>
+  <title>Безопасно Тегло — v1.35</title>
 
-  <link rel="manifest" href="manifest.webmanifest?v=1.34"/>
-  <link rel="icon" href="assets/icons/icon-192.png?v=1.34"/>
+  <link rel="manifest" href="manifest.webmanifest?v=1.35"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=1.35"/>
   <meta name="theme-color" content="#0b1215"/>
 
   <style>
     :root{
       --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
       --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
-      /* малко по-едри от v1.33 */
-      --chart-label:17px;   /* дати под графиката */
-      --chart-values:19px;  /* числа по y (min/max) */
+      /* още една идея по-едри */
+      --chart-label:18px;   /* дати под графиката */
+      --chart-values:20px;  /* числа по y (min/max) */
     }
     *{ box-sizing:border-box }
     html,body{ height:100% }
@@ -48,7 +48,7 @@
     .field.weight input{ font-weight:700; font-size:18px }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
-    /* Таблица — по-стегната, Дата и Тегло по-близо една до друга */
+    /* Таблица — по-стегната: Тегло близо до Дата, Действия по-далеч */
     table{ width:100%; border-collapse:collapse; table-layout:auto }
     th,td{
       padding:4px 6px; border-bottom:1px solid #20343a;
@@ -57,9 +57,9 @@
     }
     th{ color:var(--muted); font-weight:600 }
     th.date,td.date{ width:86px }
-    th.w,td.w{ width:96px; text-align:right }   /* <- дясно подравняване */
-    th.actions,td.actions{ width:126px }
-    td.actions{ overflow:visible }
+    th.w,td.w{ width:86px; text-align:right }         /* по-тясно => по-близо до Дата */
+    th.actions,td.actions{ width:170px }              /* по-широко => по-далеч от Тегло */
+    td.actions{ overflow:visible; padding-left:16px } /* визуално отдалечаване */
     .wCell{ text-align:right }
     .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
 
@@ -82,10 +82,7 @@
 
     /* Графика */
     canvas{
-      width:100%;               /* фиксирана по CSS; JS ползва DPR скалиране */
-      height:340px;
-      display:block;
-      margin-top:8px;
+      width:100%; height:340px; display:block; margin-top:8px;
       background:#0b1215; border:1px solid #1a2a2f; border-radius:8px;
     }
 
@@ -112,8 +109,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=1.34" alt="BT" width="28" height="28"/>
-    <h1>Безопасно Тегло — Тракер <span class="ver">v1.34</span></h1>
+    <img src="assets/icons/icon-192.png?v=1.35" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v1.35</span></h1>
   </header>
 
   <main>
@@ -187,8 +184,10 @@
         </div>
       </div>
 
+      <!-- ТОП пейджинг + топ заглавия -->
+      <div class="pager" id="pagerTop"></div>
       <table id="tbl">
-        <thead>
+        <thead id="theadTop">
           <tr>
             <th class="date">Дата</th>
             <th class="w">Тегло (kg)</th>
@@ -196,9 +195,16 @@
           </tr>
         </thead>
         <tbody></tbody>
+        <tfoot id="tfootBottom">
+          <tr>
+            <th class="date">Дата</th>
+            <th class="w">Тегло (kg)</th>
+            <th class="actions">Действия</th>
+          </tr>
+        </tfoot>
       </table>
-
-      <div class="pager" id="pager"></div>
+      <!-- ДОЛЕН пейджинг -->
+      <div class="pager" id="pagerBottom"></div>
     </section>
   </main>
 
@@ -251,7 +257,8 @@
     var weight   = document.getElementById("weight");
     var addBtn   = document.getElementById("addBtn");
     var tb       = document.querySelector("#tbl tbody");
-    var pager    = document.getElementById("pager");
+    var pagerTop    = document.getElementById("pagerTop");
+    var pagerBottom = document.getElementById("pagerBottom");
     var aggSel   = document.getElementById("aggSel");
     var chart    = document.getElementById("chart");
     var pageSizeSel = document.getElementById("pageSize");
@@ -370,6 +377,51 @@
 
     var __currentSlice = [];
 
+    function buildPager(container, total, eff){
+      container.innerHTML="";
+      var start=(currentPage-1)*eff;
+      var from=total?start+1:0, to=Math.min(start+eff,total);
+      var info=document.createElement("span");
+      info.className="info"; info.textContent=from+"-"+to+" от "+total;
+      container.appendChild(info);
+
+      var pagesTotal=Math.max(1, Math.ceil(total/eff));
+      var frag=document.createDocumentFragment();
+
+      function pageBtn(n,active){
+        var btn=document.createElement("button");
+        btn.textContent=String(n);
+        if(active) btn.className="active";
+        btn.addEventListener("click", function(){
+          currentPage=n; renderTable(); renderChart();
+        });
+        return btn;
+      }
+      if(pagesTotal>1 && currentPage>1){
+        var prev=document.createElement("button"); prev.textContent="←";
+        prev.addEventListener("click", function(){
+          currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();
+        });
+        frag.appendChild(prev);
+      }
+      if(pagesTotal<=5){
+        for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage));
+      }else{
+        var startPage=currentPage-2;
+        if(startPage<1) startPage=1;
+        if(startPage+4>pagesTotal) startPage=pagesTotal-4;
+        for(var pp=startPage; pp<=startPage+4; pp++) frag.appendChild(pageBtn(pp, pp===currentPage));
+      }
+      if(pagesTotal>1 && currentPage<pagesTotal){
+        var next=document.createElement("button"); next.textContent="→";
+        next.addEventListener("click", function(){
+          currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();
+        });
+        frag.appendChild(next);
+      }
+      container.appendChild(frag);
+    }
+
     /* ===== Таблица ===== */
     function renderTable(){
       var all=sortDesc(load()), total=all.length;
@@ -381,6 +433,10 @@
       var slice=all.slice(start, start+eff);
       __currentSlice = slice.slice();
 
+      // TOP pager
+      buildPager(pagerTop, total, eff);
+
+      // rows
       tb.innerHTML="";
       slice.forEach(function(r){
         var tr=document.createElement("tr");
@@ -428,48 +484,8 @@
         });
       });
 
-      // Пейджър (прозорец 5)
-      pager.innerHTML="";
-      var from=total?start+1:0, to=Math.min(start+eff,total);
-      var info=document.createElement("span");
-      info.className="info"; info.textContent=from+"-"+to+" от "+total;
-      pager.appendChild(info);
-
-      var pagesTotal=Math.max(1, Math.ceil(total/eff));
-      var frag=document.createDocumentFragment();
-
-      function pageBtn(n,active){
-        var btn=document.createElement("button");
-        btn.textContent=String(n);
-        if(active) btn.className="active";
-        btn.addEventListener("click", function(){
-          currentPage=n; renderTable(); renderChart();
-        });
-        return btn;
-      }
-      if(pagesTotal>1 && currentPage>1){
-        var prev=document.createElement("button"); prev.textContent="←";
-        prev.addEventListener("click", function(){
-          currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();
-        });
-        frag.appendChild(prev);
-      }
-      if(pagesTotal<=5){
-        for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage));
-      }else{
-        var startPage=currentPage-2;
-        if(startPage<1) startPage=1;
-        if(startPage+4>pagesTotal) startPage=pagesTotal-4;
-        for(var pp=startPage; pp<=startPage+4; pp++) frag.appendChild(pageBtn(pp, pp===currentPage));
-      }
-      if(pagesTotal>1 && currentPage<pagesTotal){
-        var next=document.createElement("button"); next.textContent="→";
-        next.addEventListener("click", function(){
-          currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();
-        });
-        frag.appendChild(next);
-      }
-      pager.appendChild(frag);
+      // BOTTOM pager
+      buildPager(pagerBottom, total, eff);
     }
 
     /* ===== Експорт / Импорт ===== */
@@ -526,30 +542,28 @@
     function getChartRawData(){
       var mode = aggSel.value;
       if(mode==="daily"){
-        // само текущата страница
         var src = (__currentSlice && __currentSlice.length) ? __currentSlice.slice() : sortDesc(load());
         return sortAsc(src);
       }else{
-        // седмици/месеци — всички записи
-        return sortAsc(load());
+        return sortAsc(load()); // за седмици/месеци — всички записи
       }
     }
 
     function renderChart(){
       var ctx=chart.getContext("2d");
-      // стабилни размери: CSS width/height -> чертаем в CSS px, скалираме за DPR
+      // стабилни размери (без „скъсяване“ при прелистване)
       var rect = chart.getBoundingClientRect();
       var dpr = window.devicePixelRatio || 1;
       chart.width  = Math.round(rect.width * dpr);
       chart.height = Math.round(340 * dpr);
-      ctx.setTransform(dpr,0,0,dpr,0,0); // скалиране
+      ctx.setTransform(dpr,0,0,dpr,0,0);
       var w = rect.width, h = 340;
 
       ctx.clearRect(0,0,w,h);
 
       var raw=getChartRawData();
       if(!raw.length){
-        ctx.fillStyle="#9fb4ad"; ctx.font="600 var(--chart-values) system-ui";
+        ctx.fillStyle="#9fb4ad"; ctx.font="700 var(--chart-values) system-ui";
         ctx.fillText("Няма данни",10,26); return;
       }
 
@@ -569,7 +583,7 @@
 
       var vals=pts.map(function(p){ return p.y; }).filter(function(n){ return typeof n==="number"; });
       if(vals.length<2){
-        ctx.fillStyle="#9fb4ad"; ctx.font="600 var(--chart-values) system-ui";
+        ctx.fillStyle="#9fb4ad"; ctx.font="700 var(--chart-values) system-ui";
         ctx.fillText("Добави поне 2 точки",10,26); return;
       }
 
@@ -591,12 +605,12 @@
       for(var i=0;i<n;i++){ var p=pts[i], x=X(i), y=Y(p.y); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
       ctx.stroke();
 
-      // мин/макс
+      // мин/макс (по-едри)
       ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle"; ctx.font="700 var(--chart-values) system-ui";
       ctx.fillText(String(max.toFixed(1)),10,Y(max));
       ctx.fillText(String(min.toFixed(1)),10,Y(min));
 
-      // вертикални етикети
+      // етикети
       var maxLabels=Math.min(16,n), step=Math.max(1,Math.floor(n/maxLabels));
       ctx.fillStyle="#e7faf4"; ctx.font="700 var(--chart-label) system-ui";
       for(var j=0;j<n;j+=step){
@@ -614,7 +628,6 @@
       prefillWeight(currentISO);
       renderTable();
       renderChart();
-      // рескейл при resize за стабилна ширина
       window.addEventListener("resize", function(){ renderChart(); }, {passive:true});
     }
     initialRender();
