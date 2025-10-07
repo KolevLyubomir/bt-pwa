@@ -2,27 +2,13 @@
 <html lang="bg">
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1"
-  />
-  <title>
-    Безопасно Тегло — v30e
-  </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Безопасно Тегло — v31</title>
 
-  <!-- PWA -->
-  <link
-    rel="manifest"
-    href="manifest.webmanifest?v=30e"
-  />
-  <link
-    rel="icon"
-    href="assets/icons/icon-192.png?v=30e"
-  />
-  <meta
-    name="theme-color"
-    content="#0b1215"
-  />
+  <!-- (по желание остави своя manifest/sw) -->
+  <link rel="manifest" href="manifest.webmanifest?v=31"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=31"/>
+  <meta name="theme-color" content="#0b1215"/>
 
   <style>
     :root{
@@ -32,584 +18,196 @@
       --muted:#9fb4ad;
       --accent:#10b981;
       --border:#1e2b30;
-      --has:#c7f5df;
+      --has:#c7f5df;      /* ден с данни в календара */
       --danger:#ef4444;
     }
-
-    *{
-      box-sizing:border-box;
-    }
-
-    html,
-    body{
-      height:100%;
-    }
-
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
     body{
       margin:0;
       background:var(--bg);
       color:var(--text);
-      font-family:
-        system-ui,
-        -apple-system,
-        Segoe UI,
-        Roboto,
-        Ubuntu,
-        Helvetica,
-        Arial,
-        "Noto Sans",
-        sans-serif;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif;
     }
 
     header{
-      position:sticky;
-      top:0;
-      z-index:5;
-      background:#071013cc;
-      backdrop-filter:blur(6px);
+      position:sticky; top:0; z-index:5;
+      background:#071013cc; backdrop-filter:blur(6px);
       border-bottom:1px solid var(--border);
       padding:12px 16px;
-      display:flex;
-      align-items:center;
-      gap:10px;
+      display:flex; align-items:center; gap:10px;
     }
-
-    header h1{
-      margin:0;
-      font-size:18px;
-      font-weight:700;
-    }
-
-    header .ver{
-      background:#22c55e;
-      color:#06241b;
-      border-radius:10px;
-      padding:2px 8px;
-      margin-left:6px;
-    }
+    header h1{ margin:0; font-size:18px; font-weight:700 }
+    header .ver{ background:#22c55e; color:#06241b; border-radius:10px; padding:2px 8px; margin-left:6px }
 
     main{
-      max-width:980px;
-      margin:20px auto;
-      padding:0 16px 40px;
-      display:grid;
-      gap:16px;
-      align-content:start;
+      max-width:980px; margin:20px auto; padding:0 16px 40px;
+      display:grid; gap:16px; align-content:start;
     }
+    .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:16px;
+    .row{ display:flex; gap:8px; flex-wrap:wrap; align-items:flex-end }
+    label{ font-size:12px; color:var(--muted); display:block; margin-bottom:6px }
+    input,select,button{
+      background:#0d171b; border:1px solid #254046; color:var(--text);
+      border-radius:10px; padding:8px 10px; font-size:14px;
     }
+    button{ cursor:pointer }
+    button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
 
-    .row{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:flex-end;
+    .field{ display:flex; flex-direction:column }
+    .field.date{ min-width:220px; max-width:280px }
+    .field.weight{ min-width:160px; max-width:220px }
+    .field.weight input{ font-weight:700; font-size:18px }
+    .field.weight input:focus{ outline:2px solid #2b6e66 }
+
+    /* Таблица — компактна, ляво подравнена */
+    table{ width:100%; border-collapse:collapse; table-layout:auto }
+    th,td{
+      padding:6px 8px; border-bottom:1px solid #20343a;
+      font-size:13px; line-height:1.15; white-space:nowrap;
+      text-align:left; vertical-align:middle;
     }
+    th{ color:var(--muted); font-weight:600 }
+    th.date,td.date{ width:92px }
+    th.w,td.w{ width:92px }
+    th.actions,td.actions{ width:130px }
+    td.actions{ overflow:visible }
 
-    label{
-      font-size:12px;
-      color:var(--muted);
-      display:block;
-      margin-bottom:6px;
-    }
-
-    input,
-    select,
-    button{
-      background:#0d171b;
-      border:1px solid #254046;
-      color:var(--text);
-      border-radius:10px;
-      padding:8px 10px;
-      font-size:14px;
-    }
-
-    button{
-      cursor:pointer;
-    }
-
-    button.primary{
-      background:var(--accent);
-      border-color:var(--accent);
-      color:#06241b;
-      font-weight:700;
-    }
-
-    .field{
-      display:flex;
-      flex-direction:column;
-    }
-
-    .field.date{
-      min-width:220px;
-      max-width:280px;
-    }
-
-    .field.weight{
-      min-width:140px;
-      max-width:200px;
-    }
-
-    /* ===== Таблица ===== */
-    table{
-      width:100%;
-      border-collapse:collapse;
-      table-layout:auto;
-    }
-
-    th,
-    td{
-      padding:6px 8px;
-      border-bottom:1px solid #20343a;
-      font-size:13px;
-      line-height:1.15;
-      white-space:nowrap;
-      text-align:left;      /* изрично вляво */
-      vertical-align:middle;
-    }
-
-    th{
-      color:var(--muted);
-      font-weight:600;
-    }
-
-    th.date,
-    td.date{
-      width:92px;
-    }
-
-    th.w,
-    td.w{
-      width:92px;
-    }
-
-    th.actions,
-    td.actions{
-      width:130px;
-    }
-
-    td.actions{
-      overflow:visible;
-    }
-
-    .actions{
-      display:inline-flex;
-      gap:6px;
-      align-items:center;
-      justify-content:flex-start;
-    }
-
+    .actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
     .icon{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      border:1px solid #2a3e41;
-      background:#0d171b;
-      border-radius:8px;
-      padding:4px 6px;
-      color:var(--text);
+      display:inline-flex; align-items:center; justify-content:center;
+      border:1px solid #2a3e41; background:#0d171b;
+      border-radius:8px; padding:4px 6px; color:var(--text);
     }
+    .icon svg{ width:16px; height:16px; stroke:currentColor }
+    .icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
 
-    .icon svg{
-      width:16px;
-      height:16px;
-      stroke:currentColor;
-    }
-
-    .icon.danger{
-      border-color:#3a2222;
-      background:#161112;
-      color:#ffd5d5;
-    }
-
-    /* ===== Бар над таблицата ===== */
+    /* Лента над таблицата */
     .records-bar{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      justify-content:space-between;
-      margin:8px 0;
-      flex-wrap:wrap;
+      display:flex; align-items:center; gap:8px; justify-content:space-between;
+      margin:8px 0; flex-wrap:wrap;
     }
+    .left-group,.right-group{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
 
-    .left-group{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    .right-group{
-      display:flex;
-      align-items:center;
-      gap:8px;
-      flex-wrap:wrap;
-    }
-
-    /* ===== Пагинация (вляво) ===== */
+    /* Пагинация — вляво, прозорец от 5 */
     .pager{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-      align-items:center;
-      justify-content:flex-start; /* вляво */
-      margin-top:8px;
+      display:flex; gap:6px; flex-wrap:wrap; align-items:center;
+      justify-content:flex-start; margin-top:8px;
     }
-
-    .pager .info{
-      color:var(--muted);
-      font-size:12px;
-      margin:0 8px 0 0;
-    }
-
+    .pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
     .pager button{
-      background:#0d171b;
-      border:1px solid #2a3e41;
-      color:var(--text);
-      padding:4px 8px;
-      border-radius:8px;
-      font-size:13px;
+      background:#0d171b; border:1px solid #2a3e41; color:var(--text);
+      padding:4px 8px; border-radius:8px; font-size:13px;
     }
+    .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
 
-    .pager button.active{
-      background:var(--accent);
-      color:#06241b;
-      border-color:var(--accent);
-    }
-
-    /* ===== Графика ===== */
+    /* Графика */
     canvas{
-      max-width:100%;
-      height:320px;
-      margin-top:8px;
-      background:#0b1215;
-      border:1px solid #1a2a2f;
-      border-radius:8px;
+      max-width:100%; height:320px; margin-top:8px;
+      background:#0b1215; border:1px solid #1a2a2f; border-radius:8px;
     }
 
-    /* ===== Мини календар (7 фиксирани колони) ===== */
-    .date-wrap{
-      position:relative;
-    }
-
-    #dateText[readonly]{
-      cursor:pointer;
-    }
+    /* Календар */
+    .date-wrap{ position:relative }
+    #dateText[readonly]{ cursor:pointer }
 
     .cal{
-      position:absolute;
-      z-index:10;
-      top:42px;
-      left:0;
-      background:#0e1518;
-      border:1px solid #20343a;
-      border-radius:12px;
+      position:absolute; z-index:10; top:42px; left:0;
+      background:#0e1518; border:1px solid #20343a; border-radius:12px;
       box-shadow:0 8px 30px rgba(0,0,0,.35);
-      padding:10px;
-      width:auto;
-      display:none;
+      padding:10px; width:auto; display:none;
     }
-
-    .cal.show{
-      display:block;
-    }
-
-    .cal .cal-head{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      margin-bottom:8px;
-      gap:8px;
-    }
-
-    .cal .cal-head button{
-      padding:4px 8px;
-      border-radius:8px;
-    }
-
-    .cal .cal-title{
-      font-weight:700;
-      text-transform:capitalize;
-    }
-
-    .cal-grid{
-      display:grid;
-      grid-template-columns:repeat(7,36px);
-      gap:6px;
-      justify-content:center;
-    }
-
-    .cal .dow{
-      color:var(--muted);
-      font-size:11px;
-      text-align:center;
-      line-height:36px;
-      height:36px;
-    }
-
+    .cal.show{ display:block }
+    .cal .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px }
+    .cal .cal-head button{ padding:4px 8px; border-radius:8px }
+    .cal .cal-title{ font-weight:700; text-transform:capitalize }
+    .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
+    .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
     .cal .day{
-      width:36px;
-      height:36px;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      border-radius:8px;
-      border:1px solid transparent;
+      width:36px; height:36px; display:flex; align-items:center; justify-content:center;
+      border-radius:8px; border:1px solid transparent;
     }
-
-    .cal .day:hover{
-      border-color:#27454a;
-    }
-
-    .cal .day.disabled{
-      opacity:.35;
-      pointer-events:none;
-    }
-
-    .cal .day.has{
-      background:var(--has);
-      color:#092218;
-    }
-
-    .cal .day.today{
-      outline:1px dashed #5b8f98;
-    }
-
-    .cal .day.sel{
-      background:#84e9c2;
-      color:#041915;
-      font-weight:700;
-    }
+    .cal .day:hover{ border-color:#27454a }
+    .cal .day.disabled{ opacity:.35; pointer-events:none }
+    .cal .day.has{ background:var(--has); color:#092218 }
+    .cal .day.today{ outline:1px dashed #5b8f98 }
+    .cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
   </style>
 </head>
-
 <body>
   <header>
-    <img
-      src="assets/icons/icon-192.png?v=30e"
-      alt="BT"
-      width="28"
-      height="28"
-    />
-    <h1>
-      Безопасно Тегло — Тракер
-      <span class="ver">v30e</span>
-    </h1>
+    <img src="assets/icons/icon-192.png?v=31" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v31</span></h1>
   </header>
 
   <main>
-    <!-- ===== Запис (бивш „Нов запис“) ===== -->
+    <!-- Секция: Запис -->
     <section class="card">
-      <h2
-        style="margin:0 0 10px"
-      >
-        Запис
-      </h2>
-
-      <div
-        class="row"
-        style="align-items:flex-start"
-      >
-        <div
-          class="field date"
-        >
-          <label
-            for="dateText"
-          >
-            Дата
-          </label>
-
-          <div
-            class="date-wrap"
-          >
-            <input
-              id="dateText"
-              type="text"
-              readonly
-              placeholder="ДД.ММ.ГГ"
-            />
-
-            <div
-              id="cal"
-              class="cal"
-              role="dialog"
-              aria-label="Календар"
-            >
-            </div>
+      <h2 style="margin:0 0 10px">Запис</h2>
+      <div class="row" style="align-items:flex-start">
+        <div class="field date">
+          <label for="dateText">Дата</label>
+          <div class="date-wrap">
+            <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ"/>
+            <div id="cal" class="cal" role="dialog" aria-label="Календар"></div>
           </div>
-
-          <div
-            style="margin-top:8px"
-          >
-            <button
-              id="addBtn"
-              class="primary"
-              type="button"
-            >
-              Добави
-            </button>
+          <div style="margin-top:8px">
+            <button id="addBtn" class="primary" type="button">Добави</button>
           </div>
         </div>
-
-        <div
-          class="field weight"
-        >
-          <label
-            for="weight"
-          >
-            Тегло (kg)
-          </label>
-
-          <input
-            id="weight"
-            type="number"
-            step="0.1"
-            min="0.1"
-            placeholder="напр. 86.4"
-          />
+        <div class="field weight">
+          <label for="weight">Тегло (kg)</label>
+          <input id="weight" type="number" step="0.1" min="0.1" placeholder="напр. 86.4"/>
         </div>
       </div>
     </section>
 
-    <!-- ===== Графика ===== -->
-    <section
-      class="card"
-    >
-      <h2
-        style="margin:0 0 10px"
-      >
-        Графика
-      </h2>
-
-      <div
-        class="row"
-      >
+    <!-- Секция: Графика -->
+    <section class="card">
+      <h2 style="margin:0 0 10px">Графика</h2>
+      <div class="row">
         <div>
-          <label
-            for="aggSel"
-          >
-            Агрегация
-          </label>
-
-          <select
-            id="aggSel"
-          >
-            <option
-              value="daily"
-              selected
-            >
-              Дни (всички)
-            </option>
-
-            <option
-              value="weekly"
-            >
-              Седмици (средно)
-            </option>
-
-            <option
-              value="monthly"
-            >
-              Месеци (средно)
-            </option>
+          <label for="aggSel">Агрегация</label>
+          <select id="aggSel">
+            <option value="daily" selected>Дни (всички)</option>
+            <option value="weekly">Седмици (средно)</option>
+            <option value="monthly">Месеци (средно)</option>
           </select>
         </div>
       </div>
-
-      <canvas
-        id="chart"
-      >
-      </canvas>
+      <canvas id="chart"></canvas>
     </section>
 
-    <!-- ===== Записи ===== -->
-    <section
-      class="card"
-    >
-      <h2
-        style="margin:0"
-      >
-        Записи
-      </h2>
+    <!-- Секция: Записи -->
+    <section class="card">
+      <h2 style="margin:0">Записи</h2>
 
-      <div
-        class="records-bar"
-      >
-        <div
-          class="left-group"
-        >
-          <label
-            for="pageSize"
-            style="font-size:12px; color:var(--muted)"
-          >
-            На страница:
-          </label>
-
-          <select
-            id="pageSize"
-          >
-            <option value="10">
-              10
-            </option>
-            <option value="20" selected>
-              20
-            </option>
-            <option value="50">
-              50
-            </option>
-            <option value="100">
-              100
-            </option>
-            <option value="all">
-              Всички
-            </option>
+      <div class="records-bar">
+        <div class="left-group">
+          <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
+          <select id="pageSize">
+            <option value="7">7 (1 сед.)</option>
+            <option value="14">14 (2 сед.)</option>
+            <option value="28" selected>28 (~1 мес.)</option>
+            <option value="84">84 (~3 мес.)</option>
+            <option value="112">112 (~4 мес.)</option>
+            <option value="168">168 (~6 мес.)</option>
+            <option value="336">336 (~12 мес.)</option>
+            <option value="all">Всички</option>
           </select>
         </div>
 
-        <div
-          class="right-group"
-        >
-          <button
-            id="exportBtn"
-            class="icon"
-            title="Експорт"
-            aria-label="Експорт"
-            type="button"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke-width="2"
-            >
+        <div class="right-group">
+          <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
               <path d="M12 16V4M12 4l-4 4M12 4l4 4"></path>
               <path d="M4 20h16"></path>
             </svg>
           </button>
-
-          <input
-            id="importFile"
-            type="file"
-            accept="application/json"
-            style="display:none"
-          />
-
-          <button
-            id="importBtn"
-            class="icon"
-            title="Импорт"
-            aria-label="Импорт"
-            type="button"
-          >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke-width="2"
-            >
+          <input id="importFile" type="file" accept="application/json" style="display:none"/>
+          <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
               <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path>
               <path d="M4 4h16"></path>
             </svg>
@@ -617,855 +215,408 @@
         </div>
       </div>
 
-      <table
-        id="tbl"
-      >
+      <table id="tbl">
         <thead>
           <tr>
-            <th class="date">
-              Дата
-            </th>
-            <th class="w">
-              Тегло (kg)
-            </th>
-            <th class="actions">
-              Действия
-            </th>
+            <th class="date">Дата</th>
+            <th class="w">Тегло (kg)</th>
+            <th class="actions">Действия</th>
           </tr>
         </thead>
-
-        <tbody>
-        </tbody>
+        <tbody></tbody>
       </table>
 
-      <div
-        class="pager"
-        id="pager"
-      >
-      </div>
+      <div class="pager" id="pager"></div>
     </section>
   </main>
 
   <script>
-    /* ===== Помощни — дати ===== */
-    function todayISO(){
-      const d = new Date();
-      d.setMinutes(
-        d.getMinutes() - d.getTimezoneOffset()
-      );
-      return d
-        .toISOString()
-        .slice(0, 10);
-    }
+    "use strict";
 
-    const TODAY = todayISO();
+    /* -------- Дати и формат -------- */
+    function todayISO(){
+      var d = new Date();
+      d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+      return d.toISOString().slice(0,10); // YYYY-MM-DD
+    }
+    var TODAY = todayISO();
 
     function isoToBG_YY(iso){
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)){
-        return "";
-      }
-      const [y, m, d] = iso.split("-");
+      if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(iso)) return "";
+      var y = iso.slice(0,4), m = iso.slice(5,7), d = iso.slice(8,10);
       return d + "." + m + "." + y.slice(2);
     }
-
-    /* ===== Локално хранилище ===== */
-    const KEY = "bt-progress";
-
-    function load(){
-      try{
-        return JSON.parse(
-          localStorage.getItem(KEY) || "[]"
-        );
-      }catch{
-        return [];
-      }
+    function bgYYToISO(bg){
+      // ДД.ММ.ГГ → YYYY-MM-DD (при нужда)
+      var m = bg.match(/^(\\d{2})\\.(\\d{2})\\.(\\d{2})$/);
+      if(!m) return "";
+      var d = m[1], mon = m[2], yy = m[3];
+      // хак: година — текущ век (20xx)
+      var yyyy = (yy.length===2?("20"+yy):yy);
+      return yyyy + "-" + mon + "-" + d;
     }
 
-    function save(arr){
-      localStorage.setItem(
-        KEY,
-        JSON.stringify(arr)
-      );
-    }
+    /* -------- Storage -------- */
+    var KEY="bt-progress";
+    function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(e){ return []; } }
+    function save(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
+    function sortDesc(a){ return a.slice().sort(function(x,y){ return y.date.localeCompare(x.date); }); }
+    function sortAsc(a){ return a.slice().sort(function(x,y){ return x.date.localeCompare(y.date); }); }
 
-    function sortDesc(arr){
-      return [...arr].sort(
-        (a, b) => b.date.localeCompare(a.date)
-      );
-    }
+    /* -------- DOM -------- */
+    var dateText = document.getElementById("dateText");
+    var calEl    = document.getElementById("cal");
+    var weight   = document.getElementById("weight");
+    var addBtn   = document.getElementById("addBtn");
+    var tb       = document.querySelector("#tbl tbody");
+    var pager    = document.getElementById("pager");
+    var aggSel   = document.getElementById("aggSel");
+    var chart    = document.getElementById("chart");
+    var pageSizeSel = document.getElementById("pageSize");
 
-    function sortAsc(arr){
-      return [...arr].sort(
-        (a, b) => a.date.localeCompare(b.date)
-      );
-    }
-
-    /* ===== DOM ===== */
-    const dateText     = document.getElementById("dateText");
-    const calEl        = document.getElementById("cal");
-    const weight       = document.getElementById("weight");
-    const addBtn       = document.getElementById("addBtn");
-    const tb           = document.querySelector("#tbl tbody");
-    const pager        = document.getElementById("pager");
-    const aggSel       = document.getElementById("aggSel");
-    const chart        = document.getElementById("chart");
-    const pageSizeSel  = document.getElementById("pageSize");
-
-    /* ===== Текуща дата ===== */
-    let currentISO =
-      localStorage.getItem("bt-last-date") || TODAY;
-
-    if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)){
-      currentISO = TODAY;
-    }
-
+    /* -------- Текуща дата + предпопълване на тегло -------- */
+    var currentISO = localStorage.getItem("bt-last-date") || TODAY;
+    if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(currentISO)) currentISO = TODAY;
     dateText.value = isoToBG_YY(currentISO);
 
-    /* ===== Предпопълване тегло (предходен ден) ===== */
     function prefillWeight(iso){
-      const rec = load().find(
-        (r) => r.date === iso
-      );
-
-      if(rec){
-        weight.value =
-          (typeof rec.weight === "number")
-            ? rec.weight
-            : "";
-        return;
-      }
-
-      const prev = sortDesc(load()).find(
-        (r) => r.date < iso
-      );
-
+      var data = load();
+      var rec = data.find(function(r){ return r.date===iso; });
+      if(rec){ weight.value = (typeof rec.weight==="number")?rec.weight:""; return; }
+      var prev = sortDesc(data).find(function(r){ return r.date<iso; });
       weight.value = prev ? prev.weight : "";
     }
-
     prefillWeight(currentISO);
 
-    /* ===== Мини календар (фиксирани 7 колони) ===== */
-    let calYear  = Number(currentISO.slice(0, 4));
-    let calMonth = Number(currentISO.slice(5, 7)); // 1..12
-
-    function ymd(y, m, d){
-      return (
-        String(y).padStart(4, "0") + "-"
-        + String(m).padStart(2, "0") + "-"
-        + String(d).padStart(2, "0")
-      );
+    /* -------- Календар -------- */
+    var calYear=+currentISO.slice(0,4), calMonth=+currentISO.slice(5,7);
+    function ymd(y,m,d){
+      var yy=String(y).padStart(4,"0");
+      var mm=String(m).padStart(2,"0");
+      var dd=String(d).padStart(2,"0");
+      return yy+"-"+mm+"-"+dd;
     }
-
-    function hasDataMap(){
-      const s = new Set();
-      for(const r of load()){
-        s.add(r.date);
-      }
+    function hasDataSet(){
+      var s=new Set();
+      load().forEach(function(r){ s.add(r.date); });
       return s;
     }
-
     function renderCalendar(){
-      const set        = hasDataMap();
-      const y          = calYear;
-      const m          = calMonth;
-      const first      = new Date(Date.UTC(y, m - 1, 1));
-      const startDow   = (first.getUTCDay() + 6) % 7; /* понеделник=0 */
-      const daysInMonth= new Date(Date.UTC(y, m, 0)).getUTCDate();
-      const title      = new Date(Date.UTC(y, m - 1, 1))
-        .toLocaleDateString(
-          "bg-BG",
-          { year:"numeric", month:"long" }
-        );
-
-      let html = `
-        <div class="cal-head">
-          <button id="calPrev" type="button">←</button>
-          <div class="cal-title">${title}</div>
-          <button id="calNext" type="button">→</button>
-        </div>
-        <div class="cal-grid">
-      `;
-
-      const dows = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
-      html += dows
-        .map((x) => `<div class="dow">${x}</div>`)
-        .join("");
-
-      for(let i=0; i<startDow; i++){
-        html += `<div class="day disabled"></div>`;
+      var set=hasDataSet(), y=calYear, m=calMonth;
+      var first=new Date(Date.UTC(y,m-1,1));
+      var startDow=(first.getUTCDay()+6)%7; // Monday=0
+      var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
+      var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
+      var html="";
+      html+='<div class="cal-head">';
+      html+='<button id="calPrev" type="button">←</button>';
+      html+='<div class="cal-title">'+title+'</div>';
+      html+='<button id="calNext" type="button">→</button>';
+      html+='</div>';
+      html+='<div class="cal-grid">';
+      ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"].forEach(function(x){ html+='<div class="dow">'+x+'</div>'; });
+      for(var i=0;i<startDow;i++) html+='<div class="day disabled"></div>';
+      for(var d=1; d<=daysInMonth; d++){
+        var iso=ymd(y,m,d), future=(iso>TODAY);
+        var cls=["day"];
+        if(iso===currentISO) cls.push("sel");
+        if(iso===TODAY) cls.push("today");
+        if(set.has(iso)) cls.push("has");
+        if(future) cls.push("disabled");
+        html+='<button type="button" class="'+cls.join(" ")+'" data-iso="'+iso+'">'+d+'</button>';
       }
-
-      for(let d=1; d<=daysInMonth; d++){
-        const iso    = ymd(y, m, d);
-        const future = iso > TODAY;
-        const cls    = [
-          "day",
-          (iso === currentISO) ? "sel"   : "",
-          (iso === TODAY)      ? "today" : "",
-          set.has(iso)         ? "has"   : "",
-          future               ? "disabled" : ""
-        ]
-        .filter(Boolean)
-        .join(" ");
-
-        html += `
-          <button
-            type="button"
-            class="${cls}"
-            data-iso="${iso}"
-          >
-            ${d}
-          </button>
-        `;
-      }
-
-      html += `</div>`;
-
-      calEl.innerHTML = html;
+      html+='</div>';
+      calEl.innerHTML=html;
     }
+    function showCalendar(){ renderCalendar(); calEl.classList.add("show"); }
+    function hideCalendar(){ calEl.classList.remove("show"); }
 
-    function showCalendar(){
-      renderCalendar();
-      calEl.classList.add("show");
-    }
-
-    function hideCalendar(){
-      calEl.classList.remove("show");
-    }
-
-    dateText.addEventListener(
-      "click",
-      (e) => {
-        e.stopPropagation();
-        calYear  = +currentISO.slice(0, 4);
-        calMonth = +currentISO.slice(5, 7);
-        showCalendar();
-      }
-    );
-
-    calEl.addEventListener(
-      "click",
-      (e) => {
-        e.stopPropagation();
-        const t = e.target;
-
-        if(t.id === "calPrev"){
-          calMonth--;
-          if(calMonth === 0){
-            calMonth = 12;
-            calYear--;
-          }
-          renderCalendar();
-          return;
-        }
-
-        if(t.id === "calNext"){
-          calMonth++;
-          if(calMonth === 13){
-            calMonth = 1;
-            calYear++;
-          }
-          renderCalendar();
-          return;
-        }
-
-        const btn = t.closest(".day[data-iso]");
-
-        if(btn){
-          const iso = btn.getAttribute("data-iso");
-          if(iso <= TODAY){
-            currentISO = iso;
-            localStorage.setItem("bt-last-date", iso);
-            dateText.value = isoToBG_YY(iso);
-            prefillWeight(iso);
-            hideCalendar();
-          }
+    dateText.addEventListener("click", function(e){
+      e.stopPropagation();
+      calYear=+currentISO.slice(0,4);
+      calMonth=+currentISO.slice(5,7);
+      showCalendar();
+    });
+    calEl.addEventListener("click", function(e){
+      e.stopPropagation();
+      var t=e.target;
+      if(t && t.id==="calPrev"){ calMonth--; if(calMonth===0){calMonth=12; calYear--; } renderCalendar(); return; }
+      if(t && t.id==="calNext"){ calMonth++; if(calMonth===13){calMonth=1; calYear++; } renderCalendar(); return; }
+      var btn = t.closest ? t.closest(".day[data-iso]") : null;
+      if(btn){
+        var iso = btn.getAttribute("data-iso");
+        if(iso<=TODAY){
+          currentISO=iso; localStorage.setItem("bt-last-date",iso);
+          dateText.value=isoToBG_YY(iso); prefillWeight(iso); hideCalendar();
         }
       }
-    );
+    });
+    document.addEventListener("click", function(e){
+      if(!calEl.contains(e.target) && e.target!==dateText) hideCalendar();
+    });
 
-    document.addEventListener(
-      "click",
-      (e) => {
-        if(
-          !calEl.contains(e.target) &&
-          e.target !== dateText
-        ){
-          hideCalendar();
-        }
+    /* -------- Добавяне / редакция с ±5% защита -------- */
+    addBtn.addEventListener("click", function(){
+      var iso=currentISO;
+      if(iso>TODAY){ alert("Датата е в бъдещето."); return; }
+      var w=Number(weight.value);
+      if(!(w>0)){ alert("Въведи тегло > 0."); return; }
+
+      var data=load();
+      var prev=sortDesc(data).find(function(r){ return r.date<iso; });
+      var next=sortAsc(data).find(function(r){ return r.date>iso; });
+
+      var ok=true, msgs=[];
+      if(prev){
+        var minP=prev.weight*0.95, maxP=prev.weight*1.05;
+        if(w<minP||w>maxP){ ok=false; msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg"); }
       }
-    );
-
-    /* ===== Добавяне / защита ±5% спрямо предходен/следващ ===== */
-    addBtn.addEventListener(
-      "click",
-      () => {
-        const iso = currentISO;
-
-        if(iso > TODAY){
-          alert("Датата е в бъдещето.");
-          return;
-        }
-
-        const w = Number(weight.value);
-
-        if(!(w > 0)){
-          alert("Въведи тегло > 0.");
-          return;
-        }
-
-        const data = load();
-
-        const prev = sortDesc(data).find(
-          (r) => r.date < iso
-        );
-
-        const next = sortAsc(data).find(
-          (r) => r.date > iso
-        );
-
-        let ok   = true;
-        const msgs = [];
-
-        if(prev){
-          const min = prev.weight * 0.95;
-          const max = prev.weight * 1.05;
-          if(w < min || w > max){
-            ok = false;
-            msgs.push(
-              `спрямо ${isoToBG_YY(prev.date)}: ${min.toFixed(1)}–${max.toFixed(1)} kg`
-            );
-          }
-        }
-
-        if(next){
-          const min = next.weight * 0.95;
-          const max = next.weight * 1.05;
-          if(w < min || w > max){
-            ok = false;
-            msgs.push(
-              `спрямо ${isoToBG_YY(next.date)}: ${min.toFixed(1)}–${max.toFixed(1)} kg`
-            );
-          }
-        }
-
-        if(!ok){
-          alert(
-            "Извън допустимите граници:\n" + msgs.join("\n")
-          );
-          return;
-        }
-
-        const idx = data.findIndex(
-          (r) => r.date === iso
-        );
-
-        const rec = {
-          date: iso,
-          weight: w
-        };
-
-        if(idx >= 0){
-          data[idx] = rec;
-        }else{
-          data.push(rec);
-        }
-
-        save(data);
-        renderTable();
-        renderChart();
+      if(next){
+        var minN=next.weight*0.95, maxN=next.weight*1.05;
+        if(w<minN||w>maxN){ ok=false; msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg"); }
       }
-    );
+      if(!ok){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
 
-    /* ===== Пагинация / Таблица ===== */
-    const PAGE_SIZES = [10, 20, 50, 100, "all"];
+      var idx=data.findIndex(function(r){ return r.date===iso; });
+      var rec={date:iso, weight:w};
+      if(idx>=0) data[idx]=rec; else data.push(rec);
+      save(data);
+      renderTable(); renderChart();
+    });
 
+    /* -------- Пагинация -------- */
+    var PAGE_SIZES=[7,14,28,84,112,168,336,"all"];
     function getPS(){
-      const v = localStorage.getItem("bt-page-size");
-      if(v === "all"){
-        return "all";
-      }
-      const n = Number(v);
-      return PAGE_SIZES.includes(n) ? n : 20;
+      var v=localStorage.getItem("bt-page-size");
+      if(v==="all") return "all";
+      var n=Number(v);
+      return (PAGE_SIZES.indexOf(n)>=0)?n:28;
     }
+    function setPS(v){ localStorage.setItem("bt-page-size",v); }
 
-    function setPS(v){
-      localStorage.setItem("bt-page-size", v);
-    }
-
-    let pageSize     = getPS();
-    let currentPage  = 1;
-
-    (function syncPageSizeUI(){
-      const v = (pageSize === "all")
-        ? "all"
-        : String(pageSize);
-      const opt = pageSizeSel.querySelector(
-        `option[value="${v}"]`
-      );
-      if(opt){
-        pageSizeSel.value = v;
-      }
+    var pageSize=getPS(), currentPage=1;
+    (function syncPS(){
+      var v=(pageSize==="all")?"all":String(pageSize);
+      var opt=pageSizeSel.querySelector('option[value="'+v+'"]');
+      if(opt) pageSizeSel.value=v;
     })();
+    pageSizeSel.addEventListener("change", function(){
+      var v=pageSizeSel.value;
+      pageSize=(v==="all")?"all":Number(v);
+      setPS(v);
+      currentPage=1;
+      renderTable();
+    });
 
-    pageSizeSel.addEventListener(
-      "change",
-      () => {
-        const v = pageSizeSel.value;
-        pageSize = (v === "all")
-          ? "all"
-          : Number(v);
-        setPS(v);
-        currentPage = 1;
-        renderTable();
-      }
-    );
-
+    /* -------- Таблица -------- */
     function renderTable(){
-      const all   = sortDesc(load());
-      const total = all.length;
+      var all=sortDesc(load()), total=all.length;
+      var eff=(pageSize==="all")?(total||1):pageSize;
+      var pages=Math.max(1, Math.ceil(total/eff));
+      if(currentPage>pages) currentPage=pages;
 
-      const eff   = (pageSize === "all")
-        ? (total || 1)
-        : pageSize;
+      var start=(currentPage-1)*eff;
+      var slice=all.slice(start, start+eff);
 
-      const pages = Math.max(
-        1,
-        Math.ceil(total / eff)
-      );
-
-      if(currentPage > pages){
-        currentPage = pages;
-      }
-
-      const start = (currentPage - 1) * eff;
-      const slice = all.slice(start, start + eff);
-
-      tb.innerHTML = "";
-
-      slice.forEach((r) => {
-        const tr = document.createElement("tr");
-
-        tr.innerHTML = `
-          <td class="date">
-            ${isoToBG_YY(r.date)}
-          </td>
-          <td class="w">
-            ${
-              (typeof r.weight === "number")
-              ? r.weight.toFixed(1)
-              : ""
-            }
-          </td>
-          <td class="actions">
-            <div class="actions">
-              <button
-                class="icon"
-                title="Редакция"
-                data-edit="${r.date}"
-                aria-label="Редакция"
-                type="button"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke-width="2"
-                >
-                  <path d="M3 21l3-1 11-11-2-2L4 18z"></path>
-                  <path d="M14 5l5 5"></path>
-                </svg>
-              </button>
-
-              <button
-                class="icon danger"
-                title="Изтрий"
-                data-del="${r.date}"
-                aria-label="Изтрий"
-                type="button"
-              >
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke-width="2"
-                >
-                  <!-- поправен път: латинско l, не кирилица -->
-                  <path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path>
-                </svg>
-              </button>
-            </div>
-          </td>
-        `;
-
+      tb.innerHTML="";
+      slice.forEach(function(r){
+        var tr=document.createElement("tr");
+        tr.innerHTML =
+          '<td class="date">'+isoToBG_YY(r.date)+'</td>'+
+          '<td class="w">'+(typeof r.weight==="number"?r.weight.toFixed(1):"")+'</td>'+
+          '<td class="actions">'+
+            '<div class="actions">'+
+              '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
+                '<svg viewBox="0 0 24 24" fill="none" stroke-width="2">'+
+                  '<path d="M3 21l3-1 11-11-2-2L4 18z"></path>'+
+                  '<path d="M14 5l5 5"></path>'+
+                '</svg>'+
+              '</button>'+
+              '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
+                '<svg viewBox="0 0 24 24" fill="none" stroke-width="2">'+
+                  '<path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path>'+
+                '</svg>'+
+              '</button>'+
+            '</div>'+
+          '</td>';
         tb.appendChild(tr);
       });
 
-      // действия
-      tb
-        .querySelectorAll('button[data-edit]')
-        .forEach((b) => {
-          b.onclick = () => {
-            const iso = b.getAttribute('data-edit');
-            const rec = load().find(
-              (x) => x.date === iso
-            );
-            if(rec){
-              currentISO = iso;
-              localStorage.setItem(
-                "bt-last-date",
-                iso
-              );
-              dateText.value = isoToBG_YY(iso);
-              prefillWeight(iso);
-              window.scrollTo({
-                top:0,
-                behavior:"smooth"
-              });
-            }
-          };
+      // Редакция
+      Array.prototype.forEach.call(tb.querySelectorAll('button[data-edit]'), function(b){
+        b.addEventListener("click", function(){
+          var iso=b.getAttribute("data-edit");
+          var rec=load().find(function(x){ return x.date===iso; });
+          if(rec){
+            currentISO=iso; localStorage.setItem("bt-last-date",iso);
+            dateText.value=isoToBG_YY(iso); prefillWeight(iso);
+            window.scrollTo({top:0,behavior:"smooth"});
+          }
         });
-
-      tb
-        .querySelectorAll('button[data-del]')
-        .forEach((b) => {
-          b.onclick = () => {
-            const iso = b.getAttribute('data-del');
-            if(
-              !confirm(
-                `Да изтрия записа за ${isoToBG_YY(iso)}?`
-              )
-            ){
-              return;
-            }
-            const data = load().filter(
-              (x) => x.date !== iso
-            );
-            save(data);
-            renderTable();
-            renderChart();
-          };
+      });
+      // Изтриване
+      Array.prototype.forEach.call(tb.querySelectorAll('button[data-del]'), function(b){
+        b.addEventListener("click", function(){
+          var iso=b.getAttribute("data-del");
+          if(!confirm("Да изтрия записа за "+isoToBG_YY(iso)+"?")) return;
+          var data=load().filter(function(x){ return x.date!==iso; });
+          save(data); renderTable(); renderChart();
         });
+      });
 
       // Пейджър
-      pager.innerHTML = "";
-
-      const from = total ? start + 1 : 0;
-      const to   = Math.min(start + eff, total);
-
-      const info = document.createElement("span");
-      info.className = "info";
-      info.textContent = `${from}-${to} от ${total}`;
-
-      const pagesTotal = Math.max(
-        1,
-        Math.ceil(
-          total / (
-            (pageSize === "all")
-              ? (total || 1)
-              : pageSize
-          )
-        )
-      );
-
-      const frag = document.createDocumentFragment();
-
-      if(pagesTotal > 1 && currentPage > 1){
-        const p = document.createElement("button");
-        p.textContent = "←";
-        p.onclick = () => {
-          currentPage--;
-          renderTable();
-        };
-        frag.appendChild(p);
-      }
-
-      if(pagesTotal > 1){
-        const startBtn = Math.max(1, currentPage - 3);
-        const endBtn   = Math.min(pagesTotal, currentPage + 3);
-
-        for(let p = startBtn; p <= endBtn; p++){
-          const btn = document.createElement("button");
-          btn.textContent = p;
-          if(p === currentPage){
-            btn.className = "active";
-          }
-          btn.onclick = () => {
-            currentPage = p;
-            renderTable();
-          };
-          frag.appendChild(btn);
-        }
-      }
-
-      if(pagesTotal > 1 && currentPage < pagesTotal){
-        const n = document.createElement("button");
-        n.textContent = "→";
-        n.onclick = () => {
-          currentPage++;
-          renderTable();
-        };
-        frag.appendChild(n);
-      }
-
+      pager.innerHTML="";
+      var from=total?start+1:0, to=Math.min(start+eff,total);
+      var info=document.createElement("span");
+      info.className="info"; info.textContent=from+"-"+to+" от "+total;
       pager.appendChild(info);
+
+      var pagesTotal=Math.max(1, Math.ceil(total/eff));
+      var frag=document.createDocumentFragment();
+
+      function pageBtn(n,active){
+        var btn=document.createElement("button");
+        btn.textContent=String(n);
+        if(active) btn.className="active";
+        btn.addEventListener("click", function(){ currentPage=n; renderTable(); });
+        return btn;
+      }
+
+      if(pagesTotal>1 && currentPage>1){
+        var prev=document.createElement("button"); prev.textContent="←";
+        prev.addEventListener("click", function(){ currentPage=Math.max(1,currentPage-1); renderTable(); });
+        frag.appendChild(prev);
+      }
+
+      if(pagesTotal<=5){
+        for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage));
+      }else{
+        var startPage=currentPage-2;
+        if(startPage<1) startPage=1;
+        if(startPage+4>pagesTotal) startPage=pagesTotal-4;
+        for(var pp=startPage; pp<=startPage+4; pp++) frag.appendChild(pageBtn(pp, pp===currentPage));
+      }
+
+      if(pagesTotal>1 && currentPage<pagesTotal){
+        var next=document.createElement("button"); next.textContent="→";
+        next.addEventListener("click", function(){ currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); });
+        frag.appendChild(next);
+      }
+
       pager.appendChild(frag);
     }
 
-    /* ===== Експорт / Импорт ===== */
-    document.getElementById("exportBtn").onclick = () => {
-      const data = load();
-      const blob = new Blob(
-        [JSON.stringify(data, null, 2)],
-        { type:"application/json" }
-      );
-      const url  = URL.createObjectURL(blob);
-
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "bt-progress-export.json";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-
-      URL.revokeObjectURL(url);
-    };
-
-    document.getElementById("importBtn").onclick = () => {
+    /* -------- Експорт / Импорт -------- */
+    document.getElementById("exportBtn").addEventListener("click", function(){
+      var data=load();
+      var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+      var url=URL.createObjectURL(blob);
+      var a=document.createElement("a"); a.href=url; a.download="bt-progress-export.json";
+      document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+    });
+    document.getElementById("importBtn").addEventListener("click", function(){
       document.getElementById("importFile").click();
-    };
-
-    document.getElementById("importFile").addEventListener(
-      "change",
-      async (ev) => {
-        const f = ev.target.files?.[0];
-        if(!f){
-          return;
-        }
+    });
+    document.getElementById("importFile").addEventListener("change", function(ev){
+      var f = ev.target.files && ev.target.files[0] ? ev.target.files[0] : null;
+      if(!f) return;
+      var reader=new FileReader();
+      reader.onload=function(){
         try{
-          const text = await f.text();
-          const arr  = JSON.parse(text);
-
-          if(!Array.isArray(arr)){
-            throw 0;
-          }
-
-          const cleaned = [];
-
-          for(const r of arr){
-            const ok =
-              typeof r.date   === "string"  &&
-              /^\d{4}-\d{2}-\d{2}$/.test(r.date) &&
-              typeof r.weight === "number"  &&
-              r.weight > 0 &&
-              r.date <= todayISO();
-
-            if(ok){
-              cleaned.push({
-                date: r.date,
-                weight: r.weight
-              });
+          var arr=JSON.parse(String(reader.result||"[]"));
+          if(!Array.isArray(arr)) throw 0;
+          var cleaned=[];
+          arr.forEach(function(r){
+            if(r && typeof r.date==="string" && /^\\d{4}-\\d{2}-\\d{2}$/.test(r.date) &&
+               typeof r.weight==="number" && r.weight>0 && r.date<=todayISO()){
+              cleaned.push({date:r.date, weight:r.weight});
             }
-          }
+          });
+          save(cleaned); renderTable(); renderChart(); alert("Импортът е успешен.");
+        }catch(e){ alert("Невалиден JSON файл."); }
+        ev.target.value="";
+      };
+      reader.readAsText(f);
+    });
 
-          save(cleaned);
-          renderTable();
-          renderChart();
-          alert("Импортът е успешен.");
-        }catch{
-          alert("Невалиден JSON файл.");
-        }
-
-        ev.target.value = "";
-      }
-    );
-
-    /* ===== Графика (canvas): дни / седмици / месеци ===== */
+    /* -------- Графика -------- */
     function weekKey(iso){
-      const d = new Date(iso);
+      var d=new Date(iso);
       d.setUTCHours(0,0,0,0);
-      d.setUTCDate(
-        d.getUTCDate() + 4 - (d.getUTCDay() || 7)
-      );
-      const yearStart = new Date(Date.UTC(
-        d.getUTCFullYear(), 0, 1
-      ));
-      const week = Math.ceil(
-        (((d - yearStart) / 86400000) + 1) / 7
-      );
-      return (
-        d.getUTCFullYear()
-        + "-W"
-        + String(week).padStart(2, "0")
-      );
+      d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
+      var yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
+      var week=Math.ceil((((d-yearStart)/86400000)+1)/7);
+      return d.getUTCFullYear()+"-W"+String(week).padStart(2,"0");
     }
-
     function monthKey(iso){
-      const d = new Date(iso);
-      return (
-        d.getFullYear()
-        + "-"
-        + String(d.getMonth()+1).padStart(2,"0")
-      );
+      var d=new Date(iso);
+      return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
     }
+    function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
+    function labelMonth(k){ var s=k.split("-");  return s[1]+"."+String(s[0]).slice(2); }
 
-    function labelWeek(k){
-      const [y, w] = k.split("-W");
-      return (
-        "С" + w + "." + String(y).slice(2)
-      );
-    }
-
-    function labelMonth(k){
-      const [y, m] = k.split("-");
-      return (
-        m + "." + String(y).slice(2)
-      );
-    }
-
-    aggSel.onchange = renderChart;
+    aggSel.addEventListener("change", renderChart);
 
     function renderChart(){
-      const ctx = chart.getContext("2d");
+      var ctx=chart.getContext("2d");
+      var w=(chart.width=chart.clientWidth), h=(chart.height=320);
+      ctx.clearRect(0,0,w,h);
 
-      const w = chart.width  = chart.clientWidth;
-      const h = chart.height = 320;
+      var raw=sortAsc(load());
+      if(!raw.length){ ctx.fillStyle="#9fb4ad"; ctx.fillText("Няма данни",10,22); return; }
 
-      ctx.clearRect(0, 0, w, h);
-
-      const raw = sortAsc(load());
-
-      if(!raw.length){
-        ctx.fillStyle = "#9fb4ad";
-        ctx.fillText("Няма данни", 10, 22);
-        return;
-      }
-
-      let pts = [];
-
-      if(aggSel.value === "daily"){
-        pts = raw.map((r) => ({
-          x     : r.date,
-          y     : r.weight,
-          label : isoToBG_YY(r.date)
-        }));
-      }else if(aggSel.value === "weekly"){
-        const m = new Map();
-        raw.forEach((r) => {
-          const k = weekKey(r.date);
-          (m.get(k) || m.set(k, []).get(k)).push(r.weight);
-        });
-        pts = [...m.entries()].map(([k,arr]) => ({
-          x     : k,
-          y     : arr.reduce((s,v)=>s+v,0) / arr.length,
-          label : labelWeek(k)
-        }));
+      var pts=[];
+      if(aggSel.value==="daily"){
+        pts=raw.map(function(r){ return {x:r.date,y:r.weight,label:isoToBG_YY(r.date)}; });
+      }else if(aggSel.value==="weekly"){
+        var wm=new Map();
+        raw.forEach(function(r){ var k=weekKey(r.date); var arr=wm.get(k); if(!arr){arr=[]; wm.set(k,arr);} arr.push(r.weight); });
+        wm.forEach(function(a,k){ var s=0; for(var i=0;i<a.length;i++) s+=a[i]; pts.push({x:k,y:s/a.length,label:labelWeek(k)}); });
       }else{
-        const m = new Map();
-        raw.forEach((r) => {
-          const k = monthKey(r.date);
-          (m.get(k) || m.set(k, []).get(k)).push(r.weight);
-        });
-        pts = [...m.entries()].map(([k,arr]) => ({
-          x     : k,
-          y     : arr.reduce((s,v)=>s+v,0) / arr.length,
-          label : labelMonth(k)
-        }));
+        var mm=new Map();
+        raw.forEach(function(r){ var k=monthKey(r.date); var arr=mm.get(k); if(!arr){arr=[]; mm.set(k,arr);} arr.push(r.weight); });
+        mm.forEach(function(a,k){ var s=0; for(var i=0;i<a.length;i++) s+=a[i]; pts.push({x:k,y:s/a.length,label:labelMonth(k)}); });
       }
+      pts.sort(function(a,b){ return a.x.localeCompare(b.x); });
 
-      pts.sort((a,b) => a.x.localeCompare(b.x));
+      var vals=pts.map(function(p){ return p.y; }).filter(function(n){ return typeof n==="number"; });
+      if(vals.length<2){ ctx.fillStyle="#9fb4ad"; ctx.fillText("Добави поне 2 точки",10,22); return; }
 
-      const vals = pts
-        .map((p) => p.y)
-        .filter((n) => typeof n === "number");
+      var min=Math.min.apply(null,vals), max=Math.max.apply(null,vals);
+      var padL=36, padR=14, padT=12, padB=72, n=pts.length;
+      function X(i){ return padL+(w-padL-padR)*(n<=1?0:i/(n-1)); }
+      function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
-      if(vals.length < 2){
-        ctx.fillStyle = "#9fb4ad";
-        ctx.fillText("Добави поне 2 точки", 10, 22);
-        return;
-      }
-
-      const min = Math.min(...vals);
-      const max = Math.max(...vals);
-
-      const padL = 36;
-      const padR = 14;
-      const padT = 12;
-      const padB = 72;
-
-      const n = pts.length;
-
-      const X = (i) => (
-        padL + (w - padL - padR) * (n <= 1 ? 0 : i / (n - 1))
-      );
-
-      const Y = (v) => (
-        h - padB - ((v - min) / ((max - min) || 1)) * (h - padT - padB)
-      );
-
-      /* оси */
-      ctx.strokeStyle = "#20343a";
-      ctx.lineWidth   = 1;
-
+      // оси
+      ctx.strokeStyle="#20343a"; ctx.lineWidth=1;
       ctx.beginPath();
-      ctx.moveTo(padL, h - padB);
-      ctx.lineTo(w - padR, h - padB);
-      ctx.moveTo(padL, padT);
-      ctx.lineTo(padL, h - padB);
+      ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB);
+      ctx.moveTo(padL,padT);   ctx.lineTo(padL,h-padB);
       ctx.stroke();
 
-      /* линия */
-      ctx.strokeStyle = "#87f3c5";
-      ctx.lineWidth   = 2;
-
+      // линия
+      ctx.strokeStyle="#87f3c5"; ctx.lineWidth=2;
       ctx.beginPath();
-      for(let i=0; i<n; i++){
-        const p = pts[i];
-        const x = X(i);
-        const y = Y(p.y);
-        if(i === 0){
-          ctx.moveTo(x, y);
-        }else{
-          ctx.lineTo(x, y);
-        }
-      }
+      for(var i=0;i<n;i++){ var p=pts[i], x=X(i), y=Y(p.y); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); }
       ctx.stroke();
 
-      /* мин/макс */
-      ctx.fillStyle    = "#9fb4ad";
-      ctx.textBaseline = "middle";
+      // мин/макс
+      ctx.fillStyle="#9fb4ad"; ctx.textBaseline="middle";
+      ctx.fillText(String(max.toFixed(1)),6,Y(max));
+      ctx.fillText(String(min.toFixed(1)),6,Y(min));
 
-      ctx.fillText(String(max.toFixed(1)), 6, Y(max));
-      ctx.fillText(String(min.toFixed(1)), 6, Y(min));
-
-      /* маркери + вертикални етикети (дозираме) */
-      const maxLabels = Math.min(14, n);
-      const step      = Math.max(1, Math.floor(n / maxLabels));
-
-      ctx.fillStyle = "#9fb4ad";
-
-      for(let i=0; i<n; i+=step){
-        const p  = pts[i];
-        const x  = X(i);
-        const y0 = h - padB;
-
-        ctx.beginPath();
-        ctx.arc(x, y0, 2, 0, 6.283);
-        ctx.fill();
-
-        ctx.save();
-        ctx.translate(x, y0 + 54);
-        ctx.rotate(-Math.PI / 2);
-        ctx.fillText(p.label, 0, 0);
-        ctx.restore();
+      // вертикални етикети (дозирани)
+      var maxLabels=Math.min(14,n), step=Math.max(1,Math.floor(n/maxLabels));
+      ctx.fillStyle="#9fb4ad";
+      for(var j=0;j<n;j+=step){
+        var pe=pts[j], x0=X(j), y0=h-padB;
+        ctx.beginPath(); ctx.arc(x0,y0,2,0,Math.PI*2); ctx.fill();
+        ctx.save(); ctx.translate(x0,y0+54); ctx.rotate(-Math.PI/2); ctx.fillText(pe.label,0,0); ctx.restore();
       }
     }
 
-    /* ===== Init ===== */
-    function initialRender(){
-      prefillWeight(currentISO);
-      renderTable();
-      renderChart();
-    }
-
+    /* -------- Init -------- */
+    function initialRender(){ prefillWeight(currentISO); renderTable(); renderChart(); }
     initialRender();
   </script>
 </body>
