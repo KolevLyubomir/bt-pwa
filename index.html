@@ -3,27 +3,33 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Безопасно Тегло — v1.36e</title>
+  <title>Безопасно Тегло — v1.36f (NO SW)</title>
+
+  <!-- Без service worker за да няма кеш -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+  <meta http-equiv="Pragma" content="no-cache"/>
+  <meta http-equiv="Expires" content="0"/>
 
   <meta name="theme-color" content="#0b1215"/>
-  <link rel="manifest" href="manifest.webmanifest?v=1.36e"/>
-  <link rel="icon" href="assets/icons/icon-192.png?v=1.36e"/>
+  <link rel="manifest" href="manifest.webmanifest?v=1.36f"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=1.36f"/>
 
   <style>
     :root{
       --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
       --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
-      --chart-label:22px;  /* дати под графиката */
-      --chart-values:24px; /* числа по y (min/max) */
+      /* по-ЕДРИ за да е очевидна промяната */
+      --chart-label:24px;   /* дати под графиката */
+      --chart-values:26px;  /* числа по y (min/max) */
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{ margin:0; background:var(--bg); color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif }
 
-    header{ position:sticky; top:0; z-index:5; background:#071013cc; backdrop-filter:blur(6px);
+    header{ position:sticky; top:0; z-index:5; background:#15302b; /* различен фон — да се види промяна */
       border-bottom:1px solid var(--border); padding:12px 16px; display:flex; align-items:center; gap:10px }
     header h1{ margin:0; font-size:18px; font-weight:700 }
-    header .ver{ background:#22c55e; color:#06241b; border-radius:10px; padding:2px 8px; margin-left:6px }
+    header .ver{ background:#f59e0b; color:#241b06; border-radius:10px; padding:2px 8px; margin-left:6px }
 
     main{ max-width:980px; margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
@@ -40,7 +46,7 @@
     .field.weight input{ font-weight:700; font-size:18px }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
-    /* ===== Таблица ===== */
+    /* ===== Таблица: Дата+Тегло плътно; Действия по-далеч ===== */
     table{ width:100%; border-collapse:collapse }
     colgroup col.date{ width:92px }
     colgroup col.w{ width:92px }
@@ -48,8 +54,8 @@
     th,td{ padding:4px 6px; border-bottom:1px solid #20343a; font-size:13px; line-height:1.15; white-space:nowrap; text-align:left; vertical-align:middle }
     th{ color:var(--muted); font-weight:600 }
     th.date,td.date{ padding-right:6px }
-    th.w,td.w{ text-align:right; padding-left:6px } /* плътно до датата */
-    th.actions,td.actions{ padding-left:22px }     /* по-далече от тегло */
+    th.w,td.w{ text-align:right; padding-left:6px }  /* плътно до датата */
+    th.actions,td.actions{ padding-left:28px }      /* по-далече от тегло */
     .wCell{ text-align:right }
     .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
 
@@ -67,7 +73,7 @@
     .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
 
     /* ===== Графика ===== */
-    canvas{ width:100%; height:340px; display:block; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
+    canvas{ width:100%; height:360px; display:block; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
 
     /* ===== Календар ===== */
     .date-wrap{ position:relative } #dateText[readonly]{ cursor:pointer }
@@ -89,8 +95,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=1.36e" alt="BT" width="28" height="28"/>
-    <h1>Безопасно Тегло — Тракер <span class="ver">v1.36e</span></h1>
+    <img src="assets/icons/icon-192.png?v=1.36f" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v1.36f • NO SW</span></h1>
   </header>
 
   <main>
@@ -190,25 +196,10 @@
   <script>
   "use strict";
 
-  /* ===== Версия + SW без циклично презареждане ===== */
-  window.__BT_VER = '1.36e';
-  if ('serviceWorker' in navigator) {
-    (async () => {
-      try {
-        // регистрираме новия SW с версия в query → няма нужда да чистим ръчно
-        const reg = await navigator.serviceWorker.register('sw.js?v=' + window.__BT_VER);
-        // reload само ВЕДНЪЖ при реална смяна на контролера
-        let reloaded = false;
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          if (reloaded) return;
-          reloaded = true;
-          location.reload();
-        });
-      } catch(e){ console.warn('SW register:', e); }
-    })();
-  }
+  /* ===== Версия (без SW) ===== */
+  window.__BT_VER = '1.36f-no-sw';
 
-  /* ===== Утилити за дати ===== */
+  /* ===== Дати ===== */
   function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
   var TODAY = todayISO();
   function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -357,7 +348,7 @@
               '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
             '</button>'+
             '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6л1 14h8л1-14"></path></svg>'+
             '</button>'+
           '</div>'+
         '</td>';
@@ -396,8 +387,8 @@
 
   function renderChart(){
     var ctx=chart.getContext("2d"), rect=chart.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
-    chart.width=Math.round(rect.width*dpr); chart.height=Math.round(340*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
-    var w=rect.width, h=340; ctx.clearRect(0,0,w,h);
+    chart.width=Math.round(rect.width*dpr); chart.height=Math.round(360*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
+    var w=rect.width, h=360; ctx.clearRect(0,0,w,h);
 
     var raw=getChartRawData(); if(!raw.length){ ctx.fillStyle="#9fb4ad"; ctx.font="700 var(--chart-values) system-ui"; ctx.fillText("Няма данни",10,26); return; }
 
@@ -449,7 +440,6 @@
       try{
         var arr = JSON.parse(fr.result||"[]");
         if(!Array.isArray(arr)) throw new Error("Невалиден формат");
-        // проста валидация
         arr = arr.filter(r => r && typeof r.date==="string" && typeof r.weight==="number");
         save(arr); renderTable(); renderChart();
         alert("Импортът е успешен. Записите са презаредени.");
@@ -459,7 +449,7 @@
     fr.readAsText(f);
   });
 
-  /* ===== Инициализация ===== */
+  /* ===== Init ===== */
   function initialRender(){ migrateDates(); prefillWeight(currentISO); renderTable(); renderChart(); window.addEventListener("resize", ()=>renderChart(), {passive:true}); }
   initialRender();
   </script>
