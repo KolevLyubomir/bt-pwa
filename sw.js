@@ -1,4 +1,5 @@
-const CACHE_NAME = 'bt-cache-v136b';
+// sw.js — v1.36d
+const CACHE_NAME = 'bt-cache-v136d';
 const ASSETS = [
   './',
   './index.html',
@@ -9,32 +10,28 @@ const ASSETS = [
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS))
-  );
+  e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));
 });
 
 self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    (async () => {
-      const keys = await caches.keys();
-      await Promise.all(keys.map(k => k !== CACHE_NAME ? caches.delete(k) : null));
-      await self.clients.claim();
-    })()
-  );
+  e.waitUntil((async () => {
+    const keys = await caches.keys();
+    await Promise.all(keys.map(k => k !== CACHE_NAME ? caches.delete(k) : null));
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener('fetch', (e) => {
-  const { request } = e;
-  if (request.method !== 'GET') return;
-  e.respondWith(
-    caches.match(request).then((cached) => {
-      const fetchPromise = fetch(request).then((res) => {
-        const copy = res.clone();
-        caches.open(CACHE_NAME).then((c) => c.put(request, copy));
-        return res;
-      }).catch(() => cached);
-      return cached || fetchPromise;
-    })
-  );
+  if (e.request.method !== 'GET') return;
+  e.respondWith((async () => {
+    const cached = await caches.match(e.request);
+    try {
+      const res = await fetch(e.request);
+      const copy = res.clone();
+      caches.open(CACHE_NAME).then(c => c.put(e.request, copy));
+      return res;
+    } catch {
+      return cached || Response.error();
+    }
+  })());
 });
