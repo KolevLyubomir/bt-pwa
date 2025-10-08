@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Безопасно Тегло — v1.36l (NO SW)</title>
+  <title>Безопасно Тегло — v1.36m (NO SW)</title>
 
   <!-- Без service worker за да няма кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -11,8 +11,8 @@
   <meta http-equiv="Expires" content="0"/>
 
   <meta name="theme-color" content="#0b1215"/>
-  <link rel="manifest" href="manifest.webmanifest?v=1.36l"/>
-  <link rel="icon" href="assets/icons/icon-192.png?v=1.36l"/>
+  <link rel="manifest" href="manifest.webmanifest?v=1.36m"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=1.36m"/>
 
   <style>
     :root{
@@ -20,9 +20,9 @@
       --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
       --chart-label:15px;  /* дати под графиката */
       --chart-values:15px; /* числа по y (min/max) */
-      --chart-line:#2dd4bf;  /* неутрална линия */
-      --chart-green:#87f3c5; /* точки извън БТ */
-      --chart-orange:#f59e0b;/* точки в БТ */
+      --chart-line:#2dd4bf;   /* линия */
+      --chart-green:#87f3c5;  /* точки извън БТ */
+      --chart-orange:#f59e0b; /* точки в БТ */
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{ margin:0; background:var(--bg); color:var(--text);
@@ -37,6 +37,8 @@
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
     .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end }
+    .spacer{ flex:1 1 auto } /* за разпиране между лява/дясна група */
+
     label{ font-size:12px; color:var(--muted); display:block; margin-bottom:6px }
     input,select,button{ background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px }
@@ -44,17 +46,18 @@
 
     .field{ display:flex; flex-direction:column }
 
-    /* по-тясна „Дата“ (фиксирана ширина, за да не „покрива“ следващото поле) */
+    /* „Дата“ — фиксирано, за да не покрива „Тегло“ */
     .field.date{ width:120px }
     .field.date input{ width:100% }
 
     /* „Тегло“ — достатъчно за 107.7 + спинери */
-    .field.weight input{ font-weight:700; font-size:18px; width:9ch } /* ~ 5 знака + въздух за стрелките */
+    .field.weight input{ font-weight:700; font-size:18px; width:9ch }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
-    /* БТ чекбокс — скрит надпис, tooltip при hover */
-    .bt-chip{ display:inline-flex; align-items:center; gap:6px; border:1px solid #334a4f; background:#0d171b; padding:6px 10px; border-radius:10px }
-    .sr-only{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden }
+    /* Чекбокс БТ — на едно ниво с Тегло */
+    .bt-inline{ display:flex; align-items:center; gap:8px; padding:8px 10px; border:1px solid #334a4f; background:#0d171b; border-radius:10px }
+    .bt-inline input{ width:16px; height:16px }
+    .bt-inline span{ font-size:13px; color:#c6d5d1 }
 
     /* ===== Таблица: Дата+Тегло плътно; Действия по-далеч ===== */
     table{ width:100%; border-collapse:collapse }
@@ -75,7 +78,7 @@
     .icon svg{ width:16px; height:16px; stroke:currentColor }
     .icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
 
-    .records-bar{ display:flex; align-items:center; gap:8px; justify-content:space-between; margin:8px 0; flex-wrap:wrap }
+    .recbar{ display:flex; align-items:center; gap:8px; justify-content:space-between; margin:8px 0; flex-wrap:wrap }
     .left-group,.right-group{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
 
     .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
@@ -106,39 +109,68 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=1.36l" alt="BT" width="28" height="28"/>
-    <h1>Безопасно Тегло — Тракер <span class="ver">v1.36l • NO SW</span></h1>
+    <img src="assets/icons/icon-192.png?v=1.36m" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v1.36m • NO SW</span></h1>
   </header>
 
   <main>
     <!-- Запис -->
     <section class="card">
       <h2 style="margin:0 0 10px">Запис</h2>
-      <div class="row" style="align-items:flex-start">
-        <div class="field date">
-          <label for="dateText">Дата</label>
-          <div class="date-wrap">
-            <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ"/>
-            <div id="cal" class="cal" role="dialog" aria-label="Календар"></div>
+
+      <!-- Горен ред: лява група (Дата, Тегло, БТ, Добави) + вдясно (Експорт/Импорт) -->
+      <div class="row" style="align-items:flex-end">
+        <!-- лява група -->
+        <div class="row" style="gap:10px; align-items:flex-end">
+          <div class="field date">
+            <label for="dateText">Дата</label>
+            <div class="date-wrap">
+              <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ"/>
+              <div id="cal" class="cal" role="dialog" aria-label="Календар"></div>
+            </div>
+          </div>
+
+          <div class="field weight">
+            <label for="weight">Тегло (kg)</label>
+            <input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/>
+          </div>
+
+          <!-- чекбокс БТ на нивото на теглото -->
+          <div class="field">
+            <label style="visibility:hidden">.</label>
+            <label class="bt-inline" title="Маркира точката в графиката в оранжево">
+              <input id="btFlag" type="checkbox" checked />
+              <span>Маркиран като БТ</span>
+            </label>
+          </div>
+
+          <div class="field" style="align-self:flex-end">
+            <label style="visibility:hidden">.</label>
+            <button id="addBtn" class="primary" type="button">Добави</button>
           </div>
         </div>
 
-        <div class="field weight">
-          <label for="weight">Тегло (kg)</label>
-          <input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/>
-        </div>
+        <div class="spacer"></div>
 
-        <!-- БТ чекбокс — влияе на цвета на ТОЧКАТА (по запис), по подразбиране чекнато -->
-        <div class="field" style="align-self:flex-start">
-          <label class="sr-only" for="btFlag">маркиран като БТ</label>
-          <div class="bt-chip" title="маркиран като БТ">
-            <input id="btFlag" type="checkbox" checked />
-            <span style="color:#c6d5d1; font-size:12px">БТ</span>
+        <!-- дясна група: Експорт / Импорт -->
+        <div class="row" style="gap:8px; align-items:flex-end">
+          <div class="field" style="align-self:flex-end">
+            <label style="visibility:hidden">.</label>
+            <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 16V4M12 4l-4 4M12 4l4 4"></path><path d="M4 20h16"></path>
+              </svg>
+            </button>
           </div>
-        </div>
-
-        <div class="field" style="align-self:flex-start">
-          <button id="addBtn" class="primary" type="button">Добави</button>
+          <div class="field" style="align-self:flex-end">
+            <label style="visibility:hidden">.</label>
+            <input id="importFile" type="file" accept="application/json" style="display:none"/>
+            <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -162,7 +194,7 @@
     <section class="card">
       <h2 style="margin:0">Записи</h2>
 
-      <div class="records-bar">
+      <div class="recbar">
         <div class="left-group">
           <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
           <select id="pageSize">
@@ -175,20 +207,6 @@
             <option value="336">336 (~12 мес.)</option>
             <option value="all">Всички</option>
           </select>
-        </div>
-
-        <div class="right-group">
-          <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-              <path d="M12 16V4M12 4l-4 4M12 4l4 4"></path><path d="M4 20h16"></path>
-            </svg>
-          </button>
-          <input id="importFile" type="file" accept="application/json" style="display:none"/>
-          <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-              <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
-            </svg>
-          </button>
         </div>
       </div>
 
@@ -219,7 +237,7 @@
   "use strict";
 
   /* ===== Версия (без SW) ===== */
-  window.__BT_VER = '1.36l-no-sw';
+  window.__BT_VER = '1.36m-no-sw';
 
   /* ===== Дати ===== */
   function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
@@ -362,10 +380,10 @@
         '<td class="actions">'+
           '<div class="actions">'+
             '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
-              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
             '</button>'+
             '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
+              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
             '</button>'+
           '</div>'+
         '</td>';
@@ -422,7 +440,7 @@
       return;
     }
 
-    // подгответе точки
+    // подготви точки
     var mode=aggSel.value, pts=[];
     if(mode==="daily"){
       pts=raw.map(r=>({x:r.date,y:r.weight,label:isoToBG_YY(r.date), bt:(r.bt!==false)}));
@@ -431,7 +449,6 @@
       raw.forEach(r=>{ var k=weekKey(r.date); (wm.get(k)||wm.set(k,[]).get(k)).push(r); });
       wm.forEach((arr,k)=>{
         var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
-        // цвят по мнозинство БТ
         var btCount=arr.filter(z=>z.bt!==false).length;
         pts.push({x:k,y:s/arr.length,label:labelWeek(k), bt:(btCount>=arr.length-btCount)});
       });
@@ -468,7 +485,7 @@
     ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle";
     ctx.fillText(String(max.toFixed(1)),10,Y(max)); ctx.fillText(String(min.toFixed(1)),10,Y(min));
 
-    // x labels + точки, оцветени по БТ
+    // x labels + точки оцветени по БТ
     var maxLabels=Math.min(16,n), step=Math.max(1,Math.floor(n/maxLabels));
     var green=getComputedStyle(document.documentElement).getPropertyValue('--chart-green').trim()||'#87f3c5';
     var orange=getComputedStyle(document.documentElement).getPropertyValue('--chart-orange').trim()||'#f59e0b';
@@ -480,7 +497,7 @@
       ctx.fillStyle = pe.bt ? orange : green;
       ctx.arc(x0, Y(pe.y), 3, 0, Math.PI*2);
       ctx.fill();
-      // редуцирани етикети (през step)
+      // етикети
       if(j%step===0){
         ctx.save(); ctx.translate(x0,y0+64); ctx.rotate(-Math.PI/2);
         ctx.fillStyle="#e7faf4"; ctx.fillText(pe.label,0,0); ctx.restore();
@@ -488,7 +505,7 @@
     }
   }
 
-  /* ===== Експорт / Импорт ===== */
+  /* ===== Експорт / Импорт (в секция „Запис“) ===== */
   exportBtn.addEventListener("click", ()=>{
     var data = load();
     var blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
@@ -507,7 +524,7 @@
         if(!Array.isArray(arr)) throw new Error("Невалиден формат");
         arr = arr
           .filter(r => r && typeof r.date==="string" && typeof r.weight==="number")
-          .map(r => ({ date:r.date, weight:r.weight, bt:(r.bt!==false) })); // по default БТ=true
+          .map(r => ({ date:r.date, weight:r.weight, bt:(r.bt!==false) })); // default: БТ=true
         save(arr); renderTable(); renderChart();
         alert("Импортът е успешен. Записите са презаредени.");
       }catch(e){ alert("Грешка при импорт: "+e.message); }
@@ -516,7 +533,7 @@
     fr.readAsText(f);
   });
 
-  /* ===== Init ===== */
+  /* ===== Init/migrations ===== */
   function migrateDatesAndBT(){
     var arr=load(), changed=false;
     for(var i=0;i<arr.length;i++){
