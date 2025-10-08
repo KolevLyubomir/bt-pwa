@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Безопасно Тегло — v1.36f (NO SW)</title>
+  <title>Безопасно Тегло — v1.36h (NO SW)</title>
 
   <!-- Без service worker за да няма кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -11,14 +11,13 @@
   <meta http-equiv="Expires" content="0"/>
 
   <meta name="theme-color" content="#0b1215"/>
-  <link rel="manifest" href="manifest.webmanifest?v=1.36f"/>
-  <link rel="icon" href="assets/icons/icon-192.png?v=1.36f"/>
+  <link rel="manifest" href="manifest.webmanifest?v=1.36h"/>
+  <link rel="icon" href="assets/icons/icon-192.png?v=1.36h"/>
 
   <style>
     :root{
       --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
       --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
-      /* по-ЕДРИ за да е очевидна промяната */
       --chart-label:24px;   /* дати под графиката */
       --chart-values:26px;  /* числа по y (min/max) */
     }
@@ -26,7 +25,7 @@
     body{ margin:0; background:var(--bg); color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif }
 
-    header{ position:sticky; top:0; z-index:5; background:#15302b; /* различен фон — да се види промяна */
+    header{ position:sticky; top:0; z-index:5; background:#15302b;
       border-bottom:1px solid var(--border); padding:12px 16px; display:flex; align-items:center; gap:10px }
     header h1{ margin:0; font-size:18px; font-weight:700 }
     header .ver{ background:#f59e0b; color:#241b06; border-radius:10px; padding:2px 8px; margin-left:6px }
@@ -48,14 +47,14 @@
 
     /* ===== Таблица: Дата+Тегло плътно; Действия по-далеч ===== */
     table{ width:100%; border-collapse:collapse }
-    colgroup col.date{ width:92px }
-    colgroup col.w{ width:92px }
+    colgroup col.date{ width:86px }
+    colgroup col.w{ width:86px }
     colgroup col.act{ width:auto }
     th,td{ padding:4px 6px; border-bottom:1px solid #20343a; font-size:13px; line-height:1.15; white-space:nowrap; text-align:left; vertical-align:middle }
     th{ color:var(--muted); font-weight:600 }
-    th.date,td.date{ padding-right:6px }
-    th.w,td.w{ text-align:right; padding-left:6px }  /* плътно до датата */
-    th.actions,td.actions{ padding-left:28px }      /* по-далече от тегло */
+    th.date,td.date{ padding-right:4px }
+    th.w,td.w{ text-align:right; padding-left:6px }   /* плътно до датата */
+    th.actions,td.actions{ padding-left:44px }       /* по-далече от тегло */
     .wCell{ text-align:right }
     .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
 
@@ -95,8 +94,8 @@
 </head>
 <body>
   <header>
-    <img src="assets/icons/icon-192.png?v=1.36f" alt="BT" width="28" height="28"/>
-    <h1>Безопасно Тегло — Тракер <span class="ver">v1.36f • NO SW</span></h1>
+    <img src="assets/icons/icon-192.png?v=1.36h" alt="BT" width="28" height="28"/>
+    <h1>Безопасно Тегло — Тракер <span class="ver">v1.36h • NO SW</span></h1>
   </header>
 
   <main>
@@ -197,7 +196,7 @@
   "use strict";
 
   /* ===== Версия (без SW) ===== */
-  window.__BT_VER = '1.36f-no-sw';
+  window.__BT_VER = '1.36h-no-sw';
 
   /* ===== Дати ===== */
   function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
@@ -296,7 +295,7 @@
     if(next){ var minN=next.weight*0.95, maxN=next.weight*1.05; if(w<minN||w>maxN){ ok=false; msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg"); } }
     if(!ok){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
 
-    var idx=data.findIndex(r=>r.date===iso); var rec={date:iso, weight:w};
+    var idx=data.findIndex(r=>r.date===iso); var rec={date: iso, weight: w}; /* <-- FIX */
     if(idx>=0) data[idx]=rec; else data.push(rec);
     save(data);
     renderTable(); renderChart();
@@ -348,7 +347,7 @@
               '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
             '</button>'+
             '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6л1 14h8л1-14"></path></svg>'+
+              '<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
             '</button>'+
           '</div>'+
         '</td>';
@@ -379,6 +378,11 @@
   function labelMonth(k){ var s=k.split("-"); return s[1]+"."+String(s[0]).slice(2); }
   aggSel.addEventListener("change", ()=>renderChart());
 
+  function cssPx(name, fallback){
+    var v=getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    var n=parseFloat(v); return Number.isFinite(n)?n:fallback;
+  }
+
   function getChartRawData(){
     var mode=aggSel.value;
     if(mode==="daily"){ var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(load()); return sortAsc(src); }
@@ -390,7 +394,12 @@
     chart.width=Math.round(rect.width*dpr); chart.height=Math.round(360*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
     var w=rect.width, h=360; ctx.clearRect(0,0,w,h);
 
-    var raw=getChartRawData(); if(!raw.length){ ctx.fillStyle="#9fb4ad"; ctx.font="700 var(--chart-values) system-ui"; ctx.fillText("Няма данни",10,26); return; }
+    var raw=getChartRawData(); if(!raw.length){
+      ctx.fillStyle="#9fb4ad";
+      ctx.font="700 "+cssPx('--chart-values', 26)+"px system-ui";
+      ctx.fillText("Няма данни",10,26); 
+      return;
+    }
 
     var pts=[],mode=aggSel.value;
     if(mode==="daily"){ pts=raw.map(r=>({x:r.date,y:r.weight,label:isoToBG_YY(r.date)})); }
@@ -399,7 +408,9 @@
     else { var mm=new Map(); raw.forEach(r=>{ var k=monthKey(r.date); (mm.get(k)||mm.set(k,[]).get(k)).push(r.weight); });
       mm.forEach((a,k)=>{ var s=0; for(var i=0;i<a.length;i++) s+=a[i]; pts.push({x:k,y:s/a.length,label:labelMonth(k)}); }); }
     pts.sort((a,b)=>a.x.localeCompare(b.x));
-    var vals=pts.map(p=>p.y).filter(n=>typeof n==="number"); if(vals.length<2){ ctx.fillStyle="#9fb4ad"; ctx.font="700 var(--chart-values) system-ui"; ctx.fillText("Добави поне 2 точки",10,26); return; }
+    var vals=pts.map(p=>p.y).filter(n=>typeof n==="number");
+    ctx.font="700 "+cssPx('--chart-values', 26)+"px system-ui";
+    if(vals.length<2){ ctx.fillStyle="#9fb4ad"; ctx.fillText("Добави поне 2 точки",10,26); return; }
 
     var min=Math.min(...vals), max=Math.max(...vals);
     var padL=48, padR=18, padT=16, padB=96, n=pts.length;
@@ -411,11 +422,13 @@
     ctx.strokeStyle="#87f3c5"; ctx.lineWidth=2.2;
     ctx.beginPath(); for(var i=0;i<n;i++){ var p=pts[i], x=X(i), y=Y(p.y); if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y); } ctx.stroke();
 
-    ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle"; ctx.font="700 var(--chart-values) system-ui";
+    // y labels
+    ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle";
     ctx.fillText(String(max.toFixed(1)),10,Y(max)); ctx.fillText(String(min.toFixed(1)),10,Y(min));
 
+    // x labels
     var maxLabels=Math.min(16,n), step=Math.max(1,Math.floor(n/maxLabels));
-    ctx.fillStyle="#e7faf4"; ctx.font="700 var(--chart-label) system-ui";
+    ctx.fillStyle="#e7faf4"; ctx.font="700 "+cssPx('--chart-label', 24)+"px system-ui";
     for(var j=0;j<n;j+=step){
       var pe=pts[j], x0=X(j), y0=h-padB;
       ctx.beginPath(); ctx.arc(x0,y0,2,0,Math.PI*2); ctx.fill();
