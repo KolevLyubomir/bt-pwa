@@ -1,5 +1,5 @@
-// sw.js — v1.36d
-const CACHE_NAME = 'bt-cache-v136d';
+// sw.js — v1.36e
+const CACHE_NAME = 'bt-cache-v136e';
 const ASSETS = [
   './',
   './index.html',
@@ -10,7 +10,7 @@ const ASSETS = [
 
 self.addEventListener('install', (e) => {
   self.skipWaiting();
-  e.waitUntil(caches.open(CACHE_NAME).then((c) => c.addAll(ASSETS)));
+  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
 });
 
 self.addEventListener('activate', (e) => {
