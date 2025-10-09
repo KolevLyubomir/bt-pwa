@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.10.01</title>
+  <title>БТ App 3 — v2.10.02</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -56,50 +56,24 @@
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
     /* „Данни“ */
-    .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
-    .spacer{ flex:1 1 auto }
-    .field{ display:flex; flex-direction:column; justify-content:flex-end }
+    .row{ display:flex; align-items:flex-end; gap:12px; flex-wrap:nowrap }
+    .field{ display:flex; flex-direction:column; }
     .lbl{ height:var(--lbl-h); line-height:var(--lbl-h); font-size:12px; color:var(--muted); margin:0 0 6px 0 }
-    .ctl{ display:flex; align-items:center }
-
     input,select,button{
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
-    input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
-    button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
-
-    .field.date{ width:120px }
-    .field.weight input{ font-weight:700; font-size:18px; width:9ch }
+    .field.date{ width:140px }
+    .field.weight{ width:140px }
+    .field.weight input{ font-weight:700; font-size:18px }
     .bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
       border:1px solid #334a4f; background:#0d171b; border-radius:10px }
     .bt-only input{ width:16px; height:16px; margin:0 }
+    button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700; min-width:110px }
 
-    table{ width:100%; border-collapse:collapse }
-    colgroup col.date{ width:70px } colgroup col.w{ width:70px } colgroup col.act{ width:auto }
-    th,td{ padding:3px 4px; border-bottom:1px solid #20343a; font-size:13px; line-height:1.15; white-space:nowrap; text-align:left; vertical-align:middle }
-    th{ color:var(--muted); font-weight:600 }
-    th.w,td.w{ text-align:right; padding-left:2px }
-    .wCell{ text-align:right } .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
-
-    .actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
-    .icon{ display:inline-flex; align-items:center; justify-content:center; border:1px solid #2a3e41; background:#0d171b; border-radius:8px; padding:4px 6px; color:#fff; height:var(--ctl-h) }
-    .icon svg{ width:16px; height:16px; stroke:currentColor }
-    .icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
-
-    .recbar{ display:flex; align-items:center; gap:8px; justify-content:flex-start; margin:8px 0; flex-wrap:wrap }
-
-    .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
-    .pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
-    .pager button{ background:#0d171b; border:1px solid #2a3e41; color:#fff; padding:4px 8px; border-radius:8px; font-size:13px }
-    .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
-
-    canvas{ width:100%; height:360px; display:block; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
-
+    /* Календар */
     .date-wrap{ position:relative } #dateText[readonly]{ cursor:pointer }
-    .cal{ position:absolute; z-index:10; top:calc(var(--ctl-h) + 6px); left:0; background:#0e1518; border:1px solid #20343a; border-radius:12px;
+    .cal{ position:absolute; z-index:50; top:calc(var(--ctl-h) + 8px); left:0; background:#0e1518; border:1px solid #20343a; border-radius:12px;
       box-shadow:0 8px 30px rgba(0,0,0,.35); padding:10px; width:auto; display:none }
     .cal.show{ display:block }
     .cal .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px }
@@ -114,15 +88,24 @@
     .cal .day.today{ outline:1px dashed #5b8f98 }
     .cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
 
-    .tabpanel{ display:none }
-    .tabpanel[aria-hidden="false"]{ display:block }
+    table{ width:100%; border-collapse:collapse }
+    colgroup col.date{ width:70px } colgroup col.w{ width:70px } colgroup col.act{ width:auto }
+    th,td{ padding:3px 4px; border-bottom:1px solid #20343a; font-size:13px; white-space:nowrap; text-align:left; vertical-align:middle }
+    th{ color:var(--muted); font-weight:600 }
+    th.w,td.w{ text-align:right }
+
+    canvas{ width:100%; height:360px; display:block; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
+
+    .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
+    .pager .info{ color:#9fb4ad; font-size:12px; margin:0 8px 0 0 }
+    .pager button{ background:#0d171b; border:1px solid #2a3e41; color:#fff; padding:4px 8px; border-radius:8px; font-size:13px }
+    .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
 
     /* „Програма“ */
     .dose-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
     .pill{
       display:flex; flex-direction:column; gap:6px;
-      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-      min-width:170px;
+      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px; min-width:170px;
     }
     .pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px }
     .pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
@@ -139,7 +122,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.10.01</span>
+        <span class="badge">v2.10.02</span>
       </div>
     </div>
   </div>
@@ -159,47 +142,28 @@
       <section class="card">
         <h2 style="margin:0 0 10px">Запис</h2>
 
-        <div class="inputs-row">
-          <div class="inputs-row" style="gap:10px">
-            <div class="field date">
-              <div class="lbl">Дата</div>
-              <div class="ctl date-wrap">
-                <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ"/>
-                <div id="cal" class="cal" role="dialog" aria-label="Календар"></div>
-              </div>
-            </div>
-            <div class="field weight">
-              <div class="lbl">Тегло (kg)</div>
-              <div class="ctl"><input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/></div>
-            </div>
-            <div class="field" style="min-width:var(--ctl-h)">
-              <div class="lbl"></div>
-              <label class="bt-only" title="Маркиран като БТ"><input id="btFlag" type="checkbox" checked/></label>
-            </div>
-            <div class="field" style="min-width:100px">
-              <div class="lbl"></div>
-              <button id="addBtn" class="primary" type="button" style="height:var(--ctl-h); min-width:100px">Добави</button>
+        <div class="row">
+          <div class="field date">
+            <div class="lbl">Дата</div>
+            <div class="date-wrap">
+              <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ"/>
+              <div id="cal" class="cal" role="dialog" aria-label="Календар"></div>
             </div>
           </div>
-          <div class="spacer"></div>
-          <div class="inputs-row" style="gap:8px">
-            <div class="field">
-              <div class="lbl"></div>
-              <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 16V4M12 4l-4 4M12 4l4 4"></path><path d="M4 20h16"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="field">
-              <div class="lbl"></div>
-              <input id="importFile" type="file" accept="application/json" style="display:none"/>
-              <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
-                </svg>
-              </button>
-            </div>
+
+          <div class="field weight">
+            <div class="lbl">Тегло (kg)</div>
+            <input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/>
+          </div>
+
+          <div class="field">
+            <div class="lbl">БТ</div>
+            <label class="bt-only" title="Маркиран като БТ"><input id="btFlag" type="checkbox" checked/></label>
+          </div>
+
+          <div class="field">
+            <div class="lbl">&nbsp;</div>
+            <button id="addBtn" class="primary" type="button">Добави</button>
           </div>
         </div>
       </section>
@@ -207,7 +171,7 @@
       <!-- Графика -->
       <section class="card">
         <h2 style="margin:0 0 10px">Графика</h2>
-        <div class="inputs-row">
+        <div class="row">
           <select id="aggSel" title="Агрегация">
             <option value="daily" selected>Дни (всички/страница)</option>
             <option value="weekly">Седмици (средно — всички)</option>
@@ -220,8 +184,8 @@
       <!-- Записи -->
       <section class="card">
         <h2 style="margin:0">Записи</h2>
-        <div class="recbar">
-          <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
+        <div class="row" style="flex-wrap:wrap">
+          <label for="pageSize" style="font-size:12px;color:#9fb4ad;align-self:center">На страница:</label>
           <select id="pageSize">
             <option value="7">7 (1 сед.)</option>
             <option value="14">14 (2 сед.)</option>
@@ -239,7 +203,7 @@
           <thead id="theadTop">
             <tr><th class="date">Дата</th><th class="w">Тегло (kg)</th><th class="actions">Действия</th></tr>
           </thead>
-        <tbody></tbody>
+          <tbody></tbody>
           <tfoot id="tfootBottom">
             <tr><th class="date">Дата</th><th class="w">Тегло (kg)</th><th class="actions">Действия</th></tr>
           </tfoot>
@@ -304,15 +268,15 @@
           <div class="dose-row" role="group" aria-label="Хитозан Плюс">
             <span class="pill">
               <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
-              <div id="ch-tp-m" class="tp"><div class="lbl">Час за Сутрин</div><select id="ch-sel-m"></select></div>
+              <div id="ch-tp-m" class="tp show"><div class="lbl">Час за Сутрин</div><select id="ch-sel-m"></select></div>
             </span>
             <span class="pill">
               <label><input type="checkbox" id="ch-n" checked disabled> Обед</label>
-              <div id="ch-tp-n" class="tp"><div class="lbl">Час за Обед</div><select id="ch-sel-n"></select></div>
+              <div id="ch-tp-n" class="tp show"><div class="lbl">Час за Обед</div><select id="ch-sel-n"></select></div>
             </span>
             <span class="pill">
               <label><input type="checkbox" id="ch-e" checked disabled> Вечер</label>
-              <div id="ch-tp-e" class="tp"><div class="lbl">Час за Вечер</div><select id="ch-sel-e"></select></div>
+              <div id="ch-tp-e" class="tp show"><div class="lbl">Час за Вечер</div><select id="ch-sel-e"></select></div>
             </span>
           </div>
         </div>
@@ -339,7 +303,7 @@
 
   <script>
     "use strict";
-    window.__BT_VER = '2.10.01';
+    window.__BT_VER = '2.10.02';
 
     /* Таб логика */
     (function(){
@@ -353,11 +317,11 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v21001', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v21002', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v21001'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v21002'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved);
       }catch(_){}
     })();
@@ -389,8 +353,8 @@
 
     /* ---------- ProLact: 2 от 3, таймери под слотовете ---------- */
     (function(){
-      const KEY_SEL='bt_pl_2of3_v21001';
-      const KEY_TIM='bt_pl_times_v21001';
+      const KEY_SEL='bt_pl_2of3_v21002';
+      const KEY_TIM='bt_pl_times_v21002';
 
       const m = document.getElementById('pl-m');
       const n = document.getElementById('pl-n');
@@ -490,10 +454,10 @@
 
     /* ---------- OMNi-Biotic: 1 от 3, собствен кеш за М/О/В ---------- */
     (function(){
-      const KEY_SEL='bt_he_sel_v21001';
-      const KEY_M='bt_he_time_m_v21001';
-      const KEY_N='bt_he_time_n_v21001';
-      const KEY_E='bt_he_time_e_v21001';
+      const KEY_SEL='bt_he_sel_v21002';
+      const KEY_M='bt_he_time_m_v21002';
+      const KEY_N='bt_he_time_n_v21002';
+      const KEY_E='bt_he_time_e_v21002';
 
       const m = document.getElementById('he-m');
       const n = document.getElementById('he-n');
@@ -527,7 +491,7 @@
       }
 
       function rebuild(which){
-        // винаги попълваме 00..23
+        // 00..23 винаги; дефолти M=08, N=12, E=19; ползвай собствен кеш на слота
         fillHours(selM, 0, 23*60);
         fillHours(selN, 0, 23*60);
         fillHours(selE, 0, 23*60);
@@ -566,9 +530,9 @@
       rebuild(current);
     })();
 
-    /* ---------- Хитозан Плюс: 3 фиксирани, таймери М→О→В ---------- */
+    /* ---------- Хитозан Плюс: 3 фиксирани, таймери М→О→В (винаги видими) ---------- */
     (function(){
-      const KEY_TIM='bt_ch_times_v21001';
+      const KEY_TIM='bt_ch_times_v21002';
 
       const selM = document.getElementById('ch-sel-m');
       const selN = document.getElementById('ch-sel-n');
@@ -615,6 +579,11 @@
       selN.addEventListener('change', ()=>rebuildAll("n"));
       selE.addEventListener('change', ()=>rebuildAll("e"));
 
+      // ВИНАГИ видими (дублираме safety и през JS)
+      document.getElementById('ch-tp-m').classList.add('show');
+      document.getElementById('ch-tp-n').classList.add('show');
+      document.getElementById('ch-tp-e').classList.add('show');
+
       rebuildAll(null);
     })();
 
@@ -647,14 +616,9 @@
     dateText.value=isoToBG_YY(currentISO);
     function prefillFor(iso){
       var data=load(); var rec=data.find(r=>r.date===iso);
-      if(rec){
-        weight.value=(typeof rec.weight==="number")?rec.weight:"";
-        btFlag.checked = (rec.bt!==false);
-        return;
-      }
+      if(rec){ weight.value=(typeof rec.weight==="number")?rec.weight:""; btFlag.checked = (rec.bt!==false); return; }
       var prev=sortDesc(data).find(r=>r.date<iso);
-      weight.value=prev?prev.weight:"";
-      btFlag.checked=true;
+      weight.value=prev?prev.weight:""; btFlag.checked=true;
     }
     prefillFor(currentISO);
 
@@ -699,7 +663,7 @@
 
       var data=load(), prev=sortDesc(data).find(r=>r.date<iso), next=sortAsc(data).find(r=>r.date>iso);
       var ok=true, msgs=[];
-      if(prev){ var minP=prev.weight*0.95, maxP=prev.weight*1.05; if(w<minP||w>maxP){ ok=false; msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg"); } }
+      if(prev){ var minP=prev.weight*0.95, maxP=prev.weight*1.05; if(w<минP||w>maxP){ ok=false; msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg"); } }
       if(next){ var minN=next.weight*0.95, maxN=next.weight*1.05; if(w<minN||w>maxN){ ok=false; msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg"); } }
       if(!ok){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
 
@@ -750,7 +714,7 @@
         var s=Number(r.weight).toFixed(1).split(".");
         tr.innerHTML =
           '<td class="date">'+isoToBG_YY(r.date)+'</td>'+
-          '<td class="w wCell"><span class="wInt">'+s[0]+'</span><span class="wSmall">.'+s[1]+'</span></td>'+
+          '<td class="w"><span class="wInt">'+s[0]+'</span><span class="wSmall">.'+s[1]+'</span></td>'+
           '<td class="actions">'+
             '<div class="actions">'+
               '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
@@ -802,12 +766,13 @@
     function getChartRawData(){
       var mode=aggSel.value;
       if(mode==="daily"){ var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(load()); return sortAsc(src); }
-      return sortAsc(load()); // weekly/monthly — всички
+      return sortAsc(load());
     }
 
     function renderChart(){
-      var ctx=chart.getContext("2d"), rect=chart.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
-      chart.width=Math.round(rect.width*dpr); chart.height=Math.round(360*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
+      var canvas = document.getElementById("chart");
+      var ctx=canvas.getContext("2d"), rect=canvas.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
+      canvas.width=Math.round(rect.width*dpr); canvas.height=Math.round(360*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
       var w=rect.width, h=360; ctx.clearRect(0,0,w,h);
 
       var raw=getChartRawData(); if(!raw.length){
