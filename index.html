@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.8</title>
+  <title>БТ App 3 — v2.9</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -92,7 +92,7 @@
     .recbar{ display:flex; align-items:center; gap:8px; justify-content:flex-start; margin:8px 0; flex-wrap:wrap }
 
     .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
-    .pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
+    .pager .info{ color:#9fb4ad; font-size:12px; margin:0 8px 0 0 }
     .pager button{ background:#0d171b; border:1px solid #2a3e41; color:#fff; padding:4px 8px; border-radius:8px; font-size:13px }
     .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
 
@@ -122,15 +122,13 @@
     .pill{
       display:flex; flex-direction:column; gap:6px;
       padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-      min-width:150px;
+      min-width:170px;
     }
     .pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px }
     .pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
     .tp{ display:none; }
     .tp.show{ display:block; }
     .tp .lbl{ margin:0 }
-
-    .note{ color:var(--muted); font-size:12px; margin-top:6px; display:none }
   </style>
 </head>
 <body>
@@ -141,7 +139,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.8</span>
+        <span class="badge">v2.9</span>
       </div>
     </div>
   </div>
@@ -198,7 +196,7 @@
               <input id="importFile" type="file" accept="application/json" style="display:none"/>
               <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
+                  <path d="M12 8v12M12 20l-4-4M12 20л4-4"></path><path d="M4 4h16"></path>
                 </svg>
               </button>
             </div>
@@ -223,7 +221,7 @@
       <section class="card">
         <h2 style="margin:0">Записи</h2>
         <div class="recbar">
-          <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
+          <label for="pageSize" style="font-size:12px;color:#9fb4ad">На страница:</label>
           <select id="pageSize">
             <option value="7">7 (1 сед.)</option>
             <option value="14">14 (2 сед.)</option>
@@ -258,57 +256,64 @@
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ — точно 2 от 3 + таймери ПОД съответния слот -->
+        <!-- ProLact Slim+ -->
         <div>
           <strong>ProLact Slim+</strong>
           <div class="dose-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
             <span class="pill">
               <label><input type="checkbox" id="pl-m"> Сутрин</label>
-              <div id="tp-m" class="tp">
-                <div class="lbl">Час за Сутрин</div>
-                <select id="sel-m"></select>
-              </div>
+              <div id="pl-tp-m" class="tp"><div class="lbl">Час за Сутрин</div><select id="pl-sel-m"></select></div>
             </span>
-
             <span class="pill">
               <label><input type="checkbox" id="pl-n" checked> Обед</label>
-              <div id="tp-n" class="tp">
-                <div class="lbl">Час за Обед</div>
-                <select id="sel-n"></select>
-              </div>
+              <div id="pl-tp-n" class="tp"><div class="lbl">Час за Обед</div><select id="pl-sel-n"></select></div>
             </span>
-
             <span class="pill">
               <label><input type="checkbox" id="pl-e" checked> Вечер</label>
-              <div id="tp-e" class="tp">
-                <div class="lbl">Час за Вечер</div>
-                <select id="sel-e"></select>
-              </div>
+              <div id="pl-tp-e" class="tp"><div class="lbl">Час за Вечер</div><select id="pl-sel-e"></select></div>
             </span>
           </div>
         </div>
 
-        <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
+        <hr style="border:0; border-top:1px solid #1e2b30; margin:14px 0"/>
 
-        <!-- OMNi-Biotic HETOX light — точно 1 от 3 -->
+        <!-- OMNi-Biotic HETOX light -->
         <div>
           <strong>OMNi-Biotic HETOX light</strong>
           <div class="dose-row" role="group" aria-label="HETOX — 1 от 3">
-            <span class="pill"><label><input type="checkbox" id="hetox-m"> Сутрин</label></span>
-            <span class="pill"><label><input type="checkbox" id="hetox-n" checked> Обед</label></span>
-            <span class="pill"><label><input type="checkbox" id="hetox-e"> Вечер</label></span>
+            <span class="pill">
+              <label><input type="checkbox" id="he-m"> Сутрин</label>
+              <div id="he-tp-m" class="tp"><div class="lbl">Час за Сутрин</div><select id="he-sel-m"></select></div>
+            </span>
+            <span class="pill">
+              <label><input type="checkbox" id="he-n" checked> Обед</label>
+              <div id="he-tp-n" class="tp"><div class="lbl">Час за Обед</div><select id="he-sel-n"></select></div>
+            </span>
+            <span class="pill">
+              <label><input type="checkbox" id="he-e"> Вечер</label>
+              <div id="he-tp-e" class="tp"><div class="lbl">Час за Вечер</div><select id="he-sel-e"></select></div>
+            </span>
           </div>
         </div>
 
-        <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
+        <hr style="border:0; border-top:1px solid #1e2b30; margin:14px 0"/>
 
-        <!-- Fortex Хитозан Плюс — заключени чекове -->
+        <!-- Fortex Хитозан Плюс -->
         <div>
           <strong>Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром</strong>
           <div class="dose-row" role="group" aria-label="Хитозан Плюс">
-            <span class="pill"><label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label></span>
-            <span class="pill"><label><input type="checkbox" id="ch-n" checked disabled> Обед</label></span>
-            <span class="pill"><label><input type="checkbox" id="ch-e" checked disabled> Вечер</label></span>
+            <span class="pill">
+              <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
+              <div id="ch-tp-m" class="tp"><div class="lbl">Час за Сутрин</div><select id="ch-sel-m"></select></div>
+            </span>
+            <span class="pill">
+              <label><input type="checkbox" id="ch-n" checked disabled> Обед</label>
+              <div id="ch-tp-n" class="tp"><div class="lbl">Час за Обед</div><select id="ch-sel-n"></select></div>
+            </span>
+            <span class="pill">
+              <label><input type="checkbox" id="ch-e" checked disabled> Вечер</label>
+              <div id="ch-tp-e" class="tp"><div class="lbl">Час за Вечер</div><select id="ch-sel-e"></select></div>
+            </span>
           </div>
         </div>
       </section>
@@ -321,20 +326,20 @@
           <li><strong>Глюкоманан</strong> (NOW Foods)</li>
           <li><strong>EGCg</strong> — екстракт от зелен чай (NOW Foods)</li>
         </ul>
-        <p class="note">Добавят се по избор според индивидуалния план.</p>
+        <p style="color:#9fb4ad;font-size:12px">Добавят се по избор според индивидуалния план.</p>
       </section>
 
       <!-- 💊 Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
-        <p class="note">Свободен списък за твои добавки, витамини и др.</p>
+        <p style="color:#9fb4ad;font-size:12px">Свободен списък за твои добавки, витамини и др.</p>
       </section>
     </main>
   </div>
 
   <script>
     "use strict";
-    window.__BT_VER = '2.8';
+    window.__BT_VER = '2.9';
 
     /* Таб логика */
     (function(){
@@ -348,11 +353,11 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v28', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v29', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v28'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v29'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved);
       }catch(_){}
     })();
@@ -377,51 +382,44 @@
       return false;
     }
     function clampToRange(selectEl, want){
-      // ако желаната стойност е извън опции → вземи първата възможна
       if(!setSelectValue(selectEl, want)){
         if(selectEl.options.length>0) selectEl.value = selectEl.options[0].value;
       }
     }
 
-    /* ---------- ProLact: точно 2 от 3 + таймери под всеки слот ---------- */
+    /* ---------- ProLact: 2 от 3, таймери под слотовете ---------- */
     (function(){
-      const KEY_SEL='bt_pl_2of3_v28';
-      const KEY_TIM='bt_pl_times_v28';
+      const KEY_SEL='bt_pl_2of3_v29';
+      const KEY_TIM='bt_pl_times_v29';
 
       const m = document.getElementById('pl-m');
       const n = document.getElementById('pl-n');
       const e = document.getElementById('pl-e');
 
-      const tpM = document.getElementById('tp-m');
-      const tpN = document.getElementById('tp-n');
-      const tpE = document.getElementById('tp-e');
+      const tpM = document.getElementById('pl-tp-m');
+      const tpN = document.getElementById('pl-tp-n');
+      const tpE = document.getElementById('pl-tp-e');
 
-      const selM = document.getElementById('sel-m');
-      const selN = document.getElementById('sel-n');
-      const selE = document.getElementById('sel-e');
+      const selM = document.getElementById('pl-sel-m');
+      const selN = document.getElementById('pl-sel-n');
+      const selE = document.getElementById('pl-sel-e');
 
-      const DEF_M = "08:00";
-      const DEF_N = "12:00";
-      const DEF_E = "19:00";
+      const DEF_M = "08:00", DEF_N = "12:00", DEF_E = "19:00";
 
       function saveSel(){ try{ localStorage.setItem(KEY_SEL, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }catch(_){ } }
       function saveTimes(t){ try{ localStorage.setItem(KEY_TIM, JSON.stringify(t)); }catch(_){ } }
       function loadSel(){
         try{
           const raw=JSON.parse(localStorage.getItem(KEY_SEL)||'');
-          if(raw && typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){
-            m.checked=raw.m; n.checked=raw.n; e.checked=raw.e; return;
-          }
+          if(raw && typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){ m.checked=raw.m; n.checked=raw.n; e.checked=raw.e; return; }
         }catch(_){}
-        m.checked=false; n.checked=true; e.checked=true; // дефолт О+В
+        m.checked=false; n.checked=true; e.checked=true;
       }
       function loadTimes(){
         const t={m:DEF_M,n:DEF_N,e:DEF_E};
         try{
           const raw=JSON.parse(localStorage.getItem(KEY_TIM)||'');
-          if(raw && typeof raw.m==="string" && typeof raw.n==="string" && typeof raw.e==="string"){
-            t.m=raw.m; t.n=raw.n; t.e=raw.e;
-          }
+          if(raw && typeof raw.m==="string" && typeof raw.n==="string" && typeof raw.e==="string"){ t.m=raw.m; t.n=raw.n; t.e=raw.e; }
         }catch(_){}
         return t;
       }
@@ -432,114 +430,194 @@
           if(clicked===e){ n.checked=false; }
           else if(clicked===n){ e.checked=false; }
           else { e.checked=false; }
-        }else if(count<2){
+        } else if(count<2){
           if(!n.checked) n.checked=true;
           else if(!e.checked) e.checked=true;
           else if(!m.checked) m.checked=true;
         }
-        saveSel();
-        updateTimersUI();
+        saveSel(); updateTimersUI();
       }
 
       function updateTimersUI(){
         const times = loadTimes();
         const onM = m.checked, onN = n.checked, onE = e.checked;
 
-        // показване/скриване под слота
         tpM.classList.toggle('show', onM);
         tpN.classList.toggle('show', onN);
         tpE.classList.toggle('show', onE);
 
-        // 1) Сутрин — 00..23
         if(onM){
           fillHours(selM, 0, 23*60);
           clampToRange(selM, times.m || DEF_M);
         }
-
-        // 2) Обед — зависи от М, ако М е активен
         if(onN){
           let minN = 0, defN = DEF_N;
           if(onM){
             const mMin = hhmmToMin(selM.value || times.m || DEF_M);
-            minN = mMin + 60;                 // минимум М + 1 ч
-            defN = minToHHMM(mMin + 240);     // дефолт М + 4 ч
+            minN = mMin + 60;
+            defN = minToHHMM(mMin + 240);
           }
           fillHours(selN, minN, 23*60);
-          // при възстановяване — ако запазеният е извън, clamp
-          const wantN = times.n || defN;
-          // ако дефолтът е под минимума → повдигаме
-          const effN = Math.max(hhmmToMin(wantN), minN);
+          const effN = Math.max(hhmmToMin(times.n || defN), minN);
           clampToRange(selN, minToHHMM(effN));
         }
-
-        // 3) Вечер — зависи от О, а при М+В (без О) зависи от М
         if(onE){
           let minE = 0, wantE = times.e || DEF_E;
-
           if(onN){
             const nMin = hhmmToMin(selN.value || times.n || DEF_N);
-            minE = nMin + 60; // минимум О + 1 ч
-            // дефолт е max(19:00, О+4ч)
+            minE = nMin + 60;
             const nPlus4 = nMin + 240;
-            const defE_NE = Math.max(hhmmToMin(DEF_E), nPlus4);
-            wantE = minToHHMM(defE_NE);
+            wantE = minToHHMM(Math.max(hhmmToMin(DEF_E), nPlus4));
           } else if(onM){
             const mMin = hhmmToMin(selM.value || times.m || DEF_M);
-            minE = mMin + 60; // минимум М + 1 ч
-            // дефолт е 19:00, но ако е под минимума → повдигаме до минимума
-            if(hhmmToMin(DEF_E) < minE) wantE = minToHHMM(minE);
-            else wantE = DEF_E;
-          } else {
-            // рядък случай (не би трябвало заради enforceTwo), оставям свободно
-            minE = 0; wantE = times.e || DEF_E;
+            minE = mMin + 60;
+            wantE = (hhmmToMin(DEF_E) < minE) ? minToHHMM(minE) : DEF_E;
           }
-
           fillHours(selE, minE, 23*60);
           clampToRange(selE, wantE);
         }
 
-        // запази текущите
         saveTimes({ m: selM.value || DEF_M, n: selN.value || DEF_N, e: selE.value || DEF_E });
       }
 
-      // чекбокси
       [m,n,e].forEach(el=> el.addEventListener('change', ()=>enforceTwo(el)));
-
-      // промяна на часовете
       selM.addEventListener('change', ()=>{ const t=loadTimes(); t.m=selM.value; saveTimes(t); updateTimersUI(); });
       selN.addEventListener('change', ()=>{ const t=loadTimes(); t.n=selN.value; saveTimes(t); updateTimersUI(); });
       selE.addEventListener('change', ()=>{ const t=loadTimes(); t.e=selE.value; saveTimes(t); });
 
-      // init
-      loadSel();
-      updateTimersUI();
+      loadSel(); updateTimersUI();
     })();
 
-    /* ---------- HETOX — точно 1 от 3 ---------- */
+    /* ---------- OMNi-Biotic: 1 от 3, таймер под избрания слот ---------- */
     (function(){
-      const KEY='bt_hetox_1of3_v28';
-      const m=document.getElementById('hetox-m');
-      const n=document.getElementById('hetox-n');
-      const e=document.getElementById('hetox-e');
+      const KEY_SEL='bt_he_sel_v29';
+      const KEY_TIM='bt_he_time_v29';
 
-      function save(){ try{ localStorage.setItem(KEY, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }catch(_){}
+      const m = document.getElementById('he-m');
+      const n = document.getElementById('he-n');
+      const e = document.getElementById('he-e');
+
+      const tpM = document.getElementById('he-tp-m');
+      const tpN = document.getElementById('he-tp-n');
+      const tpE = document.getElementById('he-tp-e');
+
+      const selM = document.getElementById('he-sel-m');
+      const selN = document.getElementById('he-sel-n');
+      const selE = document.getElementById('he-sel-e');
+
+      const DEF_M="08:00", DEF_N="12:00", DEF_E="19:00";
+
+      function saveSel(which){ try{ localStorage.setItem(KEY_SEL, which); }catch(_){} }
+      function saveTime(val){ try{ localStorage.setItem(KEY_TIM, val); }catch(_){} }
+      function loadSel(){
+        const s = localStorage.getItem(KEY_SEL);
+        if(s==="m"){ m.checked=true; n.checked=false; e.checked=false; }
+        else if(s==="e"){ m.checked=false; n.checked=false; e.checked=true; }
+        else { m.checked=false; n.checked=true; e.checked=false; } // дефолт Обед
       }
-      function fix(clicked){
-        if(clicked && clicked.checked){ [m,n,e].forEach(x=>{ if(x!==clicked) x.checked=false; }); }
-        if(!m.checked && !n.checked && !e.checked){ n.checked=true; }
-        save();
+      function loadTime(){
+        return localStorage.getItem(KEY_TIM) || DEF_N;
       }
-      function load(){
+
+      function showOnly(which){
+        tpM.classList.toggle('show', which==="m");
+        tpN.classList.toggle('show', which==="n");
+        tpE.classList.toggle('show', which==="e");
+      }
+
+      function rebuild(which){
+        // попълни всички, безопасно
+        fillHours(selM, 0, 23*60); setSelectValue(selM, DEF_M);
+        fillHours(selN, 0, 23*60); setSelectValue(selN, DEF_N);
+        fillHours(selE, 0, 23*60); setSelectValue(selE, DEF_E);
+
+        const stored = loadTime();
+        let want = stored;
+
+        if(which==="m"){
+          showOnly("m");
+          if(!setSelectValue(selM, want)) setSelectValue(selM, DEF_M);
+          saveTime(selM.value);
+          saveSel("m");
+        } else if(which==="e"){
+          showOnly("e");
+          if(!setSelectValue(selE, want)) setSelectValue(selE, DEF_E);
+          saveTime(selE.value);
+          saveSel("e");
+        } else {
+          showOnly("n");
+          if(!setSelectValue(selN, want)) setSelectValue(selN, DEF_N);
+          saveTime(selN.value);
+          saveSel("n");
+        }
+      }
+
+      function onChange(clicked){
+        if(clicked===m){ n.checked=false; e.checked=false; rebuild("m"); }
+        else if(clicked===n){ m.checked=false; e.checked=false; rebuild("n"); }
+        else { m.checked=false; n.checked=false; rebuild("e"); }
+      }
+
+      [m,n,e].forEach(el=> el.addEventListener('change', ()=>onChange(el)));
+      selM.addEventListener('change', ()=>saveTime(selM.value));
+      selN.addEventListener('change', ()=>saveTime(selN.value));
+      selE.addEventListener('change', ()=>saveTime(selE.value));
+
+      loadSel();
+      const current = (m.checked?"m":n.checked?"n":"e");
+      rebuild(current);
+    })();
+
+    /* ---------- Хитозан Плюс: 3 фиксирани, таймери с зависимости М→О→В ---------- */
+    (function(){
+      const KEY_TIM='bt_ch_times_v29';
+
+      const selM = document.getElementById('ch-sel-m');
+      const selN = document.getElementById('ch-sel-n');
+      const selE = document.getElementById('ch-sel-e');
+
+      const DEF_M="08:00", DEF_N="12:00", DEF_E="19:00";
+
+      function saveTimes(t){ try{ localStorage.setItem(KEY_TIM, JSON.stringify(t)); }catch(_){ } }
+      function loadTimes(){
+        const t={m:DEF_M,n:DEF_N,e:DEF_E};
         try{
-          const raw=JSON.parse(localStorage.getItem(KEY)||'');
-          if(raw && typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){
-            m.checked=raw.m; n.checked=raw.n; e.checked=raw.e;
-          }else{ m.checked=false; n.checked=true; e.checked=false; }
-        }catch(_){ m.checked=false; n.checked=true; e.checked=false; }
-        fix(null);
+          const raw=JSON.parse(localStorage.getItem(KEY_TIM)||'');
+          if(raw && typeof raw.m==="string" && typeof raw.n==="string" && typeof raw.e==="string"){ t.m=raw.m; t.n=raw.n; t.e=raw.e; }
+        }catch(_){}
+        return t;
       }
-      [m,n,e].forEach(el=> el.addEventListener('change', ()=>fix(el)));
-      load();
+
+      function rebuildAll(from){
+        const t = loadTimes();
+
+        // Сутрин: 00..23
+        fillHours(selM, 0, 23*60);
+        clampToRange(selM, (from==="m" ? selM.value : t.m) || DEF_M);
+
+        // Обед: [M+1 .. 23], дефолт M+4
+        const mMin = hhmmToMin(selM.value || t.m || DEF_M);
+        const minN = mMin + 60;
+        fillHours(selN, minN, 23*60);
+        const wantN = (from==="n" ? selN.value : t.n) || minToHHMM(mMin+240);
+        clampToRange(selN, minToHHMM(Math.max(hhmmToMin(wantN), minN)));
+
+        // Вечер: [N+1 .. 23], дефолт max(19:00, N+4)
+        const nMin = hhmmToMin(selN.value || t.n || DEF_N);
+        const minE = nMin + 60;
+        fillHours(selE, minE, 23*60);
+        const defE = Math.max(hhmmToMin(DEF_E), nMin+240);
+        const wantE = (from==="e" ? selE.value : t.e) || minToHHMM(defE);
+        clampToRange(selE, minToHHMM(Math.max(hhmmToMin(wantE), minE)));
+
+        saveTimes({ m: selM.value, n: selN.value, e: selE.value });
+      }
+
+      selM.addEventListener('change', ()=>rebuildAll("m"));
+      selN.addEventListener('change', ()=>rebuildAll("n"));
+      selE.addEventListener('change', ()=>rebuildAll("e"));
+
+      rebuildAll(null);
     })();
 
     /* ---------- Данни (таблица/графика/импорт/експорт) ---------- */
@@ -571,14 +649,9 @@
     dateText.value=isoToBG_YY(currentISO);
     function prefillFor(iso){
       var data=load(); var rec=data.find(r=>r.date===iso);
-      if(rec){
-        weight.value=(typeof rec.weight==="number")?rec.weight:"";
-        btFlag.checked = (rec.bt!==false);
-        return;
-      }
+      if(rec){ weight.value=(typeof rec.weight==="number")?rec.weight:""; btFlag.checked = (rec.bt!==false); return; }
       var prev=sortDesc(data).find(r=>r.date<iso);
-      weight.value=prev?prev.weight:"";
-      btFlag.checked=true;
+      weight.value=prev?prev.weight:""; btFlag.checked=true;
     }
     prefillFor(currentISO);
 
@@ -588,7 +661,7 @@
     function renderCalendar(){
       var set=hasDataSet(), y=calYear, m=calMonth;
       var first=new Date(Date.UTC(y,m-1,1));
-      var startDow=(first.getUTCDay()+6)%7; /* Monday=0 */
+      var startDow=(first.getUTCDay()+6)%7;
       var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
       var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
       var html='<div class="cal-head"><button id="calPrev" type="button">←</button><div class="cal-title">'+title+'</div><button id="calNext" type="button">→</button></div>';
@@ -726,7 +799,7 @@
     function getChartRawData(){
       var mode=aggSel.value;
       if(mode==="daily"){ var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(load()); return sortAsc(src); }
-      return sortAsc(load()); // weekly/monthly — всички
+      return sortAsc(load());
     }
 
     function renderChart(){
@@ -754,11 +827,11 @@
         });
       } else {
         var mm=new Map();
-        raw.forEach(r=>{ var k=monthKey(r.date); (mm.get(k)||mm.set(k,[]).get(k)).push(r); });
+        raw.forEach(r=>{ var k=monthKey(r.date); (mm.get(k)||мм.set(k,[]).get(k)).push(r); });
         mm.forEach((arr,k)=>{
           var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
           var btCount=arr.filter(z=>z.bt!==false).length;
-          pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-btCount)});
+          pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-бtCount)});
         });
       }
 
@@ -773,7 +846,7 @@
       function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
       ctx.strokeStyle="#20343a"; ctx.lineWidth=1.1;
-      ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-padB); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(pадL,h-padB); ctx.stroke();
 
       for(var i=1;i<n;i++){
         var p0=pts[i-1], p1=pts[i];
