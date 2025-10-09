@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.7</title>
+  <title>БТ App 3 — v2.8</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -118,16 +118,19 @@
     .tabpanel[aria-hidden="false"]{ display:block }
 
     /* „Програма“ */
-    .dose-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
-    .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px }
+    .dose-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
+    .pill{
+      display:flex; flex-direction:column; gap:6px;
+      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
+      min-width:150px;
+    }
     .pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px }
     .pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
-    .note{ color:var(--muted); font-size:12px; margin-top:6px; display:none } /* скрито, по твое желание */
+    .tp{ display:none; }
+    .tp.show{ display:block; }
+    .tp .lbl{ margin:0 }
 
-    .time-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
-    .time-picker{ display:none; }
-    .time-picker.show{ display:flex; flex-direction:column; gap:6px; }
-    .time-picker .lbl{ margin:0 }
+    .note{ color:var(--muted); font-size:12px; margin-top:6px; display:none }
   </style>
 </head>
 <body>
@@ -138,7 +141,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.7</span>
+        <span class="badge">v2.8</span>
       </div>
     </div>
   </div>
@@ -255,29 +258,33 @@
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ — точно 2 от 3 + таймери -->
+        <!-- ProLact Slim+ — точно 2 от 3 + таймери ПОД съответния слот -->
         <div>
           <strong>ProLact Slim+</strong>
           <div class="dose-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
-            <span class="pill"><label><input type="checkbox" id="pl-m"> Сутрин</label></span>
-            <span class="pill"><label><input type="checkbox" id="pl-n" checked> Обед</label></span>
-            <span class="pill"><label><input type="checkbox" id="pl-e" checked> Вечер</label></span>
-          </div>
+            <span class="pill">
+              <label><input type="checkbox" id="pl-m"> Сутрин</label>
+              <div id="tp-m" class="tp">
+                <div class="lbl">Час за Сутрин</div>
+                <select id="sel-m"></select>
+              </div>
+            </span>
 
-          <!-- Таймери -->
-          <div class="time-row" id="pl-times">
-            <div id="tm-m" class="time-picker">
-              <div class="lbl">Час за Сутрин</div>
-              <select id="sel-m"></select>
-            </div>
-            <div id="tm-n" class="time-picker">
-              <div class="lbl">Час за Обед</div>
-              <select id="sel-n"></select>
-            </div>
-            <div id="tm-e" class="time-picker">
-              <div class="lbl">Час за Вечер</div>
-              <select id="sel-e"></select>
-            </div>
+            <span class="pill">
+              <label><input type="checkbox" id="pl-n" checked> Обед</label>
+              <div id="tp-n" class="tp">
+                <div class="lbl">Час за Обед</div>
+                <select id="sel-n"></select>
+              </div>
+            </span>
+
+            <span class="pill">
+              <label><input type="checkbox" id="pl-e" checked> Вечер</label>
+              <div id="tp-e" class="tp">
+                <div class="lbl">Час за Вечер</div>
+                <select id="sel-e"></select>
+              </div>
+            </span>
           </div>
         </div>
 
@@ -327,7 +334,7 @@
 
   <script>
     "use strict";
-    window.__BT_VER = '2.7';
+    window.__BT_VER = '2.8';
 
     /* Таб логика */
     (function(){
@@ -341,11 +348,11 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v27', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v28', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v27'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v28'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved);
       }catch(_){}
     })();
@@ -355,8 +362,8 @@
     function minToHHMM(min){ min=(min+1440)%1440; const h=Math.floor(min/60), m=min%60; return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); }
     function fillHours(selectEl, startMin, endMin){
       selectEl.innerHTML="";
-      const start = Math.max(0, startMin);
-      const end = Math.min(23*60, endMin);
+      const start = Math.max(0, Math.min(startMin, 23*60));
+      const end = Math.max(start, Math.min(endMin, 23*60));
       for(let t=start; t<=end; t+=60){
         const opt=document.createElement("option");
         opt.value=minToHHMM(t);
@@ -369,29 +376,36 @@
       if(opt){ selectEl.value=val; return true; }
       return false;
     }
+    function clampToRange(selectEl, want){
+      // ако желаната стойност е извън опции → вземи първата възможна
+      if(!setSelectValue(selectEl, want)){
+        if(selectEl.options.length>0) selectEl.value = selectEl.options[0].value;
+      }
+    }
 
-    /* ---------- ProLact: точно 2 от 3 + таймери ---------- */
+    /* ---------- ProLact: точно 2 от 3 + таймери под всеки слот ---------- */
     (function(){
-      const KEY_SEL='bt_pl_2of3_v27';
-      const KEY_TIM='bt_pl_times_v27';
+      const KEY_SEL='bt_pl_2of3_v28';
+      const KEY_TIM='bt_pl_times_v28';
+
       const m = document.getElementById('pl-m');
       const n = document.getElementById('pl-n');
       const e = document.getElementById('pl-e');
 
-      const tmWrapM = document.getElementById('tm-m');
-      const tmWrapN = document.getElementById('tm-n');
-      const tmWrapE = document.getElementById('tm-e');
+      const tpM = document.getElementById('tp-m');
+      const tpN = document.getElementById('tp-n');
+      const tpE = document.getElementById('tp-e');
+
       const selM = document.getElementById('sel-m');
       const selN = document.getElementById('sel-n');
       const selE = document.getElementById('sel-e');
 
-      /* Дефолтни часове */
       const DEF_M = "08:00";
       const DEF_N = "12:00";
       const DEF_E = "19:00";
 
       function saveSel(){ try{ localStorage.setItem(KEY_SEL, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }catch(_){ } }
-      function saveTimes(times){ try{ localStorage.setItem(KEY_TIM, JSON.stringify(times)); }catch(_){ } }
+      function saveTimes(t){ try{ localStorage.setItem(KEY_TIM, JSON.stringify(t)); }catch(_){ } }
       function loadSel(){
         try{
           const raw=JSON.parse(localStorage.getItem(KEY_SEL)||'');
@@ -402,7 +416,7 @@
         m.checked=false; n.checked=true; e.checked=true; // дефолт О+В
       }
       function loadTimes(){
-        const t = { m:DEF_M, n:DEF_N, e:DEF_E };
+        const t={m:DEF_M,n:DEF_N,e:DEF_E};
         try{
           const raw=JSON.parse(localStorage.getItem(KEY_TIM)||'');
           if(raw && typeof raw.m==="string" && typeof raw.n==="string" && typeof raw.e==="string"){
@@ -412,7 +426,6 @@
         return t;
       }
 
-      /* Винаги точно 2 от 3 — със смяна според твоята схема */
       function enforceTwo(clicked){
         const count = (m.checked?1:0)+(n.checked?1:0)+(e.checked?1:0);
         if(count===3){
@@ -428,99 +441,83 @@
         updateTimersUI();
       }
 
-      /* Таймери — изглед и ограничения */
       function updateTimersUI(){
         const times = loadTimes();
+        const onM = m.checked, onN = n.checked, onE = e.checked;
 
-        const selMOn = m.checked;
-        const selNOn = n.checked;
-        const selEOn = e.checked;
+        // показване/скриване под слота
+        tpM.classList.toggle('show', onM);
+        tpN.classList.toggle('show', onN);
+        tpE.classList.toggle('show', onE);
 
-        // Показване/скриване според активните два
-        tmWrapM.classList.toggle('show', selMOn);
-        tmWrapN.classList.toggle('show', selNOn);
-        tmWrapE.classList.toggle('show', selEOn);
-
-        // 1) Сутрин: 00:00..23:00
-        if(selMOn){
+        // 1) Сутрин — 00..23
+        if(onM){
           fillHours(selM, 0, 23*60);
-          // възприеми записан час, иначе дефолт 08:00
-          if(!setSelectValue(selM, times.m)) setSelectValue(selM, DEF_M);
+          clampToRange(selM, times.m || DEF_M);
         }
 
-        // 2) Обед: ако М е включен → дефолтен N = M+240; диапазон [M+60..23:00]
-        if(selNOn){
-          let minN = 0;
-          let defN = DEF_N;
-          if(selMOn){
+        // 2) Обед — зависи от М, ако М е активен
+        if(onN){
+          let minN = 0, defN = DEF_N;
+          if(onM){
             const mMin = hhmmToMin(selM.value || times.m || DEF_M);
-            minN = mMin + 60;
-            defN = minToHHMM(mMin + 240);
+            minN = mMin + 60;                 // минимум М + 1 ч
+            defN = minToHHMM(mMin + 240);     // дефолт М + 4 ч
           }
           fillHours(selN, minN, 23*60);
-          if(!setSelectValue(selN, times.n)){
-            // ако дефолтът е под минималния праг, вдигни го
-            const d = hhmmToMin(defN);
-            const eff = Math.max(d, minN);
-            setSelectValue(selN, minToHHMM(eff));
-          }
+          // при възстановяване — ако запазеният е извън, clamp
+          const wantN = times.n || defN;
+          // ако дефолтът е под минимума → повдигаме
+          const effN = Math.max(hhmmToMin(wantN), minN);
+          clampToRange(selN, minToHHMM(effN));
         }
 
-        // 3) Вечер: ако N е включен → дефолтен E = N+240; диапазон [N+60..23:00]
-        if(selEOn){
-          let minE = 0;
-          let defE = DEF_E;
-          if(selNOn){
+        // 3) Вечер — зависи от О, а при М+В (без О) зависи от М
+        if(onE){
+          let minE = 0, wantE = times.e || DEF_E;
+
+          if(onN){
             const nMin = hhmmToMin(selN.value || times.n || DEF_N);
-            minE = nMin + 60;
-            defE = minToHHMM(nMin + 240);
-          } else if(selMOn && !selNOn){
-            // Комбо М+В: вечерта зависи от М? Няма изрично правило.
-            // Оставяме свободен избор (00:00..23:00) и дефолт 19:00.
-            minE = 0; defE = DEF_E;
+            minE = nMin + 60; // минимум О + 1 ч
+            // дефолт е max(19:00, О+4ч)
+            const nPlus4 = nMin + 240;
+            const defE_NE = Math.max(hhmmToMin(DEF_E), nPlus4);
+            wantE = minToHHMM(defE_NE);
+          } else if(onM){
+            const mMin = hhmmToMin(selM.value || times.m || DEF_M);
+            minE = mMin + 60; // минимум М + 1 ч
+            // дефолт е 19:00, но ако е под минимума → повдигаме до минимума
+            if(hhmmToMin(DEF_E) < minE) wantE = minToHHMM(minE);
+            else wantE = DEF_E;
+          } else {
+            // рядък случай (не би трябвало заради enforceTwo), оставям свободно
+            minE = 0; wantE = times.e || DEF_E;
           }
+
           fillHours(selE, minE, 23*60);
-          if(!setSelectValue(selE, times.e)){
-            const d = hhmmToMin(defE);
-            const eff = Math.max(d, minE);
-            setSelectValue(selE, minToHHMM(eff));
-          }
+          clampToRange(selE, wantE);
         }
 
-        // Запази актуалните стойности
-        const toSave = {
-          m: selM.value || DEF_M,
-          n: selN.value || DEF_N,
-          e: selE.value || DEF_E
-        };
-        saveTimes(toSave);
+        // запази текущите
+        saveTimes({ m: selM.value || DEF_M, n: selN.value || DEF_N, e: selE.value || DEF_E });
       }
 
-      // Слушатели за чекбокси
+      // чекбокси
       [m,n,e].forEach(el=> el.addEventListener('change', ()=>enforceTwo(el)));
 
-      // Слушатели за промяна на времена → ребилд на зависимите
-      selM.addEventListener('change', ()=>{
-        // при промяна на М влияе на N; после и на E, ако N е включен
-        const t = loadTimes(); t.m = selM.value; saveTimes(t);
-        updateTimersUI();
-      });
-      selN.addEventListener('change', ()=>{
-        const t = loadTimes(); t.n = selN.value; saveTimes(t);
-        updateTimersUI();
-      });
-      selE.addEventListener('change', ()=>{
-        const t = loadTimes(); t.e = selE.value; saveTimes(t);
-      });
+      // промяна на часовете
+      selM.addEventListener('change', ()=>{ const t=loadTimes(); t.m=selM.value; saveTimes(t); updateTimersUI(); });
+      selN.addEventListener('change', ()=>{ const t=loadTimes(); t.n=selN.value; saveTimes(t); updateTimersUI(); });
+      selE.addEventListener('change', ()=>{ const t=loadTimes(); t.e=selE.value; saveTimes(t); });
 
-      // Инициализация
+      // init
       loadSel();
       updateTimersUI();
     })();
 
     /* ---------- HETOX — точно 1 от 3 ---------- */
     (function(){
-      const KEY='bt_hetox_1of3_v27';
+      const KEY='bt_hetox_1of3_v28';
       const m=document.getElementById('hetox-m');
       const n=document.getElementById('hetox-n');
       const e=document.getElementById('hetox-e');
