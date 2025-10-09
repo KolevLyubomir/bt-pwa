@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.2</title>
+  <title>БТ App 3 — v2.3</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -50,13 +50,15 @@
       appearance:none; border:1px solid var(--border); background:#0d171b; color:#e6f2ef;
       padding:12px 18px; border-radius:10px; cursor:pointer; font-weight:800; font-size:16px; transition:.15s ease;
     }
-    .tab-btn[aria-selected="true"]{ color:#06241b; border-color:transparent; background:linear-gradient(90deg,#22c55e,#14b8a6); }
+    .tab-btn[aria-selected="true"]{
+      color:#06241b; border-color:transparent; background:linear-gradient(90deg,#22c55e,#14b8a6);
+    }
 
     /* ===== Основно съдържание ===== */
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== Стилове от v1.39 (ДАННИ) ===== */
+    /* ===== Стилове за „Данни“ ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -131,7 +133,7 @@
     .dose-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
     .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px }
     .pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px }
-    .pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
+    .pill input[type="checkbox"], .pill input[type="radio"]{ width:16px; height:16px; margin:0 }
     .note{ color:var(--muted); font-size:12px; margin-top:6px }
   </style>
 </head>
@@ -143,7 +145,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.2</span>
+        <span class="badge">v2.3</span>
       </div>
     </div>
   </div>
@@ -156,7 +158,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (твоят код 1:1) -->
+  <!-- ПАНЕЛ: ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -279,54 +281,53 @@
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ -->
+        <!-- ProLact Slim+ — 2 от 3 чрез радио-парове -->
         <div>
           <strong>ProLact Slim+</strong>
-          <div class="dose-row" role="group" aria-label="ProLact Slim+ — прием">
+          <div class="dose-row" role="group" aria-label="ProLact Slim+ — прием (2 от 3)">
             <span class="pill">
-              <label><input type="checkbox" id="pl-m" data-prod="pl" data-slot="1"> Сутрин</label>
+              <label><input type="radio" name="pl-pair" value="morning-noon"> Сутрин + Обед</label>
             </span>
             <span class="pill">
-              <label><input type="checkbox" id="pl-n" data-prod="pl" data-slot="2" checked> Обед</label>
+              <label><input type="radio" name="pl-pair" value="morning-evening"> Сутрин + Вечер</label>
             </span>
             <span class="pill">
-              <label><input type="checkbox" id="pl-e" data-prod="pl" data-slot="3" checked> Вечер</label>
+              <label><input type="radio" name="pl-pair" value="noon-evening" checked> Обед + Вечер</label>
             </span>
           </div>
-          <div class="note">По подразбиране: <em>Обед</em> и <em>Вечер</em> са включени.</div>
+          <div class="note">Избери един вариант — това е избор на <em>две</em> хранения.</div>
         </div>
 
         <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
 
-        <!-- OMNi-Biotic HETOX light -->
+        <!-- OMNi-Biotic HETOX light — еднократен прием -->
         <div>
           <strong>OMNi-Biotic HETOX light</strong>
           <div class="dose-row" role="group" aria-label="OMNi-Biotic HETOX light — прием">
-            <!-- Само 1 чекбокс, защото е 1 път: обед (преди храна) -->
             <span class="pill">
-              <label><input type="checkbox" id="hetox-n" data-prod="hetox" data-slot="2" checked> Обед (преди храна)</label>
+              <label><input type="checkbox" id="hetox-noon" checked> Обед (преди храна)</label>
             </span>
           </div>
-          <div class="note">Еднократен прием: <em>обед, преди храна</em>.</div>
+          <div class="note">Еднократно: <em>обед, преди храна</em>.</div>
         </div>
 
         <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
 
-        <!-- Fortex Хитозан Плюс - Хитозан, Л-карнитин, Хром -->
+        <!-- Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром -->
         <div>
           <strong>Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром</strong>
           <div class="dose-row" role="group" aria-label="Хитозан Плюс — прием">
             <span class="pill">
-              <label><input type="checkbox" id="ch-m" data-prod="ch" data-slot="1" checked> Сутрин</label>
+              <label><input type="checkbox" id="ch-m" checked> Сутрин</label>
             </span>
             <span class="pill">
-              <label><input type="checkbox" id="ch-n" data-prod="ch" data-slot="2" checked> Обед</label>
+              <label><input type="checkbox" id="ch-n" checked> Обед</label>
             </span>
             <span class="pill">
-              <label><input type="checkbox" id="ch-e" data-prod="ch" data-slot="3" checked> Вечер</label>
+              <label><input type="checkbox" id="ch-e" checked> Вечер</label>
             </span>
           </div>
-          <div class="note">Всички три приема са включени по подразбиране.</div>
+          <div class="note">По подразбиране: и трите приема са включени.</div>
         </div>
       </section>
 
@@ -344,7 +345,7 @@
       <!-- 💊 Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
-        <p style="margin:0 0 8px; color:var(--muted)">
+        <p style="margin:0 0 8px; color:#9fb4ad">
           Тук включваш всякакви други добавки, витамини, билки или медикаменти, които не са част от основната програма.
         </p>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
@@ -360,7 +361,7 @@
   <script>
     "use strict";
     // Версия
-    window.__BT_VER = '2.2';
+    window.__BT_VER = '2.3';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -374,21 +375,29 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v22', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v23', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v22'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v23'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved);
       }catch(_){}
     })();
 
-    /* ===== (По желание) бъдещ таймер: за сега само „куки“ ===== */
-    // Идея: по чекбоксите (сутрин/обед/вечер) ще закачим напомняния.
-    // data-prod = pl|hetox|ch, data-slot = 1|2|3 (сутрин|обед|вечер)
-    // В следващата версия ще вържем реален таймер/уведомления.
+    /* ===== Запазване на избора за ProLact (2 от 3) ===== */
+    (function(){
+      const KEY = 'bt_pl_pair_v23'; // morning-noon | morning-evening | noon-evening
+      const radios = document.querySelectorAll('input[name="pl-pair"]');
+      function save(val){ try{ localStorage.setItem(KEY, val); }catch(_){ } }
+      function load(){ try{ return localStorage.getItem(KEY)||'noon-evening'; }catch(_){ return 'noon-evening'; } }
+      const current = load();
+      radios.forEach(r=>{
+        if(r.value===current) r.checked = true;
+        r.addEventListener('change', ()=> r.checked && save(r.value));
+      });
+    })();
 
-    /* ===== ТВОЯТ ОРИГИНАЛЕН JS (ДАННИ) — 1:1 ===== */
+    /* ===== Оригиналният JS за „Данни“ ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -471,7 +480,7 @@
       var ok=true, msgs=[];
       if(prev){ var minP=prev.weight*0.95, maxP=prev.weight*1.05; if(w<minP||w>maxP){ ok=false; msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg"); } }
       if(next){ var minN=next.weight*0.95, maxN=next.weight*1.05; if(w<minN||w>maxN){ ok=false; msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg"); } }
-      if(!ок){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
+      if(!ok){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
 
       var idx=data.findIndex(r=>r.date===iso);
       var rec={date: iso, weight: w, bt: !!btFlag.checked};
@@ -558,7 +567,7 @@
     }
     function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
     function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
-    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+s[0].slice(2); }
+    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+String(s[0]).slice(2); }
 
     aggSel.addEventListener("change", ()=>renderChart());
 
