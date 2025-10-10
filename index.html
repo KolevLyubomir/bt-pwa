@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.4</title>
+  <title>БТ App 3 — v2.3</title>
 
+  <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
@@ -41,7 +42,7 @@
       background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
     }
 
-    /* ===== Табове ===== */
+    /* ===== Табове (правоъгълни, болд) ===== */
     .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
     .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
     .tab-btn{
@@ -74,17 +75,25 @@
     button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
 
     .field.date{ width:120px }
+    .field.date input{ width:100% }
     .field.weight input{ font-weight:700; font-size:18px; width:9ch }
+    .field.weight input:focus{ outline:2px solid #2b6e66 }
+
     .bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
       border:1px solid #334a4f; background:#0d171b; border-radius:10px }
     .bt-only input{ width:16px; height:16px; margin:0 }
+    .bt-only[title]{ cursor:pointer }
 
     table{ width:100%; border-collapse:collapse }
     colgroup col.date{ width:70px } colgroup col.w{ width:70px } colgroup col.act{ width:auto }
     th,td{ padding:3px 4px; border-bottom:1px solid #20343a; font-size:13px; line-height:1.15; white-space:nowrap; text-align:left; vertical-align:middle }
     th{ color:var(--muted); font-weight:600 }
+    th.date,td.date{ padding-right:1px }
     th.w,td.w{ text-align:right; padding-left:2px }
-    .wCell{ text-align:right } .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
+    th.actions,td.actions{ padding-left:72px }
+
+    .wCell{ text-align:right }
+    .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
 
     .actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
     .icon{ display:inline-flex; align-items:center; justify-content:center; border:1px solid #2a3e41; background:#0d171b; border-radius:8px; padding:4px 6px; color:#fff; height:var(--ctl-h) }
@@ -105,10 +114,13 @@
       box-shadow:0 8px 30px rgba(0,0,0,.35); padding:10px; width:auto; display:none }
     .cal.show{ display:block }
     .cal .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px }
+    .cal .cal-head button{ padding:4px 8px; border-radius:8px }
     .cal .cal-title{ font-weight:700; text-transform:capitalize }
     .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
     .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
     .cal .day{ width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid transparent }
+    .cal .day:hover{ border-color:#27454a }
+    .cal .day.disabled{ opacity:.35; pointer-events:none }
     .cal .day.has{ background:var(--has); color:#092218 }
     .cal .day.today{ outline:1px dashed #5b8f98 }
     .cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
@@ -117,11 +129,11 @@
     .tabpanel{ display:none }
     .tabpanel[aria-hidden="false"]{ display:block }
 
-    /* Контроли за „Програма“ */
+    /* Малки контролки за програмата */
     .dose-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
     .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px }
     .pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px }
-    .pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
+    .pill input[type="checkbox"], .pill input[type="radio"]{ width:16px; height:16px; margin:0 }
     .note{ color:var(--muted); font-size:12px; margin-top:6px }
   </style>
 </head>
@@ -133,7 +145,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.4</span>
+        <span class="badge">v2.3</span>
       </div>
     </div>
   </div>
@@ -146,12 +158,15 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (непокътнато) -->
+  <!-- ПАНЕЛ: ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
+      <!-- Запис -->
       <section class="card">
         <h2 style="margin:0 0 10px">Запис</h2>
+
         <div class="inputs-row">
+          <!-- лява група -->
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
               <div class="lbl">Дата</div>
@@ -160,20 +175,28 @@
                 <div id="cal" class="cal" role="dialog" aria-label="Календар"></div>
               </div>
             </div>
+
             <div class="field weight">
               <div class="lbl">Тегло (kg)</div>
-              <div class="ctl"><input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/></div>
+              <div class="ctl">
+                <input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/>
+              </div>
             </div>
+
             <div class="field" style="min-width:var(--ctl-h)">
               <div class="lbl"></div>
               <label class="bt-only" title="Маркиран като БТ"><input id="btFlag" type="checkbox" checked/></label>
             </div>
+
             <div class="field" style="min-width:100px">
               <div class="lbl"></div>
               <button id="addBtn" class="primary" type="button" style="height:var(--ctl-h); min-width:100px">Добави</button>
             </div>
           </div>
+
           <div class="spacer"></div>
+
+          <!-- дясна група -->
           <div class="inputs-row" style="gap:8px">
             <div class="field">
               <div class="lbl"></div>
@@ -196,6 +219,7 @@
         </div>
       </section>
 
+      <!-- Графика -->
       <section class="card">
         <h2 style="margin:0 0 10px">Графика</h2>
         <div class="inputs-row">
@@ -208,8 +232,10 @@
         <canvas id="chart"></canvas>
       </section>
 
+      <!-- Записи -->
       <section class="card">
         <h2 style="margin:0">Записи</h2>
+
         <div class="recbar">
           <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
           <select id="pageSize">
@@ -223,15 +249,24 @@
             <option value="all">Всички</option>
           </select>
         </div>
+
         <div class="pager" id="pagerTop"></div>
         <table id="tbl">
           <colgroup><col class="date"><col class="w"><col class="act"></colgroup>
           <thead id="theadTop">
-            <tr><th class="date">Дата</th><th class="w">Тегло (kg)</th><th class="actions">Действия</th></tr>
+            <tr>
+              <th class="date">Дата</th>
+              <th class="w">Тегло (kg)</th>
+              <th class="actions">Действия</th>
+            </tr>
           </thead>
           <tbody></tbody>
           <tfoot id="tfootBottom">
-            <tr><th class="date">Дата</th><th class="w">Тегло (kg)</th><th class="actions">Действия</th></tr>
+            <tr>
+              <th class="date">Дата</th>
+              <th class="w">Тегло (kg)</th>
+              <th class="actions">Действия</th>
+            </tr>
           </tfoot>
         </table>
         <div class="pager" id="pagerBottom"></div>
@@ -246,40 +281,53 @@
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ — чекове с правило "точно 2 от 3" -->
+        <!-- ProLact Slim+ — 2 от 3 чрез радио-парове -->
         <div>
           <strong>ProLact Slim+</strong>
-          <div class="dose-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
-            <span class="pill"><label><input type="checkbox" id="pl-m"> Сутрин</label></span>
-            <span class="pill"><label><input type="checkbox" id="pl-n" checked> Обед</label></span>
-            <span class="pill"><label><input type="checkbox" id="pl-e" checked> Вечер</label></span>
+          <div class="dose-row" role="group" aria-label="ProLact Slim+ — прием (2 от 3)">
+            <span class="pill">
+              <label><input type="radio" name="pl-pair" value="morning-noon"> Сутрин + Обед</label>
+            </span>
+            <span class="pill">
+              <label><input type="radio" name="pl-pair" value="morning-evening"> Сутрин + Вечер</label>
+            </span>
+            <span class="pill">
+              <label><input type="radio" name="pl-pair" value="noon-evening" checked> Обед + Вечер</label>
+            </span>
           </div>
-          <div class="note">Винаги трябва да са избрани <strong>точно две</strong>. Дефолт: <em>Обед + Вечер</em>.</div>
+          <div class="note">Избери един вариант — това е избор на <em>две</em> хранения.</div>
         </div>
 
         <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
 
-        <!-- OMNi-Biotic HETOX light — чекове с правило "точно 1 от 2" -->
+        <!-- OMNi-Biotic HETOX light — еднократен прием -->
         <div>
           <strong>OMNi-Biotic HETOX light</strong>
-          <div class="dose-row" role="group" aria-label="HETOX — 1 от 2">
-            <span class="pill"><label><input type="checkbox" id="hetox-m"> Сутрин (преди храна)</label></span>
-            <span class="pill"><label><input type="checkbox" id="hetox-n" checked> Обед (преди храна)</label></span>
+          <div class="dose-row" role="group" aria-label="OMNi-Biotic HETOX light — прием">
+            <span class="pill">
+              <label><input type="checkbox" id="hetox-noon" checked> Обед (преди храна)</label>
+            </span>
           </div>
-          <div class="note">Винаги трябва да е избрано <strong>точно едно</strong>. Дефолт: <em>Обед</em>.</div>
+          <div class="note">Еднократно: <em>обед, преди храна</em>.</div>
         </div>
 
         <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
 
-        <!-- Fortex Хитозан Плюс — незадължително (3 чека, по подразбиране включени) -->
+        <!-- Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром -->
         <div>
           <strong>Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром</strong>
-          <div class="dose-row" role="group" aria-label="Хитозан Плюс">
-            <span class="pill"><label><input type="checkbox" id="ch-m" checked> Сутрин</label></span>
-            <span class="pill"><label><input type="checkbox" id="ch-n" checked> Обед</label></span>
-            <span class="pill"><label><input type="checkbox" id="ch-e" checked> Вечер</label></span>
+          <div class="dose-row" role="group" aria-label="Хитозан Плюс — прием">
+            <span class="pill">
+              <label><input type="checkbox" id="ch-m" checked> Сутрин</label>
+            </span>
+            <span class="pill">
+              <label><input type="checkbox" id="ch-n" checked> Обед</label>
+            </span>
+            <span class="pill">
+              <label><input type="checkbox" id="ch-e" checked> Вечер</label>
+            </span>
           </div>
-          <div class="note">И трите са включени по подразбиране; можеш да ги променяш свободно.</div>
+          <div class="note">По подразбиране: и трите приема са включени.</div>
         </div>
       </section>
 
@@ -288,16 +336,24 @@
         <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
           <li><strong>Берберин 500–600 mg</strong> — марка по избор</li>
-          <li><strong>Глюкоманан</strong> (NOW Foods)</li>
-          <li><strong>EGCg</strong> — екстракт от зелен чай (NOW Foods)</li>
+          <li><strong>Глюкоманан</strong> (<em>NOW Foods</em>)</li>
+          <li><strong>EGCg</strong> — екстракт от зелен чай (<em>NOW Foods</em>)</li>
         </ul>
-        <p class="note">Добавят се по избор според индивидуалния план.</p>
+        <p class="note">Могат да се добавят по избор спрямо индивидуалния план.</p>
       </section>
 
       <!-- 💊 Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
-        <p class="note">Свободен списък за твои добавки, витамини и др.</p>
+        <p style="margin:0 0 8px; color:#9fb4ad">
+          Тук включваш всякакви други добавки, витамини, билки или медикаменти, които не са част от основната програма.
+        </p>
+        <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
+          <li><em>Пример:</em> Магнезий бисглицинат</li>
+          <li><em>Пример:</em> Витамин D3 + K2</li>
+          <li><em>Пример:</em> Омега-3</li>
+        </ul>
+        <p class="note">Разделът е персонален и извън официалния протокол.</p>
       </section>
     </main>
   </div>
@@ -305,7 +361,7 @@
   <script>
     "use strict";
     // Версия
-    window.__BT_VER = '2.4';
+    window.__BT_VER = '2.3';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -319,113 +375,29 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v24', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v23', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v24'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v23'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved);
       }catch(_){}
     })();
 
-    /* ===== Програма: ProLact "точно 2 от 3" ===== */
+    /* ===== Запазване на избора за ProLact (2 от 3) ===== */
     (function(){
-      const KEY='bt_pl_2of3_v24';
-      const c = {
-        m: document.getElementById('pl-m'),
-        n: document.getElementById('pl-n'),
-        e: document.getElementById('pl-e'),
-      };
-      function save(){
-        try{
-          const v = {m:c.m.checked, n:c.n.checked, e:c.e.checked};
-          localStorage.setItem(KEY, JSON.stringify(v));
-        }catch(_){}
-      }
-      function load(){
-        try{
-          const raw = JSON.parse(localStorage.getItem(KEY)||'{}');
-          if(typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){
-            c.m.checked=raw.m; c.n.checked=raw.n; c.e.checked=raw.e;
-            enforce(); // нормализирай ако е нужно
-            return;
-          }
-        }catch(_){}
-        // дефолт
-        c.m.checked=false; c.n.checked=true; c.e.checked=true; save();
-      }
-
-      // винаги точно 2 от 3; ако стават 3 при чек на m → пусни n (както поиска)
-      function enforce(clicked){
-        const arr=[c.m,c.n,c.e];
-        const count = arr.filter(x=>x.checked).length;
-
-        // Ако 3 → изключи по правило: ако кликнато е m → пускаме n; ако e → пускаме n; ако n → пускаме e.
-        if(count===3){
-          if(clicked===c.m){ c.n.checked=false; }
-          else if(clicked===c.e){ c.n.checked=false; }
-          else { c.e.checked=false; }
-        }
-
-        // Ако <2 → включи най-подходящия (предпочитание: Обед, после Вечер, после Сутрин)
-        const count2 = [c.m,c.n,c.e].filter(x=>x.checked).length;
-        if(count2<2){
-          if(!c.n.checked) c.n.checked=true;
-          else if(!c.e.checked) c.e.checked=true;
-          else if(!c.m.checked) c.m.checked=true;
-        }
-      }
-
-      // Слушатели
-      [c.m,c.n,c.e].forEach(el=>{
-        el.addEventListener('change',()=>{
-          enforce(el);
-          save();
-        });
+      const KEY = 'bt_pl_pair_v23'; // morning-noon | morning-evening | noon-evening
+      const radios = document.querySelectorAll('input[name="pl-pair"]');
+      function save(val){ try{ localStorage.setItem(KEY, val); }catch(_){ } }
+      function load(){ try{ return localStorage.getItem(KEY)||'noon-evening'; }catch(_){ return 'noon-evening'; } }
+      const current = load();
+      radios.forEach(r=>{
+        if(r.value===current) r.checked = true;
+        r.addEventListener('change', ()=> r.checked && save(r.value));
       });
-
-      load();
     })();
 
-    /* ===== Програма: HETOX "точно 1 от 2" ===== */
-    (function(){
-      const KEY='bt_hetox_1of2_v24';
-      const m=document.getElementById('hetox-m');
-      const n=document.getElementById('hetox-n');
-
-      function save(){
-        try{
-          localStorage.setItem(KEY, JSON.stringify({m:m.checked, n:n.checked}));
-        }catch(_){}
-      }
-      function load(){
-        try{
-          const raw = JSON.parse(localStorage.getItem(KEY)||'{}');
-          if(typeof raw.m==='boolean' && typeof raw.n==='boolean'){
-            m.checked=raw.m; n.checked=raw.n;
-            fix();
-            return;
-          }
-        }catch(_){}
-        // дефолт: само обед
-        m.checked=false; n.checked=true; save();
-      }
-      function fix(clicked){
-        // точно 1 от 2
-        if(clicked===m && m.checked){ n.checked=false; }
-        else if(clicked===n && n.checked){ m.checked=false; }
-        // ако и двете станат изключени → върни обед
-        if(!m.checked && !n.checked){ n.checked=true; }
-        save();
-      }
-
-      m.addEventListener('change',()=>fix(m));
-      n.addEventListener('change',()=>fix(n));
-
-      load();
-    })();
-
-    /* ===== Данни (непокътнато) ===== */
+    /* ===== Оригиналният JS за „Данни“ ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -471,7 +443,7 @@
     function renderCalendar(){
       var set=hasDataSet(), y=calYear, m=calMonth;
       var first=new Date(Date.UTC(y,m-1,1));
-      var startDow=(first.getUTCDay()+6)%7;
+      var startDow=(first.getUTCDay()+6)%7; /* Monday=0 */
       var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
       var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
       var html='<div class="cal-head"><button id="calPrev" type="button">←</button><div class="cal-title">'+title+'</div><button id="calNext" type="button">→</button></div>';
@@ -537,8 +509,7 @@
       if(pagesTotal>1 && currentPage>1){ var prev=document.createElement("button"); prev.textContent="←";
         prev.addEventListener("click",()=>{currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();}); frag.appendChild(prev); }
       if(pagesTotal<=5){ for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage)); }
-      else{ var sp=Math.max(1,currentPage-2); var ep=Math.min(pagesTotal, sp+4);
-        for(var pp=sp; pp<=ep; pp++) frag.appendChild(pageBtn(pp,pp===currentPage)); }
+      else{ var sp=currentPage-2; if(sp<1) sp=1; if(sp+4>pagesTotal) sp=pagesTotal-4; for(var pp=sp; pp<=sp+4; pp++) frag.appendChild(pageBtn(pp,pp===currentPage)); }
       if(pagesTotal>1 && currentPage<pagesTotal){ var next=document.createElement("button"); next.textContent="→";
         next.addEventListener("click",()=>{currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();}); frag.appendChild(next); }
       container.appendChild(frag);
@@ -550,7 +521,6 @@
       var start=(currentPage-1)*eff, slice=all.slice(start,start+eff); __currentSlice=slice.slice();
 
       buildPager(pagerTop,total,eff);
-      const tb=document.querySelector("#tbl tbody");
       tb.innerHTML="";
       slice.forEach((r)=>{
         var tr=document.createElement("tr");
@@ -597,7 +567,7 @@
     }
     function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
     function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
-    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+s[0].slice(2); }
+    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+String(s[0]).slice(2); }
 
     aggSel.addEventListener("change", ()=>renderChart());
 
