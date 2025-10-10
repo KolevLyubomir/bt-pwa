@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.2</title>
+  <title>БТ App 3 — v2.1</title>
 
-  <!-- Без service worker за кеш -->
+  <!-- Без service worker за да няма кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
@@ -44,19 +44,25 @@
 
     /* ===== Табове (правоъгълни, болд) ===== */
     .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
-    .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
+    .tabs{
+      max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px;
+    }
     .tab-btn{
       -webkit-tap-highlight-color: transparent;
       appearance:none; border:1px solid var(--border); background:#0d171b; color:#e6f2ef;
-      padding:12px 18px; border-radius:10px; cursor:pointer; font-weight:800; font-size:16px; transition:.15s ease;
+      padding:12px 18px; border-radius:10px; cursor:pointer; font-weight:800; font-size:16px;
+      transition:.15s ease;
     }
-    .tab-btn[aria-selected="true"]{ color:#06241b; border-color:transparent; background:linear-gradient(90deg,#22c55e,#14b8a6); }
+    .tab-btn[aria-selected="true"]{
+      color:#06241b; border-color:transparent;
+      background:linear-gradient(90deg,#22c55e,#14b8a6);
+    }
 
     /* ===== Основно съдържание ===== */
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== Стилове от v1.39 (ДАННИ) ===== */
+    /* ===== Стилове от твоята v1.39 (за „Данни“) ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -126,13 +132,6 @@
     /* Панели */
     .tabpanel{ display:none }
     .tabpanel[aria-hidden="false"]{ display:block }
-
-    /* Малки контролки за програмата */
-    .dose-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
-    .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px }
-    .pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px }
-    .pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
-    .note{ color:var(--muted); font-size:12px; margin-top:6px }
   </style>
 </head>
 <body>
@@ -143,7 +142,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.2</span>
+        <span class="badge">v2.1</span>
       </div>
     </div>
   </div>
@@ -258,7 +257,7 @@
               <th class="actions">Действия</th>
             </tr>
           </thead>
-          <tbody></tbody>
+        <tbody></tbody>
           <tfoot id="tfootBottom">
             <tr>
               <th class="date">Дата</th>
@@ -276,75 +275,35 @@
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
       <!-- 🟩 Основен пакет -->
-      <section class="card" id="pkg-core">
+      <section class="card">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
-
-        <!-- ProLact Slim+ -->
-        <div>
-          <strong>ProLact Slim+</strong>
-          <div class="dose-row" role="group" aria-label="ProLact Slim+ — прием">
-            <span class="pill">
-              <label><input type="checkbox" id="pl-m" data-prod="pl" data-slot="1"> Сутрин</label>
-            </span>
-            <span class="pill">
-              <label><input type="checkbox" id="pl-n" data-prod="pl" data-slot="2" checked> Обед</label>
-            </span>
-            <span class="pill">
-              <label><input type="checkbox" id="pl-e" data-prod="pl" data-slot="3" checked> Вечер</label>
-            </span>
-          </div>
-          <div class="note">По подразбиране: <em>Обед</em> и <em>Вечер</em> са включени.</div>
-        </div>
-
-        <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
-
-        <!-- OMNi-Biotic HETOX light -->
-        <div>
-          <strong>OMNi-Biotic HETOX light</strong>
-          <div class="dose-row" role="group" aria-label="OMNi-Biotic HETOX light — прием">
-            <!-- Само 1 чекбокс, защото е 1 път: обед (преди храна) -->
-            <span class="pill">
-              <label><input type="checkbox" id="hetox-n" data-prod="hetox" data-slot="2" checked> Обед (преди храна)</label>
-            </span>
-          </div>
-          <div class="note">Еднократен прием: <em>обед, преди храна</em>.</div>
-        </div>
-
-        <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
-
-        <!-- Fortex Хитозан Плюс - Хитозан, Л-карнитин, Хром -->
-        <div>
-          <strong>Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром</strong>
-          <div class="dose-row" role="group" aria-label="Хитозан Плюс — прием">
-            <span class="pill">
-              <label><input type="checkbox" id="ch-m" data-prod="ch" data-slot="1" checked> Сутрин</label>
-            </span>
-            <span class="pill">
-              <label><input type="checkbox" id="ch-n" data-prod="ch" data-slot="2" checked> Обед</label>
-            </span>
-            <span class="pill">
-              <label><input type="checkbox" id="ch-e" data-prod="ch" data-slot="3" checked> Вечер</label>
-            </span>
-          </div>
-          <div class="note">Всички три приема са включени по подразбиране.</div>
-        </div>
+        <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
+          <li><strong>ProLact Slim+</strong> — пробиотик</li>
+          <li><strong>OMNi-Biotic HETOX light</strong> — синергия с ProLact Slim+</li>
+          <li><strong>Хитозан Plus</strong> (<em>Fortex</em>) — блокира усвояването на мазнини</li>
+        </ul>
+        <p style="margin:12px 0 0; color:#9fb4ad; font-size:12px">
+          * Това е основният пакет на програмата <strong>Безопасно Тегло</strong>.
+        </p>
       </section>
 
       <!-- 🟨 Допълнителен пакет -->
-      <section class="card" id="pkg-extra">
+      <section class="card">
         <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
           <li><strong>Берберин 500–600 mg</strong> — марка по избор</li>
           <li><strong>Глюкоманан</strong> (<em>NOW Foods</em>)</li>
           <li><strong>EGCg</strong> — екстракт от зелен чай (<em>NOW Foods</em>)</li>
         </ul>
-        <p class="note">Могат да се добавят по избор спрямо индивидуалния план.</p>
+        <p style="margin:12px 0 0; color:#9fb4ad; font-size:12px">
+          * Допълнителните продукти могат да се добавят по избор, според индивидуалния план.
+        </p>
       </section>
 
       <!-- 💊 Личен режим -->
-      <section class="card" id="pkg-personal">
+      <section class="card">
         <h2 style="margin:0 0 10px">Личен режим</h2>
-        <p style="margin:0 0 8px; color:var(--muted)">
+        <p style="margin:0 0 8px; color:#9fb4ad">
           Тук включваш всякакви други добавки, витамини, билки или медикаменти, които не са част от основната програма.
         </p>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
@@ -352,16 +311,15 @@
           <li><em>Пример:</em> Витамин D3 + K2</li>
           <li><em>Пример:</em> Омега-3</li>
         </ul>
-        <p class="note">Разделът е персонален и извън официалния протокол.</p>
+        <p style="margin:12px 0 0; color:#9fb4ad; font-size:12px">
+          * Разделът е персонален и извън официалния протокол.
+        </p>
       </section>
     </main>
   </div>
 
   <script>
     "use strict";
-    // Версия
-    window.__BT_VER = '2.2';
-
     /* ===== Таб логика ===== */
     (function(){
       const tabs = [
@@ -374,19 +332,14 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v22', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v21', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v22'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v21'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved);
       }catch(_){}
     })();
-
-    /* ===== (По желание) бъдещ таймер: за сега само „куки“ ===== */
-    // Идея: по чекбоксите (сутрин/обед/вечер) ще закачим напомняния.
-    // data-prod = pl|hetox|ch, data-slot = 1|2|3 (сутрин|обед|вечер)
-    // В следващата версия ще вържем реален таймер/уведомления.
 
     /* ===== ТВОЯТ ОРИГИНАЛЕН JS (ДАННИ) — 1:1 ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
@@ -471,7 +424,7 @@
       var ok=true, msgs=[];
       if(prev){ var minP=prev.weight*0.95, maxP=prev.weight*1.05; if(w<minP||w>maxP){ ok=false; msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg"); } }
       if(next){ var minN=next.weight*0.95, maxN=next.weight*1.05; if(w<minN||w>maxN){ ok=false; msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg"); } }
-      if(!ок){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
+      if(!ok){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
 
       var idx=data.findIndex(r=>r.date===iso);
       var rec={date: iso, weight: w, bt: !!btFlag.checked};
@@ -558,8 +511,7 @@
     }
     function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
     function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
-    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+s[0].slice(2); }
-
+    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+String(s[0]).slice(2); }
     aggSel.addEventListener("change", ()=>renderChart());
 
     function cssPx(name, fallback){
