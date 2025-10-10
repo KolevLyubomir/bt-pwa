@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.6</title>
+  <title>БТ App 3 — v2.5</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -27,7 +27,7 @@
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif
     }
 
-    /* Горна лента */
+    /* ===== Горна лента ===== */
     .topbar-wrap{ position:sticky; top:0; z-index:10; background:#0b1215; border-bottom:1px solid var(--border); }
     .topbar{
       max-width:var(--maxw); margin:0 auto; padding:12px 16px;
@@ -41,7 +41,7 @@
       background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
     }
 
-    /* Табове */
+    /* ===== Табове (правоъгълни, болд) ===== */
     .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
     .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
     .tab-btn{
@@ -53,11 +53,11 @@
       color:#06241b; border-color:transparent; background:linear-gradient(90deg,#22c55e,#14b8a6);
     }
 
-    /* Основно съдържание */
+    /* ===== Основно съдържание ===== */
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* „Данни“ */
+    /* ===== Стилове за „Данни“ ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -105,6 +105,7 @@
       box-shadow:0 8px 30px rgba(0,0,0,.35); padding:10px; width:auto; display:none }
     .cal.show{ display:block }
     .cal .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px }
+    .cal .cal-head button{ padding:4px 8px; border-radius:8px }
     .cal .cal-title{ font-weight:700; text-transform:capitalize }
     .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
     .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
@@ -115,10 +116,11 @@
     .cal .day.today{ outline:1px dashed #5b8f98 }
     .cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
 
+    /* Панели */
     .tabpanel{ display:none }
     .tabpanel[aria-hidden="false"]{ display:block }
 
-    /* „Програма“ */
+    /* Контроли за „Програма“ */
     .dose-row{ display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
     .pill{ display:inline-flex; align-items:center; gap:8px; padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px }
     .pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px }
@@ -134,7 +136,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.6</span>
+        <span class="badge">v2.5</span>
       </div>
     </div>
   </div>
@@ -147,11 +149,13 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ -->
+  <!-- ПАНЕЛ: ДАННИ (непокътнато) -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
+      <!-- Запис -->
       <section class="card">
         <h2 style="margin:0 0 10px">Запис</h2>
+
         <div class="inputs-row">
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
@@ -197,6 +201,7 @@
         </div>
       </section>
 
+      <!-- Графика -->
       <section class="card">
         <h2 style="margin:0 0 10px">Графика</h2>
         <div class="inputs-row">
@@ -209,6 +214,7 @@
         <canvas id="chart"></canvas>
       </section>
 
+      <!-- Записи -->
       <section class="card">
         <h2 style="margin:0">Записи</h2>
         <div class="recbar">
@@ -247,7 +253,7 @@
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ — точно 2 от 3 с логиката от теб -->
+        <!-- ProLact Slim+ — точно 2 от 3 с „умно“ превключване -->
         <div>
           <strong>ProLact Slim+</strong>
           <div class="dose-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
@@ -255,7 +261,7 @@
             <span class="pill"><label><input type="checkbox" id="pl-n" checked> Обед</label></span>
             <span class="pill"><label><input type="checkbox" id="pl-e" checked> Вечер</label></span>
           </div>
-          <div class="note">Правило при избор на третия: <em>М+О → (клик В) → М+В</em>; <em>М+В → (клик О) → М+О</em>; <em>О+В → (клик М) → М+О</em>. Винаги точно две.</div>
+          <div class="note">Винаги <strong>точно две</strong>. Дефолт: <em>Обед + Вечер</em>. Клик върху третия автоматично освобождава правилния.</div>
         </div>
 
         <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
@@ -268,7 +274,7 @@
             <span class="pill"><label><input type="checkbox" id="hetox-n" checked> Обед</label></span>
             <span class="pill"><label><input type="checkbox" id="hetox-e"> Вечер</label></span>
           </div>
-          <div class="note">Винаги точно едно.</div>
+          <div class="note">Винаги <strong>точно едно</strong>.</div>
         </div>
 
         <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
@@ -281,7 +287,7 @@
             <span class="pill"><label><input type="checkbox" id="ch-n" checked disabled> Обед</label></span>
             <span class="pill"><label><input type="checkbox" id="ch-e" checked disabled> Вечер</label></span>
           </div>
-          <div class="note">Фиксирани и трите.</div>
+          <div class="note">Фиксирани (заключени) и трите.</div>
         </div>
       </section>
 
@@ -306,9 +312,10 @@
 
   <script>
     "use strict";
-    window.__BT_VER = '2.6';
+    // Версия
+    window.__BT_VER = '2.5';
 
-    /* Таб логика */
+    /* ===== Таб логика ===== */
     (function(){
       const tabs = [
         {btn: document.getElementById('tab-data'), panel: document.getElementById('panel-data')},
@@ -320,40 +327,80 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v26', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v25', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v26'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v25'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved);
       }catch(_){}
     })();
 
-    /* ProLact — точно 2 от 3 с правилата от теб */
+    /* ===== ProLact — точно 2 от 3 с „умно“ превключване ===== */
     (function(){
-      const KEY='bt_pl_2of3_v26';
-      const m = document.getElementById('pl-m');
-      const n = document.getElementById('pl-n');
-      const e = document.getElementById('pl-e');
+      const KEY='bt_pl_2of3_v25';
+      const c = {
+        m: document.getElementById('pl-m'),
+        n: document.getElementById('pl-n'),
+        e: document.getElementById('pl-e'),
+      };
+
+      function save(){
+        try{ localStorage.setItem(KEY, JSON.stringify({m:c.m.checked,n:c.n.checked,e:c.e.checked})); }catch(_){}
+      }
+
+      function enforce(clicked){
+        const count = (c.m.checked?1:0) + (c.n.checked?1:0) + (c.e.checked?1:0);
+
+        if(count===3){
+          // M+O+V → свали правилния според кликнатия:
+          // клик E → освободи O; клик N → освободи E; клик M → освободи E
+          if(clicked===c.e){ c.n.checked=false; }
+          else { c.e.checked=false; }
+        } else if(count<2){
+          // върни втори чек (предпочитания: N → E → M)
+          if(!c.n.checked) c.n.checked=true;
+          else if(!c.e.checked) c.e.checked=true;
+          else if(!c.m.checked) c.m.checked=true;
+        }
+        save();
+      }
+
+      function load(){
+        try{
+          const raw=JSON.parse(localStorage.getItem(KEY)||'');
+          if(raw && typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){
+            c.m.checked=raw.m; c.n.checked=raw.n; c.e.checked=raw.e;
+          }else{
+            c.m.checked=false; c.n.checked=true; c.e.checked=true; // дефолт О+В
+          }
+        }catch(_){
+          c.m.checked=false; c.n.checked=true; c.e.checked=true;
+        }
+        enforce(null);
+      }
+
+      [c.m,c.n,c.e].forEach(el=> el.addEventListener('change', ()=>enforce(el)));
+      load();
+    })();
+
+    /* ===== HETOX — точно 1 от 3 ===== */
+    (function(){
+      const KEY='bt_hetox_1of3_v25';
+      const m=document.getElementById('hetox-m');
+      const n=document.getElementById('hetox-n');
+      const e=document.getElementById('hetox-e');
 
       function save(){
         try{ localStorage.setItem(KEY, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }catch(_){}
       }
 
-      function ensureTwo(clicked){
-        const count = (m.checked?1:0)+(n.checked?1:0)+(e.checked?1:0);
-
-        if(count===3){
-          // При клик на третия:
-          // клик E => махни N; клик N => махни E; клик M => махни E
-          if(clicked===e){ n.checked=false; }
-          else if(clicked===n){ e.checked=false; }
-          else if(clicked===m){ e.checked=false; }
-        } else if(count<2){
-          // Върни втория чек (предпочитание N → E → M)
-          if(!n.checked) n.checked=true;
-          else if(!e.checked) e.checked=true;
-          else if(!m.checked) m.checked=true;
+      function fix(clicked){
+        if(clicked && clicked.checked){
+          [m,n,e].forEach(x=>{ if(x!==clicked) x.checked=false; });
+        }
+        if(!m.checked && !n.checked && !e.checked){
+          n.checked=true; // дефолт обратно
         }
         save();
       }
@@ -363,54 +410,26 @@
           const raw=JSON.parse(localStorage.getItem(KEY)||'');
           if(raw && typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){
             m.checked=raw.m; n.checked=raw.n; e.checked=raw.e;
-          } else {
-            m.checked=false; n.checked=true; e.checked=true; // дефолт: Обед+Вечер
+          }else{
+            m.checked=false; n.checked=true; e.checked=false; // дефолт: Обед
           }
         }catch(_){
-          m.checked=false; n.checked=true; e.checked=true;
+          m.checked=false; n.checked=true; e.checked=false;
         }
-        ensureTwo(null);
-      }
-
-      [m,n,e].forEach(el=> el.addEventListener('change', ()=>ensureTwo(el)));
-
-      load();
-    })();
-
-    /* HETOX — точно 1 от 3 */
-    (function(){
-      const KEY='bt_hetox_1of3_v26';
-      const m=document.getElementById('hetox-m');
-      const n=document.getElementById('hetox-n');
-      const e=document.getElementById('hetox-e');
-
-      function save(){ try{ localStorage.setItem(KEY, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }catch(_){}
-      }
-      function fix(clicked){
-        if(clicked && clicked.checked){ [m,n,e].forEach(x=>{ if(x!==clicked) x.checked=false; }); }
-        if(!m.checked && !n.checked && !e.checked){ n.checked=true; }
-        save();
-      }
-      function load(){
-        try{
-          const raw=JSON.parse(localStorage.getItem(KEY)||'');
-          if(raw && typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){
-            m.checked=raw.m; n.checked=raw.n; e.checked=raw.e;
-          }else{ m.checked=false; n.checked=true; e.checked=false; }
-        }catch(_){ m.checked=false; n.checked=true; e.checked=false; }
         fix(null);
       }
+
       [m,n,e].forEach(el=> el.addEventListener('change', ()=>fix(el)));
       load();
     })();
 
-    /* Данни — неизменено (запис/таблица/графика/импорт/експорт) */
+    /* ===== Данни (непокътнато) ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
     function bgToISO_any(bg){
       var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-      var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+м4[2]+"-"+м4[1];
+      var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
       return "";
     }
 
@@ -433,9 +452,14 @@
     dateText.value=isoToBG_YY(currentISO);
     function prefillFor(iso){
       var data=load(); var rec=data.find(r=>r.date===iso);
-      if(rec){ weight.value=(typeof rec.weight==="number")?rec.weight:""; btFlag.checked=(rec.bt!==false); return; }
+      if(rec){
+        weight.value=(typeof rec.weight==="number")?rec.weight:"";
+        btFlag.checked = (rec.bt!==false);
+        return;
+      }
       var prev=sortDesc(data).find(r=>r.date<iso);
-      weight.value=prev?prev.weight:""; btFlag.checked=true;
+      weight.value=prev?prev.weight:"";
+      btFlag.checked=true;
     }
     prefillFor(currentISO);
 
@@ -445,7 +469,7 @@
     function renderCalendar(){
       var set=hasDataSet(), y=calYear, m=calMonth;
       var first=new Date(Date.UTC(y,m-1,1));
-      var startDow=(first.getUTCDay()+6)%7;
+      var startDow=(first.getUTCDay()+6)%7; /* Monday=0 */
       var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
       var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
       var html='<div class="cal-head"><button id="calPrev" type="button">←</button><div class="cal-title">'+title+'</div><button id="calNext" type="button">→</button></div>';
@@ -538,7 +562,7 @@
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
               '</button>'+
               '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6л1 14h8л1-14"></path></svg>'+
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
               '</button>'+
             '</div>'+
           '</td>';
@@ -571,7 +595,7 @@
     }
     function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
     function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
-    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+s[0].slice(2); }
+    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+String(s[0]).slice(2); }
 
     aggSel.addEventListener("change", ()=>renderChart());
 
@@ -606,7 +630,7 @@
         raw.forEach(r=>{ var k=weekKey(r.date); (wm.get(k)||wm.set(k,[]).get(k)).push(r); });
         wm.forEach((arr,k)=>{
           var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
-          var btCount=arr.filter(z=>з.bt!==false).length;
+          var btCount=arr.filter(z=>z.bt!==false).length;
           pts.push({x:k,y:s/arr.length,label:labelWeek(k), bt:(btCount>=arr.length-btCount)});
         });
       } else {
@@ -630,7 +654,7 @@
       function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
       ctx.strokeStyle="#20343a"; ctx.lineWidth=1.1;
-      ctx.beginPath(); ctx.moveTo(padL,h-падB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(pадL,pадT); ctx.lineTo(pадL,h-padB); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-padB); ctx.stroke();
 
       for(var i=1;i<n;i++){
         var p0=pts[i-1], p1=pts[i];
