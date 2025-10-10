@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.10.01</title>
+  <title>БТ App 3 — v2.9</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -92,7 +92,7 @@
     .recbar{ display:flex; align-items:center; gap:8px; justify-content:flex-start; margin:8px 0; flex-wrap:wrap }
 
     .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
-    .pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
+    .pager .info{ color:#9fb4ad; font-size:12px; margin:0 8px 0 0 }
     .pager button{ background:#0d171b; border:1px solid #2a3e41; color:#fff; padding:4px 8px; border-radius:8px; font-size:13px }
     .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
 
@@ -139,7 +139,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.10.01</span>
+        <span class="badge">v2.9</span>
       </div>
     </div>
   </div>
@@ -196,7 +196,7 @@
               <input id="importFile" type="file" accept="application/json" style="display:none"/>
               <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
+                  <path d="M12 8v12M12 20l-4-4M12 20л4-4"></path><path d="M4 4h16"></path>
                 </svg>
               </button>
             </div>
@@ -221,7 +221,7 @@
       <section class="card">
         <h2 style="margin:0">Записи</h2>
         <div class="recbar">
-          <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
+          <label for="pageSize" style="font-size:12px;color:#9fb4ad">На страница:</label>
           <select id="pageSize">
             <option value="7">7 (1 сед.)</option>
             <option value="14">14 (2 сед.)</option>
@@ -239,7 +239,7 @@
           <thead id="theadTop">
             <tr><th class="date">Дата</th><th class="w">Тегло (kg)</th><th class="actions">Действия</th></tr>
           </thead>
-        <tbody></tbody>
+          <tbody></tbody>
           <tfoot id="tfootBottom">
             <tr><th class="date">Дата</th><th class="w">Тегло (kg)</th><th class="actions">Действия</th></tr>
           </tfoot>
@@ -275,7 +275,7 @@
           </div>
         </div>
 
-        <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
+        <hr style="border:0; border-top:1px solid #1e2b30; margin:14px 0"/>
 
         <!-- OMNi-Biotic HETOX light -->
         <div>
@@ -296,7 +296,7 @@
           </div>
         </div>
 
-        <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
+        <hr style="border:0; border-top:1px solid #1e2b30; margin:14px 0"/>
 
         <!-- Fortex Хитозан Плюс -->
         <div>
@@ -326,20 +326,20 @@
           <li><strong>Глюкоманан</strong> (NOW Foods)</li>
           <li><strong>EGCg</strong> — екстракт от зелен чай (NOW Foods)</li>
         </ul>
-        <p class="note">Добавят се по избор според индивидуалния план.</p>
+        <p style="color:#9fb4ad;font-size:12px">Добавят се по избор според индивидуалния план.</p>
       </section>
 
       <!-- 💊 Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
-        <p class="note">Свободен списък за твои добавки, витамини и др.</p>
+        <p style="color:#9fb4ad;font-size:12px">Свободен списък за твои добавки, витамини и др.</p>
       </section>
     </main>
   </div>
 
   <script>
     "use strict";
-    window.__BT_VER = '2.10.01';
+    window.__BT_VER = '2.9';
 
     /* Таб логика */
     (function(){
@@ -353,11 +353,11 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v21001', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v29', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v21001'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v29'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved);
       }catch(_){}
     })();
@@ -389,8 +389,8 @@
 
     /* ---------- ProLact: 2 от 3, таймери под слотовете ---------- */
     (function(){
-      const KEY_SEL='bt_pl_2of3_v21001';
-      const KEY_TIM='bt_pl_times_v21001';
+      const KEY_SEL='bt_pl_2of3_v29';
+      const KEY_TIM='bt_pl_times_v29';
 
       const m = document.getElementById('pl-m');
       const n = document.getElementById('pl-n');
@@ -488,12 +488,10 @@
       loadSel(); updateTimersUI();
     })();
 
-    /* ---------- OMNi-Biotic: 1 от 3, собствен кеш за М/О/В ---------- */
+    /* ---------- OMNi-Biotic: 1 от 3, таймер под избрания слот ---------- */
     (function(){
-      const KEY_SEL='bt_he_sel_v21001';
-      const KEY_M='bt_he_time_m_v21001';
-      const KEY_N='bt_he_time_n_v21001';
-      const KEY_E='bt_he_time_e_v21001';
+      const KEY_SEL='bt_he_sel_v29';
+      const KEY_TIM='bt_he_time_v29';
 
       const m = document.getElementById('he-m');
       const n = document.getElementById('he-n');
@@ -510,14 +508,15 @@
       const DEF_M="08:00", DEF_N="12:00", DEF_E="19:00";
 
       function saveSel(which){ try{ localStorage.setItem(KEY_SEL, which); }catch(_){} }
-      function getTime(key, def){ const v=localStorage.getItem(key); return v || def; }
-      function setTime(key, val){ try{ localStorage.setItem(key, val); }catch(_){} }
-
+      function saveTime(val){ try{ localStorage.setItem(KEY_TIM, val); }catch(_){} }
       function loadSel(){
         const s = localStorage.getItem(KEY_SEL);
         if(s==="m"){ m.checked=true; n.checked=false; e.checked=false; }
         else if(s==="e"){ m.checked=false; n.checked=false; e.checked=true; }
         else { m.checked=false; n.checked=true; e.checked=false; } // дефолт Обед
+      }
+      function loadTime(){
+        return localStorage.getItem(KEY_TIM) || DEF_N;
       }
 
       function showOnly(which){
@@ -527,25 +526,28 @@
       }
 
       function rebuild(which){
-        // винаги попълваме 00..23
-        fillHours(selM, 0, 23*60);
-        fillHours(selN, 0, 23*60);
-        fillHours(selE, 0, 23*60);
+        // попълни всички, безопасно
+        fillHours(selM, 0, 23*60); setSelectValue(selM, DEF_M);
+        fillHours(selN, 0, 23*60); setSelectValue(selN, DEF_N);
+        fillHours(selE, 0, 23*60); setSelectValue(selE, DEF_E);
+
+        const stored = loadTime();
+        let want = stored;
 
         if(which==="m"){
           showOnly("m");
-          setSelectValue(selM, getTime(KEY_M, DEF_M));
-          setTime(KEY_M, selM.value);
+          if(!setSelectValue(selM, want)) setSelectValue(selM, DEF_M);
+          saveTime(selM.value);
           saveSel("m");
         } else if(which==="e"){
           showOnly("e");
-          setSelectValue(selE, getTime(KEY_E, DEF_E));
-          setTime(KEY_E, selE.value);
+          if(!setSelectValue(selE, want)) setSelectValue(selE, DEF_E);
+          saveTime(selE.value);
           saveSel("e");
         } else {
           showOnly("n");
-          setSelectValue(selN, getTime(KEY_N, DEF_N));
-          setTime(KEY_N, selN.value);
+          if(!setSelectValue(selN, want)) setSelectValue(selN, DEF_N);
+          saveTime(selN.value);
           saveSel("n");
         }
       }
@@ -557,18 +559,18 @@
       }
 
       [m,n,e].forEach(el=> el.addEventListener('change', ()=>onChange(el)));
-      selM.addEventListener('change', ()=>setTime(KEY_M, selM.value));
-      selN.addEventListener('change', ()=>setTime(KEY_N, selN.value));
-      selE.addEventListener('change', ()=>setTime(KEY_E, selE.value));
+      selM.addEventListener('change', ()=>saveTime(selM.value));
+      selN.addEventListener('change', ()=>saveTime(selN.value));
+      selE.addEventListener('change', ()=>saveTime(selE.value));
 
       loadSel();
       const current = (m.checked?"m":n.checked?"n":"e");
       rebuild(current);
     })();
 
-    /* ---------- Хитозан Плюс: 3 фиксирани, таймери М→О→В ---------- */
+    /* ---------- Хитозан Плюс: 3 фиксирани, таймери с зависимости М→О→В ---------- */
     (function(){
-      const KEY_TIM='bt_ch_times_v21001';
+      const KEY_TIM='bt_ch_times_v29';
 
       const selM = document.getElementById('ch-sel-m');
       const selN = document.getElementById('ch-sel-n');
@@ -647,14 +649,9 @@
     dateText.value=isoToBG_YY(currentISO);
     function prefillFor(iso){
       var data=load(); var rec=data.find(r=>r.date===iso);
-      if(rec){
-        weight.value=(typeof rec.weight==="number")?rec.weight:"";
-        btFlag.checked = (rec.bt!==false);
-        return;
-      }
+      if(rec){ weight.value=(typeof rec.weight==="number")?rec.weight:""; btFlag.checked = (rec.bt!==false); return; }
       var prev=sortDesc(data).find(r=>r.date<iso);
-      weight.value=prev?prev.weight:"";
-      btFlag.checked=true;
+      weight.value=prev?prev.weight:""; btFlag.checked=true;
     }
     prefillFor(currentISO);
 
@@ -664,7 +661,7 @@
     function renderCalendar(){
       var set=hasDataSet(), y=calYear, m=calMonth;
       var first=new Date(Date.UTC(y,m-1,1));
-      var startDow=(first.getUTCDay()+6)%7; /* Monday=0 */
+      var startDow=(first.getUTCDay()+6)%7;
       var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
       var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
       var html='<div class="cal-head"><button id="calPrev" type="button">←</button><div class="cal-title">'+title+'</div><button id="calNext" type="button">→</button></div>';
@@ -802,7 +799,7 @@
     function getChartRawData(){
       var mode=aggSel.value;
       if(mode==="daily"){ var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(load()); return sortAsc(src); }
-      return sortAsc(load()); // weekly/monthly — всички
+      return sortAsc(load());
     }
 
     function renderChart(){
@@ -830,11 +827,11 @@
         });
       } else {
         var mm=new Map();
-        raw.forEach(r=>{ var k=monthKey(r.date); (mm.get(k)||mm.set(k,[]).get(k)).push(r); });
+        raw.forEach(r=>{ var k=monthKey(r.date); (mm.get(k)||мм.set(k,[]).get(k)).push(r); });
         mm.forEach((arr,k)=>{
           var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
           var btCount=arr.filter(z=>z.bt!==false).length;
-          pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-btCount)});
+          pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-бtCount)});
         });
       }
 
@@ -849,7 +846,7 @@
       function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
       ctx.strokeStyle="#20343a"; ctx.lineWidth=1.1;
-      ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-padB); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(pадL,h-padB); ctx.stroke();
 
       for(var i=1;i<n;i++){
         var p0=pts[i-1], p1=pts[i];
