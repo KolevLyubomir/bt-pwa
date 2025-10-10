@@ -437,7 +437,7 @@
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
     function bgToISO_any(bg){
       var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-      var m4=bg.match(/^(\d{2})\.(\d{2})\.(\д{4})$/); if(m4) return m4[3]+"-"+м4[2]+"-"+м4[1];
+      var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
       return "";
     }
 
@@ -568,7 +568,7 @@
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
               '</button>'+
               '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8л1-14"></path></svg>'+
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
               '</button>'+
             '</div>'+
           '</td>';
@@ -636,7 +636,7 @@
         raw.forEach(r=>{ var k=weekKey(r.date); (wm.get(k)||wm.set(k,[]).get(k)).push(r); });
         wm.forEach((arr,k)=>{
           var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
-          var btCount=arr.filter(z=>з.bt!==false).length;
+          var btCount=arr.filter(z=>z.bt!==false).length;
           pts.push({x:k,y:s/arr.length,label:labelWeek(k), bt:(btCount>=arr.length-btCount)});
         });
       } else {
@@ -660,7 +660,7 @@
       function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
       ctx.strokeStyle="#20343a"; ctx.lineWidth=1.1;
-      ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,pадT); ctx.lineTo(padL,h-padB); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-padB); ctx.stroke();
 
       for(var i=1;i<n;i++){
         var p0=pts[i-1], p1=pts[i];
@@ -727,7 +727,7 @@
       var arr=load(), changed=false;
       for(var i=0;i<arr.length;i++){
         var r=arr[i];
-        if(typeof r.date==="string" && !/^\d{4}-\d{2}-\д{2}$/.test(r.date)){
+        if(typeof r.date==="string" && !/^\d{4}-\d{2}-\d{2}$/.test(r.date)){
           var iso=bgToISO_any(r.date); if(iso){ r.date=iso; changed=true; }
         }
         if(typeof r.bt==="undefined"){ r.bt=true; changed=true; }
@@ -896,7 +896,7 @@
       setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
 
       [m,n,e].forEach(el=>el.addEventListener('change',()=>{
-        const which = el===м ? "m" : el===n ? "n" : "e";
+        const which = el===m ? "m" : el===n ? "n" : "e";
         setOnly(which);
         const t=loadTim(); saveTim(t);
       }));
