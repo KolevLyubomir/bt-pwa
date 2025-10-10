@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.14</title>
+  <title>БТ App 3 — v2.15</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -69,7 +69,7 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
-    /* Стрелките за number са позволени по подразбиране (както v2.13) */
+    /* Стрелките за number са позволени по подразбиране (както v2.13/2.14) */
 
     button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
 
@@ -141,6 +141,9 @@
     .time-row{ display:flex; align-items:center; gap:6px }
     .time-row select{ min-width:64px }
     .time-row .colon{ opacity:.8; user-select:none; }
+
+    /* Подчертаване на „важни“ опции в dropdown (часове и минути) */
+    select option.strong { font-weight:700; }
   </style>
 </head>
 <body>
@@ -151,7 +154,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.14</span>
+        <span class="badge">v2.15</span>
       </div>
     </div>
   </div>
@@ -164,7 +167,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (НЕПРОМЕНЕН СПРЯМО v2.13) -->
+  <!-- ПАНЕЛ: ДАННИ (НЕПРОМЕНЕН СПРЯМО v2.14) -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -426,7 +429,7 @@
 
   <script>
     "use strict";
-    window.__BT_VER = '2.14';
+    window.__BT_VER = '2.15';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -440,16 +443,16 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v214', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v215', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v214'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v215'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved); else select(0);
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ — оригинален JS (без промени от v2.13) ===== */
+    /* ===== „Данни“ — оригинален JS (без промени от v2.14) ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -663,7 +666,7 @@
         mm.forEach((arr,k)=>{
           var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
           var btCount=arr.filter(z=>z.bt!==false).length;
-          pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-btCount)});
+          pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-бtCount)});
         });
       }
 
@@ -764,15 +767,31 @@
 
     /* ===== ПРОГРАМА — помощни ===== */
     function two(n){ return String(n).padStart(2,"0"); }
-    function buildHourRange(sel, fromH, toH){ sel.innerHTML=""; for(let h=fromH; h<=toH; h++){ const o=document.createElement("option"); o.value=two(h); o.textContent=o.value; sel.appendChild(o);} }
-    function buildMinutes(sel){ sel.innerHTML=""; for(let m=0;m<60;m++){ const o=document.createElement("option"); o.value=two(m); o.textContent=o.value; sel.appendChild(o);} }
+    function buildHourRange(sel, fromH, toH){
+      sel.innerHTML="";
+      for(let h=fromH; h<=toH; h++){
+        const o=document.createElement("option");
+        o.value=two(h); o.textContent=o.value;
+        if(h===8 || h===12 || h===19) o.className="strong";
+        sel.appendChild(o);
+      }
+    }
+    function buildMinutes5(sel){
+      sel.innerHTML="";
+      for(let m=0; m<60; m+=5){
+        const o=document.createElement("option");
+        o.value=two(m); o.textContent=o.value;
+        if(m%15===0) o.className="strong"; // 00, 15, 30, 45
+        sel.appendChild(o);
+      }
+    }
     function setSel(sel,val){ const opt=[...sel.options].find(o=>o.value===val); if(opt){ sel.value=val; return true;} return false; }
 
-    /* ===== ProLact Slim+ — 2 от 3, със HH + MM за активните ===== */
+    /* ===== ProLact Slim+ — 2 от 3, HH+MM с 5-мин стъпка ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_pl_sel_v214'; // {m:bool,n:bool,e:bool} — винаги точно 2 true
-      const KEY_TIM='bt_pl_tim_v214'; // {m:"HH:MM", n:"HH:MM", e:"HH:MM"}
+      const KEY_SEL='bt_pl_sel_v215'; // {m:bool,n:bool,e:bool}
+      const KEY_TIM='bt_pl_tim_v215'; // {m:"HH:MM", n:"HH:MM", e:"HH:MM"}
 
       const m=document.getElementById('pl-m'), n=document.getElementById('pl-n'), e=document.getElementById('pl-e');
       const boxM=document.getElementById('pl-tp-m'), boxN=document.getElementById('pl-tp-n'), boxE=document.getElementById('pl-tp-e');
@@ -780,10 +799,9 @@
       const hhN=document.getElementById('pl-hh-n'), mmN=document.getElementById('pl-mm-n');
       const hhE=document.getElementById('pl-hh-e'), mmE=document.getElementById('pl-mm-e');
 
-      // build ranges
-      buildHourRange(hhM,0,9); buildMinutes(mmM);
-      buildHourRange(hhN,10,17); buildMinutes(mmN);
-      buildHourRange(hhE,18,23); buildMinutes(mmE);
+      buildHourRange(hhM,0,9);  buildMinutes5(mmM);
+      buildHourRange(hhN,10,17); buildMinutes5(mmN);
+      buildHourRange(hhE,18,23); buildMinutes5(mmE);
 
       function saveSel(){ localStorage.setItem(KEY_SEL, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }
       function loadSel(){
@@ -798,15 +816,11 @@
       function enforceTwo(clicked){
         const c=(m.checked?1:0)+(n.checked?1:0)+(e.checked?1:0);
         if(c===3){
-          // Изключи третата според логиката ти по-рано (предпочитаме да оставим кликнатия + най-близкия)
           if(clicked===e) n.checked=false;
           else if(clicked===n) e.checked=false;
           else e.checked=false;
         }else if(c<2){
-          // Вдигни друг, за да станат 2
-          if(!n.checked) n.checked=true;
-          else if(!e.checked) e.checked=true;
-          else if(!m.checked) m.checked=true;
+          if(!n.checked) n.checked=true; else if(!e.checked) e.checked=true; else if(!m.checked) m.checked=true;
         }
         saveSel(); updateUI();
       }
@@ -818,16 +832,18 @@
       }
 
       function setFromStr(hhSel, mmSel, str){
-        const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00";
+        const [H,M]=(str||"").split(":");
+        if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value;
+        if(!setSel(mmSel,M)) mmSel.value="00";
       }
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       function updateUI(){
         const t=loadTim();
-        // при показване — зареди/нормализирай в границите
-        if(m.checked) setFromStr(hhM, mmM, t.m); if(n.checked) setFromStr(hhN, mmN, t.n); if(e.checked) setFromStr(hhE, mmE, t.e);
+        if(m.checked) setFromStr(hhM, mmM, t.m);
+        if(n.checked) setFromStr(hhN, mmN, t.n);
+        if(e.checked) setFromStr(hhE, mmE, t.e);
         showBoxes();
-        // запиши актуалните
         saveTim({ m:getStr(hhM,mmM), n:getStr(hhN,mmN), e:getStr(hhE,mmE) });
       }
 
@@ -839,11 +855,11 @@
       loadSel(); updateUI();
     })();
 
-    /* ===== OMNi-Biotic — 1 от 3, с HH+MM за избрания ===== */
+    /* ===== OMNi-Biotic — 1 от 3, HH+MM (5-мин) ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_he_sel_v214'; // "m" | "n" | "e"
-      const KEY_TIM='bt_he_tim_v214'; // {m:"HH:MM", n:"HH:MM", e:"HH:MM"}
+      const KEY_SEL='bt_he_sel_v215'; // "m" | "n" | "e"
+      const KEY_TIM='bt_he_tim_v215'; // {m:"HH:MM", n:"HH:MM", e:"HH:MM"}
 
       const m=document.getElementById('he-m'), n=document.getElementById('he-n'), e=document.getElementById('he-e');
       const boxM=document.getElementById('he-tp-m'), boxN=document.getElementById('he-tp-n'), boxE=document.getElementById('he-tp-e');
@@ -851,9 +867,9 @@
       const hhN=document.getElementById('he-hh-n'), mmN=document.getElementById('he-mm-n');
       const hhE=document.getElementById('he-hh-e'), mmE=document.getElementById('he-mm-e');
 
-      buildHourRange(hhM,0,9);  buildMinutes(mmM);
-      buildHourRange(hhN,10,17); buildMinutes(mmN);
-      buildHourRange(hhE,18,23); buildMinutes(mmE);
+      buildHourRange(hhM,0,9);  buildMinutes5(mmM);
+      buildHourRange(hhN,10,17); buildMinutes5(mmN);
+      buildHourRange(hhE,18,23); buildMinutes5(mmE);
 
       function saveSel(v){ localStorage.setItem(KEY_SEL, v); }
       function loadSel(){ return localStorage.getItem(KEY_SEL)||"n"; }
@@ -867,7 +883,11 @@
         boxE.style.display = (which==="e")?"block":"none";
         saveSel(which);
       }
-      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
+      function setFromStr(hhSel, mmSel, str){
+        const [H,M]=(str||"").split(":");
+        if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value;
+        if(!setSel(mmSel,M)) mmSel.value="00";
+      }
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       [m,n,e].forEach(el=>el.addEventListener('change',()=>{
@@ -884,39 +904,40 @@
         saveTim(t);
       }));
 
-      // init
       const which=loadSel(); setOnly(which);
       const t=loadTim();
       setFromStr(hhM,mmM,t.m); setFromStr(hhN,mmN,t.n); setFromStr(hhE,mmE,t.e);
-      // запис на текущото видимо
       if(which==="m") saveTim({...t, m:getStr(hhM,mmM)});
       else if(which==="n") saveTim({...t, n:getStr(hhN,mmN)});
       else saveTim({...t, e:getStr(hhE,mmE)});
     })();
 
-    /* ===== Хитозан Плюс — 3 активни, с HH+MM за всяка част ===== */
+    /* ===== Хитозан Плюс — 3 активни, HH+MM (5-мин) ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY='bt_ch_tim_v214'; // {m:"HH:MM", n:"HH:MM", e:"HH:MM"}
+      const KEY='bt_ch_tim_v215'; // {m:"HH:MM", n:"HH:MM", e:"HH:MM"}
 
       const hhM=document.getElementById('ch-hh-m'), mmM=document.getElementById('ch-mm-m');
       const hhN=document.getElementById('ch-hh-n'), mmN=document.getElementById('ch-mm-n');
       const hhE=document.getElementById('ch-hh-e'), mmE=document.getElementById('ch-mm-e');
 
-      buildHourRange(hhM,0,9);  buildMinutes(mmM);
-      buildHourRange(hhN,10,17); buildMinutes(mmN);
-      buildHourRange(hhE,18,23); buildMinutes(mmE);
+      buildHourRange(hhM,0,9);  buildMinutes5(mmM);
+      buildHourRange(hhN,10,17); buildMinutes5(mmN);
+      buildHourRange(hhE,18,23); buildMinutes5(mmE);
 
       function save(t){ localStorage.setItem(KEY, JSON.stringify(t)); }
       function load(){ try{ const r=JSON.parse(localStorage.getItem(KEY)||''); return {m:r?.m||DEF.m, n:r?.n||DEF.n, e:r?.e||DEF.e}; }catch(_){ return {...DEF}; } }
-      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
+      function setFromStr(hhSel, mmSel, str){
+        const [H,M]=(str||"").split(":");
+        if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value;
+        if(!setSel(mmSel,M)) mmSel.value="00";
+      }
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       function write(){ save({ m:getStr(hhM,mmM), n:getStr(hhN,mmN), e:getStr(hhE,mmE) }); }
 
       [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', write));
 
-      // init
       const t=load();
       setFromStr(hhM,mmM,t.m); setFromStr(hhN,mmN,t.n); setFromStr(hhE,mmE,t.e);
       write();
