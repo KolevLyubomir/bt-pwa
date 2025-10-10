@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.16</title>
+  <title>БТ App 3 — v2.18</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -69,7 +69,6 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
-
     button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
 
     .field.date{ width:120px }
@@ -116,7 +115,7 @@
     .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
     .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
     .cal .day{ width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid transparent }
-    .cal .day:hover{ border-color:#27454a }
+    .cal .day:hover{ border-color:#27454a } /* FIX: латиница 'a' */
     .cal .day.disabled{ opacity:.35; pointer-events:none }
     .cal .day.has{ background:var(--has); color:#092218 }
     .cal .day.today{ outline:1px dashed #5b8f98 }
@@ -132,16 +131,13 @@
     .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px }
     .prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
     .prog-cap{ font-weight:700 }
-    .prog-note{ color:#9fb4ad; font-size:12px; margin-top:6px }
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
     .time-wrap{ display:flex; align-items:center; gap:6px }
-    .time-wrap .lbl{ font-size:12px; color:var(--muted); margin:0 }
-    .time-row{ display:flex; align-items:center; gap:6px }
-    .time-row select{ min-width:64px }
+    .time-row{ display:flex; align-items:center; gap:4px }
+    .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px } /* компактно */
     .time-row .colon{ opacity:.8; user-select:none; }
 
-    /* Подчертаване на „важни“ опции в dropdown (часове и минути) */
     select option.strong { font-weight:700; }
   </style>
 </head>
@@ -153,7 +149,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.16</span>
+        <span class="badge">v2.18</span>
       </div>
     </div>
   </div>
@@ -166,7 +162,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (без промяна спрямо v2.15) -->
+  <!-- ПАНЕЛ: ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -174,7 +170,6 @@
         <h2 style="margin:0 0 10px">Запис</h2>
 
         <div class="inputs-row">
-          <!-- лява група -->
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
               <div class="lbl">Дата</div>
@@ -204,7 +199,6 @@
 
           <div class="spacer"></div>
 
-          <!-- дясна група -->
           <div class="inputs-row" style="gap:8px">
             <div class="field">
               <div class="lbl"></div>
@@ -296,7 +290,6 @@
             <span class="prog-pill">
               <label><input type="checkbox" id="pl-m"> Сутрин</label>
               <div id="pl-tp-m" class="time-wrap" style="display:none">
-                <div class="lbl">Час (00–09)</div>
                 <div class="time-row">
                   <select id="pl-hh-m"></select><span class="colon">:</span><select id="pl-mm-m"></select>
                 </div>
@@ -305,7 +298,6 @@
             <span class="prog-pill">
               <label><input type="checkbox" id="pl-n" checked> Обед</label>
               <div id="pl-tp-n" class="time-wrap" style="display:block">
-                <div class="lbl">Час (10–17)</div>
                 <div class="time-row">
                   <select id="pl-hh-n"></select><span class="colon">:</span><select id="pl-mm-n"></select>
                 </div>
@@ -314,14 +306,12 @@
             <span class="prog-pill">
               <label><input type="checkbox" id="pl-e" checked> Вечер</label>
               <div id="pl-tp-e" class="time-wrap" style="display:block">
-                <div class="lbl">Час (18–23)</div>
                 <div class="time-row">
                   <select id="pl-hh-e"></select><span class="colon">:</span><select id="pl-mm-e"></select>
                 </div>
               </div>
             </span>
           </div>
-          <div class="prog-note">Избираш точно два приема. За всяка активна отметка задаваш Час и Минути (през 5 мин). Часовете 08/12/19 и минутите 00/15/30/45 са удебелени.</div>
         </div>
 
         <hr class="prog-sep"/>
@@ -333,7 +323,6 @@
             <span class="prog-pill">
               <label><input type="checkbox" id="he-m"> Сутрин</label>
               <div id="he-tp-m" class="time-wrap" style="display:none">
-                <div class="lbl">Час (00–09)</div>
                 <div class="time-row">
                   <select id="he-hh-m"></select><span class="colon">:</span><select id="he-mm-m"></select>
                 </div>
@@ -342,7 +331,6 @@
             <span class="prog-pill">
               <label><input type="checkbox" id="he-n" checked> Обед</label>
               <div id="he-tp-n" class="time-wrap" style="display:block">
-                <div class="lbl">Час (10–17)</div>
                 <div class="time-row">
                   <select id="he-hh-n"></select><span class="colon">:</span><select id="he-mm-n"></select>
                 </div>
@@ -351,14 +339,12 @@
             <span class="prog-pill">
               <label><input type="checkbox" id="he-e"> Вечер</label>
               <div id="he-tp-e" class="time-wrap" style="display:none">
-                <div class="lbl">Час (18–23)</div>
                 <div class="time-row">
                   <select id="he-hh-e"></select><span class="colon">:</span><select id="he-mm-e"></select>
                 </div>
               </div>
             </span>
           </div>
-          <div class="prog-note">Избираш един от трите приема. Настройваш час и минути (през 5 мин). Маркирани: 08/12/19 и 00/15/30/45.</div>
         </div>
 
         <hr class="prog-sep"/>
@@ -370,7 +356,6 @@
             <span class="prog-pill">
               <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
               <div id="ch-tp-m" class="time-wrap">
-                <div class="lbl">Час (00–09)</div>
                 <div class="time-row">
                   <select id="ch-hh-m"></select><span class="colon">:</span><select id="ch-mm-m"></select>
                 </div>
@@ -379,7 +364,6 @@
             <span class="prog-pill">
               <label><input type="checkbox" id="ch-n" checked disabled> Обед</label>
               <div id="ch-tp-n" class="time-wrap">
-                <div class="lbl">Час (10–17)</div>
                 <div class="time-row">
                   <select id="ch-hh-n"></select><span class="colon">:</span><select id="ch-mm-n"></select>
                 </div>
@@ -388,14 +372,12 @@
             <span class="prog-pill">
               <label><input type="checkbox" id="ch-e" checked disabled> Вечер</label>
               <div id="ch-tp-e" class="time-wrap">
-                <div class="lbl">Час (18–23)</div>
                 <div class="time-row">
                   <select id="ch-hh-e"></select><span class="colon">:</span><select id="ch-mm-e"></select>
                 </div>
               </div>
             </span>
           </div>
-          <div class="prog-note">И трите приема са активни; настройваш час и минути (през 5 мин). Маркирани: 08/12/19 и 00/15/30/45.</div>
         </div>
       </section>
 
@@ -407,7 +389,6 @@
           <li><strong>Глюкоманан</strong> (<em>NOW Foods</em>)</li>
           <li><strong>EGCg</strong> — екстракт от зелен чай (<em>NOW Foods</em>)</li>
         </ul>
-        <p class="prog-note">Добавят се по избор според индивидуалния план.</p>
       </section>
 
       <!-- 💊 Личен режим -->
@@ -421,14 +402,13 @@
           <li><em>Пример:</em> Витамин D3 + K2</li>
           <li><em>Пример:</em> Омега-3</li>
         </ul>
-        <p class="prog-note">Разделът е персонален и извън официалния протокол.</p>
       </section>
     </main>
   </div>
 
   <script>
     "use strict";
-    window.__BT_VER = '2.16';
+    window.__BT_VER = '2.18';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -442,22 +422,22 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v216', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v218', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v216'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v218'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved); else select(0);
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ — оригинален JS (както v2.15) ===== */
+    /* ===== „Данни“ ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
     function bgToISO_any(bg){
       var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-      var m4=bg.match(/^(\д{2})\.(\д{2})\.(\д{4})$/); if(m4) return m4[3]+"-"+м4[2]+"-"+м4[1];
+      var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
       return "";
     }
 
@@ -621,7 +601,7 @@
     }
     function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
     function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
-    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+s[0].slice(2); }
+    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+String(s[0]).slice(2); }
 
     aggSel.addEventListener("change", ()=>renderChart());
 
@@ -786,11 +766,11 @@
     }
     function setSel(sel,val){ const opt=[...sel.options].find(o=>o.value===val); if(opt){ sel.value=val; return true;} return false; }
 
-    /* ===== ProLact Slim+ — FIX: пазим часовете само за активните отметки ===== */
+    /* ===== ProLact Slim+ — 2 от 3 ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_pl_sel_v216'; // {m:bool,n:bool,e:bool}
-      const KEY_TIM='bt_pl_tim_v216'; // {m:"HH:MM", n:"HH:MM", e:"HH:MM"}
+      const KEY_SEL='bt_pl_sel_v218';
+      const KEY_TIM='bt_pl_tim_v218';
 
       const m=document.getElementById('pl-m'), n=document.getElementById('pl-n'), e=document.getElementById('pl-e');
       const boxM=document.getElementById('pl-tp-m'), boxN=document.getElementById('pl-tp-n'), boxE=document.getElementById('pl-tp-e');
@@ -818,15 +798,11 @@
           const r=JSON.parse(localStorage.getItem(KEY_SEL)||'');
           if(r){ m.checked=!!r.m; n.checked=!!r.n; e.checked=!!r.e; return; }
         }catch(_){}
-        m.checked=false; n.checked=true; e.checked=true; // дефолт: Обед+Вечер
+        m.checked=false; n.checked=true; e.checked=true;
       }
       function saveSel(){ localStorage.setItem(KEY_SEL, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }
 
-      function setFromStr(hhSel, mmSel, str){
-        const [H,M]=(str||"").split(":");
-        if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value;
-        if(!setSel(mmSel,M)) mmSel.value="00";
-      }
+      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       function showBoxes(){
@@ -845,38 +821,29 @@
           if(!n.checked) n.checked=true; else if(!e.checked) e.checked=true; else if(!m.checked) m.checked=true;
         }
         saveSel();
-        updateUI(/*noForceSave*/false);
+        updateUI(false);
       }
 
-      // ВАЖНО: не презаписваме неактивните!
       function updateUI(noForceSave){
         const prev = loadTim();
-        // Зареди стойности в селектите (дори и скритите), за да имат правилни дефолти
         setFromStr(hhM, mmM, prev.m);
         setFromStr(hhN, mmN, prev.n);
         setFromStr(hhE, mmE, prev.e);
-
         showBoxes();
-
-        // Подготви нов обект: пренасяме старите стойности и заменяме само активните
         const next = {...prev};
         if(m.checked) next.m = getStr(hhM,mmM);
         if(n.checked) next.n = getStr(hhN,mmN);
         if(e.checked) next.e = getStr(hhE,mmE);
-
         if(noForceSave!==true){ saveTim(next); }
       }
 
-      // init
-      ensureTim();            // гарантираме 08/12/19 в storage, ако липсва
-      loadSel();              // възстановяваме кои две са активни
-      updateUI(true);         // визуализираме без да презаписваме неактивните с 00:00
+      ensureTim();
+      loadSel();
+      updateUI(true);
 
       [m,n,e].forEach(el=>el.addEventListener('change',()=>enforceTwo(el)));
       [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', ()=>{
-        // при промяна на селект — записваме само активните полета
-        const prev = loadTim();
-        const next = {...prev};
+        const prev = loadTim(); const next = {...prev};
         if(m.checked) next.m = getStr(hhM,mmM);
         if(n.checked) next.n = getStr(hhN,mmN);
         if(e.checked) next.e = getStr(hhE,mmE);
@@ -884,11 +851,11 @@
       }));
     })();
 
-    /* ===== OMNi-Biotic — 1 от 3, HH+MM (5-мин) ===== */
+    /* ===== OMNi-Biotic — 1 от 3 ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_he_sel_v216'; // "m" | "n" | "e"
-      const KEY_TIM='bt_he_tim_v216'; // {m:"HH:MM", n:"HH:MM", e:"HH:MM"}
+      const KEY_SEL='bt_he_sel_v218'; // "m" | "n" | "e"
+      const KEY_TIM='bt_he_tim_v218'; // {m,n,e}
 
       const m=document.getElementById('he-m'), n=document.getElementById('he-n'), e=document.getElementById('he-e');
       const boxM=document.getElementById('he-tp-m'), boxN=document.getElementById('he-tp-n'), boxE=document.getElementById('he-tp-e');
@@ -924,7 +891,6 @@
       function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
-      // init
       const which0=loadSel(); setOnly(which0);
       const t0=ensureTim();
       setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
@@ -932,9 +898,7 @@
       [m,n,e].forEach(el=>el.addEventListener('change',()=>{
         const which = el===m ? "m" : el===n ? "n" : "e";
         setOnly(which);
-        const t=loadTim();
-        // при превключване не пипаме другите стойности; само показваме избрания
-        saveTim(t);
+        const t=loadTim(); saveTim(t);
       }));
       [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', ()=>{
         const which = localStorage.getItem(KEY_SEL)||"n";
@@ -946,10 +910,10 @@
       }));
     })();
 
-    /* ===== Хитозан Плюс — 3 активни, HH+MM (5-мин) ===== */
+    /* ===== Хитозан Плюс — 3 активни ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY='bt_ch_tim_v216'; // {m:"HH:MM", n:"HH:MM", e:"HH:MM"}
+      const KEY='bt_ch_tim_v218';
 
       const hhM=document.getElementById('ch-hh-m'), mmM=document.getElementById('ch-mm-m');
       const hhN=document.getElementById('ch-hh-n'), mmN=document.getElementById('ch-mm-n');
