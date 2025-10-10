@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.11</title>
+  <title>БТ App 3 — v2.12</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -58,7 +58,7 @@
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== Стилове за „Данни“ (НЕ ПИПАМ) ===== */
+    /* ===== Стилове за „Данни“ ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -69,9 +69,16 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
+    /* Общото изключване на стрелките оставяме,
+       но за #weight изрично ги ВРЪЩАМЕ (виж override-а по-долу). */
     input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
+
+    /* 🔁 OVERRIDE: за полето Тегло върни стрелките/скрола */
+    #weight{ appearance:auto; -webkit-appearance:number-input; -moz-appearance:textfield; }
+    #weight::-webkit-inner-spin-button, #weight::-webkit-outer-spin-button{ -webkit-appearance: inner-spin-button; margin:0; }
+
     button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
 
     .field.date{ width:120px }
@@ -149,7 +156,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.11</span>
+        <span class="badge">v2.12</span>
       </div>
     </div>
   </div>
@@ -162,7 +169,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (НЕПРОМЕНЕН СПРЯМО v2.3) -->
+  <!-- ПАНЕЛ: ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -278,14 +285,14 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ: ПРОГРАМА (v2.11 — timers & rules, изолиран namespace) -->
+  <!-- ПАНЕЛ: ПРОГРАМА (идентичен на v2.11) -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
       <!-- 🟩 Основен пакет -->
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ — 2 от 3, със селект-таймери -->
+        <!-- ProLact Slim+ -->
         <div class="prog-slim">
           <span class="prog-cap">ProLact Slim+</span>
           <div class="prog-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
@@ -307,7 +314,7 @@
 
         <hr class="prog-sep"/>
 
-        <!-- OMNi-Biotic HETOX light — 1 от 3, със селект-таймер -->
+        <!-- OMNi-Biotic HETOX light -->
         <div>
           <span class="prog-cap">OMNi-Biotic HETOX light</span>
           <div class="prog-row" role="group" aria-label="HETOX — 1 от 3">
@@ -329,7 +336,7 @@
 
         <hr class="prog-sep"/>
 
-        <!-- Fortex Хитозан Плюс — 3 фиксирани, със селект-таймери -->
+        <!-- Fortex Хитозан Плюс -->
         <div>
           <span class="prog-cap">Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром</span>
           <div class="prog-row" role="group" aria-label="Хитозан Плюс">
@@ -380,9 +387,9 @@
   <script>
     "use strict";
     // Версия
-    window.__BT_VER = '2.11';
+    window.__BT_VER = '2.12';
 
-    /* ===== Таб логика (както v2.3, ключ сменен за да не се бият стойности) ===== */
+    /* ===== Таб логика (ключ за таба остава отделен от старата версия) ===== */
     (function(){
       const tabs = [
         {btn: document.getElementById('tab-data'), panel: document.getElementById('panel-data')},
@@ -403,7 +410,7 @@
       }catch(_){ select(0); }
     })();
 
-    /* ===== Оригиналният JS за „Данни“ (НЕПРОМЕНЕН) ===== */
+    /* ===== „Данни“ — оригинален JS (без промени в логиката) ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -716,9 +723,8 @@
 
     initialRender();
 
-    /* ===== ПРОГРАМА — таймери и правила (изолиран namespace) ===== */
+    /* ===== ПРОГРАМА — таймери и правила (както v2.11) ===== */
     (function(){
-      // Helpers (локални за namespace)
       function hhmmToMin(hhmm){ const [h,m]=hhmm.split(":").map(Number); return h*60+m; }
       function minToHHMM(min){ min=(min+1440)%1440; const h=Math.floor(min/60),m=min%60; return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); }
       function fillHours(sel,startMin,endMin){ sel.innerHTML=""; const s=Math.max(0,Math.min(startMin,23*60)), e=Math.max(s,Math.min(endMin,23*60));
@@ -726,7 +732,6 @@
       function setSelectValue(sel,val){ const o=[...sel.options].find(x=>x.value===val); if(o){ sel.value=val; return true;} return false; }
       function clampToRange(sel,want){ if(!setSelectValue(sel,want)){ if(sel.options.length) sel.value=sel.options[0].value; } }
 
-      /* === ProLact: 2 от 3, с таймери (по подразбиране Обед+Вечер) === */
       (function(){
         const DEF_M="08:00", DEF_N="12:00", DEF_E="19:00";
         const KEY_SEL='bt_pl_sel_v211', KEY_TIM='bt_pl_tim_v211';
@@ -741,7 +746,6 @@
         function loadTim(){ const d={m:DEF_M,n:DEF_N,e:DEF_E}; try{ const r=JSON.parse(localStorage.getItem(KEY_TIM)||''); return r?{m:r.m||d.m,n:r.n||d.n,e:r.e||d.e}:d; }catch(_){ return d; } }
 
         function enforceTwo(clicked){
-          // винаги точно два чек-а; ако станат 3, освобождаваме според клика (приоритет Вечер -> Обед)
           const c=(m.checked?1:0)+(n.checked?1:0)+(e.checked?1:0);
           if(c===3){
             if(clicked===e) n.checked=false;
@@ -784,7 +788,6 @@
         loadSel(); updateUI();
       })();
 
-      /* === OMNi: 1 от 3, с таймери (по подразбиране Обед 12:00) === */
       (function(){
         const DEF_M="08:00", DEF_N="12:00", DEF_E="19:00";
         const KEY_SEL='bt_he_sel_v211', KM='bt_he_m_v211', KN='bt_he_n_v211', KE='bt_he_e_v211';
@@ -827,7 +830,6 @@
         loadSel(); rebuild(m.checked?"m":n.checked?"n":"e");
       })();
 
-      /* === Хитозан: 3 фиксирани, с таймери и минимални отмествания === */
       (function(){
         const DEF_M="08:00", DEF_N="12:00", DEF_E="19:00";
         const KEY='bt_ch_tim_v211';
@@ -836,20 +838,20 @@
         function save(t){ localStorage.setItem(KEY, JSON.stringify(t)); }
         function load(){ const d={m:DEF_M,n:DEF_N,e:DEF_E}; try{ const r=JSON.parse(localStorage.getItem(KEY)||''); return r?{m:r.m||d.m,n:r.n||d.n,e:r.e||d.e}:d; }catch(_){ return d; } }
 
+        function hhmmToMin(hhmm){ const [h,m]=hhmm.split(":").map(Number); return h*60+m; }
+        function minToHHMM(min){ min=(min+1440)%1440; const h=Math.floor(min/60),m=min%60; return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); }
+
         function rebuild(from){
           const t=load();
-          // Morning
           fillHours(selM,0,23*60);
           clampToRange(selM,(from==="m"?selM.value:t.m)||DEF_M);
 
-          // Noon (>= morning+1h, предпочитано morning+4h)
           const mMin=hhmmToMin(selM.value||t.m||DEF_M);
           const minN=mMin+60, prefN=mMin+240;
           fillHours(selN,minN,23*60);
           const wantN=(from==="n"?selN.value:t.n) || minToHHMM(prefN);
           clampToRange(selN, minToHHMM(Math.max(hhmmToMin(wantN),minN)));
 
-          // Evening (>= noon+1h, предпочитано noon+4h, и >= 19:00 ако е възможно)
           const nMin=hhmmToMin(selN.value||t.n||DEF_N);
           const minE=nMin+60, prefE=Math.max(nMin+240, hhmmToMin(DEF_E));
           fillHours(selE,minE,23*60);
@@ -859,7 +861,6 @@
           save({m:selM.value,n:selN.value,e:selE.value});
         }
 
-        // Показани по подразбиране
         document.getElementById('ch-tp-m').style.display="block";
         document.getElementById('ch-tp-n').style.display="block";
         document.getElementById('ch-tp-e').style.display="block";
@@ -870,6 +871,13 @@
         rebuild(null);
       })();
 
+      // локални помощници, повторно дефинирани тук
+      function fillHours(sel,startMin,endMin){ sel.innerHTML=""; const s=Math.max(0,Math.min(startMin,23*60)), e=Math.max(s,Math.min(endMin,23*60));
+        for(let t=s;t<=e;t+=60){ const o=document.createElement("option"); const h=Math.floor(t/60),m=t%60;
+          const v=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); o.value=v; o.textContent=v; sel.appendChild(o);}
+      }
+      function setSelectValue(sel,val){ const o=[...sel.options].find(x=>x.value===val); if(o){ sel.value=val; return true;} return false; }
+      function clampToRange(sel,want){ if(!setSelectValue(sel,want)){ if(sel.options.length) sel.value=sel.options[0].value; } }
     })();
   </script>
 </body>
