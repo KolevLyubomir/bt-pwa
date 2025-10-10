@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.12</title>
+  <title>БТ App 3 — v2.13</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -69,15 +69,9 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
-    /* Общото изключване на стрелките оставяме,
-       но за #weight изрично ги ВРЪЩАМЕ (виж override-а по-долу). */
-    input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
 
-    /* 🔁 OVERRIDE: за полето Тегло върни стрелките/скрола */
-    #weight{ appearance:auto; -webkit-appearance:number-input; -moz-appearance:textfield; }
-    #weight::-webkit-inner-spin-button, #weight::-webkit-outer-spin-button{ -webkit-appearance: inner-spin-button; margin:0; }
+    /* ⛳️ ВАЖНО: премахнахме глобалното скриване на стрелките за number,
+       за да се виждат спинърите при #weight по подразбиране. */
 
     button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
 
@@ -121,7 +115,6 @@
       box-shadow:0 8px 30px rgba(0,0,0,.35); padding:10px; width:auto; display:none }
     .cal.show{ display:block }
     .cal .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px }
-    .cal .cal-head button{ padding:4px 8px; border-radius:8px }
     .cal .cal-title{ font-weight:700; text-transform:capitalize }
     .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
     .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
@@ -156,7 +149,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.12</span>
+        <span class="badge">v2.13</span>
       </div>
     </div>
   </div>
@@ -285,7 +278,7 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ: ПРОГРАМА (идентичен на v2.11) -->
+  <!-- ПАНЕЛ: ПРОГРАМА (идентичен на v2.12) -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
       <!-- 🟩 Основен пакет -->
@@ -387,9 +380,9 @@
   <script>
     "use strict";
     // Версия
-    window.__BT_VER = '2.12';
+    window.__BT_VER = '2.13';
 
-    /* ===== Таб логика (ключ за таба остава отделен от старата версия) ===== */
+    /* ===== Таб логика ===== */
     (function(){
       const tabs = [
         {btn: document.getElementById('tab-data'), panel: document.getElementById('panel-data')},
@@ -410,7 +403,7 @@
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ — оригинален JS (без промени в логиката) ===== */
+    /* ===== „Данни“ — оригинален JS (без промени) ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -723,7 +716,7 @@
 
     initialRender();
 
-    /* ===== ПРОГРАМА — таймери и правила (както v2.11) ===== */
+    /* ===== ПРОГРАМА — без промени от v2.12 (оставена идентична) ===== */
     (function(){
       function hhmmToMin(hhmm){ const [h,m]=hhmm.split(":").map(Number); return h*60+m; }
       function minToHHMM(min){ min=(min+1440)%1440; const h=Math.floor(min/60),m=min%60; return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); }
@@ -841,6 +834,11 @@
         function hhmmToMin(hhmm){ const [h,m]=hhmm.split(":").map(Number); return h*60+m; }
         function minToHHMM(min){ min=(min+1440)%1440; const h=Math.floor(min/60),m=min%60; return String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); }
 
+        function fillHours(sel,startMin,endMin){ sel.innerHTML=""; const s=Math.max(0,Math.min(startMin,23*60)), e=Math.max(s,Math.min(endMin,23*60));
+          for(let t=s;t<=e;t+=60){ const o=document.createElement("option"); const v=minToHHMM(t); o.value=v; o.textContent=v; sel.appendChild(o);} }
+        function setSelectValue(sel,val){ const o=[...sel.options].find(x=>x.value===val); if(o){ sel.value=val; return true;} return false; }
+        function clampToRange(sel,want){ if(!setSelectValue(sel,want)){ if(sel.options.length) sel.value=sel.options[0].value; } }
+
         function rebuild(from){
           const t=load();
           fillHours(selM,0,23*60);
@@ -870,14 +868,6 @@
         selE.addEventListener('change',()=>rebuild("e"));
         rebuild(null);
       })();
-
-      // локални помощници, повторно дефинирани тук
-      function fillHours(sel,startMin,endMin){ sel.innerHTML=""; const s=Math.max(0,Math.min(startMin,23*60)), e=Math.max(s,Math.min(endMin,23*60));
-        for(let t=s;t<=e;t+=60){ const o=document.createElement("option"); const h=Math.floor(t/60),m=t%60;
-          const v=String(h).padStart(2,"0")+":"+String(m).padStart(2,"0"); o.value=v; o.textContent=v; sel.appendChild(o);}
-      }
-      function setSelectValue(sel,val){ const o=[...sel.options].find(x=>x.value===val); if(o){ sel.value=val; return true;} return false; }
-      function clampToRange(sel,want){ if(!setSelectValue(sel,want)){ if(sel.options.length) sel.value=sel.options[0].value; } }
     })();
   </script>
 </body>
