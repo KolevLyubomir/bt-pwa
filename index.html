@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.5</title>
+  <title>БТ App 3 — v2.4</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -41,7 +41,7 @@
       background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
     }
 
-    /* ===== Табове (правоъгълни, болд) ===== */
+    /* ===== Табове ===== */
     .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
     .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
     .tab-btn{
@@ -105,13 +105,10 @@
       box-shadow:0 8px 30px rgba(0,0,0,.35); padding:10px; width:auto; display:none }
     .cal.show{ display:block }
     .cal .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px }
-    .cal .cal-head button{ padding:4px 8px; border-radius:8px }
     .cal .cal-title{ font-weight:700; text-transform:capitalize }
     .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
     .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
     .cal .day{ width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid transparent }
-    .cal .day:hover{ border-color:#27454a }
-    .cal .day.disabled{ opacity:.35; pointer-events:none }
     .cal .day.has{ background:var(--has); color:#092218 }
     .cal .day.today{ outline:1px dashed #5b8f98 }
     .cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
@@ -136,7 +133,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.5</span>
+        <span class="badge">v2.4</span>
       </div>
     </div>
   </div>
@@ -152,10 +149,8 @@
   <!-- ПАНЕЛ: ДАННИ (непокътнато) -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
-      <!-- Запис -->
       <section class="card">
         <h2 style="margin:0 0 10px">Запис</h2>
-
         <div class="inputs-row">
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
@@ -201,7 +196,6 @@
         </div>
       </section>
 
-      <!-- Графика -->
       <section class="card">
         <h2 style="margin:0 0 10px">Графика</h2>
         <div class="inputs-row">
@@ -214,7 +208,6 @@
         <canvas id="chart"></canvas>
       </section>
 
-      <!-- Записи -->
       <section class="card">
         <h2 style="margin:0">Записи</h2>
         <div class="recbar">
@@ -253,7 +246,7 @@
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ — точно 2 от 3 с „умно“ превключване -->
+        <!-- ProLact Slim+ — чекове с правило "точно 2 от 3" -->
         <div>
           <strong>ProLact Slim+</strong>
           <div class="dose-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
@@ -261,33 +254,32 @@
             <span class="pill"><label><input type="checkbox" id="pl-n" checked> Обед</label></span>
             <span class="pill"><label><input type="checkbox" id="pl-e" checked> Вечер</label></span>
           </div>
-          <div class="note">Винаги <strong>точно две</strong>. Дефолт: <em>Обед + Вечер</em>. Клик върху третия автоматично освобождава правилния.</div>
+          <div class="note">Винаги трябва да са избрани <strong>точно две</strong>. Дефолт: <em>Обед + Вечер</em>.</div>
         </div>
 
         <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
 
-        <!-- OMNi-Biotic HETOX light — точно 1 от 3 -->
+        <!-- OMNi-Biotic HETOX light — чекове с правило "точно 1 от 2" -->
         <div>
           <strong>OMNi-Biotic HETOX light</strong>
-          <div class="dose-row" role="group" aria-label="HETOX — 1 от 3">
-            <span class="pill"><label><input type="checkbox" id="hetox-m"> Сутрин</label></span>
-            <span class="pill"><label><input type="checkbox" id="hetox-n" checked> Обед</label></span>
-            <span class="pill"><label><input type="checkbox" id="hetox-e"> Вечер</label></span>
+          <div class="dose-row" role="group" aria-label="HETOX — 1 от 2">
+            <span class="pill"><label><input type="checkbox" id="hetox-m"> Сутрин (преди храна)</label></span>
+            <span class="pill"><label><input type="checkbox" id="hetox-n" checked> Обед (преди храна)</label></span>
           </div>
-          <div class="note">Винаги <strong>точно едно</strong>.</div>
+          <div class="note">Винаги трябва да е избрано <strong>точно едно</strong>. Дефолт: <em>Обед</em>.</div>
         </div>
 
         <hr style="border:0; border-top:1px solid var(--border); margin:14px 0"/>
 
-        <!-- Fortex Хитозан Плюс — заключени чекове -->
+        <!-- Fortex Хитозан Плюс — незадължително (3 чека, по подразбиране включени) -->
         <div>
           <strong>Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром</strong>
           <div class="dose-row" role="group" aria-label="Хитозан Плюс">
-            <span class="pill"><label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label></span>
-            <span class="pill"><label><input type="checkbox" id="ch-n" checked disabled> Обед</label></span>
-            <span class="pill"><label><input type="checkbox" id="ch-e" checked disabled> Вечер</label></span>
+            <span class="pill"><label><input type="checkbox" id="ch-m" checked> Сутрин</label></span>
+            <span class="pill"><label><input type="checkbox" id="ch-n" checked> Обед</label></span>
+            <span class="pill"><label><input type="checkbox" id="ch-e" checked> Вечер</label></span>
           </div>
-          <div class="note">Фиксирани (заключени) и трите.</div>
+          <div class="note">И трите са включени по подразбиране; можеш да ги променяш свободно.</div>
         </div>
       </section>
 
@@ -313,7 +305,7 @@
   <script>
     "use strict";
     // Версия
-    window.__BT_VER = '2.5';
+    window.__BT_VER = '2.4';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -327,99 +319,109 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v25', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v24', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v25'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v24'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved);
       }catch(_){}
     })();
 
-    /* ===== ProLact — точно 2 от 3 с „умно“ превключване ===== */
+    /* ===== Програма: ProLact "точно 2 от 3" ===== */
     (function(){
-      const KEY='bt_pl_2of3_v25';
+      const KEY='bt_pl_2of3_v24';
       const c = {
         m: document.getElementById('pl-m'),
         n: document.getElementById('pl-n'),
         e: document.getElementById('pl-e'),
       };
-
       function save(){
-        try{ localStorage.setItem(KEY, JSON.stringify({m:c.m.checked,n:c.n.checked,e:c.e.checked})); }catch(_){}
+        try{
+          const v = {m:c.m.checked, n:c.n.checked, e:c.e.checked};
+          localStorage.setItem(KEY, JSON.stringify(v));
+        }catch(_){}
+      }
+      function load(){
+        try{
+          const raw = JSON.parse(localStorage.getItem(KEY)||'{}');
+          if(typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){
+            c.m.checked=raw.m; c.n.checked=raw.n; c.e.checked=raw.e;
+            enforce(); // нормализирай ако е нужно
+            return;
+          }
+        }catch(_){}
+        // дефолт
+        c.m.checked=false; c.n.checked=true; c.e.checked=true; save();
       }
 
+      // винаги точно 2 от 3; ако стават 3 при чек на m → пусни n (както поиска)
       function enforce(clicked){
-        const count = (c.m.checked?1:0) + (c.n.checked?1:0) + (c.e.checked?1:0);
+        const arr=[c.m,c.n,c.e];
+        const count = arr.filter(x=>x.checked).length;
 
+        // Ако 3 → изключи по правило: ако кликнато е m → пускаме n; ако e → пускаме n; ако n → пускаме e.
         if(count===3){
-          // M+O+V → свали правилния според кликнатия:
-          // клик E → освободи O; клик N → освободи E; клик M → освободи E
-          if(clicked===c.e){ c.n.checked=false; }
+          if(clicked===c.m){ c.n.checked=false; }
+          else if(clicked===c.e){ c.n.checked=false; }
           else { c.e.checked=false; }
-        } else if(count<2){
-          // върни втори чек (предпочитания: N → E → M)
+        }
+
+        // Ако <2 → включи най-подходящия (предпочитание: Обед, после Вечер, после Сутрин)
+        const count2 = [c.m,c.n,c.e].filter(x=>x.checked).length;
+        if(count2<2){
           if(!c.n.checked) c.n.checked=true;
           else if(!c.e.checked) c.e.checked=true;
           else if(!c.m.checked) c.m.checked=true;
         }
-        save();
       }
 
-      function load(){
-        try{
-          const raw=JSON.parse(localStorage.getItem(KEY)||'');
-          if(raw && typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){
-            c.m.checked=raw.m; c.n.checked=raw.n; c.e.checked=raw.e;
-          }else{
-            c.m.checked=false; c.n.checked=true; c.e.checked=true; // дефолт О+В
-          }
-        }catch(_){
-          c.m.checked=false; c.n.checked=true; c.e.checked=true;
-        }
-        enforce(null);
-      }
+      // Слушатели
+      [c.m,c.n,c.e].forEach(el=>{
+        el.addEventListener('change',()=>{
+          enforce(el);
+          save();
+        });
+      });
 
-      [c.m,c.n,c.e].forEach(el=> el.addEventListener('change', ()=>enforce(el)));
       load();
     })();
 
-    /* ===== HETOX — точно 1 от 3 ===== */
+    /* ===== Програма: HETOX "точно 1 от 2" ===== */
     (function(){
-      const KEY='bt_hetox_1of3_v25';
+      const KEY='bt_hetox_1of2_v24';
       const m=document.getElementById('hetox-m');
       const n=document.getElementById('hetox-n');
-      const e=document.getElementById('hetox-e');
 
       function save(){
-        try{ localStorage.setItem(KEY, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }catch(_){}
+        try{
+          localStorage.setItem(KEY, JSON.stringify({m:m.checked, n:n.checked}));
+        }catch(_){}
       }
-
+      function load(){
+        try{
+          const raw = JSON.parse(localStorage.getItem(KEY)||'{}');
+          if(typeof raw.m==='boolean' && typeof raw.n==='boolean'){
+            m.checked=raw.m; n.checked=raw.n;
+            fix();
+            return;
+          }
+        }catch(_){}
+        // дефолт: само обед
+        m.checked=false; n.checked=true; save();
+      }
       function fix(clicked){
-        if(clicked && clicked.checked){
-          [m,n,e].forEach(x=>{ if(x!==clicked) x.checked=false; });
-        }
-        if(!m.checked && !n.checked && !e.checked){
-          n.checked=true; // дефолт обратно
-        }
+        // точно 1 от 2
+        if(clicked===m && m.checked){ n.checked=false; }
+        else if(clicked===n && n.checked){ m.checked=false; }
+        // ако и двете станат изключени → върни обед
+        if(!m.checked && !n.checked){ n.checked=true; }
         save();
       }
 
-      function load(){
-        try{
-          const raw=JSON.parse(localStorage.getItem(KEY)||'');
-          if(raw && typeof raw.m==='boolean' && typeof raw.n==='boolean' && typeof raw.e==='boolean'){
-            m.checked=raw.m; n.checked=raw.n; e.checked=raw.e;
-          }else{
-            m.checked=false; n.checked=true; e.checked=false; // дефолт: Обед
-          }
-        }catch(_){
-          m.checked=false; n.checked=true; e.checked=false;
-        }
-        fix(null);
-      }
+      m.addEventListener('change',()=>fix(m));
+      n.addEventListener('change',()=>fix(n));
 
-      [m,n,e].forEach(el=> el.addEventListener('change', ()=>fix(el)));
       load();
     })();
 
@@ -469,7 +471,7 @@
     function renderCalendar(){
       var set=hasDataSet(), y=calYear, m=calMonth;
       var first=new Date(Date.UTC(y,m-1,1));
-      var startDow=(first.getUTCDay()+6)%7; /* Monday=0 */
+      var startDow=(first.getUTCDay()+6)%7;
       var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
       var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
       var html='<div class="cal-head"><button id="calPrev" type="button">←</button><div class="cal-title">'+title+'</div><button id="calNext" type="button">→</button></div>';
@@ -535,7 +537,7 @@
       if(pagesTotal>1 && currentPage>1){ var prev=document.createElement("button"); prev.textContent="←";
         prev.addEventListener("click",()=>{currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();}); frag.appendChild(prev); }
       if(pagesTotal<=5){ for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage)); }
-      else{ var sp=Math.max(1,currentPage-2), ep=Math.min(pagesTotal, sp+4);
+      else{ var sp=Math.max(1,currentPage-2); var ep=Math.min(pagesTotal, sp+4);
         for(var pp=sp; pp<=ep; pp++) frag.appendChild(pageBtn(pp,pp===currentPage)); }
       if(pagesTotal>1 && currentPage<pagesTotal){ var next=document.createElement("button"); next.textContent="→";
         next.addEventListener("click",()=>{currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();}); frag.appendChild(next); }
@@ -595,7 +597,7 @@
     }
     function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
     function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
-    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+String(s[0]).slice(2); }
+    function labelMonth(k){ var s=k.split("-"); return s[1]+"."+s[0].slice(2); }
 
     aggSel.addEventListener("change", ()=>renderChart());
 
