@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.19</title>
+  <title>БТ App 3 — v2.18</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -21,9 +21,6 @@
       --chart-label:15px; --chart-values:15px;
       --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2dd4bf;
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
-
-      /* ширина на плочките „Сутрин / Обед / Вечер“ */
-      --pill-w: 168px;
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{
@@ -61,7 +58,7 @@
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== „Данни“ (непипано) ===== */
+    /* ===== „Данни“ ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -118,7 +115,7 @@
     .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
     .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
     .cal .day{ width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid transparent }
-    .cal .day:hover{ border-color:#27454a }
+    .cal .day:hover{ border-color:#27454a } /* FIX: латиница 'a' */
     .cal .day.disabled{ opacity:.35; pointer-events:none }
     .cal .day.has{ background:var(--has); color:#092218 }
     .cal .day.today{ outline:1px dashed #5b8f98 }
@@ -130,31 +127,18 @@
 
     /* ====== ПРОГРАМА ====== */
     .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
-    .prog-head{ display:flex; align-items:center; gap:10px; margin-bottom:6px }
-    .prod-img{ width:38px; height:38px; object-fit:contain; border-radius:8px; background:#0d171b; border:1px solid #254046 }
-
-    .prog-pill{
-      display:flex; flex-direction:column; gap:6px;
-      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-      width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
-    }
-    .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .prog-pill{ display:flex; flex-direction:column; gap:6px; padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px; min-width:210px }
+    .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px }
     .prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
     .prog-cap{ font-weight:700 }
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
     .time-wrap{ display:flex; align-items:center; gap:6px }
     .time-row{ display:flex; align-items:center; gap:4px }
-    .time-row select{ min-width:48px; padding:6px 8px; height:36px; font-size:14px } /* по-компактно */
+    .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px } /* компактно */
     .time-row .colon{ opacity:.8; user-select:none; }
 
     select option.strong { font-weight:700; }
-
-    /* по-тясно на много малки екрани */
-    @media (max-width: 380px){
-      :root{ --pill-w: 156px; }
-      .time-row select{ min-width:44px; }
-    }
   </style>
 </head>
 <body>
@@ -165,7 +149,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.19</span>
+        <span class="badge">v2.18</span>
       </div>
     </div>
   </div>
@@ -178,7 +162,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (НЕПРОМЕНЕН) -->
+  <!-- ПАНЕЛ: ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -186,7 +170,6 @@
         <h2 style="margin:0 0 10px">Запис</h2>
 
         <div class="inputs-row">
-          <!-- лява група -->
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
               <div class="lbl">Дата</div>
@@ -216,7 +199,6 @@
 
           <div class="spacer"></div>
 
-          <!-- дясна група -->
           <div class="inputs-row" style="gap:8px">
             <div class="field">
               <div class="lbl"></div>
@@ -303,12 +285,7 @@
 
         <!-- ProLact Slim+ -->
         <div>
-          <div class="prog-head">
-            <!-- Сложи файла тук: assets/products/prolact.webp -->
-            <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
-            <span class="prog-cap">ProLact Slim+</span>
-          </div>
-
+          <span class="prog-cap">ProLact Slim+</span>
           <div class="prog-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
             <span class="prog-pill">
               <label><input type="checkbox" id="pl-m"> Сутрин</label>
@@ -341,12 +318,7 @@
 
         <!-- OMNi-Biotic HETOX light -->
         <div>
-          <div class="prog-head">
-            <!-- Сложи файла тук: assets/products/omni-hetox-light.webp -->
-            <img class="prod-img" src="assets/products/omni-hetox-light.webp" alt="OMNi-Biotic HETOX light"/>
-            <span class="prog-cap">OMNi-Biotic HETOX light</span>
-          </div>
-
+          <span class="prog-cap">OMNi-Biotic HETOX light</span>
           <div class="prog-row" role="group" aria-label="HETOX — 1 от 3">
             <span class="prog-pill">
               <label><input type="checkbox" id="he-m"> Сутрин</label>
@@ -379,12 +351,7 @@
 
         <!-- Fortex Хитозан Плюс -->
         <div>
-          <div class="prog-head">
-            <!-- Сложи файла тук: assets/products/chitosan-plus.webp -->
-            <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
-            <span class="prog-cap">Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром</span>
-          </div>
-
+          <span class="prog-cap">Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром</span>
           <div class="prog-row" role="group" aria-label="Хитозан Плюс">
             <span class="prog-pill">
               <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
@@ -441,7 +408,7 @@
 
   <script>
     "use strict";
-    window.__BT_VER = '2.19';
+    window.__BT_VER = '2.18';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -455,22 +422,22 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v219', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v218', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v219'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v218'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved); else select(0);
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ — оригинален JS (непипан функционално) ===== */
+    /* ===== „Данни“ ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
     function bgToISO_any(bg){
-      var m2=bg.match(/^(\d{2})\.(\д{2})\.(\д{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-      var m4=bg.match(/^(\д{2})\.(\д{2})\.(\д{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
+      var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
+      var m4=bg.match(/^(\d{2})\.(\d{2})\.(\д{4})$/); if(m4) return m4[3]+"-"+м4[2]+"-"+м4[1];
       return "";
     }
 
@@ -601,7 +568,7 @@
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
               '</button>'+
               '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8л1-14"></path></svg>'+
               '</button>'+
             '</div>'+
           '</td>';
@@ -669,7 +636,7 @@
         raw.forEach(r=>{ var k=weekKey(r.date); (wm.get(k)||wm.set(k,[]).get(k)).push(r); });
         wm.forEach((arr,k)=>{
           var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
-          var btCount=arr.filter(z=>z.bt!==false).length;
+          var btCount=arr.filter(z=>з.bt!==false).length;
           pts.push({x:k,y:s/arr.length,label:labelWeek(k), bt:(btCount>=arr.length-btCount)});
         });
       } else {
@@ -678,7 +645,7 @@
         mm.forEach((arr,k)=>{
           var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
           var btCount=arr.filter(z=>z.bt!==false).length;
-          pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-бtCount)});
+          pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-btCount)});
         });
       }
 
@@ -693,7 +660,7 @@
       function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
       ctx.strokeStyle="#20343a"; ctx.lineWidth=1.1;
-      ctx.beginPath(); ctx.moveTo(padL,h-падB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-padB); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,pадT); ctx.lineTo(padL,h-padB); ctx.stroke();
 
       for(var i=1;i<n;i++){
         var p0=pts[i-1], p1=pts[i];
@@ -760,7 +727,7 @@
       var arr=load(), changed=false;
       for(var i=0;i<arr.length;i++){
         var r=arr[i];
-        if(typeof r.date==="string" && !/^\d{4}-\d{2}-\d{2}$/.test(r.date)){
+        if(typeof r.date==="string" && !/^\d{4}-\d{2}-\д{2}$/.test(r.date)){
           var iso=bgToISO_any(r.date); if(iso){ r.date=iso; changed=true; }
         }
         if(typeof r.bt==="undefined"){ r.bt=true; changed=true; }
@@ -802,8 +769,8 @@
     /* ===== ProLact Slim+ — 2 от 3 ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_pl_sel_v219';
-      const KEY_TIM='bt_pl_tim_v219';
+      const KEY_SEL='bt_pl_sel_v218';
+      const KEY_TIM='bt_pl_tim_v218';
 
       const m=document.getElementById('pl-m'), n=document.getElementById('pl-n'), e=document.getElementById('pl-e');
       const boxM=document.getElementById('pl-tp-m'), boxN=document.getElementById('pl-tp-n'), boxE=document.getElementById('pl-tp-e');
@@ -887,8 +854,8 @@
     /* ===== OMNi-Biotic — 1 от 3 ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_he_sel_v219'; // "m" | "n" | "e"
-      const KEY_TIM='bt_he_tim_v219'; // {m,n,e}
+      const KEY_SEL='bt_he_sel_v218'; // "m" | "n" | "e"
+      const KEY_TIM='bt_he_tim_v218'; // {m,n,e}
 
       const m=document.getElementById('he-m'), n=document.getElementById('he-n'), e=document.getElementById('he-e');
       const boxM=document.getElementById('he-tp-m'), boxN=document.getElementById('he-tp-n'), boxE=document.getElementById('he-tp-e');
@@ -929,7 +896,7 @@
       setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
 
       [m,n,e].forEach(el=>el.addEventListener('change',()=>{
-        const which = el===m ? "m" : el===n ? "n" : "e";
+        const which = el===м ? "m" : el===n ? "n" : "e";
         setOnly(which);
         const t=loadTim(); saveTim(t);
       }));
@@ -946,7 +913,7 @@
     /* ===== Хитозан Плюс — 3 активни ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY='bt_ch_tim_v219';
+      const KEY='bt_ch_tim_v218';
 
       const hhM=document.getElementById('ch-hh-m'), mmM=document.getElementById('ch-mm-m');
       const hhN=document.getElementById('ch-hh-n'), mmN=document.getElementById('ch-mm-n');
