@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.21</title>
+  <title>БТ App 3 — v2.22</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -21,7 +21,7 @@
       --chart-label:15px; --chart-values:15px;
       --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2dd4bf;
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
-      --pill-w:168px; /* равни ширини за плочките в „Програма“ */
+      --pill-w:168px;
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{
@@ -70,8 +70,7 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
-    /* Глобално бяха скрити стрелките за number — оставяме така,
-       а по-долу връщаме стрелките САМО за полето за тегло. */
+    /* Глобално скрити стрелки — по-долу ги връщаме САМО за Тегло */
     input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
@@ -83,7 +82,7 @@
     .field.weight input{ font-weight:700; font-size:18px; width:9ch }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
-    /* ===== Връщане на стрелките за number inputs (само за Тегло) ===== */
+    /* Връщане на стрелките само за „Тегло (kg)” */
     .field.weight input[type="number"]{
       appearance: auto;
       -webkit-appearance: auto;
@@ -113,7 +112,7 @@
 
     .actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
     .icon{ display:inline-flex; align-items:center; justify-content:center; border:1px solid #2a3e41; background:#0d171b; border-radius:8px; padding:4px 6px; color:#fff; height:var(--ctl-h) }
-    .icon svg{ width:16px; height:16px; stroke:currentColor }
+    .icon svg{ width:16px; height:16px; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round }
     .icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
 
     .recbar{ display:flex; align-items:center; gap:8px; justify-content:flex-start; margin:8px 0; flex-wrap:wrap }
@@ -147,7 +146,6 @@
     /* ====== ПРОГРАМА (визуални и нови само стилове) ====== */
     .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
     .prog-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
-    /* Увеличени изображения (двойно спрямо преди) */
     .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
 
     .prog-pill{
@@ -182,7 +180,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.21</span>
+        <span class="badge">v2.22</span>
       </div>
     </div>
   </div>
@@ -261,9 +259,9 @@
         <h2 style="margin:0 0 10px">Графика</h2>
         <div class="inputs-row">
           <select id="aggSel" title="Агрегация">
-            <option value="daily" selected>Дни (всички/страница)</option>
-            <option value="weekly">Седмици (средно — всички)</option>
-            <option value="monthly">Месеци (средно — всички)</option>
+            <option value="daily" selected>Дневни</option>
+            <option value="weekly">Седмични</option>
+            <option value="monthly">Месечни</option>
           </select>
         </div>
         <canvas id="chart"></canvas>
@@ -297,7 +295,7 @@
               <th class="actions">Действия</th>
             </tr>
           </thead>
-          <tbody></tbody>
+        <tbody></tbody>
           <tfoot id="tfootBottom">
             <tr>
               <th class="date">Дата</th>
@@ -311,7 +309,7 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ: ПРОГРАМА (без промени спрямо v2.20) -->
+  <!-- ПАНЕЛ: ПРОГРАМА (без промени в тази версия) -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
       <!-- 🟩 Основен пакет -->
@@ -456,7 +454,7 @@
   <script>
     "use strict";
     // Версия
-    window.__BT_VER = '2.21';
+    window.__BT_VER = '2.22';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -616,7 +614,8 @@
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
               '</button>'+
               '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6В4h8v2M7 6l1 14h8l1-14"></path></svg>'+
+                <!-- ПОПРАВЕНО: латинско V -->
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
               '</button>'+
             '</div>'+
           '</td>';
@@ -739,13 +738,19 @@
         ctx.arc(x0, yVal, 3, 0, Math.PI*2);
         ctx.fill();
 
-        /* Малък етикет с теглото до всяка точка */
+        /* Малък етикет с теглото до всяка точка — ограничен в платното */
         ctx.save();
         ctx.font = "600 11px system-ui";
         ctx.fillStyle = "#9fb4ad";
-        ctx.textAlign = "left";
         ctx.textBaseline = "bottom";
-        ctx.fillText(pe.y.toFixed(1), x0 + 5, yVal - 4);
+        ctx.textAlign = "left";
+        const txt = pe.y.toFixed(1);
+        const tw = ctx.measureText(txt).width;
+        // Ограничаваме x така, че да не излиза вдясно/вляво
+        let xText = x0 + 5;
+        if (xText + tw > w - padR - 2) xText = (w - padR - 2) - tw;
+        if (xText < padL + 2) xText = padL + 2;
+        ctx.fillText(txt, xText, yVal - 4);
         ctx.restore();
 
         if(j%step===0){
