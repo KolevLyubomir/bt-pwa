@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.19</title>
+  <title>БТ App 3 — v2.20</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -21,8 +21,7 @@
       --chart-label:15px; --chart-values:15px;
       --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2dd4bf;
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
-      /* равни ширини за плочките в „Програма“ */
-      --pill-w:168px;
+      --pill-w:168px; /* равни ширини за плочките в „Програма“ */
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{
@@ -44,7 +43,7 @@
       background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
     }
 
-    /* ===== Табове ===== */
+    /* ===== Табове (правоъгълни, болд) ===== */
     .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
     .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
     .tab-btn{
@@ -60,7 +59,7 @@
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== „Данни“ — 1:1 от v2.18 ===== */
+    /* ===== Стилове за „Данни“ ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -71,6 +70,9 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
+    input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
     button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
 
     .field.date{ width:120px }
@@ -127,10 +129,11 @@
     .tabpanel{ display:none }
     .tabpanel[aria-hidden="false"]{ display:block }
 
-    /* ====== ПРОГРАМА (нови само стилове; без промяна на логиката) ====== */
+    /* ====== ПРОГРАМА (визуални и нови само стилове) ====== */
     .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
-    .prog-head{ display:flex; align-items:center; gap:10px; margin-bottom:6px }
-    .prod-img{ width:38px; height:38px; object-fit:contain; border-radius:8px; background:#0d171b; border:1px solid #254046 }
+    .prog-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
+    /* Увеличени изображения (двойно спрямо преди) */
+    .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
 
     .prog-pill{
       display:flex; flex-direction:column; gap:6px;
@@ -152,6 +155,7 @@
     @media (max-width: 380px){
       :root{ --pill-w:156px; }
       .time-row select{ min-width:48px; }
+      .prod-img{ width:64px; height:64px; border-radius:10px; }
     }
   </style>
 </head>
@@ -163,7 +167,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.19</span>
+        <span class="badge">v2.20</span>
       </div>
     </div>
   </div>
@@ -176,7 +180,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (1:1 от v2.18) -->
+  <!-- ПАНЕЛ: ДАННИ (запазен 1:1) -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -184,6 +188,7 @@
         <h2 style="margin:0 0 10px">Запис</h2>
 
         <div class="inputs-row">
+          <!-- лява група -->
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
               <div class="lbl">Дата</div>
@@ -213,6 +218,7 @@
 
           <div class="spacer"></div>
 
+          <!-- дясна група -->
           <div class="inputs-row" style="gap:8px">
             <div class="field">
               <div class="lbl"></div>
@@ -290,7 +296,7 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ: ПРОГРАМА (плочки с фиксирана ширина + картинки) -->
+  <!-- ПАНЕЛ: ПРОГРАМА (картинки уголемени; Omni .png; без доп. текст при Хитозан) -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
       <!-- 🟩 Основен пакет -->
@@ -337,7 +343,7 @@
         <!-- OMNi-Biotic HETOX light -->
         <div>
           <div class="prog-head">
-            <img class="prod-img" src="assets/products/omni-hetox-light.webp" alt="OMNi-Biotic HETOX light"/>
+            <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
             <span class="prog-cap">OMNi-Biotic HETOX light</span>
           </div>
 
@@ -375,7 +381,7 @@
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
-            <span class="prog-cap">Fortex Хитозан Плюс — Хитозан, Л-карнитин, Хром</span>
+            <span class="prog-cap">Fortex Хитозан Плюс</span>
           </div>
 
           <div class="prog-row" role="group" aria-label="Хитозан Плюс">
@@ -434,7 +440,8 @@
 
   <script>
     "use strict";
-    window.__BT_VER = '2.19';
+    // Версия
+    window.__BT_VER = '2.20';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -457,7 +464,7 @@
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ — 1:1 логика от v2.18 ===== */
+    /* ===== „Данни“ — 1:1 логика ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -770,7 +777,7 @@
 
     initialRender();
 
-    /* ===== ПРОГРАМА — помощни (същите ключове като 2.18 за непрекъснатост) ===== */
+    /* ===== ПРОГРАМА — помощни ===== */
     function two(n){ return String(n).padStart(2,"0"); }
     function buildHourRange(sel, fromH, toH){
       sel.innerHTML="";
@@ -837,6 +844,7 @@
         boxE.style.display = e.checked?"block":"none";
       }
 
+      // Винаги точно две отметки активни
       function enforceTwo(clicked){
         const c=(m.checked?1:0)+(n.checked?1:0)+(e.checked?1:0);
         if(c===3){
