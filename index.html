@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.20</title>
+  <title>БТ App 3 — v2.21</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -70,15 +70,30 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
+    /* Глобално бяха скрити стрелките за number — оставяме така,
+       а по-долу връщаме стрелките САМО за полето за тегло. */
     input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
+
     button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
 
     .field.date{ width:120px }
     .field.date input{ width:100% }
     .field.weight input{ font-weight:700; font-size:18px; width:9ch }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
+
+    /* ===== Връщане на стрелките за number inputs (само за Тегло) ===== */
+    .field.weight input[type="number"]{
+      appearance: auto;
+      -webkit-appearance: auto;
+      -moz-appearance: auto;
+    }
+    .field.weight input[type="number"]::-webkit-inner-spin-button,
+    .field.weight input[type="number"]::-webkit-outer-spin-button{
+      -webkit-appearance: auto;
+      margin: 0;
+    }
 
     .bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
       border:1px solid #334a4f; background:#0d171b; border-radius:10px }
@@ -167,7 +182,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.20</span>
+        <span class="badge">v2.21</span>
       </div>
     </div>
   </div>
@@ -180,7 +195,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (запазен 1:1) -->
+  <!-- ПАНЕЛ: ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -296,7 +311,7 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ: ПРОГРАМА (картинки уголемени; Omni .png; без доп. текст при Хитозан) -->
+  <!-- ПАНЕЛ: ПРОГРАМА (без промени спрямо v2.20) -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
       <!-- 🟩 Основен пакет -->
@@ -441,7 +456,7 @@
   <script>
     "use strict";
     // Версия
-    window.__BT_VER = '2.20';
+    window.__BT_VER = '2.21';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -464,7 +479,7 @@
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ — 1:1 логика ===== */
+    /* ===== „Данни“ — логика ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -720,8 +735,19 @@
         var pe=pts[j], x0=X(j), y0=h-padB;
         ctx.beginPath();
         ctx.fillStyle = pe.bt ? orange : green;
-        ctx.arc(x0, Y(pe.y), 3, 0, Math.PI*2);
+        const yVal = Y(pe.y);
+        ctx.arc(x0, yVal, 3, 0, Math.PI*2);
         ctx.fill();
+
+        /* Малък етикет с теглото до всяка точка */
+        ctx.save();
+        ctx.font = "600 11px system-ui";
+        ctx.fillStyle = "#9fb4ad";
+        ctx.textAlign = "left";
+        ctx.textBaseline = "bottom";
+        ctx.fillText(pe.y.toFixed(1), x0 + 5, yVal - 4);
+        ctx.restore();
+
         if(j%step===0){
           ctx.save(); ctx.translate(x0,y0+64); ctx.rotate(-Math.PI/2);
           ctx.fillStyle="#e7faf4"; ctx.fillText(pe.label,0,0); ctx.restore();
