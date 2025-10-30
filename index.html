@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.22</title>
+  <title>БТ App 3 — v2.23</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -21,7 +21,7 @@
       --chart-label:15px; --chart-values:15px;
       --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2dd4bf;
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
-      --pill-w:168px;
+      --pill-w:220px;
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{
@@ -43,7 +43,7 @@
       background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
     }
 
-    /* ===== Табове (правоъгълни, болд) ===== */
+    /* ===== Табове ===== */
     .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
     .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
     .tab-btn{
@@ -144,16 +144,21 @@
     .tabpanel[aria-hidden="false"]{ display:block }
 
     /* ====== ПРОГРАМА (визуални и нови само стилове) ====== */
-    .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
+    .prog-row{
+      display:flex; align-items:flex-start; gap:14px; flex-wrap:wrap; margin:8px 0 0
+    }
     .prog-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
     .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
 
+    /* Лява колона: Сутрин/Обед/Вечер вертикални */
+    .periods-col{
+      display:flex; flex-direction:column; gap:8px; min-width:var(--pill-w);
+    }
     .prog-pill{
       display:flex; flex-direction:column; gap:6px;
       padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-      width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
     }
-    .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; }
     .prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
     .prog-cap{ font-weight:700 }
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
@@ -163,19 +168,10 @@
     .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
     .time-row .colon{ opacity:.8; user-select:none; }
 
-    select option.strong { font-weight:700; }
-
-    @media (max-width: 380px){
-      :root{ --pill-w:156px; }
-      .time-row select{ min-width:48px; }
-      .prod-img{ width:64px; height:64px; border-radius:10px; }
-    }
-
-    /* === НОВО: Колона с дни Пн–Нд, плътно до периодите === */
+    /* Дясна колона: дни Пн–Нд вертикално */
     .days-col{
-      display:flex; flex-direction:column; gap:6px; align-items:center;
-      margin-left:4px; padding-left:10px; border-left:2px solid #1e2b30;
-      min-width:64px;
+      display:flex; flex-direction:column; gap:6px; align-items:flex-start;
+      padding-left:12px; border-left:2px solid #1e2b30; min-width:70px;
     }
     .day-chip{
       min-width:50px; text-align:center; font-weight:800;
@@ -187,6 +183,15 @@
       background:#f59e0b; color:#06241b; border-color:#f59e0b;
       box-shadow:0 0 0 2px rgba(245,158,11,.25) inset;
     }
+
+    select option.strong { font-weight:700; }
+
+    @media (max-width: 540px){
+      :root{ --pill-w:200px; }
+      .time-row select{ min-width:48px; }
+      .prod-img{ width:64px; height:64px; border-radius:10px; }
+      .prog-row{ gap:10px; }
+    }
   </style>
 </head>
 <body>
@@ -197,7 +202,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.22</span>
+        <span class="badge">v2.23</span>
       </div>
     </div>
   </div>
@@ -210,7 +215,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ -->
+  <!-- ПАНЕЛ: ДАННИ (без промени) -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -326,7 +331,7 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ: ПРОГРАМА -->
+  <!-- ПАНЕЛ: ПРОГРАМА (колона С/О/В вляво, дни вдясно) -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
       <!-- 🟩 Основен пакет -->
@@ -341,33 +346,35 @@
           </div>
 
           <div class="prog-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
-            <!-- Периоди -->
-            <span class="prog-pill">
-              <label><input type="checkbox" id="pl-m"> Сутрин</label>
-              <div id="pl-tp-m" class="time-wrap" style="display:none">
-                <div class="time-row">
-                  <select id="pl-hh-m"></select><span class="colon">:</span><select id="pl-mm-m"></select>
+            <!-- Лява колона: Сутрин/Обед/Вечер вертикално -->
+            <div class="periods-col">
+              <span class="prog-pill">
+                <label><input type="checkbox" id="pl-m"> Сутрин</label>
+                <div id="pl-tp-m" class="time-wrap" style="display:none">
+                  <div class="time-row">
+                    <select id="pl-hh-m"></select><span class="colon">:</span><select id="pl-mm-m"></select>
+                  </div>
                 </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="pl-n" checked> Обед</label>
-              <div id="pl-tp-n" class="time-wrap" style="display:block">
-                <div class="time-row">
-                  <select id="pl-hh-n"></select><span class="colon">:</span><select id="pl-mm-n"></select>
+              </span>
+              <span class="prog-pill">
+                <label><input type="checkbox" id="pl-n" checked> Обед</label>
+                <div id="pl-tp-n" class="time-wrap" style="display:block">
+                  <div class="time-row">
+                    <select id="pl-hh-n"></select><span class="colon">:</span><select id="pl-mm-n"></select>
+                  </div>
                 </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="pl-e" checked> Вечер</label>
-              <div id="pl-tp-e" class="time-wrap" style="display:block">
-                <div class="time-row">
-                  <select id="pl-hh-e"></select><span class="colon">:</span><select id="pl-mm-e"></select>
+              </span>
+              <span class="prog-pill">
+                <label><input type="checkbox" id="pl-e" checked> Вечер</label>
+                <div id="pl-tp-e" class="time-wrap" style="display:block">
+                  <div class="time-row">
+                    <select id="pl-hh-e"></select><span class="colon">:</span><select id="pl-mm-e"></select>
+                  </div>
                 </div>
-              </div>
-            </span>
+              </span>
+            </div>
 
-            <!-- НОВО: Колона с дни -->
+            <!-- Дясна колона: дни -->
             <div class="days-col" aria-label="Дни от седмицата">
               <div class="day-chip">Пн</div>
               <div class="day-chip">Вт</div>
@@ -390,33 +397,33 @@
           </div>
 
           <div class="prog-row" role="group" aria-label="HETOX — 1 от 3">
-            <!-- Периоди -->
-            <span class="prog-pill">
-              <label><input type="checkbox" id="he-m"> Сутрин</label>
-              <div id="he-tp-m" class="time-wrap" style="display:none">
-                <div class="time-row">
-                  <select id="he-hh-m"></select><span class="colon">:</span><select id="he-mm-m"></select>
+            <div class="periods-col">
+              <span class="prog-pill">
+                <label><input type="checkbox" id="he-m"> Сутрин</label>
+                <div id="he-tp-m" class="time-wrap" style="display:none">
+                  <div class="time-row">
+                    <select id="he-hh-m"></select><span class="colon">:</span><select id="he-mm-m"></select>
+                  </div>
                 </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="he-n" checked> Обед</label>
-              <div id="he-tp-n" class="time-wrap" style="display:block">
-                <div class="time-row">
-                  <select id="he-hh-n"></select><span class="colon">:</span><select id="he-mm-n"></select>
+              </span>
+              <span class="prog-pill">
+                <label><input type="checkbox" id="he-n" checked> Обед</label>
+                <div id="he-tp-n" class="time-wrap" style="display:block">
+                  <div class="time-row">
+                    <select id="he-hh-n"></select><span class="colon">:</span><select id="he-mm-n"></select>
+                  </div>
                 </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="he-e"> Вечер</label>
-              <div id="he-tp-e" class="time-wrap" style="display:none">
-                <div class="time-row">
-                  <select id="he-hh-e"></select><span class="colon">:</span><select id="he-mm-e"></select>
+              </span>
+              <span class="prog-pill">
+                <label><input type="checkbox" id="he-e"> Вечер</label>
+                <div id="he-tp-e" class="time-wrap" style="display:none">
+                  <div class="time-row">
+                    <select id="he-hh-e"></select><span class="colon">:</span><select id="he-mm-e"></select>
+                  </div>
                 </div>
-              </div>
-            </span>
+              </span>
+            </div>
 
-            <!-- НОВО: Колона с дни -->
             <div class="days-col" aria-label="Дни от седмицата">
               <div class="day-chip">Пн</div>
               <div class="day-chip">Вт</div>
@@ -438,34 +445,34 @@
             <span class="prog-cap">Fortex Хитозан Плюс</span>
           </div>
 
-          <div class="prog-row" role="group" aria-label="Хитозан Плюс">
-            <!-- Периоди -->
-            <span class="prog-pill">
-              <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
-              <div id="ch-tp-m" class="time-wrap">
-                <div class="time-row">
-                  <select id="ch-hh-m"></select><span class="colon">:</span><select id="ch-mm-m"></select>
+        <div class="prog-row" role="group" aria-label="Хитозан Плюс">
+            <div class="periods-col">
+              <span class="prog-pill">
+                <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
+                <div id="ch-tp-m" class="time-wrap">
+                  <div class="time-row">
+                    <select id="ch-hh-m"></select><span class="colon">:</span><select id="ch-mm-m"></select>
+                  </div>
                 </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="ch-n" checked disabled> Обед</label>
-              <div id="ch-tp-n" class="time-wrap">
-                <div class="time-row">
-                  <select id="ch-hh-n"></select><span class="colon">:</span><select id="ch-mm-n"></select>
+              </span>
+              <span class="prog-pill">
+                <label><input type="checkbox" id="ch-n" checked disabled> Обед</label>
+                <div id="ch-tp-n" class="time-wrap">
+                  <div class="time-row">
+                    <select id="ch-hh-n"></select><span class="colon">:</span><select id="ch-mm-n"></select>
+                  </div>
                 </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="ch-e" checked disabled> Вечер</label>
-              <div id="ch-tp-e" class="time-wrap">
-                <div class="time-row">
-                  <select id="ch-hh-e"></select><span class="colon">:</span><select id="ch-mm-e"></select>
+              </span>
+              <span class="prog-pill">
+                <label><input type="checkbox" id="ch-e" checked disabled> Вечер</label>
+                <div id="ch-tp-e" class="time-wrap">
+                  <div class="time-row">
+                    <select id="ch-hh-e"></select><span class="colon">:</span><select id="ch-mm-e"></select>
+                  </div>
                 </div>
-              </div>
-            </span>
+              </span>
+            </div>
 
-            <!-- НОВО: Колона с дни -->
             <div class="days-col" aria-label="Дни от седмицата">
               <div class="day-chip">Пн</div>
               <div class="day-chip">Вт</div>
@@ -507,7 +514,7 @@
   <script>
     "use strict";
     // Версия
-    window.__BT_VER = '2.22';
+    window.__BT_VER = '2.23';
 
     /* ===== Таб логика ===== */
     (function(){
@@ -530,7 +537,7 @@
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ — логика ===== */
+    /* ===== „Данни“ — логика (без промени) ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -911,7 +918,7 @@
       function loadSel(){
         try{
           const r=JSON.parse(localStorage.getItem(KEY_SEL)||'');
-          if(r){ m.checked=!!r.m; n.checked=!!r.n; e.checked=!!r.e; return; }
+        if(r){ m.checked=!!r.m; n.checked=!!r.n; e.checked=!!r.e; return; }
         }catch(_){}
         m.checked=false; n.checked=true; e.checked=true;
       }
@@ -1053,7 +1060,7 @@
       write();
     })();
 
-    /* === НОВО: Оцвети днешния ден в колоните с дни === */
+    /* === Оцвети днешния ден в колоните с дни === */
     (function(){
       const jsDay = new Date().getDay(); // 0..6, 0=Sun
       const TODAY_IDX = (jsDay===0?6:jsDay-1); // 0=Пн .. 6=Нд
