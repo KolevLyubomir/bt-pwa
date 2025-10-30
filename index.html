@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.24</title>
+  <title>БТ App 3 — v2.25</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -142,19 +142,20 @@
     .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
     .prog-cap{ font-weight:800 }
 
+    /* СВИВАНЕ НА РАЗСТОЯНИЕТО МЕЖДУ КОЛОНИТЕ */
     .prog-grid{
       display:grid;
-      grid-template-columns: 220px auto;
-      gap:14px;
+      grid-template-columns: max-content max-content;
+      column-gap:8px; /* беше по-голямо, сега 8px */
+      row-gap:0;
       align-items:start;
     }
 
-    /* Лява колона: вертикално „Сутрин/Обед/Вечер“ — компактен layout */
-    .daypart-col{ display:flex; flex-direction:column; gap:10px; }
+    /* Лява колона: Сутрин/Обед/Вечер – компактни плочки */
+    .daypart-col{ display:flex; flex-direction:column; gap:8px; }
     .time-block{
       display:inline-flex; flex-direction:column; align-items:flex-start; gap:6px;
       padding:6px 8px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-      /* ширина само колкото съдържанието */
       width:-moz-fit-content; width:fit-content; max-width:100%;
     }
     .time-block label{
@@ -162,28 +163,25 @@
       font-size:12px; /* ~ -20% */
     }
     .time-block input[type="checkbox"]{ width:16px; height:16px; margin:0 }
-    .time-wrap{
-      width:auto; margin-left:0; display:flex; align-items:center; gap:4px;
-    }
+    .time-wrap{ width:auto; margin-left:0; display:flex; align-items:center; gap:4px; }
     .time-row{ display:flex; align-items:center; gap:4px }
-    .time-row select{
-      min-width:48px; padding:4px 6px; height:32px; font-size:12px; /* по-малки селекти */
-    }
+    .time-row select{ min-width:48px; padding:4px 6px; height:32px; font-size:12px; }
     .time-row .colon{ opacity:.8; user-select:none; font-size:12px }
-
     select option.strong { font-weight:700; }
 
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
-    /* ===== ДНИ – общи стилове ===== */
+    /* ===== ДНИ – плътно вляво до плочките ===== */
     .days-col{
       display:flex; flex-direction:column; gap:6px; align-items:flex-start;
-      padding-left:12px; border-left:2px solid #1e2b30; min-width:70px;
+      /* Махнати отстоянията и лявата разделителна линия */
+      padding-left:0; border-left:none; margin-left:0;
+      min-width:0;
     }
     .day-chip{
-      min-width:50px; text-align:center; font-weight:800;
-      font-size:13px;
-      padding:7px 9px; border-radius:10px;
+      min-width:44px; text-align:center; font-weight:800;
+      font-size:12px; /* малко по-дребни */
+      padding:6px 8px; border-radius:10px;
       background:#122229; color:#e6f2ef; border:1px solid #23373b;
       user-select:none; cursor:pointer;
       transition:background .15s,border-color .15s, color .15s, box-shadow .15s;
@@ -196,8 +194,8 @@
     }
 
     @media (max-width: 520px){
-      .prog-grid{ grid-template-columns: 1fr; }
-      .days-col{ border-left:none; padding-left:0; flex-direction:row; flex-wrap:wrap; gap:8px }
+      .prog-grid{ grid-template-columns: 1fr; column-gap:0 }
+      .days-col{ flex-direction:row; flex-wrap:wrap; gap:8px }
     }
   </style>
 </head>
@@ -209,7 +207,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.24</span>
+        <span class="badge">v2.25</span>
       </div>
     </div>
   </div>
@@ -350,7 +348,6 @@
           </div>
 
           <div class="prog-grid" role="group" aria-label="ProLact Slim+ — 2 от 3">
-            <!-- Лява колона: сутрин/обед/вечер -->
             <div class="daypart-col">
               <div class="time-block">
                 <label><input type="checkbox" id="pl-m"> Сутрин</label>
@@ -378,7 +375,6 @@
               </div>
             </div>
 
-            <!-- Дясна колона: дни -->
             <div class="days-col" aria-label="Дни от седмицата">
               <div class="day-chip">Пн</div>
               <div class="day-chip">Вт</div>
@@ -517,7 +513,7 @@
 
   <script>
     "use strict";
-    window.__BT_VER = '2.24';
+    window.__BT_VER = '2.25';
 
     /* ===== Таб логика ===== */
     (function(){
