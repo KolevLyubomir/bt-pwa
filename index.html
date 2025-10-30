@@ -21,7 +21,7 @@
       --chart-label:15px; --chart-values:15px;
       --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2dd4bf;
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
-      --pill-w:220px;
+      --pill-w:168px;
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{
@@ -70,7 +70,6 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
-    /* Глобално скрити стрелки — по-долу ги връщаме САМО за Тегло */
     input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
@@ -82,28 +81,23 @@
     .field.weight input{ font-weight:700; font-size:18px; width:9ch }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
-    /* Връщане на стрелките само за „Тегло (kg)” */
+    /* Връщане на стрелките само за Тегло */
     .field.weight input[type="number"]{
-      appearance: auto;
-      -webkit-appearance: auto;
-      -moz-appearance: auto;
+      appearance: auto; -webkit-appearance: auto; -moz-appearance: auto;
     }
     .field.weight input[type="number"]::-webkit-inner-spin-button,
     .field.weight input[type="number"]::-webkit-outer-spin-button{
-      -webkit-appearance: auto;
-      margin: 0;
+      -webkit-appearance: auto; margin: 0;
     }
 
     .bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
       border:1px solid #334a4f; background:#0d171b; border-radius:10px }
     .bt-only input{ width:16px; height:16px; margin:0 }
-    .bt-only[title]{ cursor:pointer }
 
     table{ width:100%; border-collapse:collapse }
     colgroup col.date{ width:70px } colgroup col.w{ width:70px } colgroup col.act{ width:auto }
     th,td{ padding:3px 4px; border-bottom:1px solid #20343a; font-size:13px; line-height:1.15; white-space:nowrap; text-align:left; vertical-align:middle }
     th{ color:var(--muted); font-weight:600 }
-    th.date,td.date{ padding-right:1px }
     th.w,td.w{ text-align:right; padding-left:2px }
     th.actions,td.actions{ padding-left:72px }
 
@@ -144,53 +138,59 @@
     .tabpanel[aria-hidden="false"]{ display:block }
 
     /* ====== ПРОГРАМА (визуални и нови само стилове) ====== */
-    .prog-row{
-      display:flex; align-items:flex-start; gap:14px; flex-wrap:wrap; margin:8px 0 0
-    }
+    .prog-section{ display:flex; flex-direction:column; gap:14px; }
     .prog-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
     .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
+    .prog-cap{ font-weight:800 }
 
-    /* Лява колона: Сутрин/Обед/Вечер вертикални */
-    .periods-col{
-      display:flex; flex-direction:column; gap:8px; min-width:var(--pill-w);
+    /* Нов ред: лява колона (сутрин/обед/вечер) + дясна колона (дни) */
+    .prog-grid{
+      display:grid;
+      grid-template-columns: 220px auto;
+      gap:14px;
+      align-items:start;
     }
-    .prog-pill{
-      display:flex; flex-direction:column; gap:6px;
-      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-    }
-    .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; }
-    .prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
-    .prog-cap{ font-weight:700 }
-    .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
-    .time-wrap{ display:flex; align-items:center; gap:6px }
+    /* Лява колона: вертикално „Сутрин/Обед/Вечер“ */
+    .daypart-col{ display:flex; flex-direction:column; gap:10px; }
+    .time-block{
+      display:flex; align-items:center; gap:8px;
+      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px; width:100%;
+    }
+    .time-block label{ display:flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap; font-size:14px; }
+    .time-block input[type="checkbox"]{ width:16px; height:16px; margin:0 }
+    .time-wrap{ margin-left:auto; display:flex; align-items:center; gap:4px }
     .time-row{ display:flex; align-items:center; gap:4px }
     .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
     .time-row .colon{ opacity:.8; user-select:none; }
 
-    /* Дясна колона: дни Пн–Нд вертикално */
+    select option.strong { font-weight:700; }
+
+    .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
+
+    /* ===== ДНИ – общи стилове (добавка) ===== */
     .days-col{
       display:flex; flex-direction:column; gap:6px; align-items:flex-start;
       padding-left:12px; border-left:2px solid #1e2b30; min-width:70px;
     }
     .day-chip{
       min-width:50px; text-align:center; font-weight:800;
-      padding:8px 10px; border-radius:10px;
+      font-size:13px; /* ~-20% */
+      padding:7px 9px; border-radius:10px;
       background:#122229; color:#e6f2ef; border:1px solid #23373b;
-      user-select:none;
+      user-select:none; cursor:pointer;
+      transition:background .15s,border-color .15s, color .15s, box-shadow .15s;
     }
-    .day-chip.today{
+    .day-chip.weekend{ color:#d9fff0 }              /* зеленикаво-бял уикенд */
+    .day-chip.today{ outline:1px dashed #f59e0b; outline-offset:-3px; border-color:#2a3e41; }
+    .day-chip.active{
       background:#f59e0b; color:#06241b; border-color:#f59e0b;
       box-shadow:0 0 0 2px rgba(245,158,11,.25) inset;
     }
 
-    select option.strong { font-weight:700; }
-
-    @media (max-width: 540px){
-      :root{ --pill-w:200px; }
-      .time-row select{ min-width:48px; }
-      .prod-img{ width:64px; height:64px; border-radius:10px; }
-      .prog-row{ gap:10px; }
+    @media (max-width: 520px){
+      .prog-grid{ grid-template-columns: 1fr; }
+      .days-col{ border-left:none; padding-left:0; flex-direction:row; flex-wrap:wrap; gap:8px }
     }
   </style>
 </head>
@@ -215,7 +215,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (без промени) -->
+  <!-- ПАНЕЛ: ДАННИ (без промени в логиката) -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -223,7 +223,6 @@
         <h2 style="margin:0 0 10px">Запис</h2>
 
         <div class="inputs-row">
-          <!-- лява група -->
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
               <div class="lbl">Дата</div>
@@ -253,7 +252,6 @@
 
           <div class="spacer"></div>
 
-          <!-- дясна група -->
           <div class="inputs-row" style="gap:8px">
             <div class="field">
               <div class="lbl"></div>
@@ -292,7 +290,6 @@
       <!-- Записи -->
       <section class="card">
         <h2 style="margin:0">Записи</h2>
-
         <div class="recbar">
           <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
           <select id="pageSize">
@@ -317,7 +314,7 @@
               <th class="actions">Действия</th>
             </tr>
           </thead>
-        <tbody></tbody>
+          <tbody></tbody>
           <tfoot id="tfootBottom">
             <tr>
               <th class="date">Дата</th>
@@ -331,11 +328,11 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ: ПРОГРАМА (колона С/О/В вляво, дни вдясно) -->
+  <!-- ПАНЕЛ: ПРОГРАМА -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
       <!-- 🟩 Основен пакет -->
-      <section class="card" id="pkg-core">
+      <section class="card prog-section" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
         <!-- ProLact Slim+ -->
@@ -345,33 +342,33 @@
             <span class="prog-cap">ProLact Slim+</span>
           </div>
 
-          <div class="prog-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
-            <!-- Лява колона: Сутрин/Обед/Вечер вертикално -->
-            <div class="periods-col">
-              <span class="prog-pill">
+          <div class="prog-grid" role="group" aria-label="ProLact Slim+ — 2 от 3">
+            <!-- Лява колона: сутрин/обед/вечер -->
+            <div class="daypart-col">
+              <div class="time-block">
                 <label><input type="checkbox" id="pl-m"> Сутрин</label>
                 <div id="pl-tp-m" class="time-wrap" style="display:none">
                   <div class="time-row">
                     <select id="pl-hh-m"></select><span class="colon">:</span><select id="pl-mm-m"></select>
                   </div>
                 </div>
-              </span>
-              <span class="prog-pill">
+              </div>
+              <div class="time-block">
                 <label><input type="checkbox" id="pl-n" checked> Обед</label>
                 <div id="pl-tp-n" class="time-wrap" style="display:block">
                   <div class="time-row">
                     <select id="pl-hh-n"></select><span class="colon">:</span><select id="pl-mm-n"></select>
                   </div>
                 </div>
-              </span>
-              <span class="prog-pill">
+              </div>
+              <div class="time-block">
                 <label><input type="checkbox" id="pl-e" checked> Вечер</label>
                 <div id="pl-tp-e" class="time-wrap" style="display:block">
                   <div class="time-row">
                     <select id="pl-hh-e"></select><span class="colon">:</span><select id="pl-mm-e"></select>
                   </div>
                 </div>
-              </span>
+              </div>
             </div>
 
             <!-- Дясна колона: дни -->
@@ -396,32 +393,32 @@
             <span class="prog-cap">OMNi-Biotic HETOX light</span>
           </div>
 
-          <div class="prog-row" role="group" aria-label="HETOX — 1 от 3">
-            <div class="periods-col">
-              <span class="prog-pill">
+          <div class="prog-grid" role="group" aria-label="HETOX — 1 от 3">
+            <div class="daypart-col">
+              <div class="time-block">
                 <label><input type="checkbox" id="he-m"> Сутрин</label>
                 <div id="he-tp-m" class="time-wrap" style="display:none">
                   <div class="time-row">
                     <select id="he-hh-m"></select><span class="colon">:</span><select id="he-mm-m"></select>
                   </div>
                 </div>
-              </span>
-              <span class="prog-pill">
+              </div>
+              <div class="time-block">
                 <label><input type="checkbox" id="he-n" checked> Обед</label>
                 <div id="he-tp-n" class="time-wrap" style="display:block">
                   <div class="time-row">
                     <select id="he-hh-n"></select><span class="colon">:</span><select id="he-mm-n"></select>
                   </div>
                 </div>
-              </span>
-              <span class="prog-pill">
+              </div>
+              <div class="time-block">
                 <label><input type="checkbox" id="he-e"> Вечер</label>
                 <div id="he-tp-e" class="time-wrap" style="display:none">
                   <div class="time-row">
                     <select id="he-hh-e"></select><span class="colon">:</span><select id="he-mm-e"></select>
                   </div>
                 </div>
-              </span>
+              </div>
             </div>
 
             <div class="days-col" aria-label="Дни от седмицата">
@@ -445,32 +442,32 @@
             <span class="prog-cap">Fortex Хитозан Плюс</span>
           </div>
 
-        <div class="prog-row" role="group" aria-label="Хитозан Плюс">
-            <div class="periods-col">
-              <span class="prog-pill">
+          <div class="prog-grid" role="group" aria-label="Хитозан Плюс">
+            <div class="daypart-col">
+              <div class="time-block">
                 <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
                 <div id="ch-tp-m" class="time-wrap">
                   <div class="time-row">
                     <select id="ch-hh-m"></select><span class="colon">:</span><select id="ch-mm-m"></select>
                   </div>
                 </div>
-              </span>
-              <span class="prog-pill">
+              </div>
+              <div class="time-block">
                 <label><input type="checkbox" id="ch-n" checked disabled> Обед</label>
                 <div id="ch-tp-n" class="time-wrap">
                   <div class="time-row">
                     <select id="ch-hh-n"></select><span class="colon">:</span><select id="ch-mm-n"></select>
                   </div>
                 </div>
-              </span>
-              <span class="prog-pill">
+              </div>
+              <div class="time-block">
                 <label><input type="checkbox" id="ch-e" checked disabled> Вечер</label>
                 <div id="ch-tp-e" class="time-wrap">
                   <div class="time-row">
                     <select id="ch-hh-e"></select><span class="colon">:</span><select id="ch-mm-e"></select>
                   </div>
                 </div>
-              </span>
+              </div>
             </div>
 
             <div class="days-col" aria-label="Дни от седмицата">
@@ -486,7 +483,7 @@
         </div>
       </section>
 
-      <!-- 🟨 Допълнителен пакет -->
+      <!-- 🟨 Допълнителен пакет (без промени) -->
       <section class="card" id="pkg-extra">
         <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
@@ -496,7 +493,7 @@
         </ul>
       </section>
 
-      <!-- 💊 Личен режим -->
+      <!-- 💊 Личен режим (без промени) -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
         <p style="margin:0 0 8px; color:#9fb4ad">
@@ -513,10 +510,9 @@
 
   <script>
     "use strict";
-    // Версия
     window.__BT_VER = '2.23';
 
-    /* ===== Таб логика ===== */
+    /* ===== Таб логика (без промени) ===== */
     (function(){
       const tabs = [
         {btn: document.getElementById('tab-data'), panel: document.getElementById('panel-data')},
@@ -537,7 +533,7 @@
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ — логика (без промени) ===== */
+    /* ===== Помощни (датa/формати) — без промени ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -719,7 +715,7 @@
     function getChartRawData(){
       var mode=aggSel.value;
       if(mode==="daily"){ var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(load()); return sortAsc(src); }
-      return sortAsc(load()); // weekly/monthly — всички
+      return sortAsc(load());
     }
 
     function renderChart(){
@@ -797,7 +793,6 @@
         ctx.arc(x0, yVal, 3, 0, Math.PI*2);
         ctx.fill();
 
-        /* Малък етикет с теглото до всяка точка — ограничен в платното */
         ctx.save();
         ctx.font = "600 11px system-ui";
         ctx.fillStyle = "#9fb4ad";
@@ -863,10 +858,9 @@
       renderTable(); renderChart();
       window.addEventListener("resize", ()=>renderChart(), {passive:true});
     }
-
     initialRender();
 
-    /* ===== ПРОГРАМА — помощни ===== */
+    /* ===== Помощни за селектите ===== */
     function two(n){ return String(n).padStart(2,"0"); }
     function buildHourRange(sel, fromH, toH){
       sel.innerHTML="";
@@ -882,11 +876,13 @@
       for(let m=0; m<60; m+=5){
         const o=document.createElement("option");
         o.value=two(m); o.textContent=o.value;
-        if(m%15===0) o.className="strong"; // 00, 15, 30, 45
+        if(m%15===0) o.className="strong";
         sel.appendChild(o);
       }
     }
     function setSel(sel,val){ const opt=[...sel.options].find(o=>o.value===val); if(opt){ sel.value=val; return true;} return false; }
+    function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
+    function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
     /* ===== ProLact Slim+ — 2 от 3 ===== */
     (function(){
@@ -918,14 +914,11 @@
       function loadSel(){
         try{
           const r=JSON.parse(localStorage.getItem(KEY_SEL)||'');
-        if(r){ m.checked=!!r.m; n.checked=!!r.n; e.checked=!!r.e; return; }
+          if(r){ m.checked=!!r.m; n.checked=!!r.n; e.checked=!!r.e; return; }
         }catch(_){}
         m.checked=false; n.checked=true; e.checked=true;
       }
       function saveSel(){ localStorage.setItem(KEY_SEL, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }
-
-      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
-      function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       function showBoxes(){
         boxM.style.display = m.checked?"block":"none";
@@ -933,7 +926,6 @@
         boxE.style.display = e.checked?"block":"none";
       }
 
-      // Винаги точно две отметки активни
       function enforceTwo(clicked){
         const c=(m.checked?1:0)+(n.checked?1:0)+(e.checked?1:0);
         if(c===3){
@@ -977,8 +969,8 @@
     /* ===== OMNi-Biotic — 1 от 3 ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_he_sel_v218'; // "m" | "n" | "e"
-      const KEY_TIM='bt_he_tim_v218'; // {m,n,e}
+      const KEY_SEL='bt_he_sel_v218';
+      const KEY_TIM='bt_he_tim_v218';
 
       const m=document.getElementById('he-m'), n=document.getElementById('he-n'), e=document.getElementById('he-e');
       const boxM=document.getElementById('he-tp-m'), boxN=document.getElementById('he-tp-n'), boxE=document.getElementById('he-tp-e');
@@ -1011,8 +1003,6 @@
         boxE.style.display = (which==="e")?"block":"none";
         saveSel(which);
       }
-      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
-      function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       const which0=loadSel(); setOnly(which0);
       const t0=ensureTim();
@@ -1050,8 +1040,6 @@
         const def={...DEF}; localStorage.setItem(KEY, JSON.stringify(def)); return def; }
       function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||ensure(); }catch(_){ return ensure(); } }
       function save(t){ localStorage.setItem(KEY, JSON.stringify(t)); }
-      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
-      function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       const t0=ensure();
       setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
@@ -1060,14 +1048,42 @@
       write();
     })();
 
-    /* === Оцвети днешния ден в колоните с дни === */
+    /* ===== ДНИ: уикенд стил + синхронизиран избор ===== */
     (function(){
-      const jsDay = new Date().getDay(); // 0..6, 0=Sun
-      const TODAY_IDX = (jsDay===0?6:jsDay-1); // 0=Пн .. 6=Нд
-      document.querySelectorAll('.days-col').forEach(col=>{
+      const jsDay = new Date().getDay();
+      const TODAY_IDX = (jsDay===0?6:jsDay-1);
+
+      const cols = document.querySelectorAll('.days-col');
+
+      cols.forEach(col=>{
         const chips = col.querySelectorAll('.day-chip');
-        if(chips[TODAY_IDX]) chips[TODAY_IDX].classList.add('today');
+        chips.forEach((chip,i)=>{
+          chip.dataset.day = String(i);
+          if(i>=5) chip.classList.add('weekend'); // Сб(5), Нд(6)
+          if(i===TODAY_IDX) chip.classList.add('today');
+        });
       });
+
+      function applyActive(idx){
+        cols.forEach(col=>{
+          col.querySelectorAll('.day-chip').forEach((c,i)=> c.classList.toggle('active', i===idx));
+        });
+      }
+      function setActive(idx){
+        try{ localStorage.setItem('bt_sel_day_idx', String(idx)); }catch(_){}
+        applyActive(idx);
+      }
+
+      document.querySelectorAll('.day-chip').forEach(chip=>{
+        chip.addEventListener('click', ()=>{
+          const idx = Number(chip.dataset.day||'0');
+          setActive(idx);
+        });
+      });
+
+      let sel = Number(localStorage.getItem('bt_sel_day_idx'));
+      if(!Number.isInteger(sel) || sel<0 || sel>6) sel = TODAY_IDX;
+      applyActive(sel);
     })();
   </script>
 </body>
