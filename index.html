@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.23</title>
+  <title>БТ App 3 — v2.24</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -21,7 +21,6 @@
       --chart-label:15px; --chart-values:15px;
       --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2dd4bf;
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
-      --pill-w:168px;
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{
@@ -150,18 +149,27 @@
       align-items:start;
     }
 
-    /* Лява колона: вертикално „Сутрин/Обед/Вечер“ — ИЗМЕНЕНО: колонен layout */
+    /* Лява колона: вертикално „Сутрин/Обед/Вечер“ — компактен layout */
     .daypart-col{ display:flex; flex-direction:column; gap:10px; }
     .time-block{
-      display:flex; flex-direction:column; align-items:flex-start; gap:8px;
-      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px; width:100%;
+      display:inline-flex; flex-direction:column; align-items:flex-start; gap:6px;
+      padding:6px 8px; background:#0d171b; border:1px solid #254046; border-radius:10px;
+      /* ширина само колкото съдържанието */
+      width:-moz-fit-content; width:fit-content; max-width:100%;
     }
-    .time-block label{ display:flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap; font-size:14px; }
+    .time-block label{
+      display:flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap;
+      font-size:12px; /* ~ -20% */
+    }
     .time-block input[type="checkbox"]{ width:16px; height:16px; margin:0 }
-    .time-wrap{ width:100%; margin-left:0; display:flex; align-items:center; gap:4px }
+    .time-wrap{
+      width:auto; margin-left:0; display:flex; align-items:center; gap:4px;
+    }
     .time-row{ display:flex; align-items:center; gap:4px }
-    .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
-    .time-row .colon{ opacity:.8; user-select:none; }
+    .time-row select{
+      min-width:48px; padding:4px 6px; height:32px; font-size:12px; /* по-малки селекти */
+    }
+    .time-row .colon{ opacity:.8; user-select:none; font-size:12px }
 
     select option.strong { font-weight:700; }
 
@@ -180,7 +188,7 @@
       user-select:none; cursor:pointer;
       transition:background .15s,border-color .15s, color .15s, box-shadow .15s;
     }
-    .day-chip.weekend{ color:#d9fff0 }
+    .day-chip.weekend{ color:#d9fff0 } /* зелено-белезникав тон за Сб/Нд */
     .day-chip.today{ outline:1px dashed #f59e0b; outline-offset:-3px; border-color:#2a3e41; }
     .day-chip.active{
       background:#f59e0b; color:#06241b; border-color:#f59e0b;
@@ -201,7 +209,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.23</span>
+        <span class="badge">v2.24</span>
       </div>
     </div>
   </div>
@@ -214,7 +222,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (без промени) -->
+  <!-- ПАНЕЛ: ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -342,7 +350,7 @@
           </div>
 
           <div class="prog-grid" role="group" aria-label="ProLact Slim+ — 2 от 3">
-            <!-- Лява колона: сутрин/обед/вечер (часовете под етикета) -->
+            <!-- Лява колона: сутрин/обед/вечер -->
             <div class="daypart-col">
               <div class="time-block">
                 <label><input type="checkbox" id="pl-m"> Сутрин</label>
@@ -377,8 +385,8 @@
               <div class="day-chip">Ср</div>
               <div class="day-chip">Чт</div>
               <div class="day-chip">Пт</div>
-              <div class="day-chip">Сб</div>
-              <div class="day-chip">Нд</div>
+              <div class="day-chip weekend">Сб</div>
+              <div class="day-chip weekend">Нд</div>
             </div>
           </div>
         </div>
@@ -426,13 +434,13 @@
               <div class="day-chip">Ср</div>
               <div class="day-chip">Чт</div>
               <div class="day-chip">Пт</div>
-              <div class="day-chip">Сб</div>
-              <div class="day-chip">Нд</div>
+              <div class="day-chip weekend">Сб</div>
+              <div class="day-chip weekend">Нд</div>
             </div>
           </div>
         </div>
 
-        <hr class="prog-seп"/>
+        <hr class="prog-sep"/>
 
         <!-- Fortex Хитозан Плюс -->
         <div>
@@ -475,8 +483,8 @@
               <div class="day-chip">Ср</div>
               <div class="day-chip">Чт</div>
               <div class="day-chip">Пт</div>
-              <div class="day-chip">Сб</div>
-              <div class="day-chip">Нд</div>
+              <div class="day-chip weekend">Сб</div>
+              <div class="day-chip weekend">Нд</div>
             </div>
           </div>
         </div>
@@ -509,7 +517,7 @@
 
   <script>
     "use strict";
-    window.__BT_VER = '2.23';
+    window.__BT_VER = '2.24';
 
     /* ===== Таб логика ===== */
     (function(){
