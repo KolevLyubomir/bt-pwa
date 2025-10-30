@@ -143,7 +143,6 @@
     .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
     .prog-cap{ font-weight:800 }
 
-    /* Нов ред: лява колона (сутрин/обед/вечер) + дясна колона (дни) */
     .prog-grid{
       display:grid;
       grid-template-columns: 220px auto;
@@ -151,15 +150,15 @@
       align-items:start;
     }
 
-    /* Лява колона: вертикално „Сутрин/Обед/Вечер“ */
+    /* Лява колона: вертикално „Сутрин/Обед/Вечер“ — ИЗМЕНЕНО: колонен layout */
     .daypart-col{ display:flex; flex-direction:column; gap:10px; }
     .time-block{
-      display:flex; align-items:center; gap:8px;
+      display:flex; flex-direction:column; align-items:flex-start; gap:8px;
       padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px; width:100%;
     }
     .time-block label{ display:flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap; font-size:14px; }
     .time-block input[type="checkbox"]{ width:16px; height:16px; margin:0 }
-    .time-wrap{ margin-left:auto; display:flex; align-items:center; gap:4px }
+    .time-wrap{ width:100%; margin-left:0; display:flex; align-items:center; gap:4px }
     .time-row{ display:flex; align-items:center; gap:4px }
     .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
     .time-row .colon{ opacity:.8; user-select:none; }
@@ -168,20 +167,20 @@
 
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
-    /* ===== ДНИ – общи стилове (добавка) ===== */
+    /* ===== ДНИ – общи стилове ===== */
     .days-col{
       display:flex; flex-direction:column; gap:6px; align-items:flex-start;
       padding-left:12px; border-left:2px solid #1e2b30; min-width:70px;
     }
     .day-chip{
       min-width:50px; text-align:center; font-weight:800;
-      font-size:13px; /* ~-20% */
+      font-size:13px;
       padding:7px 9px; border-radius:10px;
       background:#122229; color:#e6f2ef; border:1px solid #23373b;
       user-select:none; cursor:pointer;
       transition:background .15s,border-color .15s, color .15s, box-shadow .15s;
     }
-    .day-chip.weekend{ color:#d9fff0 }              /* зеленикаво-бял уикенд */
+    .day-chip.weekend{ color:#d9fff0 }
     .day-chip.today{ outline:1px dashed #f59e0b; outline-offset:-3px; border-color:#2a3e41; }
     .day-chip.active{
       background:#f59e0b; color:#06241b; border-color:#f59e0b;
@@ -215,7 +214,7 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ (без промени в логиката) -->
+  <!-- ПАНЕЛ: ДАННИ (без промени) -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <!-- Запис -->
@@ -343,7 +342,7 @@
           </div>
 
           <div class="prog-grid" role="group" aria-label="ProLact Slim+ — 2 от 3">
-            <!-- Лява колона: сутрин/обед/вечер -->
+            <!-- Лява колона: сутрин/обед/вечер (часовете под етикета) -->
             <div class="daypart-col">
               <div class="time-block">
                 <label><input type="checkbox" id="pl-m"> Сутрин</label>
@@ -433,7 +432,7 @@
           </div>
         </div>
 
-        <hr class="prog-sep"/>
+        <hr class="prog-seп"/>
 
         <!-- Fortex Хитозан Плюс -->
         <div>
@@ -483,7 +482,7 @@
         </div>
       </section>
 
-      <!-- 🟨 Допълнителен пакет (без промени) -->
+      <!-- 🟨 Допълнителен пакет -->
       <section class="card" id="pkg-extra">
         <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
@@ -493,7 +492,7 @@
         </ul>
       </section>
 
-      <!-- 💊 Личен режим (без промени) -->
+      <!-- 💊 Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
         <p style="margin:0 0 8px; color:#9fb4ad">
@@ -512,7 +511,7 @@
     "use strict";
     window.__BT_VER = '2.23';
 
-    /* ===== Таб логика (без промени) ===== */
+    /* ===== Таб логика ===== */
     (function(){
       const tabs = [
         {btn: document.getElementById('tab-data'), panel: document.getElementById('panel-data')},
@@ -533,7 +532,7 @@
       }catch(_){ select(0); }
     })();
 
-    /* ===== Помощни (датa/формати) — без промени ===== */
+    /* ===== Помощни (датa/формати) ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
