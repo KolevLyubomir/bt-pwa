@@ -3,14 +3,14 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.28</title>
+  <title>БТ App 3 — v2.29</title>
 
-  <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
 
   <meta name="theme-color" content="#0b1215"/>
+  <link rel="manifest" href="manifest.webmanifest?v=1.39"/>
   <link rel="icon" href="assets/icons/icon-192.png?v=1.39"/>
 
   <style>
@@ -21,12 +21,9 @@
       --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2dd4bf;
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
       --pill-w:168px;
-      --weekend:#bfead7;         /* зеленикаво-бяло за Сб/Нд */
-      --weekend-strong:#8fd4bd;  /* по-тъмен нюанс за по-добра видимост */
-      --orange:#f59e0b;
-      --green:#22c55e;
-      --yellow:#eab308;
-      --red:#ef4444;
+
+      --wk-green-d:#a6e6cd;            /* уикенд (по-тъмен зелено-бял) */
+      --sel-orange:#f59e0b;
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{
@@ -48,7 +45,7 @@
       background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
     }
 
-    /* ===== Табове (правоъгълни, болд) ===== */
+    /* ===== Табове ===== */
     .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
     .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
     .tab-btn{
@@ -60,17 +57,16 @@
       color:#06241b; border-color:transparent; background:linear-gradient(90deg,#22c55e,#14b8a6);
     }
 
-    /* ===== Основно съдържание ===== */
+    /* ===== Основно ===== */
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== Стилове за „Данни“ ===== */
+    /* ===== „Данни“ (оригинална логика от 2.22) ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
     .lbl{ height:var(--lbl-h); line-height:var(--lbl-h); font-size:12px; color:var(--muted); margin:0 0 6px 0 }
     .ctl{ display:flex; align-items:center }
-
     input,select,button{
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
@@ -79,24 +75,12 @@
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
     button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
-
-    .field.date{ width:120px }
-    .field.date input{ width:100% }
+    .field.date{ width:120px } .field.date input{ width:100% }
     .field.weight input{ font-weight:700; font-size:18px; width:9ch }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
-
-    /* Връщане на стрелките само за „Тегло (kg)” */
-    .field.weight input[type="number"]{
-      appearance: auto;
-      -webkit-appearance: auto;
-      -moz-appearance: auto;
-    }
+    .field.weight input[type="number"]{ appearance:auto; -webkit-appearance:auto; -moz-appearance:auto }
     .field.weight input[type="number"]::-webkit-inner-spin-button,
-    .field.weight input[type="number"]::-webkit-outer-spin-button{
-      -webkit-appearance: auto;
-      margin: 0;
-    }
-
+    .field.weight input[type="number"]::-webkit-outer-spin_button{ -webkit-appearance:auto; margin:0 }
     .bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
       border:1px solid #334a4f; background:#0d171b; border-radius:10px }
     .bt-only input{ width:16px; height:16px; margin:0 }
@@ -109,24 +93,17 @@
     th.date,td.date{ padding-right:1px }
     th.w,td.w{ text-align:right; padding-left:2px }
     th.actions,td.actions{ padding-left:72px }
-
-    .wCell{ text-align:right }
-    .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
-
+    .wCell{ text-align:right } .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
     .actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
     .icon{ display:inline-flex; align-items:center; justify-content:center; border:1px solid #2a3e41; background:#0d171b; border-radius:8px; padding:4px 6px; color:#fff; height:var(--ctl-h) }
     .icon svg{ width:16px; height:16px; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round }
     .icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
-
     .recbar{ display:flex; align-items:center; gap:8px; justify-content:flex-start; margin:8px 0; flex-wrap:wrap }
-
     .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
     .pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
     .pager button{ background:#0d171b; border:1px solid #2a3e41; color:#fff; padding:4px 8px; border-radius:8px; font-size:13px }
     .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
-
     canvas{ width:100%; height:360px; display:block; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
-
     .date-wrap{ position:relative } #dateText[readonly]{ cursor:pointer }
     .cal{ position:absolute; z-index:10; top:calc(var(--ctl-h) + 6px); left:0; background:#0e1518; border:1px solid #20343a; border-radius:12px;
       box-shadow:0 8px 30px rgba(0,0,0,.35); padding:10px; width:auto; display:none }
@@ -142,91 +119,69 @@
     .cal .day.today{ outline:1px dashed #5b8f98 }
     .cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
 
-    /* Панели */
     .tabpanel{ display:none }
     .tabpanel[aria-hidden="false"]{ display:block }
 
-    /* ===== ПРОГРАМА — продукти (общо) ===== */
+    /* ===== ПРОГРАМА ===== */
     .prog-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
-    .prod-img{ width:74px; height:74px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
-    .prog-cap{ font-weight:800; font-size:16px }
+    .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
+    .prog-cap{ font-weight:700 }
+    .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
 
-    /* ===== Пролакт — Таблица ДНИ × 2 ВРЕМЕНА ===== */
-    .day-grid-wrap{ overflow-x:auto; }
-    .pl-table{
-      border-collapse:collapse; width:max-content; min-width:100%;
-      border:1px solid var(--border); border-radius:12px; overflow:hidden;
-      background:#0d171b;
+    .prog-pill{
+      display:flex; flex-direction:column; gap:6px;
+      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
+      width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
     }
+    .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .time-wrap{ display:flex; align-items:center; gap:6px }
+    .time-row{ display:flex; align-items:center; gap:4px }
+    .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
+    .time-row .colon{ opacity:.8; user-select:none; }
+    select option.strong { font-weight:700; }
+
+    /* ===== ProLact Slim+ таблица ===== */
+    .pl-wrap{ overflow-x:auto }
+    .pl-table{ width:100%; border-collapse:separate; border-spacing:6px; table-layout:fixed }
     .pl-table th, .pl-table td{
-      border-right:1px solid #20343a; border-bottom:1px solid #20343a;
-      padding:6px 8px; text-align:center; white-space:nowrap;
-      font-size:12px; line-height:1.1;
+      border:1px solid #20343a; border-radius:10px; text-align:center; padding:6px 4px;
+      font-size:12px; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     }
-    .pl-table th{ color:#cfe3dd; font-weight:800; background:#0f1a1d; position:relative }
-    .pl-table td{ color:#e6f2ef }
-    .pl-table th:last-child, .pl-table td:last-child { border-right:none; }
+    .pl-row-caption{ color:var(--muted); font-size:11px; text-align:right; padding-right:8px; border:none !important }
+    .pl-day{ cursor:pointer; user-select:none }
+    .pl-day.weekend{ color:var(--wk-green-d) }
+    .pl-day.today{ outline:1px dashed rgba(200,200,200,.6); outline-offset:-4px }
+    .pl-day.active{ border-color:var(--sel-orange) }
+    .pl-time-cell{ cursor:pointer; user-select:none; font-weight:700 }
 
-    .dow-cell{ min-width:52px }                 /* компактни клетки */
-    .dow-badge{
-      display:inline-block; padding:4px 6px; border-radius:8px; border:1px solid #2a3e41;
-      font-weight:800; letter-spacing:.2px;
-    }
-    .dow-badge.weekend{ color:var(--weekend-strong) } /* по-тъмен нюанс за видимост */
-    .dow-badge.current{ outline:1px dashed #6fa9a1; } /* пунктир за текущ ден */
-    .dow-badge.active{ border-color:transparent; background:var(--orange); color:#06241b; }
-
-    .time-cell{ min-width:60px; }
-    .time-badge{
-      display:inline-block; padding:4px 6px; border-radius:8px; border:1px solid #2a3e41; font-weight:700;
-    }
-    .time-badge.edit{ outline:1px dashed #6fa9a1; }
-    .time-badge.sel{ background:#1b2a2e; border-color:#35535a; }
-
-    .pl-actions{ display:flex; align-items:center; justify-content:center; gap:16px; margin-top:10px; }
-    .round-btn{
-      width:56px; height:56px; border-radius:50%; border:2px solid #234046; background:#0f181b; cursor:pointer;
-      display:flex; align-items:center; justify-content:center; font-weight:800; user-select:none;
-    }
-    .round-btn.green{ background:var(--green); color:#06241b; }
-    .round-btn.yellow{ background:var(--yellow); color:#06241b; }
-    .round-btn.red{ background:var(--red); color:#fff; }
-
-    .action-tile{
-      display:inline-flex; align-items:center; justify-content:center; gap:8px;
-      border:1px solid #214047; background:#0f181b; border-radius:12px; padding:10px 16px; cursor:pointer;
-      font-weight:800;
-    }
-    .action-tile svg{ width:18px; height:18px; stroke:currentColor }
-
-    /* ===== Кръгов часовник (modal) ===== */
-    .modal{ position:fixed; inset:0; background:rgba(0,0,0,.45); display:none; align-items:center; justify-content:center; z-index:50; }
-    .modal.show{ display:flex; }
-    .modal-card{
-      width:320px; background:#0e1518; border:1px solid #20343a; border-radius:14px; padding:14px; color:#e6f2ef;
-      box-shadow:0 8px 40px rgba(0,0,0,.45);
-    }
-    .modal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px }
-    .modal-title{ font-weight:800 }
-    .ring{
-      width:280px; height:280px; margin:8px auto; position:relative;
-    }
-    .ring svg{ width:280px; height:280px; display:block; }
-    .ring-center{
-      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      width:112px; height:64px; display:flex; align-items:center; justify-content:center;
-      background:#0f181b; border:1px dashed #2f4c52; border-radius:10px; font-weight:900; font-size:20px;
-    }
-    .modal-actions{ display:flex; align-items:center; justify-content:flex-end; gap:8px; }
-    .btn{ border:1px solid #2a3e41; background:#0d171b; color:#e6f2ef; border-radius:10px; padding:8px 12px; cursor:pointer; }
-    .btn.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:900 }
+    /* ===== Часовник с drag ===== */
+    .clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:100 }
+    .clk.show{ display:flex; align-items:center; justify-content:center }
+    .clk-card{ background:#0e1518; border:1px solid #20343a; border-radius:16px; padding:12px; width:320px; max-width:92vw; box-shadow:0 10px 40px rgba(0,0,0,.5) }
+    .clk-title{ margin:2px 0 8px; font-weight:800; font-size:14px }
+    .clk-face{ position:relative; width:270px; height:270px; margin:0 auto; border-radius:50%; border:1px solid #294047; background:#0b1317; touch-action:none }
+    .clk-center{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50% }
+    .clk-read{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); background:#10191c; border:1px solid #294047; border-radius:8px; padding:4px 8px; font-weight:800 }
+    .clk-ring{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50% }
+    .clk-ring.hours{ width:220px; height:220px }
+    .clk-ring.mins{ width:250px; height:250px }
+    .clk-tick{ position:absolute; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; color:#d6ece6;
+      border:1px solid transparent; background:#0f1a1d; user-select:none }
+    .clk-tick.strong{ font-weight:800 }
+    .clk-tick.sel{ background:#22c55e; color:#06241b }
+    .clk-actions{ display:flex; gap:8px; justify-content:center; margin-top:10px }
+    .btn-traffic{ padding:6px 10px; border-radius:20px; font-weight:800; border:1px solid #2a3e41; background:#0f1a1d; font-size:12px; cursor:pointer }
+    .btn-ok{ background:#22c55e; color:#06241b; border-color:#22c55e }
+    .btn-accept{ background:#f59e0b; color:#2a1703; border-color:#f59e0b }
+    .btn-mute{ display:flex; align-items:center; gap:6px }
+    .btn-mute svg{ width:14px; height:14px; stroke:currentColor }
+    .clk-footer{ display:flex; justify-content:space-between; margin-top:8px }
+    .clk-x{ background:#111; border:1px solid #333; font-size:12px; padding:4px 8px; border-radius:8px; cursor:pointer }
 
     @media (max-width: 380px){
       :root{ --pill-w:156px; }
+      .time-row select{ min-width:48px; }
       .prod-img{ width:64px; height:64px; border-radius:10px; }
-      .pl-table th, .pl-table td{ font-size:11px; padding:5px 6px; }
-      .dow-cell{ min-width:44px }
-      .time-cell{ min-width:52px }
     }
   </style>
 </head>
@@ -238,7 +193,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.28</span>
+        <span class="badge">v2.29</span>
       </div>
     </div>
   </div>
@@ -270,7 +225,9 @@
 
             <div class="field weight">
               <div class="lbl">Тегло (kg)</div>
-              <div class="ctl"><input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/></div>
+              <div class="ctl">
+                <input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/>
+              </div>
             </div>
 
             <div class="field" style="min-width:var(--ctl-h)">
@@ -366,68 +323,132 @@
   <!-- ПАНЕЛ: ПРОГРАМА -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
-      <!-- 🟩 Основен пакет -->
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ — таблица ДНИ × 2 ВРЕМЕНА -->
+        <!-- ✅ ProLact Slim+ — таблица (2 приема) -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
-            <span class="prog-cap">ProLact Slim+</span>
+            <span class="prog-cap">ProLact Slim+ — два приема</span>
           </div>
 
-          <div class="day-grid-wrap">
+          <div class="pl-wrap">
             <table class="pl-table" id="pl-table">
               <thead>
-                <tr id="pl-dow-row">
-                  <!-- попълва се динамично с Пн…Нд -->
+                <tr>
+                  <th class="pl-row-caption"></th>
+                  <th class="pl-day" data-dow="1">Пн</th>
+                  <th class="pl-day" data-dow="2">Вт</th>
+                  <th class="pl-day" data-dow="3">Ср</th>
+                  <th class="pl-day" data-dow="4">Чт</th>
+                  <th class="pl-day" data-dow="5">Пт</th>
+                  <th class="pl-day weekend" data-dow="6">Сб</th>
+                  <th class="pl-day weekend" data-dow="0">Нд</th>
                 </tr>
               </thead>
               <tbody>
-                <tr id="pl-t1-row"></tr>
-                <tr id="pl-t2-row"></tr>
+                <tr>
+                  <td class="pl-row-caption">I време</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="1">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="2">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="3">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="4">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="5">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="6">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="0">08:00</td>
+                </tr>
+                <tr>
+                  <td class="pl-row-caption">II време</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="1">19:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="2">19:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="3">19:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="4">19:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="5">19:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="6">19:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="0">19:00</td>
+                </tr>
               </tbody>
             </table>
           </div>
-
-          <div class="pl-actions">
-            <button id="pl-change-time" class="action-tile" type="button" title="Промяна на времето">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="9"></circle>
-                <path d="M12 7v5l3 3"></path>
-              </svg>
-              <span>Промяна на времето</span>
-            </button>
-
-            <button id="pl-flag" class="round-btn" type="button" title="Състояние"></button>
-          </div>
         </div>
 
-        <hr class="prog-sep" style="border:0;border-top:1px solid var(--border);margin:14px 0"/>
+        <hr class="prog-sep"/>
 
-        <!-- OMNi-Biotic HETOX light (сегашният компакт UI) -->
+        <!-- OMNi-Biotic HETOX light (без промени) -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
             <span class="prog-cap">OMNi-Biotic HETOX light</span>
           </div>
-          <p style="margin:6px 0 0;color:var(--muted);font-size:13px">Обед — еднократен прием (редакцията остава както досега).</p>
+
+          <div class="prog-row" role="group" aria-label="HETOX — 1 от 3">
+            <span class="prog-pill">
+              <label><input type="checkbox" id="he-m"> Сутрин</label>
+              <div id="he-tp-m" class="time-wrap" style="display:none">
+                <div class="time-row">
+                  <select id="he-hh-m"></select><span class="colon">:</span><select id="he-mm-m"></select>
+                </div>
+              </div>
+            </span>
+            <span class="prog-pill">
+              <label><input type="checkbox" id="he-n" checked> Обед</label>
+              <div id="he-tp-n" class="time-wrap" style="display:block">
+                <div class="time-row">
+                  <select id="he-hh-n"></select><span class="colon">:</span><select id="he-mm-n"></select>
+                </div>
+              </div>
+            </span>
+            <span class="prog-pill">
+              <label><input type="checkbox" id="he-e"> Вечер</label>
+              <div id="he-tp-e" class="time-wrap" style="display:none">
+                <div class="time-row">
+                  <select id="he-hh-e"></select><span class="colon">:</span><select id="he-mm-e"></select>
+                </div>
+              </div>
+            </span>
+          </div>
         </div>
 
-        <hr class="prog-sep" style="border:0;border-top:1px solid var(--border);margin:14px 0"/>
+        <hr class="prog-sep"/>
 
-        <!-- Fortex Хитозан Плюс (компакт) -->
+        <!-- Fortex Хитозан Плюс (без промени) -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
             <span class="prog-cap">Fortex Хитозан Плюс</span>
           </div>
-          <p style="margin:6px 0 0;color:var(--muted);font-size:13px">3 приема (сутрин/обед/вечер) — текущата логика остава.</p>
+
+          <div class="prog-row" role="group" aria-label="Хитозан Плюс">
+            <span class="prog-pill">
+              <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
+              <div id="ch-tp-m" class="time-wrap">
+                <div class="time-row">
+                  <select id="ch-hh-m"></select><span class="colon">:</span><select id="ch-mm-m"></select>
+                </div>
+              </div>
+            </span>
+            <span class="prog-pill">
+              <label><input type="checkbox" id="ch-n" checked disabled> Обед</label>
+              <div id="ch-tp-n" class="time-wrap">
+                <div class="time-row">
+                  <select id="ch-hh-n"></select><span class="colon">:</span><select id="ch-mm-n"></select>
+                </div>
+              </div>
+            </span>
+            <span class="prog-pill">
+              <label><input type="checkbox" id="ch-e" checked disabled> Вечер</label>
+              <div id="ch-tp-e" class="time-wrap">
+                <div class="time-row">
+                  <select id="ch-hh-e"></select><span class="colon">:</span><select id="ch-mm-e"></select>
+                </div>
+              </div>
+            </span>
+          </div>
         </div>
       </section>
 
-      <!-- 🟨 Допълнителен пакет -->
+      <!-- Допълнителен пакет -->
       <section class="card" id="pkg-extra">
         <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
@@ -437,7 +458,7 @@
         </ul>
       </section>
 
-      <!-- 💊 Личен режим -->
+      <!-- Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
         <p style="margin:0 0 8px; color:#9fb4ad">
@@ -452,30 +473,41 @@
     </main>
   </div>
 
-  <!-- ===== MODAL: Кръгов часовник ===== -->
-  <div id="ringModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="ringTitle">
-    <div class="modal-card">
-      <div class="modal-head">
-        <div id="ringTitle" class="modal-title">Избор на време</div>
-        <button id="ringCancel" class="btn" type="button">Отказ</button>
+  <!-- МОДАЛЕН ЧАСОВНИК + “СФЕТОФАР” -->
+  <div class="clk" id="clk">
+    <div class="clk-card" role="dialog" aria-label="Избор на време">
+      <div class="clk-title">Избери час / минути</div>
+      <div class="clk-face" id="clkFace">
+        <div class="clk-ring mins" id="ringM"></div>
+        <div class="clk-ring hours" id="ringH"></div>
+        <div class="clk-center"></div>
+        <div class="clk-read" id="clkRead">08:00</div>
       </div>
-      <div class="ring" id="ringBox">
-        <!-- SVG часовник (часове + минути) -->
-        <svg viewBox="0 0 280 280" id="ringSvg"></svg>
-        <div id="ringCenter" class="ring-center">08:00</div>
+      <div class="clk-actions">
+        <button class="btn-traffic btn-ok" id="btnOk">OK</button>
+        <button class="btn-traffic btn-accept" id="btnAccept">Прието</button>
+        <button class="btn-traffic btn-mute" id="btnMute" title="Без звук">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 9l6 6M15 9l-6 6"></path>
+            <path d="M3 9v6h4l5 4V5L7 9H3z"></path>
+          </svg> Без звук
+        </button>
       </div>
-      <div class="modal-actions">
-        <button id="ringOk" class="btn primary" type="button">Запази</button>
+      <div class="clk-footer">
+        <button id="btnReset" class="clk-x" type="button">Reset (08:00/19:00)</button>
+        <button id="btnClose" class="clk-x" type="button">Затвори</button>
       </div>
     </div>
   </div>
 
   <script>
   "use strict";
-  // Версия
-  window.__BT_VER = '2.28';
+  /* ===== Общи ===== */
+  function two(n){ return String(n).padStart(2,"0"); }
+  function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
+  var TODAY = todayISO();
 
-  /* ===== Таб логика ===== */
+  /* ===== Табове ===== */
   (function(){
     const tabs = [
       {btn: document.getElementById('tab-data'), panel: document.getElementById('panel-data')},
@@ -487,29 +519,19 @@
         t.btn.setAttribute('aria-selected', String(sel));
         t.panel.setAttribute('aria-hidden', String(!sel));
       });
-      try{ localStorage.setItem('bt_active_tab_v228', String(i)); }catch(_){}
+      try{ localStorage.setItem('bt_active_tab_v229', String(i)); }catch(_){}
     }
     tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
     try{
-      const saved = parseInt(localStorage.getItem('bt_active_tab_v228'),10);
+      const saved = parseInt(localStorage.getItem('bt_active_tab_v229'),10);
       if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved); else select(0);
     }catch(_){ select(0); }
   })();
 
-  /* ===== Помощни за дати ===== */
-  function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
-  var TODAY = todayISO();
-  function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
-  function bgToISO_any(bg){
-    var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-    var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
-    return "";
-  }
-
-  /* ===== Локално съхр. на записи (Данни) ===== */
+  /* ===== Данни (възстановена 2.22 логика) ===== */
   var KEY="bt-progress";
-  function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(_) { return []; } }
-  function save(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
+  function loadRecs(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(_) { return []; } }
+  function saveRecs(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
   function sortDesc(a){ return a.slice().sort((x,y)=>y.date.localeCompare(x.date)); }
   function sortAsc(a){ return a.slice().sort((x,y)=>x.date.localeCompare(y.date)); }
 
@@ -521,31 +543,32 @@
       exportBtn=document.getElementById("exportBtn"), importBtn=document.getElementById("importBtn"),
       importFile=document.getElementById("importFile"), btFlag=document.getElementById("btFlag");
 
+  function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
+  function bgToISO_any(bg){
+    var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
+    var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
+    return "";
+  }
+
   var currentISO=localStorage.getItem("bt-last-date")||TODAY;
   if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO=TODAY;
-  dateText.value=isoToBG_YY(currentISO);
+  if(dateText) dateText.value=isoToBG_YY(currentISO);
+
   function prefillFor(iso){
-    var data=load(); var rec=data.find(r=>r.date===iso);
-    if(rec){
-      weight.value=(typeof rec.weight==="number")?rec.weight:"";
-      btFlag.checked = (rec.bt!==false);
-      return;
-    }
+    var data=loadRecs(); var rec=data.find(r=>r.date===iso);
+    if(rec){ weight.value=(typeof rec.weight==="number")?rec.weight:""; btFlag.checked=(rec.bt!==false); return; }
     var prev=sortDesc(data).find(r=>r.date<iso);
-    weight.value=prev?prev.weight:"";
-    btFlag.checked=true;
+    weight.value=prev?prev.weight:""; btFlag.checked=true;
   }
   prefillFor(currentISO);
 
-  /* Календар мини */
   var calYear=+currentISO.slice(0,4), calMonth=+currentISO.slice(5,7);
   function ymd(y,m,d){ return String(y).padStart(4,"0")+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0"); }
-  function hasDataSet(){ var s=new Set(); load().forEach(r=>s.add(r.date)); return s; }
+  function hasDataSet(){ var s=new Set(); loadRecs().forEach(r=>s.add(r.date)); return s; }
   function renderCalendar(){
     var set=hasDataSet(), y=calYear, m=calMonth;
     var first=new Date(Date.UTC(y,m-1,1));
-    var startDow=(first.getUTCDay()+6)%7;
-    var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
+    var startDow=(first.getUTCDay()+6)%7; var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
     var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
     var html='<div class="cal-head"><button id="calPrev" type="button">←</button><div class="cal-title">'+title+'</div><button id="calNext" type="button">→</button></div>';
     html+='<div class="cal-grid">';
@@ -557,71 +580,56 @@
       if(set.has(iso)) cls.push("has"); if(future) cls.push("disabled");
       html+='<button type="button" class="'+cls.join(" ")+'" data-iso="'+iso+'">'+d+'</button>';
     }
-    html+='</div>';
-    calEl.innerHTML=html;
+    html+='</div>'; calEl.innerHTML=html;
   }
-  function showCalendar(){ renderCalendar(); calEl.classList.add("show"); }
-  function hideCalendar(){ calEl.classList.remove("show"); }
-  dateText.addEventListener("click",(e)=>{ e.stopPropagation(); calYear=+currentISO.slice(0,4); calMonth=+currentISO.slice(5,7); showCalendar(); });
-  calEl.addEventListener("click",(e)=>{
+  function showCalendar(){ if(!calEl) return; renderCalendar(); calEl.classList.add("show"); }
+  function hideCalendar(){ calEl && calEl.classList.remove("show"); }
+  dateText && dateText.addEventListener("click",(e)=>{ e.stopPropagation(); calYear=+currentISO.slice(0,4); calMonth=+currentISO.slice(5,7); showCalendar(); });
+  calEl && calEl.addEventListener("click",(e)=>{
     e.stopPropagation(); var t=e.target;
     if(t && t.id==="calPrev"){ calMonth--; if(calMonth===0){calMonth=12; calYear--; } renderCalendar(); return; }
     if(t && t.id==="calNext"){ calMonth++; if(calMonth===13){calMonth=1; calYear++; } renderCalendar(); return; }
     var btn=t.closest && t.closest(".day[data-iso]");
     if(btn){ var iso=btn.getAttribute("data-iso"); if(iso<=TODAY){ currentISO=iso; localStorage.setItem("bt-last-date",iso); dateText.value=isoToBG_YY(iso); prefillFor(iso); hideCalendar(); } }
   });
-  document.addEventListener("click",(e)=>{ if(!calEl.contains(e.target) && e.target!==dateText) hideCalendar(); });
+  document.addEventListener("click",(e)=>{ if(calEl && !calEl.contains(e.target) && e.target!==dateText) hideCalendar(); });
 
-  addBtn.addEventListener("click", ()=>{
-    var iso=currentISO;
-    if(iso>TODAY){ alert("Датата е в бъдещето."); return; }
+  addBtn && addBtn.addEventListener("click", ()=>{
+    var iso=currentISO; if(iso>TODAY){ alert("Датата е в бъдещето."); return; }
     var w=Number(weight.value); if(!(w>0)){ alert("Въведи тегло > 0."); return; }
-
-    var data=load(), prev=sortDesc(data).find(r=>r.date<iso), next=sortAsc(data).find(r=>r.date>iso);
-    var ok=true, msgs=[];
-    if(prev){ var minP=prev.weight*0.95, maxP=prev.weight*1.05; if(w<minP||w>maxP){ ok=false; msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg"); } }
-    if(next){ var minN=next.weight*0.95, maxN=next.weight*1.05; if(w<minN||w>maxN){ ok=false; msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg"); } }
-    if(!ok){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
-
-    var idx=data.findIndex(r=>r.date===iso);
+    var data=loadRecs(), idx=data.findIndex(r=>r.date===iso);
     var rec={date: iso, weight: w, bt: !!btFlag.checked};
     if(idx>=0) data[idx]=rec; else data.push(rec);
-    save(data);
-    renderTable(); renderChart();
+    saveRecs(data); renderTable(); renderChart();
   });
 
-  var PAGE_SIZES=[7,14,28,84,112,168,336,"all"];
-  function getPS(){ var v=localStorage.getItem("bt-page-size"); if(v==="all") return "all"; var n=Number(v); return (PAGE_SIZES.indexOf(n)>=0)?n:28; }
-  function setPS(v){ localStorage.setItem("bt-page-size",v); }
-  var pageSize=getPS(), currentPage=1;
-  (function(){ var v=(pageSize==="all")?"all":String(pageSize); var opt=document.querySelector('#pageSize option[value="'+v+'"]'); if(opt) pageSizeSel.value=v; })();
-  pageSizeSel.addEventListener("change", ()=>{ var v=pageSizeSel.value; pageSize=(v==="all")?"all":Number(v); setPS(v); currentPage=1; renderTable(); renderChart(); });
-
+  // странициране
+  var pageSize=(localStorage.getItem("bt-page-size")||"28"), currentPage=1;
+  function getPS(){ return pageSize==="all"?"all":Number(pageSize)||28; }
+  function setPS(v){ pageSize=v; localStorage.setItem("bt-page-size",v); }
+  if(pageSizeSel){ pageSizeSel.value=pageSize; pageSizeSel.addEventListener("change", ()=>{ setPS(pageSizeSel.value); currentPage=1; renderTable(); renderChart(); }); }
   var __currentSlice=[];
-
   function buildPager(container,total,eff){
-    container.innerHTML="";
+    if(!container) return; container.innerHTML="";
     var start=(currentPage-1)*eff, from=total?start+1:0, to=Math.min(start+eff,total);
     var info=document.createElement("span"); info.className="info"; info.textContent=from+"-"+to+" от "+total; container.appendChild(info);
-
     var pagesTotal=Math.max(1,Math.ceil(total/eff)), frag=document.createDocumentFragment();
     function pageBtn(n,active){ var b=document.createElement("button"); b.textContent=String(n); if(active) b.className="active";
       b.addEventListener("click",()=>{currentPage=n; renderTable(); renderChart();}); return b; }
     if(pagesTotal>1 && currentPage>1){ var prev=document.createElement("button"); prev.textContent="←";
       prev.addEventListener("click",()=>{currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();}); frag.appendChild(prev); }
-    if(pagesTotal<=5){ for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage)); }
-    else{ var sp=currentPage-2; if(sp<1) sp=1; if(sp+4>pagesTotal) sp=pagesTotal-4; for(var pp=sp; pp<=sp+4; pp++) frag.appendChild(pageBtn(pp,pp===currentPage)); }
+    var sp=Math.max(1,Math.min(currentPage-2,pagesTotal-4));
+    for(var pp=sp; pp<=Math.min(pagesTotal, sp+4); pp++) frag.appendChild(pageBtn(pp,pp===currentPage));
     if(pagesTotal>1 && currentPage<pagesTotal){ var next=document.createElement("button"); next.textContent="→";
       next.addEventListener("click",()=>{currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();}); frag.appendChild(next); }
     container.appendChild(frag);
   }
-
   function renderTable(){
-    var all=sortDesc(load()), total=all.length, eff=(pageSize==="all")?(total||1):pageSize;
+    if(!tb) return;
+    var all=sortDesc(loadRecs()), total=all.length, eff=(getPS()==="all")?(total||1):getPS();
     var pages=Math.max(1,Math.ceil(total/eff)); if(currentPage>pages) currentPage=pages;
     var start=(currentPage-1)*eff, slice=all.slice(start,start+eff); __currentSlice=slice.slice();
-
-    buildPager(pagerTop,total,eff);
+    buildPager(pagerTop,total,eff); buildPager(pagerBottom,total,eff);
     tb.innerHTML="";
     slice.forEach((r)=>{
       var tr=document.createElement("tr");
@@ -631,40 +639,27 @@
         '<td class="w wCell"><span class="wInt">'+s[0]+'</span><span class="wSmall">.'+s[1]+'</span></td>'+
         '<td class="actions">'+
           '<div class="actions">'+
-            '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
-            '</button>'+
-            '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-              '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
-            '</button>'+
+            '<button class="icon" data-edit="'+r.date+'" title="Редакция">✎</button>'+
+            '<button class="icon danger" data-del="'+r.date+'" title="Изтрий">🗑</button>'+
           '</div>'+
         '</td>';
       tb.appendChild(tr);
     });
     Array.from(tb.querySelectorAll('button[data-edit]')).forEach((b)=>{
       b.addEventListener("click",()=>{
-        var iso=b.getAttribute("data-edit"); var rec=load().find(x=>x.date===iso);
-        if(rec){
-          currentISO=iso; localStorage.setItem("bt-last-date",iso);
-          dateText.value=isoToBG_YY(iso); prefillFor(iso);
-          window.scrollTo({top:0,behavior:"smooth"});
-        }
+        var iso=b.getAttribute("data-edit"); var rec=loadRecs().find(x=>x.date===iso);
+        if(rec){ currentISO=iso; localStorage.setItem("bt-last-date",iso); dateText.value=isoToBG_YY(iso); prefillFor(iso); window.scrollTo({top:0,behavior:"smooth"}); }
       });
     });
     Array.from(tb.querySelectorAll('button[data-del]')).forEach((b)=>{
       b.addEventListener("click",()=>{
         var iso=b.getAttribute("data-del"); if(!confirm("Да изтрия записа за "+isoToBG_YY(iso)+"?")) return;
-        var data=load().filter(x=>x.date!==iso); save(data); renderTable(); renderChart();
+        var data=loadRecs().filter(x=>x.date!==iso); saveRecs(data); renderTable(); renderChart();
       });
     });
-    buildPager(pagerBottom,total,eff);
   }
 
-  /* ===== Графика (canvas) — съкратената ти версия, без промени в логиката ===== */
-  function cssPx(name, fallback){
-    var v=getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-    var n=parseFloat(v); return Number.isFinite(n)?n:fallback;
-  }
+  // Агрегации
   function weekKey(iso){
     var d=new Date(iso); d.setUTCHours(0,0,0,0); d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
     var yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
@@ -674,24 +669,32 @@
   function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
   function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
   function labelMonth(k){ var s=k.split("-"); return s[1]+"."+String(s[0]).slice(2); }
-  function getChartRawData(){
-    var mode=aggSel.value;
-    if(mode==="daily"){ var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(load()); return sortAsc(src); }
-    return sortAsc(load());
+  function cssPx(name, fallback){
+    var v=getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    var n=parseFloat(v); return Number.isFinite(n)?n:fallback;
   }
+  aggSel && aggSel.addEventListener("change", ()=>renderChart());
+
+  function getChartRawData(){
+    var mode=aggSel?aggSel.value:"daily";
+    if(mode==="daily"){
+      var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(loadRecs());
+      return sortAsc(src);
+    }
+    return sortAsc(loadRecs());
+  }
+
   function renderChart(){
     var ctx=chart.getContext("2d"), rect=chart.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
     chart.width=Math.round(rect.width*dpr); chart.height=Math.round(360*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
     var w=rect.width, h=360; ctx.clearRect(0,0,w,h);
 
     var raw=getChartRawData(); if(!raw.length){
-      ctx.fillStyle="#9fb4ad";
-      ctx.font="700 "+cssPx('--chart-values', 15)+"px system-ui";
-      ctx.fillText("Няма данни",10,26);
-      return;
+      ctx.fillStyle="#9fb4ad"; ctx.font="700 "+cssPx('--chart-values', 15)+"px system-ui";
+      ctx.fillText("Няма данни",10,26); return;
     }
 
-    var mode=aggSel.value, pts=[];
+    var mode=aggSel?aggSel.value:"daily", pts=[];
     if(mode==="daily"){
       pts=raw.map(r=>({x:r.date,y:r.weight,label:isoToBG_YY(r.date), bt:(r.bt!==false)}));
     } else if(mode==="weekly"){
@@ -751,15 +754,12 @@
       ctx.beginPath();
       ctx.fillStyle = pe.bt ? orange : green;
       const yVal = Y(pe.y);
-      ctx.arc(x0, yVal, 3, 0, Math.PI*2);
-      ctx.fill();
+      ctx.arc(x0, yVal, 3, 0, Math.PI*2); ctx.fill();
 
-      /* малък етикет при всяка точка */
       ctx.save();
       ctx.font = "600 11px system-ui";
       ctx.fillStyle = "#9fb4ad";
-      ctx.textBaseline = "bottom";
-      ctx.textAlign = "left";
+      ctx.textBaseline = "bottom"; ctx.textAlign = "left";
       const txt = pe.y.toFixed(1);
       const tw = ctx.measureText(txt).width;
       let xText = x0 + 5;
@@ -774,11 +774,35 @@
       }
     }
   }
-  aggSel.addEventListener("change", ()=>renderChart());
 
-  /* ===== Инициализация на „Данни“ ===== */
+  exportBtn && exportBtn.addEventListener("click", ()=>{
+    var data = loadRecs();
+    var blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement("a"); a.href=url; a.download="bt-progress-export.json";
+    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  });
+  importBtn && importBtn.addEventListener("click", ()=>importFile.click());
+  importFile && importFile.addEventListener("change", ()=>{
+    var f=importFile.files[0]; if(!f) return;
+    var fr=new FileReader();
+    fr.onload = () => {
+      try{
+        var arr = JSON.parse(fr.result||"[]");
+        if(!Array.isArray(arr)) throw new Error("Невалиден формат");
+        arr = arr
+          .filter(r => r && typeof r.date==="string" && typeof r.weight==="number")
+          .map(r => ({ date:r.date, weight:r.weight, bt:(r.bt!==false) }));
+        saveRecs(arr); renderTable(); renderChart();
+        alert("Импортът е успешен. Записите са презаредени.");
+      }catch(e){ alert("Грешка при импорт: "+e.message); }
+      importFile.value="";
+    };
+    fr.readAsText(f);
+  });
+
   function migrateDatesAndBT(){
-    var arr=load(), changed=false;
+    var arr=loadRecs(), changed=false;
     for(var i=0;i<arr.length;i++){
       var r=arr[i];
       if(typeof r.date==="string" && !/^\d{4}-\d{2}-\d{2}$/.test(r.date)){
@@ -786,240 +810,232 @@
       }
       if(typeof r.bt==="undefined"){ r.bt=true; changed=true; }
     }
-    if(changed) save(arr);
+    if(changed) saveRecs(arr);
   }
   function initialRender(){
-    migrateDatesAndBT();
-    prefillFor(currentISO);
+    migrateDatesAndBT(); prefillFor(currentISO);
     renderTable(); renderChart();
     window.addEventListener("resize", ()=>renderChart(), {passive:true});
   }
   initialRender();
 
-  /* ===== ПРОГРАМА → ProLact Slim+ (таблица дни × 2 времена) ===== */
+  /* ===== OMNi (без промени) ===== */
+  function buildHourRange(sel, fromH, toH){ sel.innerHTML=""; for(let h=fromH; h<=toH; h++){ const o=document.createElement("option"); o.value=two(h); o.textContent=o.value; if(h===8||h===12||h===19) o.className="strong"; sel.appendChild(o);}}
+  function buildMinutes5(sel){ sel.innerHTML=""; for(let m=0; m<60; m+=5){ const o=document.createElement("option"); o.value=two(m); o.textContent=o.value; if(m%15===0) o.className="strong"; sel.appendChild(o);}}
+  function setSel(sel,val){ const opt=[...sel.options].find(o=>o.value===val); if(opt){ sel.value=val; return true;} return false; }
+
   (function(){
-    const DOW = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
-    const KEY_TIMES = "bt_pl_grid_v228";        // { d0:{t1:"08:00",t2:"19:00"}, ..., d6:{...}}
-    const KEY_FLAG  = "bt_pl_flag_v228";        // "green" | "yellow" | "red"
-    const DEF_T1 = "08:00"; const DEF_T2 = "19:00";
-
-    const dowRow = document.getElementById("pl-dow-row");
-    const t1Row  = document.getElementById("pl-t1-row");
-    const t2Row  = document.getElementById("pl-t2-row");
-    const btnFlag= document.getElementById("pl-flag");
-    const btnTime= document.getElementById("pl-change-time");
-
-    /* текущ ден (0=Пн ... 6=Нд) */
-    function todayIndex(){
-      const js = new Date().getDay(); // 0=Sun..6=Sat
-      return (js===0)?6:(js-1);
+    const DEF={m:"08:00", n:"12:00", e:"19:00"};
+    const KEY_SEL='bt_he_sel_v229'; const KEY_TIM='bt_he_tim_v229';
+    const m=document.getElementById('he-m'), n=document.getElementById('he-n'), e=document.getElementById('he-e');
+    const boxM=document.getElementById('he-tp-m'), boxN=document.getElementById('he-tp-n'), boxE=document.getElementById('he-tp-e');
+    const hhM=document.getElementById('he-hh-m'), mmM=document.getElementById('he-mm-m');
+    const hhN=document.getElementById('he-hh-n'), mmN=document.getElementById('he-mm-n');
+    const hhE=document.getElementById('he-hh-e'), mmE=document.getElementById('he-mm-e');
+    if(!hhN) return;
+    buildHourRange(hhM,0,9);  buildMinutes5(mmM);
+    buildHourRange(hhN,10,17); buildMinutes5(mmN);
+    buildHourRange(hhE,18,23); buildMinutes5(mmE);
+    function ensureTim(){ try{ const r=JSON.parse(localStorage.getItem(KEY_TIM)||''); if(r&&r.m&&r.n&&r.e) return r; }catch(_){}
+      localStorage.setItem(KEY_TIM, JSON.stringify({...DEF})); return {...DEF}; }
+    function loadTim(){ try{ return JSON.parse(localStorage.getItem(KEY_TIM))||ensureTim(); }catch(_){ return ensureTim(); } }
+    function saveTim(t){ localStorage.setItem(KEY_TIM, JSON.stringify(t)); }
+    function loadSel(){ return localStorage.getItem(KEY_SEL)||"n"; }
+    function setOnly(which){
+      m.checked=(which==="m"); n.checked=(which==="n"); e.checked=(which==="e");
+      boxM.style.display=(which==="m")?"block":"none";
+      boxN.style.display=(which==="n")?"block":"none";
+      boxE.style.display=(which==="e")?"block":"none";
+      localStorage.setItem(KEY_SEL, which);
     }
-    const TODAY_IDX = todayIndex();
+    function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
+    const which0=loadSel(); setOnly(which0);
+    const t0=ensureTim(); setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
+    [m,n,e].forEach(el=>el.addEventListener('change',()=> setOnly(el===m?"m":el===n?"n":"e")));
+    [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', ()=>{
+      const which = localStorage.getItem(KEY_SEL)||"n";
+      const t=loadTim();
+      if(which==="m") t.m = hhM.value+":"+mmM.value;
+      else if(which==="n") t.n = hhN.value+":"+mmN.value;
+      else t.e = hhE.value+":"+mmE.value;
+      saveTim(t);
+    }));
+  })();
 
-    /* state */
-    function ensure(){
-      try{
-        const r=JSON.parse(localStorage.getItem(KEY_TIMES)||'');
-        if(r && typeof r==="object"){ return r; }
-      }catch(_){}
-      const seed = {};
-      for(let i=0;i<7;i++) seed["d"+i] = { t1: DEF_T1, t2: DEF_T2 };
-      localStorage.setItem(KEY_TIMES, JSON.stringify(seed));
-      return seed;
+  /* ===== Хитозан (без промени) ===== */
+  (function(){
+    const DEF={m:"08:00", n:"12:00", e:"19:00"}; const KEY='bt_ch_tim_v229';
+    const hhM=document.getElementById('ch-hh-m'), mmM=document.getElementById('ch-mm-m');
+    const hhN=document.getElementById('ch-hh-n'), mmN=document.getElementById('ch-mm-n');
+    const hhE=document.getElementById('ch-hh-e'), mmE=document.getElementById('ch-mm-e');
+    if(!hhM) return;
+    buildHourRange(hhM,0,9);  buildMinutes5(mmM);
+    buildHourRange(hhN,10,17); buildMinutes5(mmN);
+    buildHourRange(hhE,18,23); buildMinutes5(mmE);
+    function ensure(){ try{ const r=JSON.parse(localStorage.getItem(KEY)||''); if(r&&r.m&&r.n&&r.e) return r; }catch(_){}
+      const def={...DEF}; localStorage.setItem(KEY, JSON.stringify(def)); return def; }
+    function save(t){ localStorage.setItem(KEY, JSON.stringify(t)); }
+    function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); setSel(hhSel,H)|| (hhSel.value=hhSel.options[0].value); setSel(mmSel,M)||(mmSel.value="00"); }
+    const t0=ensure(); setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
+    function write(){ save({ m:hhM.value+":"+mmM.value, n:hhN.value+":"+mmN.value, e:hhE.value+":"+mmE.value }); }
+    ;[hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', write)); write();
+  })();
+
+  /* ===== ProLact Slim+ — таблица + drag часовник ===== */
+  (function(){
+    const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
+    const KEY='bt_pl_grid_v229';
+    const DEF_T1 = ["08:00","08:00","08:00","08:00","08:00","08:00","08:00"];
+    const DEF_T2 = ["19:00","19:00","19:00","19:00","19:00","19:00","19:00"];
+
+    function getTodayDow(){ return (new Date()).getDay(); } // 0..6
+    function load(){ try{ const r=JSON.parse(localStorage.getItem(KEY)||""); if(r && r.times && r.times.length===2) return r; }catch(_){}
+      const init = { times:[ [...DEF_T1], [...DEF_T2] ], mute:[ [0,0,0,0,0,0,0],[0,0,0,0,0,0,0] ], todayDow:getTodayDow(), activeDow:getTodayDow() };
+      localStorage.setItem(KEY, JSON.stringify(init)); return init;
     }
-    function loadTimes(){ try{ return JSON.parse(localStorage.getItem(KEY_TIMES))||ensure(); }catch(_){ return ensure(); } }
-    function saveTimes(obj){ localStorage.setItem(KEY_TIMES, JSON.stringify(obj)); }
+    function save(obj){ localStorage.setItem(KEY, JSON.stringify(obj)); }
+    let state = load();
 
-    function loadFlag(){ return localStorage.getItem(KEY_FLAG)||"green"; }
-    function saveFlag(v){ localStorage.setItem(KEY_FLAG, v); }
-
-    let state = loadTimes();
-    let selDay = TODAY_IDX;        // кой ден редактираме (рамката в оранжево)
-    let editCell = { row:1, col: TODAY_IDX }; // коя клетка (t1 или t2) — визуално само зелено подчертаване
-
-    /* Рендер: заглавен ред с дни */
-    function renderDow(){
-      dowRow.innerHTML = "";
-      for(let i=0;i<7;i++){
-        const th = document.createElement("th");
-        th.className = "dow-cell";
-        const isWeekend = (i===5 || i===6);
-        const badge = document.createElement("span");
-        badge.className = "dow-badge"+(isWeekend?" weekend":"");
-        if(i===TODAY_IDX) badge.classList.add("current");
-        if(i===selDay)    badge.classList.add("active");  // само избрания ден е оранжев
-        badge.textContent = DOW[i];
-        badge.title = "Ден: "+DOW[i];
-        badge.addEventListener("click", ()=>{ selDay=i; renderAll(); });
-        th.appendChild(badge);
-        dowRow.appendChild(th);
-      }
-    }
-    /* Редове с времена */
-    function two(n){ return String(n).padStart(2,"0"); }
-    function tdTime(dayIdx, which){ // which=1|2
-      const td = document.createElement("td");
-      td.className = "time-cell";
-      const tstr = state["d"+dayIdx][which===1?"t1":"t2"];
-      const b = document.createElement("span");
-      b.className = "time-badge";
-      if(editCell.col===dayIdx && ((which===1 && editCell.row===1) || (which===2 && editCell.row===2))){
-        b.classList.add("edit");
-      }
-      b.textContent = tstr;
-      b.title = "Промени "+(which===1?"I":"II")+" време за "+DOW[dayIdx];
-      b.addEventListener("click", ()=>{
-        selDay = dayIdx;
-        editCell = { row: which, col: dayIdx };
-        openRing(tstr, (val)=>{
-          state["d"+dayIdx][which===1?"t1":"t2"]=val;
-          saveTimes(state);
-          renderAll();
-        });
+    function refreshDays(){
+      const ths = TABLE.querySelectorAll('thead .pl-day');
+      ths.forEach(th=>{
+        const dow = Number(th.getAttribute('data-dow'));
+        th.classList.toggle('today', dow===state.todayDow);
+        th.classList.toggle('active', dow===state.activeDow);
       });
-      td.appendChild(b);
-      return td;
     }
     function renderTimes(){
-      t1Row.innerHTML = ""; t2Row.innerHTML="";
-      for(let i=0;i<7;i++){ t1Row.appendChild(tdTime(i,1)); }
-      for(let i=0;i<7;i++){ t2Row.appendChild(tdTime(i,2)); }
+      for(let row=0; row<2; row++){
+        for(let i=0;i<7;i++){
+          const dow = [1,2,3,4,5,6,0][i];
+          const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
+          if(cell){ const idx = (dow===0?6:dow-1); cell.textContent = state.times[row][idx]; }
+        }
+      }
     }
+    refreshDays(); renderTimes();
 
-    /* Флаг бутон (зелено → жълто → червено) */
-    function paintFlag(){
-      const v = loadFlag();
-      btnFlag.className = "round-btn "+v;
-      btnFlag.textContent = "";
-      if(v==="green"){ btnFlag.textContent="OK"; }
-      else if(v==="yellow"){ btnFlag.textContent="!"; }
-      else { btnFlag.textContent="X"; }
-    }
-    btnFlag.addEventListener("click", ()=>{
-      const v = loadFlag();
-      const next = (v==="green")?"yellow":(v==="yellow")?"red":"green";
-      saveFlag(next); paintFlag();
-    });
-
-    /* Бутон „Промяна на времето“ — отваря редакция за текущо селектирания слот */
-    btnTime.addEventListener("click", ()=>{
-      const t = state["d"+selDay][editCell.row===1?"t1":"t2"];
-      openRing(t, (val)=>{
-        state["d"+selDay][editCell.row===1?"t1":"t2"]=val;
-        saveTimes(state);
-        renderAll();
+    TABLE.querySelectorAll('thead .pl-day').forEach(th=>{
+      th.addEventListener('click', ()=>{
+        state.activeDow = Number(th.getAttribute('data-dow'));
+        refreshDays(); save(state);
       });
     });
 
-    function renderAll(){
-      state = loadTimes();
-      renderDow();
-      renderTimes();
-      paintFlag();
-    }
+    // Модал/часовник
+    const Modal = document.getElementById('clk');
+    const face = document.getElementById('clkFace');
+    const ringH = document.getElementById('ringH');
+    const ringM = document.getElementById('ringM');
+    const read = document.getElementById('clkRead');
+    const btnOk = document.getElementById('btnOk');
+    const btnAccept = document.getElementById('btnAccept');
+    const btnMute = document.getElementById('btnMute');
+    const btnReset = document.getElementById('btnReset');
+    const btnClose = document.getElementById('btnClose');
 
-    renderAll();
+    let selRow=0, selDow=1; let H=8, M=0;
+    function updateRead(){ read.textContent = two(H)+":"+two(M); }
 
-    /* ===== Кръгов часовник — имплементация (SVG) ===== */
-    const modal = document.getElementById('ringModal');
-    const ringSvg = document.getElementById('ringSvg');
-    const ringCenter = document.getElementById('ringCenter');
-    const btnOk  = document.getElementById('ringOk');      // декларация №1 (единствена)
-    const btnCan = document.getElementById('ringCancel');  // декларация №1 (единствена)
-
-    let ring = {
-      hour: 8, minute: 0,
-      phase: "hour", // "hour" → "minute"
-      onDone: null
-    };
-
-    function polar(cx, cy, r, angleDeg){
-      const a = (angleDeg - 90) * Math.PI/180;
-      return { x: cx + r*Math.cos(a), y: cy + r*Math.sin(a) };
-    }
-
-    function drawRing(){
-      const cx=140, cy=140;
-      ringSvg.innerHTML = "";
-
-      // фон
-      const bg = document.createElementNS("http://www.w3.org/2000/svg","circle");
-      bg.setAttribute("cx", cx); bg.setAttribute("cy", cy); bg.setAttribute("r", 120);
-      bg.setAttribute("fill", "#0f181b"); bg.setAttribute("stroke", "#27454a"); bg.setAttribute("stroke-width", "2");
-      ringSvg.appendChild(bg);
-
-      const labels = ring.phase==="hour" ? 24 : 60;
-      const step = 360/labels;
-
-      for(let i=0;i<labels;i++){
-        const ang = i*step;
-        const p = polar(cx,cy, 100, ang);
-        const txt = document.createElementNS("http://www.w3.org/2000/svg","text");
-        txt.setAttribute("x", p.x); txt.setAttribute("y", p.y);
-        txt.setAttribute("text-anchor","middle");
-        txt.setAttribute("dominant-baseline","central");
-        txt.setAttribute("fill", (ring.phase==="minute" && (i%5)!==0) ? "#56757a" : "#bfe3da");
-        txt.setAttribute("font-size", (ring.phase==="hour" ? 11 : (i%5===0?10:0))); // минутните не-кратни на 5 са мини
-        txt.style.userSelect="none";
-        if(ring.phase==="hour"){
-          txt.textContent = String(i);
-        }else{
-          txt.textContent = (i%5===0)? String(i).padStart(2,"0") : "·"; // чертички/точки за минути между 5-ците
-        }
-        ringSvg.appendChild(txt);
+    function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
+    function buildHours(){
+      clear(ringH);
+      for(let h=0; h<24; h++){
+        const el=document.createElement('div'); el.className='clk-tick'+((h%6===0)?' strong':'');
+        el.textContent = h;
+        const ang = (Math.PI*2) * (h/24) - Math.PI/2;
+        const R=95; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
+        el.style.left='calc(50% + '+(x-13)+'px)'; el.style.top='calc(50% + '+(y-13)+'px)';
+        if(h===H) el.classList.add('sel');
+        el.addEventListener('click', ()=>{ H=h; updateRead(); ringH.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); });
+        ringH.appendChild(el);
       }
-
-      // Индикатор
-      const val = ring.phase==="hour" ? ring.hour : ring.minute;
-      const angSel = val*step;
-      const pSel = polar(cx,cy, 74, angSel);
-      const dot = document.createElementNS("http://www.w3.org/2000/svg","circle");
-      dot.setAttribute("cx", pSel.x); dot.setAttribute("cy", pSel.y);
-      dot.setAttribute("r", 6); dot.setAttribute("fill", "#22c55e");
-      ringSvg.appendChild(dot);
-
-      ringCenter.textContent = String(ring.hour).padStart(2,"0")+":"+String(ring.minute).padStart(2,"0");
+    }
+    function buildMins(){
+      clear(ringM);
+      for(let m=0; m<60; m++){
+        const el=document.createElement('div'); el.className='clk-tick'+((m%5===0)?' strong':'');
+        el.textContent = (m%5===0)? m : '·';
+        const ang = (Math.PI*2) * (m/60) - Math.PI/2;
+        const R=115; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
+        el.style.left='calc(50% + '+(x-13)+'px)'; el.style.top='calc(50% + '+(y-13)+'px)';
+        if(m===M) el.classList.add('sel');
+        el.addEventListener('click', ()=>{ M=m; updateRead(); ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); });
+        ringM.appendChild(el);
+      }
     }
 
-    function pickAt(x, y){
-      const rect = ringSvg.getBoundingClientRect();
-      const cx = rect.left + rect.width/2;
-      const cy = rect.top  + rect.height/2;
-      const dx = x - cx, dy = y - cy;
-      let ang = Math.atan2(dy, dx)*180/Math.PI + 90;
-      if(ang<0) ang += 360;
-      const labels = ring.phase==="hour" ? 24 : 60;
-      const step = 360/labels;
-      const idx = Math.round(ang/step) % labels;
-      if(ring.phase==="hour") ring.hour = idx; else ring.minute = idx;
-      drawRing();
+    function showClk(row,dow,initial){
+      selRow=row; selDow=dow;
+      const idx = (dow===0?6:dow-1);
+      const [h,m] = (initial||state.times[row][idx]).split(':').map(x=>parseInt(x,10));
+      H = isFinite(h)?h:8; M=isFinite(m)?m:0; updateRead();
+      buildHours(); buildMins();
+      Modal.classList.add('show');
+    }
+    function hideClk(){ Modal.classList.remove('show'); }
+
+    // Drag въртене
+    let dragging=null; // 'H' или 'M'
+    function ptAngle(cx,cy, x,y){ const dx=x-cx, dy=y-cy; let ang=Math.atan2(dy,dx); ang+=Math.PI/2; if(ang<0) ang+=Math.PI*2; return ang; }
+    function setFromAngleHours(ang){ let v=Math.round((ang/(Math.PI*2))*24)%24; H=v; updateRead(); ringH.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); const t=[...ringH.children].find(el=>Number(el.textContent)===H); if(t) t.classList.add('sel'); }
+    function setFromAngleMins(ang){ let v=Math.round((ang/(Math.PI*2))*60)%60; M=v; updateRead(); ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); const t=[...ringM.children][M]; if(t) t.classList.add('sel'); }
+
+    function startDrag(which, e){
+      dragging=which;
+      handleMove(e);
+    }
+    function endDrag(){ dragging=null; }
+    function handleMove(e){
+      if(!dragging) return;
+      const rect=face.getBoundingClientRect();
+      const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
+      const x=(e.touches?e.touches[0].clientX:e.clientX), y=(e.touches?e.touches[0].clientY:e.clientY);
+      const ang=ptAngle(cx,cy,x,y);
+      if(dragging==='H') setFromAngleHours(ang); else setFromAngleMins(ang);
     }
 
-    function openRing(hhmm, onDone){
-      const [H,M] = (hhmm||"08:00").split(":").map(n=>parseInt(n,10));
-      ring.hour = Number.isFinite(H)?H:8;
-      ring.minute = Number.isFinite(M)?M:0;
-      ring.phase = "hour";
-      ring.onDone = onDone || null;
-      drawRing();
-      modal.classList.add("show");
-    }
-    function closeRing(){ modal.classList.remove("show"); }
+    ringH.addEventListener('pointerdown', (e)=>{ e.preventDefault(); startDrag('H',e); });
+    ringM.addEventListener('pointerdown', (e)=>{ e.preventDefault(); startDrag('M',e); });
+    window.addEventListener('pointermove', handleMove, {passive:false});
+    window.addEventListener('pointerup', endDrag);
+    ringH.addEventListener('touchstart', (e)=>{ startDrag('H',e); }, {passive:false});
+    ringM.addEventListener('touchstart', (e)=>{ startDrag('M',e); }, {passive:false});
+    window.addEventListener('touchmove', handleMove, {passive:false});
+    window.addEventListener('touchend', endDrag);
 
-    ringSvg.addEventListener("click",(e)=>{
-      pickAt(e.clientX, e.clientY);
-      if(ring.phase==="hour") ring.phase="minute"; else ring.phase="hour";
-      drawRing();
+    TABLE.querySelectorAll('.pl-time-cell').forEach(td=>{
+      td.addEventListener('click', ()=>{
+        const row = Number(td.getAttribute('data-row'));
+        const dow = Number(td.getAttribute('data-dow'));
+        showClk(row, dow, td.textContent.trim());
+      });
     });
 
-    // слушателите използват единствените декларации (няма повторно const!)
-    btnCan.addEventListener('click', closeRing);
-    modal.addEventListener('click', (e)=>{ if(e.target===modal) closeRing(); });
-    btnOk.addEventListener('click', ()=>{
-      const hhmm = String(ring.hour).padStart(2,"0")+":"+String(ring.minute).padStart(2,"0");
-      if(typeof ring.onDone === 'function') ring.onDone(hhmm);
-      closeRing();
+    function commitTime(muteFlag){
+      const idx = (selDow===0?6:selDow-1);
+      state.times[selRow][idx] = two(H)+":"+two(M);
+      if(muteFlag!=null){ state.mute[selRow][idx] = muteFlag?1:0; }
+      save(state);
+      renderTimes();
+    }
+
+    btnOk.addEventListener('click', ()=>{ commitTime(0); hideClk(); });
+    btnAccept.addEventListener('click', ()=>{ commitTime(0); hideClk(); });
+    btnMute.addEventListener('click', ()=>{ commitTime(1); hideClk(); });
+    btnReset.addEventListener('click', ()=>{
+      state.times = [ [...DEF_T1], [...DEF_T2] ];
+      state.mute = [ [0,0,0,0,0,0,0], [0,0,0,0,0,0,0] ];
+      save(state); renderTimes();
     });
+    btnClose.addEventListener('click', hideClk);
+
+    // маркировки уикенд + днешен ден
+    (function markDays(){
+      state.todayDow = (new Date()).getDay();
+      if(typeof state.activeDow!=="number") state.activeDow = state.todayDow;
+      save(state); refreshDays();
+    })();
   })();
   </script>
 </body>
