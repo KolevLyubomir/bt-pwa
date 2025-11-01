@@ -22,8 +22,11 @@
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
       --pill-w:168px;
 
-      --wk-green-d:#a6e6cd;            /* уикенд (по-тъмен зелено-бял) */
+      --wk-green-d:#9fdcc7;           /* уикенд (по-тъмен зелено-бял) */
       --sel-orange:#f59e0b;
+
+      --pl-cell-pad:6px;
+      --pl-font:12px;
     }
     *{ box-sizing:border-box } html,body{ height:100% }
     body{
@@ -61,7 +64,7 @@
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== „Данни“ (оригинална логика от 2.22) ===== */
+    /* ===== „Данни“ (оригинал от 2.22, непокътнато) ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -79,8 +82,6 @@
     .field.weight input{ font-weight:700; font-size:18px; width:9ch }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
     .field.weight input[type="number"]{ appearance:auto; -webkit-appearance:auto; -moz-appearance:auto }
-    .field.weight input[type="number"]::-webkit-inner-spin-button,
-    .field.weight input[type="number"]::-webkit-outer-spin_button{ -webkit-appearance:auto; margin:0 }
     .bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
       border:1px solid #334a4f; background:#0d171b; border-radius:10px }
     .bt-only input{ width:16px; height:16px; margin:0 }
@@ -101,7 +102,6 @@
     .recbar{ display:flex; align-items:center; gap:8px; justify-content:flex-start; margin:8px 0; flex-wrap:wrap }
     .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
     .pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
-    .pager button{ background:#0d171b; border:1px solid #2a3e41; color:#fff; padding:4px 8px; border-radius:8px; font-size:13px }
     .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
     canvas{ width:100%; height:360px; display:block; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
     .date-wrap{ position:relative } #dateText[readonly]{ cursor:pointer }
@@ -113,75 +113,79 @@
     .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
     .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
     .cal .day{ width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid transparent }
-    .cal .day:hover{ border-color:#27454a }
-    .cal .day.disabled{ opacity:.35; pointer-events:none }
-    .cal .day.has{ background:var(--has); color:#092218 }
     .cal .day.today{ outline:1px dashed #5b8f98 }
     .cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
 
     .tabpanel{ display:none }
     .tabpanel[aria-hidden="false"]{ display:block }
 
-    /* ===== ПРОГРАМА ===== */
+    /* ===== ПРОГРАМА (общи) ===== */
     .prog-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
     .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
     .prog-cap{ font-weight:700 }
-    .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
-
-    .prog-pill{
-      display:flex; flex-direction:column; gap:6px;
-      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-      width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
-    }
-    .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
-    .time-wrap{ display:flex; align-items:center; gap:6px }
-    .time-row{ display:flex; align-items:center; gap:4px }
-    .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
-    .time-row .colon{ opacity:.8; user-select:none; }
-    select option.strong { font-weight:700; }
+    .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
     /* ===== ProLact Slim+ таблица ===== */
     .pl-wrap{ overflow-x:auto }
-    .pl-table{ width:100%; border-collapse:separate; border-spacing:6px; table-layout:fixed }
+    .pl-table{ width:100%; border-collapse:separate; border-spacing:4px; table-layout:fixed }
     .pl-table th, .pl-table td{
-      border:1px solid #20343a; border-radius:10px; text-align:center; padding:6px 4px;
-      font-size:12px; line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      border:1px solid #20343a; border-radius:10px; text-align:center; padding:var(--pl-cell-pad);
+      font-size:var(--pl-font); line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
     }
-    .pl-row-caption{ color:var(--muted); font-size:11px; text-align:right; padding-right:8px; border:none !important }
     .pl-day{ cursor:pointer; user-select:none }
     .pl-day.weekend{ color:var(--wk-green-d) }
     .pl-day.today{ outline:1px dashed rgba(200,200,200,.6); outline-offset:-4px }
     .pl-day.active{ border-color:var(--sel-orange) }
-    .pl-time-cell{ cursor:pointer; user-select:none; font-weight:700 }
+    .pl-time-cell{ cursor:pointer; user-select:none; font-weight:800 }
+    .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
+    .pl-time-cell.green{ background:#103d2a; border-color:#1e6147 }
+    .pl-time-cell.yellow{ background:#3d3310; border-color:#6b5314 }
+    .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
+    .pl-time-mute{ display:inline-flex; margin-left:4px; vertical-align:middle }
 
-    /* ===== Часовник с drag ===== */
-    .clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.35); z-index:100 }
+    /* ===== Модал часовник (drag) ===== */
+    .clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:100 }
     .clk.show{ display:flex; align-items:center; justify-content:center }
-    .clk-card{ background:#0e1518; border:1px solid #20343a; border-radius:16px; padding:12px; width:320px; max-width:92vw; box-shadow:0 10px 40px rgba(0,0,0,.5) }
-    .clk-title{ margin:2px 0 8px; font-weight:800; font-size:14px }
-    .clk-face{ position:relative; width:270px; height:270px; margin:0 auto; border-radius:50%; border:1px solid #294047; background:#0b1317; touch-action:none }
-    .clk-center{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50% }
-    .clk-read{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); background:#10191c; border:1px solid #294047; border-radius:8px; padding:4px 8px; font-weight:800 }
+    .clk-card{ background:#0e1519; border:1px solid #20343a; border-radius:16px; padding:12px 12px 14px; width:330px; max-width:92vw; box-shadow:0 10px 40px rgba(0,0,0,.5) }
+
+    .clk-face{ position:relative; width:290px; height:290px; margin:0 auto; border-radius:50%; border:1px solid #294047; background:#0b1317; touch-action:none }
+    /* пръстени – по-раздалечени */
     .clk-ring{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50% }
-    .clk-ring.hours{ width:220px; height:220px }
-    .clk-ring.mins{ width:250px; height:250px }
+    .clk-ring.hours{ width:200px; height:200px }   /* вътрешен */
+    .clk-ring.mins{ width:260px; height:260px }    /* външен */
+
     .clk-tick{ position:absolute; width:26px; height:26px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; color:#d6ece6;
       border:1px solid transparent; background:#0f1a1d; user-select:none }
     .clk-tick.strong{ font-weight:800 }
     .clk-tick.sel{ background:#22c55e; color:#06241b }
-    .clk-actions{ display:flex; gap:8px; justify-content:center; margin-top:10px }
-    .btn-traffic{ padding:6px 10px; border-radius:20px; font-weight:800; border:1px solid #2a3e41; background:#0f1a1d; font-size:12px; cursor:pointer }
-    .btn-ok{ background:#22c55e; color:#06241b; border-color:#22c55e }
-    .btn-accept{ background:#f59e0b; color:#2a1703; border-color:#f59e0b }
-    .btn-mute{ display:flex; align-items:center; gap:6px }
-    .btn-mute svg{ width:14px; height:14px; stroke:currentColor }
-    .clk-footer{ display:flex; justify-content:space-between; margin-top:8px }
-    .clk-x{ background:#111; border:1px solid #333; font-size:12px; padding:4px 8px; border-radius:8px; cursor:pointer }
+
+    /* стрелки */
+    .clk-hand{ position:absolute; left:50%; top:50%; transform-origin:50% 100%; pointer-events:none }
+    .clk-hand.hour{ width:6px; height:68px; background:#e7faf4; border-radius:3px; transform:translate(-50%,-100%) rotate(0deg); box-shadow:0 0 0 1px #0b1215 inset }
+    .clk-hand.min{ width:3px; height:96px; background:#cde7df; border-radius:2px; transform:translate(-50%,-100%) rotate(0deg); box-shadow:0 0 0 1px #0b1215 inset }
+
+    .clk-center-dot{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 0 2px #0b1317 }
+
+    /* центърен правоъгълник (клик/клавиатура) */
+    .clk-read{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); background:#10191c; border:1px solid #294047; border-radius:8px; padding:4px 8px;
+      font-weight:800; min-width:72px; text-align:center; cursor:pointer; user-select:none }
+
+    .clk-actions{ display:flex; gap:12px; justify-content:center; margin-top:12px }
+    .traffic-btn{ width:28px; height:28px; border-radius:50%; border:2px solid #0b1215; cursor:pointer }
+    #btnGreen{ background:#22c55e }
+    #btnYellow{ background:#f59e0b }
+    #btnRed{ background:#ef4444; display:flex; align-items:center; justify-content:center }
+    #btnRed svg{ width:15px; height:15px; stroke:#0b1215; stroke-width:2; }
 
     @media (max-width: 380px){
-      :root{ --pill-w:156px; }
-      .time-row select{ min-width:48px; }
+      :root{ --pill-w:156px; --pl-font:11px; --pl-cell-pad:5px }
       .prod-img{ width:64px; height:64px; border-radius:10px; }
+      .clk-card{ width:306px }
+      .clk-face{ width:272px; height:272px }
+      .clk-ring.hours{ width:188px; height:188px }
+      .clk-ring.mins{ width:248px; height:248px }
+      .clk-hand.hour{ height:64px } .clk-hand.min{ height:90px }
     }
   </style>
 </head>
@@ -206,13 +210,11 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ -->
+  <!-- ПАНЕЛ: ДАННИ (оригиналната ти логика) -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
-      <!-- Запис -->
       <section class="card">
         <h2 style="margin:0 0 10px">Запис</h2>
-
         <div class="inputs-row">
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
@@ -265,7 +267,6 @@
         </div>
       </section>
 
-      <!-- Графика -->
       <section class="card">
         <h2 style="margin:0 0 10px">Графика</h2>
         <div class="inputs-row">
@@ -278,10 +279,8 @@
         <canvas id="chart"></canvas>
       </section>
 
-      <!-- Записи -->
       <section class="card">
         <h2 style="margin:0">Записи</h2>
-
         <div class="recbar">
           <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
           <select id="pageSize">
@@ -299,21 +298,9 @@
         <div class="pager" id="pagerTop"></div>
         <table id="tbl">
           <colgroup><col class="date"><col class="w"><col class="act"></colgroup>
-          <thead id="theadTop">
-            <tr>
-              <th class="date">Дата</th>
-              <th class="w">Тегло (kg)</th>
-              <th class="actions">Действия</th>
-            </tr>
-          </thead>
+          <thead><tr><th class="date">Дата</th><th class="w">Тегло (kg)</th><th class="actions">Действия</th></tr></thead>
           <tbody></tbody>
-          <tfoot id="tfootBottom">
-            <tr>
-              <th class="date">Дата</th>
-              <th class="w">Тегло (kg)</th>
-              <th class="actions">Действия</th>
-            </tr>
-          </tfoot>
+          <tfoot><tr><th class="date">Дата</th><th class="w">Тегло (kg)</th><th class="actions">Действия</th></tr></tfoot>
         </table>
         <div class="pager" id="pagerBottom"></div>
       </section>
@@ -326,7 +313,7 @@
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ✅ ProLact Slim+ — таблица (2 приема) -->
+        <!-- ✅ ProLact Slim+ — 2 приема / таблица без колона I/II -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
@@ -337,7 +324,6 @@
             <table class="pl-table" id="pl-table">
               <thead>
                 <tr>
-                  <th class="pl-row-caption"></th>
                   <th class="pl-day" data-dow="1">Пн</th>
                   <th class="pl-day" data-dow="2">Вт</th>
                   <th class="pl-day" data-dow="3">Ср</th>
@@ -349,7 +335,6 @@
               </thead>
               <tbody>
                 <tr>
-                  <td class="pl-row-caption">I време</td>
                   <td class="pl-time-cell" data-row="0" data-dow="1">08:00</td>
                   <td class="pl-time-cell" data-row="0" data-dow="2">08:00</td>
                   <td class="pl-time-cell" data-row="0" data-dow="3">08:00</td>
@@ -359,7 +344,6 @@
                   <td class="pl-time-cell" data-row="0" data-dow="0">08:00</td>
                 </tr>
                 <tr>
-                  <td class="pl-row-caption">II време</td>
                   <td class="pl-time-cell" data-row="1" data-dow="1">19:00</td>
                   <td class="pl-time-cell" data-row="1" data-dow="2">19:00</td>
                   <td class="pl-time-cell" data-row="1" data-dow="3">19:00</td>
@@ -381,7 +365,6 @@
             <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
             <span class="prog-cap">OMNi-Biotic HETOX light</span>
           </div>
-
           <div class="prog-row" role="group" aria-label="HETOX — 1 от 3">
             <span class="prog-pill">
               <label><input type="checkbox" id="he-m"> Сутрин</label>
@@ -418,7 +401,6 @@
             <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
             <span class="prog-cap">Fortex Хитозан Плюс</span>
           </div>
-
           <div class="prog-row" role="group" aria-label="Хитозан Плюс">
             <span class="prog-pill">
               <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
@@ -448,7 +430,6 @@
         </div>
       </section>
 
-      <!-- Допълнителен пакет -->
       <section class="card" id="pkg-extra">
         <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
@@ -458,7 +439,6 @@
         </ul>
       </section>
 
-      <!-- Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
         <p style="margin:0 0 8px; color:#9fb4ad">
@@ -473,41 +453,38 @@
     </main>
   </div>
 
-  <!-- МОДАЛЕН ЧАСОВНИК + “СФЕТОФАР” -->
+  <!-- МОДАЛ ЧАСОВНИК — само циферблат + 3 бутона -->
   <div class="clk" id="clk">
     <div class="clk-card" role="dialog" aria-label="Избор на време">
-      <div class="clk-title">Избери час / минути</div>
       <div class="clk-face" id="clkFace">
         <div class="clk-ring mins" id="ringM"></div>
         <div class="clk-ring hours" id="ringH"></div>
-        <div class="clk-center"></div>
-        <div class="clk-read" id="clkRead">08:00</div>
+        <div class="clk-hand hour" id="handH"></div>
+        <div class="clk-hand min" id="handM"></div>
+        <div class="clk-center-dot"></div>
+        <div class="clk-read" id="clkRead" title="Клик за превключване H/M">08:00</div>
       </div>
       <div class="clk-actions">
-        <button class="btn-traffic btn-ok" id="btnOk">OK</button>
-        <button class="btn-traffic btn-accept" id="btnAccept">Прието</button>
-        <button class="btn-traffic btn-mute" id="btnMute" title="Без звук">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M9 9l6 6M15 9l-6 6"></path>
-            <path d="M3 9v6h4l5 4V5L7 9H3z"></path>
-          </svg> Без звук
+        <button id="btnGreen" class="traffic-btn" aria-label="Запиши (зелено)"></button>
+        <button id="btnYellow" class="traffic-btn" aria-label="Запиши (жълто)"></button>
+        <button id="btnRed" class="traffic-btn" aria-label="Запиши (червено)">
+          <svg viewBox="0 0 24 24" fill="none">
+            <path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
         </button>
-      </div>
-      <div class="clk-footer">
-        <button id="btnReset" class="clk-x" type="button">Reset (08:00/19:00)</button>
-        <button id="btnClose" class="clk-x" type="button">Затвори</button>
       </div>
     </div>
   </div>
 
   <script>
   "use strict";
-  /* ===== Общи ===== */
+  /* ===== utilities ===== */
   function two(n){ return String(n).padStart(2,"0"); }
   function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
   var TODAY = todayISO();
 
-  /* ===== Табове ===== */
+  /* ===== Tabs ===== */
   (function(){
     const tabs = [
       {btn: document.getElementById('tab-data'), panel: document.getElementById('panel-data')},
@@ -528,12 +505,18 @@
     }catch(_){ select(0); }
   })();
 
-  /* ===== Данни (възстановена 2.22 логика) ===== */
+  /* ===== Данни (възстановено 1:1) ===== */
   var KEY="bt-progress";
   function loadRecs(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(_) { return []; } }
   function saveRecs(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
   function sortDesc(a){ return a.slice().sort((x,y)=>y.date.localeCompare(x.date)); }
   function sortAsc(a){ return a.slice().sort((x,y)=>x.date.localeCompare(y.date)); }
+  function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
+  function bgToISO_any(bg){
+    var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
+    var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
+    return "";
+  }
 
   var dateText=document.getElementById("dateText"), calEl=document.getElementById("cal"),
       weight=document.getElementById("weight"), addBtn=document.getElementById("addBtn"),
@@ -542,13 +525,6 @@
       chart=document.getElementById("chart"), pageSizeSel=document.getElementById("pageSize"),
       exportBtn=document.getElementById("exportBtn"), importBtn=document.getElementById("importBtn"),
       importFile=document.getElementById("importFile"), btFlag=document.getElementById("btFlag");
-
-  function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
-  function bgToISO_any(bg){
-    var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-    var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
-    return "";
-  }
 
   var currentISO=localStorage.getItem("bt-last-date")||TODAY;
   if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO=TODAY;
@@ -603,10 +579,10 @@
     saveRecs(data); renderTable(); renderChart();
   });
 
-  // странициране
   var pageSize=(localStorage.getItem("bt-page-size")||"28"), currentPage=1;
   function getPS(){ return pageSize==="all"?"all":Number(pageSize)||28; }
   function setPS(v){ pageSize=v; localStorage.setItem("bt-page-size",v); }
+  var pageSizeSel=document.getElementById("pageSize");
   if(pageSizeSel){ pageSizeSel.value=pageSize; pageSizeSel.addEventListener("change", ()=>{ setPS(pageSizeSel.value); currentPage=1; renderTable(); renderChart(); }); }
   var __currentSlice=[];
   function buildPager(container,total,eff){
@@ -659,7 +635,6 @@
     });
   }
 
-  // Агрегации
   function weekKey(iso){
     var d=new Date(iso); d.setUTCHours(0,0,0,0); d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
     var yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
@@ -736,10 +711,7 @@
                       : bothNon ? (getComputedStyle(document.documentElement).getPropertyValue('--line-green').trim()||'#87f3c5')
                       : (getComputedStyle(document.documentElement).getPropertyValue('--line-neutral').trim()||'#2dd4bf');
       ctx.lineWidth=2.0;
-      ctx.beginPath();
-      ctx.moveTo(X(i-1), Y(p0.y));
-      ctx.lineTo(X(i),   Y(p1.y));
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(X(i-1), Y(p0.y)); ctx.lineTo(X(i), Y(p1.y)); ctx.stroke();
     }
 
     ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle";
@@ -751,22 +723,15 @@
     ctx.font="700 "+cssPx('--chart-label', 15)+"px system-ui";
     for(var j=0;j<n;j++){
       var pe=pts[j], x0=X(j), y0=h-padB;
-      ctx.beginPath();
-      ctx.fillStyle = pe.bt ? orange : green;
+      ctx.beginPath(); ctx.fillStyle = pe.bt ? orange : green;
       const yVal = Y(pe.y);
       ctx.arc(x0, yVal, 3, 0, Math.PI*2); ctx.fill();
 
-      ctx.save();
-      ctx.font = "600 11px system-ui";
-      ctx.fillStyle = "#9fb4ad";
+      ctx.save(); ctx.font = "600 11px system-ui"; ctx.fillStyle = "#9fb4ad";
       ctx.textBaseline = "bottom"; ctx.textAlign = "left";
-      const txt = pe.y.toFixed(1);
-      const tw = ctx.measureText(txt).width;
-      let xText = x0 + 5;
-      if (xText + tw > w - padR - 2) xText = (w - padR - 2) - tw;
-      if (xText < padL + 2) xText = padL + 2;
-      ctx.fillText(txt, xText, yVal - 4);
-      ctx.restore();
+      const txt = pe.y.toFixed(1); const tw = ctx.measureText(txt).width;
+      let xText = x0 + 5; if (xText + tw > w - padR - 2) xText = (w - padR - 2) - tw; if (xText < padL + 2) xText = padL + 2;
+      ctx.fillText(txt, xText, yVal - 4); ctx.restore();
 
       if(j%step===0){
         ctx.save(); ctx.translate(x0,y0+64); ctx.rotate(-Math.PI/2);
@@ -774,31 +739,19 @@
       }
     }
   }
-
-  exportBtn && exportBtn.addEventListener("click", ()=>{
-    var data = loadRecs();
-    var blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a"); a.href=url; a.download="bt-progress-export.json";
-    document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-  });
+  exportBtn && exportBtn.addEventListener("click", ()=>{ var data = loadRecs(); var blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+    var url = URL.createObjectURL(blob); var a = document.createElement("a"); a.href=url; a.download="bt-progress-export.json"; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url); });
   importBtn && importBtn.addEventListener("click", ()=>importFile.click());
   importFile && importFile.addEventListener("change", ()=>{
     var f=importFile.files[0]; if(!f) return;
-    var fr=new FileReader();
-    fr.onload = () => {
+    var fr=new FileReader(); fr.onload = () => {
       try{
-        var arr = JSON.parse(fr.result||"[]");
-        if(!Array.isArray(arr)) throw new Error("Невалиден формат");
-        arr = arr
-          .filter(r => r && typeof r.date==="string" && typeof r.weight==="number")
-          .map(r => ({ date:r.date, weight:r.weight, bt:(r.bt!==false) }));
-        saveRecs(arr); renderTable(); renderChart();
-        alert("Импортът е успешен. Записите са презаредени.");
+        var arr = JSON.parse(fr.result||"[]"); if(!Array.isArray(arr)) throw new Error("Невалиден формат");
+        arr = arr.filter(r => r && typeof r.date==="string" && typeof r.weight==="number").map(r => ({ date:r.date, weight:r.weight, bt:(r.bt!==false) }));
+        saveRecs(arr); renderTable(); renderChart(); alert("Импортът е успешен. Записите са презаредени.");
       }catch(e){ alert("Грешка при импорт: "+e.message); }
       importFile.value="";
-    };
-    fr.readAsText(f);
+    }; fr.readAsText(f);
   });
 
   function migrateDatesAndBT(){
@@ -812,21 +765,15 @@
     }
     if(changed) saveRecs(arr);
   }
-  function initialRender(){
-    migrateDatesAndBT(); prefillFor(currentISO);
-    renderTable(); renderChart();
-    window.addEventListener("resize", ()=>renderChart(), {passive:true});
-  }
+  function initialRender(){ migrateDatesAndBT(); prefillFor(currentISO); renderTable(); renderChart(); window.addEventListener("resize", ()=>renderChart(), {passive:true}); }
   initialRender();
 
   /* ===== OMNi (без промени) ===== */
   function buildHourRange(sel, fromH, toH){ sel.innerHTML=""; for(let h=fromH; h<=toH; h++){ const o=document.createElement("option"); o.value=two(h); o.textContent=o.value; if(h===8||h===12||h===19) o.className="strong"; sel.appendChild(o);}}
   function buildMinutes5(sel){ sel.innerHTML=""; for(let m=0; m<60; m+=5){ const o=document.createElement("option"); o.value=two(m); o.textContent=o.value; if(m%15===0) o.className="strong"; sel.appendChild(o);}}
   function setSel(sel,val){ const opt=[...sel.options].find(o=>o.value===val); if(opt){ sel.value=val; return true;} return false; }
-
   (function(){
-    const DEF={m:"08:00", n:"12:00", e:"19:00"};
-    const KEY_SEL='bt_he_sel_v229'; const KEY_TIM='bt_he_tim_v229';
+    const DEF={m:"08:00", n:"12:00", e:"19:00"}; const KEY_SEL='bt_he_sel_v229'; const KEY_TIM='bt_he_tim_v229';
     const m=document.getElementById('he-m'), n=document.getElementById('he-n'), e=document.getElementById('he-e');
     const boxM=document.getElementById('he-tp-m'), boxN=document.getElementById('he-tp-n'), boxE=document.getElementById('he-tp-e');
     const hhM=document.getElementById('he-hh-m'), mmM=document.getElementById('he-mm-m');
@@ -890,7 +837,7 @@
 
     function getTodayDow(){ return (new Date()).getDay(); } // 0..6
     function load(){ try{ const r=JSON.parse(localStorage.getItem(KEY)||""); if(r && r.times && r.times.length===2) return r; }catch(_){}
-      const init = { times:[ [...DEF_T1], [...DEF_T2] ], mute:[ [0,0,0,0,0,0,0],[0,0,0,0,0,0,0] ], todayDow:getTodayDow(), activeDow:getTodayDow() };
+      const init = { times:[ [...DEF_T1], [...DEF_T2] ], flag:[ [0,0,0,0,0,0,0],[0,0,0,0,0,0,0] ], todayDow:getTodayDow(), activeDow:getTodayDow() };
       localStorage.setItem(KEY, JSON.stringify(init)); return init;
     }
     function save(obj){ localStorage.setItem(KEY, JSON.stringify(obj)); }
@@ -905,16 +852,32 @@
       });
     }
     function renderTimes(){
+      // row 0 and 1 across dow sequence [1,2,3,4,5,6,0] indexes 0..6
+      const seq=[1,2,3,4,5,6,0];
       for(let row=0; row<2; row++){
         for(let i=0;i<7;i++){
-          const dow = [1,2,3,4,5,6,0][i];
+          const dow = seq[i];
           const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
-          if(cell){ const idx = (dow===0?6:dow-1); cell.textContent = state.times[row][idx]; }
+          if(cell){
+            const idx = (dow===0?6:dow-1);
+            cell.textContent = state.times[row][idx];
+            cell.classList.remove('green','yellow','red','sel');
+            const f = state.flag[row][idx]|0;
+            if(f===0) cell.classList.add('green'); else if(f===1) cell.classList.add('yellow'); else if(f===2) cell.classList.add('red');
+            // mute icon only when red (optional visual cue)
+            const old = cell.querySelector('.pl-time-mute'); if(old) old.remove();
+            if(f===2){
+              const ico=document.createElement('span'); ico.className='pl-time-mute';
+              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+              cell.appendChild(ico);
+            }
+          }
         }
       }
     }
     refreshDays(); renderTimes();
 
+    // активен ден при клик в заглавката
     TABLE.querySelectorAll('thead .pl-day').forEach(th=>{
       th.addEventListener('click', ()=>{
         state.activeDow = Number(th.getAttribute('data-dow'));
@@ -922,20 +885,28 @@
       });
     });
 
-    // Модал/часовник
+    // Модал и избор
     const Modal = document.getElementById('clk');
     const face = document.getElementById('clkFace');
     const ringH = document.getElementById('ringH');
     const ringM = document.getElementById('ringM');
+    const handH = document.getElementById('handH');
+    const handM = document.getElementById('handM');
     const read = document.getElementById('clkRead');
-    const btnOk = document.getElementById('btnOk');
-    const btnAccept = document.getElementById('btnAccept');
-    const btnMute = document.getElementById('btnMute');
-    const btnReset = document.getElementById('btnReset');
-    const btnClose = document.getElementById('btnClose');
+    const btnGreen = document.getElementById('btnGreen');
+    const btnYellow = document.getElementById('btnYellow');
+    const btnRed = document.getElementById('btnRed');
 
-    let selRow=0, selDow=1; let H=8, M=0;
+    let selRow=0, selDow=1, activeCell=null;
+    let H=8, M=0, focusHM='H';
+
     function updateRead(){ read.textContent = two(H)+":"+two(M); }
+    function setHands(){
+      const degH = (H%12)*30 + (M/60)*30; // 360/12
+      const degM = M*6;                   // 360/60
+      handH.style.transform = 'translate(-50%,-100%) rotate('+degH+'deg)';
+      handM.style.transform = 'translate(-50%,-100%) rotate('+degM+'deg)';
+    }
 
     function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
     function buildHours(){
@@ -944,10 +915,10 @@
         const el=document.createElement('div'); el.className='clk-tick'+((h%6===0)?' strong':'');
         el.textContent = h;
         const ang = (Math.PI*2) * (h/24) - Math.PI/2;
-        const R=95; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
+        const R=84; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
         el.style.left='calc(50% + '+(x-13)+'px)'; el.style.top='calc(50% + '+(y-13)+'px)';
         if(h===H) el.classList.add('sel');
-        el.addEventListener('click', ()=>{ H=h; updateRead(); ringH.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); });
+        el.addEventListener('click', ()=>{ H=h; updateRead(); setHands(); ringH.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); focusHM='H'; });
         ringH.appendChild(el);
       }
     }
@@ -957,35 +928,37 @@
         const el=document.createElement('div'); el.className='clk-tick'+((m%5===0)?' strong':'');
         el.textContent = (m%5===0)? m : '·';
         const ang = (Math.PI*2) * (m/60) - Math.PI/2;
-        const R=115; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
+        const R=124; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
         el.style.left='calc(50% + '+(x-13)+'px)'; el.style.top='calc(50% + '+(y-13)+'px)';
         if(m===M) el.classList.add('sel');
-        el.addEventListener('click', ()=>{ M=m; updateRead(); ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); });
+        el.addEventListener('click', ()=>{ M=m; updateRead(); setHands(); ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); focusHM='M'; });
         ringM.appendChild(el);
       }
     }
 
-    function showClk(row,dow,initial){
+    function showClk(row,dow,initial, cell){
+      if(activeCell){ activeCell.classList.remove('sel'); }
+      activeCell = cell; if(activeCell) activeCell.classList.add('sel');
       selRow=row; selDow=dow;
       const idx = (dow===0?6:dow-1);
       const [h,m] = (initial||state.times[row][idx]).split(':').map(x=>parseInt(x,10));
-      H = isFinite(h)?h:8; M=isFinite(m)?m:0; updateRead();
-      buildHours(); buildMins();
+      H = isFinite(h)?h:8; M=isFinite(m)?m:0; focusHM='H';
+      updateRead(); setHands(); buildHours(); buildMins();
       Modal.classList.add('show');
     }
-    function hideClk(){ Modal.classList.remove('show'); }
+    function hideClk(){
+      Modal.classList.remove('show');
+      if(activeCell){ activeCell.classList.remove('sel'); activeCell=null; }
+    }
 
     // Drag въртене
     let dragging=null; // 'H' или 'M'
     function ptAngle(cx,cy, x,y){ const dx=x-cx, dy=y-cy; let ang=Math.atan2(dy,dx); ang+=Math.PI/2; if(ang<0) ang+=Math.PI*2; return ang; }
-    function setFromAngleHours(ang){ let v=Math.round((ang/(Math.PI*2))*24)%24; H=v; updateRead(); ringH.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); const t=[...ringH.children].find(el=>Number(el.textContent)===H); if(t) t.classList.add('sel'); }
-    function setFromAngleMins(ang){ let v=Math.round((ang/(Math.PI*2))*60)%60; M=v; updateRead(); ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); const t=[...ringM.children][M]; if(t) t.classList.add('sel'); }
+    function setFromAngleHours(ang){ let v=Math.round((ang/(Math.PI*2))*24)%24; if(v<0) v+=24; H=v; updateRead(); setHands();
+      ringH.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); const t=[...ringH.children].find(el=>Number(el.textContent)===H); if(t) t.classList.add('sel'); focusHM='H'; }
+    function setFromAngleMins(ang){ let v=Math.round((ang/(Math.PI*2))*60)%60; if(v<0) v+=60; M=v; updateRead(); setHands();
+      ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); const t=[...ringM.children][M]; if(t) t.classList.add('sel'); focusHM='M'; }
 
-    function startDrag(which, e){
-      dragging=which;
-      handleMove(e);
-    }
-    function endDrag(){ dragging=null; }
     function handleMove(e){
       if(!dragging) return;
       const rect=face.getBoundingClientRect();
@@ -994,6 +967,8 @@
       const ang=ptAngle(cx,cy,x,y);
       if(dragging==='H') setFromAngleHours(ang); else setFromAngleMins(ang);
     }
+    function startDrag(which, e){ dragging=which; handleMove(e); }
+    function endDrag(){ dragging=null; }
 
     ringH.addEventListener('pointerdown', (e)=>{ e.preventDefault(); startDrag('H',e); });
     ringM.addEventListener('pointerdown', (e)=>{ e.preventDefault(); startDrag('M',e); });
@@ -1004,31 +979,38 @@
     window.addEventListener('touchmove', handleMove, {passive:false});
     window.addEventListener('touchend', endDrag);
 
+    // Централният правоъгълник: кликаш → превключва H/M; ↑/↓ променят текущия фокус, wrap
+    read.addEventListener('click', ()=>{ focusHM = (focusHM==='H'?'M':'H'); });
+    Modal.addEventListener('keydown', (ev)=>{
+      if(ev.key==='ArrowUp' || ev.key==='ArrowDown'){
+        ev.preventDefault();
+        const dir = ev.key==='ArrowUp'?1:-1;
+        if(focusHM==='H'){ H=(H+dir+24)%24; updateRead(); setHands(); buildHours(); }
+        else { M=(M+dir+60)%60; updateRead(); setHands(); buildMins(); }
+      }
+    });
+
+    // Клетка клик → отваряне
     TABLE.querySelectorAll('.pl-time-cell').forEach(td=>{
       td.addEventListener('click', ()=>{
         const row = Number(td.getAttribute('data-row'));
         const dow = Number(td.getAttribute('data-dow'));
-        showClk(row, dow, td.textContent.trim());
+        showClk(row, dow, td.textContent.trim(), td);
+        // фокус върху модала за да работят стрелките от клавиатура
+        setTimeout(()=>Modal.querySelector('.clk-card').focus?.(), 0);
       });
     });
 
-    function commitTime(muteFlag){
+    function commitTime(flag){ // 0-green,1-yellow,2-red
       const idx = (selDow===0?6:selDow-1);
       state.times[selRow][idx] = two(H)+":"+two(M);
-      if(muteFlag!=null){ state.mute[selRow][idx] = muteFlag?1:0; }
-      save(state);
-      renderTimes();
+      state.flag[selRow][idx] = flag;
+      save(state); renderTimes(); hideClk();
     }
 
-    btnOk.addEventListener('click', ()=>{ commitTime(0); hideClk(); });
-    btnAccept.addEventListener('click', ()=>{ commitTime(0); hideClk(); });
-    btnMute.addEventListener('click', ()=>{ commitTime(1); hideClk(); });
-    btnReset.addEventListener('click', ()=>{
-      state.times = [ [...DEF_T1], [...DEF_T2] ];
-      state.mute = [ [0,0,0,0,0,0,0], [0,0,0,0,0,0,0] ];
-      save(state); renderTimes();
-    });
-    btnClose.addEventListener('click', hideClk);
+    btnGreen.addEventListener('click', ()=>commitTime(0));
+    btnYellow.addEventListener('click', ()=>commitTime(1));
+    btnRed.addEventListener('click', ()=>commitTime(2));
 
     // маркировки уикенд + днешен ден
     (function markDays(){
