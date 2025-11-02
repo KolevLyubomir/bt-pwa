@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.34</title>
+  <title>БТ App 3 — v2.35</title>
 
-  <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
@@ -22,10 +21,10 @@
       --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2dd4bf;
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
       --pill-w:168px;
-      --wk-font:13px;             /* по-малки цифри в таблицата */
-      --wk-pad:6px;               /* стегнат падинг */
+      --wk-font:13px;
+      --wk-pad:6px;
       --wk-head-pad:6px;
-      --wk-weekend:#cfe7da;       /* зеленикаво-бял (по-тъмен) */
+      --wk-weekend:#cfe7da;
       --wk-head-border:#6f8e94;
       --wk-head-dotted:#8ca3a8;
       --modal-backdrop:rgba(0,0,0,.55);
@@ -42,7 +41,6 @@
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif
     }
 
-    /* ===== Горна лента ===== */
     .topbar-wrap{ position:sticky; top:0; z-index:10; background:#0b1215; border-bottom:1px solid var(--border); }
     .topbar{
       max-width:var(--maxw); margin:0 auto; padding:12px 16px;
@@ -56,7 +54,6 @@
       background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
     }
 
-    /* ===== Табове ===== */
     .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
     .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
     .tab-btn{
@@ -68,11 +65,9 @@
       color:#06241b; border-color:transparent; background:linear-gradient(90deg,#22c55e,#14b8a6);
     }
 
-    /* ===== Основно съдържание ===== */
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== „Данни“ (без промени) ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -90,42 +85,30 @@
     button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
 
     .field.date{ width:120px }
-    .field.date input{ width:100% }
     .field.weight input{ font-weight:700; font-size:18px; width:9ch }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
-
-    .field.weight input[type="number"]{
-      appearance:auto; -webkit-appearance:auto; -moz-appearance:auto;
-    }
-    .field.weight input[type="number"]::-webkit-inner-spin-button,
-    .field.weight input[type="number"]::-webkit-outer-spin-button{
-      -webkit-appearance:auto; margin:0;
-    }
 
     .bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
       border:1px solid #334a4f; background:#0d171b; border-radius:10px }
     .bt-only input{ width:16px; height:16px; margin:0 }
-    .bt-only[title]{ cursor:pointer }
 
     table{ width:100%; border-collapse:collapse }
     colgroup col.date{ width:70px } colgroup col.w{ width:70px } colgroup col.act{ width:auto }
     th,td{ padding:3px 4px; border-bottom:1px solid #20343a; font-size:13px; line-height:1.15; white-space:nowrap; text-align:left; vertical-align:middle }
     th{ color:var(--muted); font-weight:600 }
-    th.date,td.date{ padding-right:1px }
-    th.w,td.w{ text-align:right; padding-left:2px }
     th.actions,td.actions{ padding-left:72px }
 
     .wCell{ text-align:right }
     .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
 
-    .actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
+    .actions{ display:inline-flex; gap:6px; align-items:center; }
     .icon{ display:inline-flex; align-items:center; justify-content:center; border:1px solid #2a3e41; background:#0d171b; border-radius:8px; padding:4px 6px; color:#fff; height:var(--ctl-h) }
     .icon svg{ width:16px; height:16px; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round }
     .icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
 
-    .recbar{ display:flex; align-items:center; gap:8px; justify-content:flex-start; margin:8px 0; flex-wrap:wrap }
-    .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
-    .pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
+    .recbar{ display:flex; align-items:center; gap:8px; margin:8px 0; flex-wrap:wrap }
+    .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; margin-top:8px }
+    .pager .info{ color:var(--muted); font-size:12px; margin-right:8px }
     .pager button{ background:#0d171b; border:1px solid #2a3e41; color:#fff; padding:4px 8px; border-radius:8px; font-size:13px }
     .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
 
@@ -146,18 +129,15 @@
     .cal .day.today{ outline:1px dashed #5b8f98 }
     .cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
 
-    /* Панели */
     .tabpanel{ display:none }
     .tabpanel[aria-hidden="false"]{ display:block }
 
-    /* ===== ПРОГРАМА: общи ===== */
     .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
     .prog-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
     .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
     .prog-cap{ font-weight:700 }
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
-    /* ===== ProLact — седмична таблица (2 реда, 7 колони) ===== */
     .wk-table-wrap{ overflow:auto; }
     .wk{ width:100%; border-collapse:separate; border-spacing:0; table-layout:fixed; }
     .wk th, .wk td{
@@ -176,68 +156,53 @@
     }
     .wk th .h.weekend{ color:var(--wk-weekend); }
     .wk th .h.today{ border:1px dashed var(--wk-head-dotted); }
-    .wk th .h.active{ border-color:transparent; background:rgba(245,158,11,.18); outline:1px solid var(--orange); color:#fff; }
-    .wk td{ font-weight:600; }
+    .wk th .h.active{ background:rgba(245,158,11,.18); outline:1px solid var(--orange); color:#fff; }
     .wk .tcell{
       display:flex; align-items:center; justify-content:center; gap:6px;
       padding:6px 2px; cursor:pointer; user-select:none; font-weight:600;
     }
-    .wk .tcell .t{ font-weight:600; letter-spacing:.2px }
-    .wk .tcell .ic{ opacity:.9; transform:translateY(1px); }
     .wk .tcell.editing{ outline:1px solid var(--orange); border-radius:8px; }
-    .wk .tcell .muted{ opacity:.8 }
-    .wk .tight td{ padding-top:4px; padding-bottom:6px; }
-    /* по-малък шрифт и по-стегнат за телефон */
     @media (max-width: 420px){
       :root{ --wk-font:12px; --wk-pad:4px; --wk-head-pad:4px; }
     }
 
-    /* ===== Модал часовник ===== */
     .modal{ position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:30; background:var(--modal-backdrop); }
     .modal.show{ display:flex; }
     .modal-card{
       width:min(94vw, 360px); background:var(--modal-card); border:1px solid #1e2b30; border-radius:14px; padding:12px 12px 8px;
       box-shadow:0 12px 50px rgba(0,0,0,.45);
     }
-    .clock-top{
-      display:flex; align-items:center; justify-content:center; margin-bottom:6px;
-    }
+    .clock-top{ display:flex; align-items:center; justify-content:center; margin-bottom:6px; }
     .clock-val{
       display:inline-flex; gap:6px; align-items:center; justify-content:center;
       font-weight:800; font-size:22px; background:#0b1417; border:1px solid #20343a; border-radius:10px; padding:6px 10px; min-width:112px;
     }
     .clock-val span{ display:inline-block; min-width:2ch; text-align:center; }
     .clock-canvas-wrap{ display:flex; align-items:center; justify-content:center; }
-    .clock-actions{
-      display:flex; align-items:center; justify-content:center; gap:10px; margin-top:8px;
-    }
+    .clock-actions{ display:flex; align-items:center; justify-content:center; gap:10px; margin-top:8px; }
     .btn-round{
       width:38px; height:38px; border-radius:999px; border:1px solid #20343a; background:#0d171b; display:inline-flex; align-items:center; justify-content:center;
     }
     .btn-round.green{ background:var(--green); border-color:var(--green); color:#032514; }
     .btn-round.yellow{ background:var(--yellow); border-color:var(--yellow); color:#3a2b03; }
     .btn-round.red{ background:var(--red); border-color:var(--red); color:#260808; }
-
     .btn-round svg{ width:18px; height:18px; stroke:currentColor; stroke-width:2; fill:none; }
 
-    /* ===== Скрити оригинални „пили“ за ProLact (само визуално ги махаме) ===== */
     .prolact-pills{ display:none !important; }
   </style>
 </head>
 <body>
 
-  <!-- Горна лента -->
   <div class="topbar-wrap">
     <div class="topbar">
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.34</span>
+        <span class="badge">v2.35</span>
       </div>
     </div>
   </div>
 
-  <!-- Табове -->
   <div class="tabs-wrap" role="navigation" aria-label="Навигация">
     <div class="tabs" role="tablist">
       <button id="tab-data" class="tab-btn" role="tab" aria-controls="panel-data" aria-selected="true">Данни</button>
@@ -245,15 +210,13 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ -->
+  <!-- ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
-      <!-- Запис -->
       <section class="card">
         <h2 style="margin:0 0 10px">Запис</h2>
 
         <div class="inputs-row">
-          <!-- лява група -->
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
               <div class="lbl">Дата</div>
@@ -283,7 +246,6 @@
 
           <div class="spacer"></div>
 
-          <!-- дясна група -->
           <div class="inputs-row" style="gap:8px">
             <div class="field">
               <div class="lbl"></div>
@@ -306,7 +268,6 @@
         </div>
       </section>
 
-      <!-- Графика -->
       <section class="card">
         <h2 style="margin:0 0 10px">Графика</h2>
         <div class="inputs-row">
@@ -319,7 +280,6 @@
         <canvas id="chart" class="bt-chart"></canvas>
       </section>
 
-      <!-- Записи -->
       <section class="card">
         <h2 style="margin:0">Записи</h2>
 
@@ -347,7 +307,7 @@
               <th class="actions">Действия</th>
             </tr>
           </thead>
-        <tbody></tbody>
+          <tbody></tbody>
           <tfoot id="tfootBottom">
             <tr>
               <th class="date">Дата</th>
@@ -361,26 +321,21 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ: ПРОГРАМА -->
+  <!-- ПРОГРАМА -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
-      <!-- 🟩 Основен пакет -->
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
             <span class="prog-cap">ProLact Slim+</span>
           </div>
 
-          <!-- Седмична таблица: само 7 колони, 2 реда (08:00 / 19:00) -->
           <div class="wk-table-wrap">
             <table class="wk" id="pl-wk">
-              <thead>
-                <tr id="pl-wk-head"></tr>
-              </thead>
+              <thead><tr id="pl-wk-head"></tr></thead>
               <tbody>
                 <tr id="pl-wk-row1" class="tight"></tr>
                 <tr id="pl-wk-row2" class="tight"></tr>
@@ -388,40 +343,13 @@
             </table>
           </div>
 
-          <!-- Скриваме старите „пили“ -->
           <div class="prolact-pills">
-            <div class="prog-row" role="group" aria-label="ProLact Slim+ — 2 от 3">
-              <span class="prog-pill">
-                <label><input type="checkbox" id="pl-m"> Сутрин</label>
-                <div id="pl-tp-m" class="time-wrap" style="display:none">
-                  <div class="time-row">
-                    <select id="pl-hh-m"></select><span class="colon">:</span><select id="pl-mm-m"></select>
-                  </div>
-                </div>
-              </span>
-              <span class="prog-pill">
-                <label><input type="checkbox" id="pl-n" checked> Обед</label>
-                <div id="pl-tp-n" class="time-wrap" style="display:block">
-                  <div class="time-row">
-                    <select id="pl-hh-n"></select><span class="colon">:</span><select id="pl-mm-n"></select>
-                  </div>
-                </div>
-              </span>
-              <span class="prog-pill">
-                <label><input type="checkbox" id="pl-e" checked> Вечер</label>
-                <div id="pl-tp-e" class="time-wrap" style="display:block">
-                  <div class="time-row">
-                    <select id="pl-hh-e"></select><span class="colon">:</span><select id="pl-mm-e"></select>
-                  </div>
-                </div>
-              </span>
-            </div>
+            <!-- скрито старо мини-UI -->
           </div>
         </div>
 
         <hr class="prog-sep"/>
 
-        <!-- OMNi-Biotic HETOX light (без промени) -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
@@ -457,7 +385,6 @@
 
         <hr class="prog-sep"/>
 
-        <!-- Fortex Хитозан Плюс (без промени) -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
@@ -492,7 +419,6 @@
         </div>
       </section>
 
-      <!-- 🟨 Допълнителен пакет -->
       <section class="card" id="pkg-extra">
         <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
@@ -502,7 +428,6 @@
         </ul>
       </section>
 
-      <!-- 💊 Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
         <p style="margin:0 0 8px; color:#9fb4ad">
@@ -517,7 +442,7 @@
     </main>
   </div>
 
-  <!-- Модал часовник -->
+  <!-- МОДАЛ ЧАСОВНИК -->
   <div id="timeModal" class="modal" aria-hidden="true">
     <div class="modal-card" role="dialog" aria-label="Избор на време">
       <div class="clock-top">
@@ -544,9 +469,9 @@
 
   <script>
     "use strict";
-    window.__BT_VER = '2.34';
+    window.__BT_VER = '2.35';
 
-    /* ===== Таб логика (оригинална) ===== */
+    /* ===== табове ===== */
     (function(){
       const tabs = [
         {btn: document.getElementById('tab-data'), panel: document.getElementById('panel-data')},
@@ -567,7 +492,7 @@
       }catch(_){ select(0); }
     })();
 
-    /* ===== Данни — оригиналният код (лека адаптация: selector за chart) ===== */
+    /* ===== помощни за дати/записи/графика (както в 2.34) ===== */
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
     function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
@@ -613,7 +538,7 @@
     function renderCalendar(){
       var set=hasDataSet(), y=calYear, m=calMonth;
       var first=new Date(Date.UTC(y,m-1,1));
-      var startDow=(first.getUTCDay()+6)%7; /* Monday=0 */
+      var startDow=(first.getUTCDay()+6)%7;
       var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
       var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
       var html='<div class="cal-head"><button id="calPrev" type="button">←</button><div class="cal-title">'+title+'</div><button id="calNext" type="button">→</button></div>';
@@ -659,6 +584,7 @@
       renderTable(); renderChart();
     });
 
+    var pageSizeSel=document.getElementById("pageSize");
     var PAGE_SIZES=[7,14,28,84,112,168,336,"all"];
     function getPS(){ var v=localStorage.getItem("bt-page-size"); if(v==="all") return "all"; var n=Number(v); return (PAGE_SIZES.indexOf(n)>=0)?n:28; }
     function setPS(v){ localStorage.setItem("bt-page-size",v); }
@@ -749,7 +675,7 @@
     function getChartRawData(){
       var mode=aggSel.value;
       if(mode==="daily"){ var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(load()); return sortAsc(src); }
-      return sortAsc(load()); // weekly/monthly — всички
+      return sortAsc(load());
     }
 
     function renderChart(){
@@ -758,10 +684,7 @@
       var w=rect.width, h=360; ctx.clearRect(0,0,w,h);
 
       var raw=getChartRawData(); if(!raw.length){
-        ctx.fillStyle="#9fb4ad";
-        ctx.font="700 "+cssPx('--chart-values', 15)+"px system-ui";
-        ctx.fillText("Няма данни",10,26);
-        return;
+        ctx.fillStyle="#9fb4ad"; ctx.font="700 "+cssPx('--chart-values', 15)+"px system-ui"; ctx.fillText("Няма данни",10,26); return;
       }
 
       var mode=aggSel.value, pts=[];
@@ -806,10 +729,7 @@
                         : bothNon ? (getComputedStyle(document.documentElement).getPropertyValue('--line-green').trim()||'#87f3c5')
                         : (getComputedStyle(document.documentElement).getPropertyValue('--line-neutral').trim()||'#2dd4bf');
         ctx.lineWidth=2.0;
-        ctx.beginPath();
-        ctx.moveTo(X(i-1), Y(p0.y));
-        ctx.lineTo(X(i),   Y(p1.y));
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(X(i-1), Y(p0.y)); ctx.lineTo(X(i),   Y(p1.y)); ctx.stroke();
       }
 
       ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle";
@@ -820,30 +740,15 @@
       var orange=getComputedStyle(document.documentElement).getPropertyValue('--line-orange').trim()||'#f59e0b';
       ctx.font="700 "+cssPx('--chart-label', 15)+"px system-ui";
       for(var j=0;j<n;j++){
-        var pe=pts[j], x0=X(j), y0=h-padB;
-        ctx.beginPath();
-        ctx.fillStyle = pe.bt ? orange : green;
-        const yVal = Y(pe.y);
-        ctx.arc(x0, yVal, 3, 0, Math.PI*2);
-        ctx.fill();
+        var pe=pts[j], x0=X(j), yVal=Y(pe.y);
+        ctx.beginPath(); ctx.fillStyle = pe.bt ? orange : green; ctx.arc(x0, yVal, 3, 0, Math.PI*2); ctx.fill();
 
-        ctx.save();
-        ctx.font = "600 11px system-ui";
-        ctx.fillStyle = "#9fb4ad";
-        ctx.textBaseline = "bottom";
-        ctx.textAlign = "left";
-        const txt = pe.y.toFixed(1);
-        const tw = ctx.measureText(txt).width;
-        let xText = x0 + 5;
+        ctx.save(); ctx.font = "600 11px system-ui"; ctx.fillStyle = "#9fb4ad"; ctx.textBaseline = "bottom"; ctx.textAlign = "left";
+        const txt = pe.y.toFixed(1); const tw = ctx.measureText(txt).width; let xText = x0 + 5;
         if (xText + tw > w - padR - 2) xText = (w - padR - 2) - tw;
-        if (xText < padL + 2) xText = padL + 2;
-        ctx.fillText(txt, xText, yVal - 4);
-        ctx.restore();
+        if (xText < padL + 2) xText = padL + 2; ctx.fillText(txt, xText, yVal - 4); ctx.restore();
 
-        if(j%step===0){
-          ctx.save(); ctx.translate(x0,y0+64); ctx.rotate(-Math.PI/2);
-          ctx.fillStyle="#e7faf4"; ctx.fillText(pe.label,0,0); ctx.restore();
-        }
+        if(j%step===0){ ctx.save(); ctx.translate(x0,h-padB+64); ctx.rotate(-Math.PI/2); ctx.fillStyle="#e7faf4"; ctx.fillText(pe.label,0,0); ctx.restore(); }
       }
     }
 
@@ -863,9 +768,8 @@
         try{
           var arr = JSON.parse(fr.result||"[]");
           if(!Array.isArray(arr)) throw new Error("Невалиден формат");
-          arr = arr
-            .filter(r => r && typeof r.date==="string" && typeof r.weight==="number")
-            .map(r => ({ date:r.date, weight:r.weight, bt:(r.bt!==false) }));
+          arr = arr.filter(r => r && typeof r.date==="string" && typeof r.weight==="number")
+                   .map(r => ({ date:r.date, weight:r.weight, bt:(r.bt!==false) }));
           save(arr); renderTable(); renderChart();
           alert("Импортът е успешен. Записите са презаредени.");
         }catch(e){ alert("Грешка при импорт: "+e.message); }
@@ -894,39 +798,39 @@
     }
     initialRender();
 
-    /* ===== ПРОГРАМА — помощни за старите селекти ===== */
+    /* ===== помощни за селекти (за другите продукти) ===== */
     function two(n){ return String(n).padStart(2,"0"); }
     function buildHourRange(sel, fromH, toH){
+      if(!sel) return;
       sel.innerHTML="";
       for(let h=fromH; h<=toH; h++){
         const o=document.createElement("option");
         o.value=two(h); o.textContent=o.value;
-        if(h===8 || h===12 || h===19) o.className="strong";
         sel.appendChild(o);
       }
     }
     function buildMinutes5(sel){
+      if(!sel) return;
       sel.innerHTML="";
       for(let m=0; m<60; m+=5){
         const o=document.createElement("option");
         o.value=two(m); o.textContent=o.value;
-        if(m%15===0) o.className="strong";
         sel.appendChild(o);
       }
     }
-    function setSel(sel,val){ const opt=[...sel.options].find(o=>o.value===val); if(opt){ sel.value=val; return true;} return false; }
+    function setSel(sel,val){ if(!sel) return false; const opt=[...sel.options].find(o=>o.value===val); if(opt){ sel.value=val; return true;} return false; }
 
-    /* ====== ProLact седмица (таблица) ====== */
+    /* ===== ProLact седмична таблица ===== */
     (function(){
       const HEAD = ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"];
-      const DEF = { t1:"08:00", t2:"19:00", f1:"", f2:"" }; // f1/f2: "", "take", "mute"
-      const STORE = "bt_pl_wk_v234"; // [{t1,t2,f1,f2} x 7], 0..6 (Пн..Нд)
+      const DEF = { t1:"08:00", t2:"19:00", f1:"", f2:"" };
+      const STORE = "bt_pl_wk_v234";
       const elHead = document.getElementById('pl-wk-head');
       const row1 = document.getElementById('pl-wk-row1');
       const row2 = document.getElementById('pl-wk-row2');
       let state = loadState();
       let activeDay = getTodayIdx();
-      let editing = null; // {day, row} row:1|2
+      let editing = null;
 
       function loadState(){
         try{
@@ -938,8 +842,7 @@
       function saveState(){ localStorage.setItem(STORE, JSON.stringify(state)); }
 
       function getTodayIdx(){
-        // Пн=0 ... Нд=6
-        const js = (new Date()).getDay(); // 0=Sun..6=Sat
+        const js = (new Date()).getDay();
         return (js+6)%7;
       }
 
@@ -976,7 +879,7 @@
         div.addEventListener('click', ()=>{
           editing = {day,row};
           renderBody();
-          openClock(time, (newTime, saveFlag)=>{ // saveFlag: "ok"|"take"|"mute"
+          openClock(time, (newTime, saveFlag)=>{
             const rec = state[day];
             if(row===1){ rec.t1=newTime; rec.f1 = saveFlag==="take"?"take":(saveFlag==="mute"?"mute":""); }
             else { rec.t2=newTime; rec.f2 = saveFlag==="take"?"take":(saveFlag==="mute"?"mute":""); }
@@ -991,18 +894,14 @@
 
       function renderBody(){
         row1.innerHTML=""; row2.innerHTML="";
-        for(let i=0;i<7;i++){
-          row1.appendChild(cell(i,1));
-        }
-        for(let i=0;i<7;i++){
-          row2.appendChild(cell(i,2));
-        }
+        for(let i=0;i<7;i++) row1.appendChild(cell(i,1));
+        for(let i=0;i<7;i++) row2.appendChild(cell(i,2));
       }
 
       renderHead(); renderBody();
     })();
 
-    /* ===== Модал часовник (canvas) ===== */
+    /* ===== Модал часовник (canvas) — с fallback на roundRect ===== */
     function openClock(current, onCommit){
       const modal = document.getElementById('timeModal');
       const cvHH = document.getElementById('cvHH');
@@ -1013,31 +912,51 @@
       const take = document.getElementById('clkTake');
       const mute = document.getElementById('clkMute');
 
+      // рендер на заоблен правоъгълник без roundRect
+      function roundRectPath(ctx,x,y,w,h,r){
+        const rr = Math.max(0, Math.min(r, Math.min(w,h)/2));
+        ctx.beginPath();
+        ctx.moveTo(x+rr, y);
+        ctx.lineTo(x+w-rr, y);
+        ctx.arcTo(x+w, y, x+w, y+rr, rr);
+        ctx.lineTo(x+w, y+h-rr);
+        ctx.arcTo(x+w, y+h, x+w-rr, y+h, rr);
+        ctx.lineTo(x+rr, y+h);
+        ctx.arcTo(x, y+h, x, y+h-rr, rr);
+        ctx.lineTo(x, y+rr);
+        ctx.arcTo(x, y, x+rr, y, rr);
+        ctx.closePath();
+      }
+
       let HH = 8, MM = 0;
       if(typeof current==="string" && /^\d{2}:\d{2}$/.test(current)){ HH=+current.slice(0,2); MM=+current.slice(3,5); }
 
-      function setVal(h,m){ HH=(Math.max(0,Math.min(24, h|0))); if(HH===24&&m>0){ HH=23; m=59; } MM=(Math.max(0,Math.min(59, m|0))); cvHH.textContent=String(HH).padStart(2,"0"); cvMM.textContent=String(MM).padStart(2,"0"); draw(); }
-      setVal(HH,MM);
+      function setVal(h,m){
+        HH=(Math.max(0,Math.min(24, h|0)));
+        if(HH===24&&m>0){ HH=23; m=59; }
+        MM=(Math.max(0,Math.min(59, m|0)));
+        cvHH.textContent=String(HH).padStart(2,"0");
+        cvMM.textContent=String(MM).padStart(2,"0");
+        try{ draw(); }catch(e){ /* не блокирай UI */ }
+      }
 
       const W=clk.width, H=clk.height, CX=W/2, CY=H/2;
       const R = 132;
-      const R_H_IN = 62;   // вътрешни часове (1..12)
-      const R_H_OUT= 92;   // външни часове (13..24)
-      const R_MIN   = 118; // минутен пръстен
-      const HIT_H   = 22;  // хит-зона за часове
-      const HIT_M   = 16;  // хит-зона за минути
+      const R_H_IN = 62;
+      const R_H_OUT= 92;
+      const R_MIN   = 118;
+      const HIT_H   = 22;
+      const HIT_M   = 16;
 
-      let dragMode = ""; // "h" | "m" | ""
+      let dragMode = "";
       function angToXY(r,ang){ return [CX + r*Math.sin(ang), CY - r*Math.cos(ang)]; }
-      function xyToAng(x,y){ return Math.atan2(x-CX, CY-y); } // 0=нагоре; посока по часовника
+      function xyToAng(x,y){ return Math.atan2(x-CX, CY-y); } // 0 горе
 
       function drawRingHours(){
         ctx.save();
         ctx.strokeStyle="#20343a"; ctx.lineWidth=1;
-        // пръстени
         ctx.beginPath(); ctx.arc(CX,CY,R_H_IN,0,Math.PI*2); ctx.stroke();
         ctx.beginPath(); ctx.arc(CX,CY,R_H_OUT,0,Math.PI*2); ctx.stroke();
-        // числа
         ctx.fillStyle="#cfe5df"; ctx.font="700 12px system-ui"; ctx.textAlign="center"; ctx.textBaseline="middle";
         for(let h=1;h<=12;h++){
           const ang = (Math.PI*2)*(h%12)/12;
@@ -1056,7 +975,6 @@
         ctx.save();
         ctx.strokeStyle="#20343a"; ctx.lineWidth=1;
         ctx.beginPath(); ctx.arc(CX,CY,R_MIN,0,Math.PI*2); ctx.stroke();
-        // маркери
         for(let m=0;m<60;m++){
           const ang=(Math.PI*2)*m/60;
           const r1 = R_MIN-8, r2 = (m%5===0)? R_MIN : R_MIN-3;
@@ -1073,30 +991,25 @@
 
       function drawHands(){
         ctx.save();
-        // часовник фон
         ctx.beginPath(); ctx.arc(CX,CY,R,0,Math.PI*2); ctx.strokeStyle="#20343a"; ctx.lineWidth=1; ctx.stroke();
 
-        // минутна стрелка (по-тънка)
         const aM=(Math.PI*2)*(MM/60);
         const [mx,my]=angToXY(R_MIN-12,aM);
         ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(mx,my);
         ctx.lineWidth=2; ctx.strokeStyle="#a7f3d0"; ctx.stroke();
 
-        // часова стрелка (по-дебела)
-        // позиционираме в съответния пръстен според HH<=12 или >12
         const isOut = (HH>=13);
-        const base = HH%12===0?12:HH%12; // 12 вместо 0
+        const base = HH%12===0?12:HH%12;
         const aH=(Math.PI*2)*(base/12) + (Math.PI*2)*(MM/60)/12;
         const rH = isOut ? (R_H_OUT-8) : (R_H_IN-8);
         const [hx,hy]=angToXY(rH,aH);
         ctx.beginPath(); ctx.moveTo(CX,CY); ctx.lineTo(hx,hy);
         ctx.lineWidth=4; ctx.strokeStyle="#f59e0b"; ctx.stroke();
 
-        // център с правоъгълник HH:MM
+        // правоъгълник HH:MM (fallback без roundRect)
         ctx.fillStyle="#0b1417"; ctx.strokeStyle="#20343a"; ctx.lineWidth=1;
-        const rectW=114, rectH=34;
-        ctx.beginPath();
-        ctx.roundRect(CX-rectW/2, CY-rectH/2, rectW, rectH, 8);
+        const rectW=114, rectH=34, rx=8;
+        roundRectPath(ctx, CX-rectW/2, CY-rectH/2, rectW, rectH, rx);
         ctx.fill(); ctx.stroke();
         ctx.fillStyle="#e7faf4"; ctx.font="800 18px system-ui"; ctx.textAlign="center"; ctx.textBaseline="middle";
         ctx.fillText(String(HH).padStart(2,"0")+":"+String(MM).padStart(2,"0"), CX, CY);
@@ -1110,36 +1023,37 @@
         drawHands();
       }
 
-      // hit detection
       function pickWhere(x,y){
         const dx=x-CX, dy=y-CY; const d=Math.hypot(dx,dy);
-        if(d>R_H_IN-HIT_H && d<R_H_IN+HIT_H) return "h-in";
-        if(d>R_H_OUT-HIT_H && d<R_H_OUT+HIT_H) return "h-out";
-        if(d>R_MIN-HIT_M && d<R_MIN+HIT_M) return "m";
-        // ако тап в централния правоъгълник – позволяваме ↑/↓ да пипат часовете/минутите
+        if(d>R_H_IN-22 && d<R_H_IN+22) return "h-in";
+        if(d>R_H_OUT-22 && d<R_H_OUT+22) return "h-out";
+        if(d>R_MIN-16 && d<R_MIN+16) return "m";
         if(Math.abs(dx)<=60 && Math.abs(dy)<=18) return "center";
         return "";
       }
 
       function setHourFromAng(ring, ang){
-        // ang: 0 на 12 часа, нараства по часовника
-        // 12 деления
         let idx = Math.round((ang/(Math.PI*2))*12) % 12;
-        if(idx<=0) idx += 12; // 1..12
+        if(idx<=0) idx += 12;
         if(ring==="in"){ setVal(idx===12?12:idx, MM); }
-        else { // out 13..24 с подредба по същите позиции
-          const val = idx===12 ? 24 : (12+idx);
-          setVal(val, MM);
-        }
+        else { const val = idx===12 ? 24 : (12+idx); setVal(val, MM); }
       }
-
       function setMinuteFromAng(ang){
         let m = Math.round((ang/(Math.PI*2))*60) % 60;
         if(m<0) m+=60;
         setVal(HH, m);
       }
 
-      // interactions
+      // показваме първо модала, после рисуваме (за да не блокира при грешка)
+      function show(){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); }
+      function hide(){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
+
+      show();        // <-- важно
+      setVal(HH,MM); // рисуване след show()
+
+      const valBox=document.getElementById('clockVal');
+      valBox.tabIndex = 0;
+
       let mouseDown=false, modePicked="";
       clk.addEventListener('pointerdown', (e)=>{
         const rect=clk.getBoundingClientRect();
@@ -1148,7 +1062,6 @@
         const hit = pickWhere(x,y);
         if(hit==="h-in"||hit==="h-out"){ dragMode="h"; modePicked=hit; mouseDown=true; const ang=xyToAng(x,y); setHourFromAng(hit==="h-in"?"in":"out", ang); }
         else if(hit==="m"){ dragMode="m"; mouseDown=true; const ang=xyToAng(x,y); setMinuteFromAng(ang); }
-        else if(hit==="center"){ /* нищо – само визуален показател; стрелките/скрола ще работят */ }
       });
       clk.addEventListener('pointermove', (e)=>{
         if(!mouseDown) return;
@@ -1161,116 +1074,22 @@
       });
       window.addEventListener('pointerup', ()=>{ mouseDown=false; dragMode=""; });
 
-      // keyboard in center: стрелки ↑/↓ на HH или MM (фокус – като цяло)
-      const valBox=document.getElementById('clockVal');
-      valBox.tabIndex = 0;
       valBox.addEventListener('keydown',(e)=>{
         if(e.key==="ArrowUp"){ setVal(HH+1>24?24:HH+1, MM); e.preventDefault(); }
         else if(e.key==="ArrowDown"){ setVal(HH-1<0?0:HH-1, MM); e.preventDefault(); }
         else if(e.key==="ArrowRight"){ setVal(HH, (MM+1)%60); e.preventDefault(); }
         else if(e.key==="ArrowLeft"){ setVal(HH, (MM+59)%60); e.preventDefault(); }
       });
-      // wheel върху централното поле – минутите
       valBox.addEventListener('wheel',(e)=>{ e.preventDefault(); const d=Math.sign(e.deltaY); setVal(HH,(MM + (d>0?59:1))%60); }, {passive:false});
-
-      function show(){ modal.classList.add('show'); modal.setAttribute('aria-hidden','false'); valBox.focus(); draw(); }
-      function hide(){ modal.classList.remove('show'); modal.setAttribute('aria-hidden','true'); }
 
       modal.addEventListener('click', (e)=>{ if(e.target===modal) hide(); });
 
       ok.onclick = ()=>{ hide(); onCommit(`${String(HH).padStart(2,"0")}:${String(MM).padStart(2,"0")}`, "ok"); };
       take.onclick = ()=>{ hide(); onCommit(`${String(HH).padStart(2,"0")}:${String(MM).padStart(2,"0")}`, "take"); };
       mute.onclick = ()=>{ hide(); onCommit(`${String(HH).padStart(2,"0")}:${String(MM).padStart(2,"0")}`, "mute"); };
-
-      show();
     }
 
-    /* ===== (Оригиналните блокове за Omni/Chitosan остават, без промяна на логика) ===== */
-    (function(){
-      const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_pl_sel_v218';
-      const KEY_TIM='bt_pl_tim_v218';
-
-      const m=document.getElementById('pl-m'), n=document.getElementById('pl-n'), e=document.getElementById('pl-e');
-      if(!m||!n||!e) return; // скрити виз.
-      const boxM=document.getElementById('pl-tp-m'), boxN=document.getElementById('pl-tp-n'), boxE=document.getElementById('pl-tp-e');
-      const hhM=document.getElementById('pl-hh-m'), mmM=document.getElementById('pl-mm-m');
-      const hhN=document.getElementById('pl-hh-n'), mmN=document.getElementById('pl-mm-n');
-      const hhE=document.getElementById('pl-hh-e'), mmE=document.getElementById('pl-mm-e');
-
-      buildHourRange(hhM,0,9);  buildMinutes5(mmM);
-      buildHourRange(hhN,10,17); buildMinutes5(mmN);
-      buildHourRange(hhE,18,23); buildMinutes5(mmE);
-
-      function ensureTim(){
-        try{
-          const r=JSON.parse(localStorage.getItem(KEY_TIM)||'');
-          if(r && r.m && r.n && r.e) return r;
-        }catch(_){}
-        localStorage.setItem(KEY_TIM, JSON.stringify({...DEF}));
-        return {...DEF};
-      }
-      function loadTim(){ try{ return JSON.parse(localStorage.getItem(KEY_TIM))||ensureTim(); }catch(_){ return ensureTim(); } }
-      function saveTim(t){ localStorage.setItem(KEY_TIM, JSON.stringify(t)); }
-
-      function loadSel(){
-        try{
-          const r=JSON.parse(localStorage.getItem(KEY_SEL)||'');
-        if(r){ m.checked=!!r.m; n.checked=!!r.n; e.checked=!!r.e; return; }
-        }catch(_){}
-        m.checked=false; n.checked=true; e.checked=true;
-      }
-      function saveSel(){ localStorage.setItem(KEY_SEL, JSON.stringify({m:m.checked,n:n.checked,e:e.checked})); }
-
-      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
-      function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
-
-      function showBoxes(){
-        boxM.style.display = m.checked?"block":"none";
-        boxN.style.display = n.checked?"block":"none";
-        boxE.style.display = e.checked?"block":"none";
-      }
-
-      function enforceTwo(clicked){
-        const c=(m.checked?1:0)+(n.checked?1:0)+(e.checked?1:0);
-        if(c===3){
-          if(clicked===e) n.checked=false;
-          else if(clicked===n) e.checked=false;
-          else e.checked=false;
-        }else if(c<2){
-          if(!n.checked) n.checked=true; else if(!e.checked) e.checked=true; else if(!m.checked) m.checked=true;
-        }
-        saveSel();
-        updateUI(false);
-      }
-
-      function updateUI(noForceSave){
-        const prev = loadTim();
-        setFromStr(hhM, mmM, prev.m);
-        setFromStr(hhN, mmN, prev.n);
-        setFromStr(hhE, mmE, prev.e);
-        showBoxes();
-        const next = {...prev};
-        if(m.checked) next.m = getStr(hhM,mmM);
-        if(n.checked) next.n = getStr(hhN,mmN);
-        if(e.checked) next.e = getStr(hhE,mmE);
-        if(noForceSave!==true){ saveTim(next); }
-      }
-
-      ensureTim();
-      loadSel();
-      updateUI(true);
-
-      [m,n,e].forEach(el=>el.addEventListener('change',()=>enforceTwo(el)));
-      [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', ()=>{
-        const prev = loadTim(); const next = {...prev};
-        if(m.checked) next.m = getStr(hhM,mmM);
-        if(n.checked) next.n = getStr(hhN,mmN);
-        if(e.checked) next.e = getStr(hhE,mmE);
-        saveTim(next);
-      }));
-    })();
-
+    /* ===== Omni/Chitosan (непипната логика) ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
       const KEY_SEL='bt_he_sel_v218';
@@ -1301,25 +1120,26 @@
       buildHourRange(hhE,18,23); buildMinutes5(mmE);
 
       function setOnly(which){
+        if(!m||!n||!e) return;
         m.checked = (which==="m"); n.checked = (which==="n"); e.checked = (which==="e");
-        boxM.style.display = (which==="m")?"block":"none";
-        boxN.style.display = (which==="n")?"block":"none";
-        boxE.style.display = (which==="e")?"block":"none";
+        if(boxM) boxM.style.display = (which==="m")?"block":"none";
+        if(boxN) boxN.style.display = (which==="n")?"block":"none";
+        if(boxE) boxE.style.display = (which==="e")?"block":"none";
         saveSel(which);
       }
-      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
+      function setFromStr(hhSel, mmSel, str){ if(!hhSel||!mmSel) return; const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       const which0=loadSel(); setOnly(which0);
       const t0=ensureTim();
       setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
 
-      [m,n,e].forEach(el=>el.addEventListener('change',()=>{
+      [m,n,e].forEach(el=>el && el.addEventListener('change',()=>{
         const which = el===m ? "m" : el===n ? "n" : "e";
         setOnly(which);
         const t=loadTim(); saveTim(t);
       }));
-      [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', ()=>{
+      [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel && sel.addEventListener('change', ()=>{
         const which = localStorage.getItem(KEY_SEL)||"n";
         const t=loadTim();
         if(which==="m") t.m = getStr(hhM,mmM);
@@ -1353,7 +1173,7 @@
       const t0=ensure();
       setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
       function write(){ save({ m:getStr(hhM,mmM), n:getStr(hhN,mmN), e:getStr(hhE,mmE) }); }
-      [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', write));
+      [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel && sel.addEventListener('change', write));
       write();
     })();
   </script>
