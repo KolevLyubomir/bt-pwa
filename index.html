@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.32</title>
+  <title>БТ App 3 — v2.33</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -211,7 +211,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.32</span>
+        <span class="badge">v2.33</span>
       </div>
     </div>
   </div>
@@ -481,11 +481,11 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v232', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v233', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v232'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v233'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved); else select(0);
       }catch(_){ select(0); }
     })();
@@ -495,7 +495,7 @@
       function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
       function bgToISO_any(bg){
         var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
+        var m4=bg.match(/^(\d{2})\.(\д{2})\.(\д{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
         return "";
       }
       var KEY="bt-progress";
@@ -774,7 +774,7 @@
     /* ===== OMNi-Biotic — 1 от 3 ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_he_sel_v232'; const KEY_TIM='bt_he_tim_v232';
+      const KEY_SEL='bt_he_sel_v233'; const KEY_TIM='bt_he_tim_v233';
       const m=document.getElementById('he-m'), n=document.getElementById('he-n'), e=document.getElementById('he-e');
       const boxM=document.getElementById('he-tp-m'), boxN=document.getElementById('he-tp-n'), boxE=document.getElementById('he-tp-e');
       const hhM=document.getElementById('he-hh-m'), mmM=document.getElementById('he-mm-m');
@@ -814,7 +814,7 @@
 
     /* ===== Хитозан Плюс — 3 активни ===== */
     (function(){
-      const DEF={m:"08:00", n:"12:00", e:"19:00"}; const KEY='bt_ch_tim_v232';
+      const DEF={m:"08:00", n:"12:00", e:"19:00"}; const KEY='bt_ch_tim_v233';
       const hhM=document.getElementById('ch-hh-m'), mmM=document.getElementById('ch-mm-m');
       const hhN=document.getElementById('ch-hh-n'), mmN=document.getElementById('ch-mm-n');
       const hhE=document.getElementById('ch-hh-e'), mmE=document.getElementById('ch-mm-e');
@@ -833,7 +833,7 @@
     /* ===== ProLact Slim+ — таблица + модал часовник ===== */
     (function(){
       const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
-      const KEY='bt_pl_grid_v232';
+      const KEY='bt_pl_grid_v233';
       const DEF_T1 = ["08:00","08:00","08:00","08:00","08:00","08:00","08:00"];
       const DEF_T2 = ["19:00","19:00","19:00","19:00","19:00","19:00","19:00"];
 
@@ -858,7 +858,7 @@
         });
       }
       function iconCheck(){ return '<span class="pl-ico" title="Взето"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#eafff3" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'; }
-      function iconMute(){ return '<span class="pl-ico" title="Без звук"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>'; }
+      function iconMute(){ return '<span class="pl-ico" title="Без звук"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4В5Л7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>'; }
 
       function renderTimes(){
         const seq=[1,2,3,4,5,6,0];
@@ -896,7 +896,7 @@
 
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0;
-      let hourCycle=0;  // 0 => 1..12 ; 1 => 13..24
+      let hourCycle=0;  // 0 => 1..12 (позиции [12,1..11]); 1 => 13..24 (позиции [24,13..23])
       let focusHM='H';
 
       function updateRead(){ read.textContent = two(H)+":"+two(M); }
@@ -908,16 +908,32 @@
       }
       function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
 
+      // НОВО: стандартен циферблат — 12/0 е горе
+      const POS_12H = [12,1,2,3,4,5,6,7,8,9,10,11];          // по позиции 0..11
+      const POS_24H = [24,13,14,15,16,17,18,19,20,21,22,23]; // 24 се визуализира като 0
+
+      function hToCycle(H){
+        // ако H==0 или 13..23 => цикъл 24, иначе 1..12
+        return (H===0 || (H>=13 && H<=23)) ? 1 : 0;
+      }
+      function labelAt(k){
+        // k е позиция 0..11 (0 = горе)
+        const arr = (hourCycle===0) ? POS_12H : POS_24H;
+        const lab = arr[k];
+        return (lab===24 ? 0 : lab);
+      }
       function buildHours(){
         clear(ringH);
-        const base = (hourCycle%2===0)?1:13;
-        for(let i=0;i<12;i++){
-          const label = base + i;
-          const el=document.createElement('div'); el.className='clk-tick strong'; el.textContent = label<=24?label:(label-24);
-          const ang = (Math.PI*2) * (i/12) - Math.PI/2;
+        const arr = (hourCycle===0) ? POS_12H : POS_24H;
+        for(let k=0;k<12;k++){
+          const raw = arr[k];
+          const shown = (raw===24?0:raw);
+          const el=document.createElement('div'); el.className='clk-tick strong'; el.textContent = shown;
+          // k=0 е горе => -90deg
+          const ang = (Math.PI*2)*(k/12) - Math.PI/2;
           const R=84; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
           el.style.left='calc(50% + '+(x-12)+'px)'; el.style.top='calc(50% + '+(y-12)+'px)';
-          const h24 = (label===24?0:label);
+          const h24 = (raw===24?0:raw);
           if(h24===H) el.classList.add('sel');
           el.addEventListener('click', ()=>{ H=h24; updateRead(); setHands(); buildHours(); });
           ringH.appendChild(el);
@@ -948,7 +964,7 @@
         const [h,m] = (initial||state.times[row][idx]).split(':').map(x=>parseInt(x,10));
         H=isFinite(h)?h:8; M=isFinite(m)?m:0; focusHM='H';
 
-        hourCycle = (H>=13 && H<=23)?1: (H===0?1:0);
+        hourCycle = hToCycle(H);
         updateRead(); setHands(); buildHours(); buildMins();
 
         Modal.classList.add('show'); Modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; Card.focus();
@@ -974,20 +990,23 @@
         if(dragging==='H'){
           if(prevAngle!==null){
             const delta = ang - prevAngle;
-            if(delta>Math.PI) { hourCycle = (hourCycle-1+2)%2; buildHours(); }
-            else if(delta<-Math.PI) { hourCycle = (hourCycle+1)%2; buildHours(); }
+            if(delta>Math.PI) { hourCycle = (hourCycle-1+2)%2; }
+            else if(delta<-Math.PI) { hourCycle = (hourCycle+1)%2; }
           }
           prevAngle=ang;
-          let idx = Math.round((ang/(Math.PI*2))*12) % 12; if(idx<0) idx+=12;
-          let label = (hourCycle%2===0 ? 1 : 13) + idx; if(label>24) label-=24;
-          H = (label===24)?0:label;
+          // позиция 0..11 (0 = горе)
+          let k = Math.round((ang/(Math.PI*2))*12) % 12; if(k<0) k+=12;
+          H = labelAt(k);
           updateRead(); setHands(); buildHours();
         }else{
           let v = Math.round((ang/(Math.PI*2))*60) % 60; if(v<0) v+=60;
           if(prevM!==null){
             const diff = v - prevM;
-            if(diff>40){ H=(H+1)%24; if(H===0||H===13) { hourCycle=(hourCycle+1)%2; } buildHours(); }
-            else if(diff<-40){ H=(H-1+24)%24; if(H===12||H===23) { hourCycle=(hourCycle+1)%2; } buildHours(); }
+            if(diff>40){ // 59 -> 0
+              H=(H+1)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours();
+            } else if(diff<-40){ // 0 -> 59
+              H=(H-1+24)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours();
+            }
           }
           prevM=v; M=v; updateRead(); setHands(); buildMins();
         }
@@ -1013,13 +1032,11 @@
           const step = (dy>0)?-1:1; startY = e.clientY||0;
           if(focusHM==='H'){
             const oldH=H; H=(H+step+24)%24;
-            if((oldH===12 && H===13)||(oldH===23 && H===0)||(oldH===13 && H===12)||(oldH===0 && H===23)){
-              hourCycle=(hourCycle+1)%2; buildHours();
-            }else{ buildHours(); }
+            const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); else buildHours();
           }else{
             let oldM=M; M=(M+step+60)%60;
-            if(oldM===59 && M===0){ H=(H+1)%24; if(H===0||H===13) { hourCycle=(hourCycle+1)%2; } buildHours(); }
-            if(oldM===0 && M===59){ H=(H-1+24)%24; if(H===12||H===23) { hourCycle=(hourCycle+1)%2; } buildHours(); }
+            if(oldM===59 && M===0){ H=(H+1)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); }
+            if(oldM===0 && M===59){ H=(H-1+24)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); }
             buildMins();
           }
           updateRead(); setHands();
@@ -1036,14 +1053,11 @@
           const oldH=H, oldM=M;
           if(focusHM==='H'){
             H=(H+dir+24)%24;
-            if((oldH===12 && H===13)||(oldH===23 && H===0)||(oldH===13 && H===12)||(oldH===0 && H===23)){
-              hourCycle=(hourCycle+1)%2;
-            }
-            buildHours();
+            const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); else buildHours();
           }else{
             M=(M+dir+60)%60;
-            if(oldM===59 && M===0){ H=(H+1)%24; if(H===0||H===13) hourCycle=(hourCycle+1)%2; buildHours(); }
-            if(oldM===0 && M===59){ H=(H-1+24)%24; if(H===12||H===23) hourCycle=(hourCycle+1)%2; buildHours(); }
+            if(oldM===59 && M===0){ H=(H+1)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); }
+            if(oldM===0 && M===59){ H=(H-1+24)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); }
             buildMins();
           }
           updateRead(); setHands();
