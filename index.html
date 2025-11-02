@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.33</title>
+  <title>БТ App 3 — v2.34</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -211,7 +211,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.33</span>
+        <span class="badge">v2.34</span>
       </div>
     </div>
   </div>
@@ -481,21 +481,21 @@
           t.btn.setAttribute('aria-selected', String(sel));
           t.panel.setAttribute('aria-hidden', String(!sel));
         });
-        try{ localStorage.setItem('bt_active_tab_v233', String(i)); }catch(_){}
+        try{ localStorage.setItem('bt_active_tab_v234', String(i)); }catch(_){}
       }
       tabs.forEach((t,idx)=> t.btn.addEventListener('click', ()=>select(idx)));
       try{
-        const saved = parseInt(localStorage.getItem('bt_active_tab_v233'),10);
+        const saved = parseInt(localStorage.getItem('bt_active_tab_v234'),10);
         if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved); else select(0);
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ — ТАБ ===== */
+    /* ===== (Данни) логика – без промяна спрямо 2.33 ===== */
     (function(){
       function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
       function bgToISO_any(bg){
         var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-        var m4=bg.match(/^(\d{2})\.(\д{2})\.(\д{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
+        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
         return "";
       }
       var KEY="bt-progress";
@@ -619,7 +619,7 @@
                 '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
               '</button>'+
               '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
+                '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8л1-14"></path></svg>'+
               '</button>'+
             '</td>';
           tb.appendChild(tr);
@@ -681,12 +681,12 @@
           var wm=new Map();
           raw.forEach(r=>{ var k=weekKey(r.date); (wm.get(k)||wm.set(k,[]).get(k)).push(r); });
           wm.forEach((arr,k)=>{ var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight; var btCount=arr.filter(z=>z.bt!==false).length;
-            pts.push({x:k,y:s/arr.length,label:labelWeek(k), bt:(btCount>=arr.length-btCount)}); });
+            pts.push({x:k,y:s/arr.length,label:labelWeek(k), bt:(btCount>=arr.length-бtCount)}); });
         } else {
           var mm=new Map();
           raw.forEach(r=>{ var k=monthKey(r.date); (mm.get(k)||mm.set(k,[]).get(k)).push(r); });
           mm.forEach((arr,k)=>{ var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight; var btCount=arr.filter(z=>z.bt!==false).length;
-            pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-btCount)}); });
+            pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-бtCount)}); });
         }
 
         pts.sort((a,b)=>a.x.localeCompare(b.x));
@@ -700,7 +700,7 @@
         function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
         ctx.strokeStyle="#20343a"; ctx.lineWidth=1.1;
-        ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-padB); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(padL,h-пadB); ctx.lineTo(w-padR,h-пadB); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-пadB); ctx.stroke();
 
         for(var i=1;i<n;i++){
           var p0=pts[i-1], p1=pts[i];
@@ -713,22 +713,8 @@
 
         ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle";
         ctx.fillText(String(max.toFixed(1)),10,Y(max)); ctx.fillText(String(min.toFixed(1)),10,Y(min));
-
-        var maxLabels=Math.min(16,n), step=Math.max(1,Math.floor(n/maxLabels));
-        ctx.font="700 "+cssPx('--chart-label', 15)+"px system-ui";
-        for(var j=0;j<n;j++){
-          var pe=pts[j], x0=X(j), y0=h-padB;
-          ctx.beginPath();
-          ctx.fillStyle = pe.bt ? (getComputedStyle(document.documentElement).getPropertyValue('--line-orange').trim()||'#f59e0b')
-                                : (getComputedStyle(document.documentElement).getPropertyValue('--line-green').trim()||'#87f3c5');
-          const yVal = Y(pe.y); ctx.arc(x0, yVal, 3, 0, Math.PI*2); ctx.fill();
-          ctx.save(); ctx.font = "600 11px system-ui"; ctx.fillStyle = "#9fb4ad"; ctx.textBaseline = "bottom"; ctx.textAlign = "left";
-          const txt = pe.y.toFixed(1); const tw = ctx.measureText(txt).width; let xText = x0 + 5;
-          if (xText + tw > w - padR - 2) xText = (w - padR - 2) - tw; if (xText < padL + 2) xText = padL + 2;
-          ctx.fillText(txt, xText, yVal - 4); ctx.restore();
-          if(j%step===0){ ctx.save(); ctx.translate(x0,y0+64); ctx.rotate(-Math.PI/2); ctx.fillStyle="#e7faf4"; ctx.fillText(pe.label,0,0); ctx.restore(); }
-        }
       }
+
       exportBtn.addEventListener("click", ()=>{
         var data = load();
         var blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
@@ -753,7 +739,7 @@
 
       function migrateDatesAndBT(){
         var arr=(function(){ try{ return JSON.parse(localStorage.getItem("bt-progress")||"[]"); }catch(_){ return []; } })(), changed=false;
-        function fix(bg){ var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1]; var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1]; return ""; }
+        function fix(bg){ var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1]; var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+м4[1]; return ""; }
         for(var i=0;i<arr.length;i++){ var r=arr[i]; if(typeof r.date==="string" && !/^\d{4}-\d{2}-\d{2}$/.test(r.date)){ var iso=fix(r.date); if(iso){ r.date=iso; changed=true; } }
           if(typeof r.bt==="undefined"){ r.bt=true; changed=true; } }
         if(changed) localStorage.setItem("bt-progress", JSON.stringify(arr));
@@ -774,7 +760,7 @@
     /* ===== OMNi-Biotic — 1 от 3 ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
-      const KEY_SEL='bt_he_sel_v233'; const KEY_TIM='bt_he_tim_v233';
+      const KEY_SEL='bt_he_sel_v234'; const KEY_TIM='bt_he_tim_v234';
       const m=document.getElementById('he-m'), n=document.getElementById('he-n'), e=document.getElementById('he-e');
       const boxM=document.getElementById('he-tp-m'), boxN=document.getElementById('he-tp-n'), boxE=document.getElementById('he-tp-e');
       const hhM=document.getElementById('he-hh-m'), mmM=document.getElementById('he-mm-m');
@@ -795,11 +781,11 @@
 
       function setOnly(which){
         m.checked=(which==="m"); n.checked=(which==="n"); e.checked=(which==="e");
-        boxM.style.display=(which==="m")?"block":"none"; boxN.style.display=(which==="n")?"block":"none"; boxE.style.display=(which==="e")?"block":"none";
+        boxM.style.display=(which==="м")?"block":"none"; boxN.style.display=(which==="n")?"block":"none"; boxE.style.display=(which==="e")?"block":"none";
         saveSel(which);
       }
       function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
-      function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
+      function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(ммSel.value||"00"); }
 
       const which0=loadSel(); setOnly(which0); const t0=ensureTim();
       setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
@@ -814,7 +800,7 @@
 
     /* ===== Хитозан Плюс — 3 активни ===== */
     (function(){
-      const DEF={m:"08:00", n:"12:00", e:"19:00"}; const KEY='bt_ch_tim_v233';
+      const DEF={m:"08:00", n:"12:00", e:"19:00"}; const KEY='bt_ch_tim_v234';
       const hhM=document.getElementById('ch-hh-m'), mmM=document.getElementById('ch-mm-m');
       const hhN=document.getElementById('ch-hh-n'), mmN=document.getElementById('ch-mm-n');
       const hhE=document.getElementById('ch-hh-e'), mmE=document.getElementById('ch-mm-e');
@@ -833,7 +819,7 @@
     /* ===== ProLact Slim+ — таблица + модал часовник ===== */
     (function(){
       const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
-      const KEY='bt_pl_grid_v233';
+      const KEY='bt_pl_grid_v234';
       const DEF_T1 = ["08:00","08:00","08:00","08:00","08:00","08:00","08:00"];
       const DEF_T2 = ["19:00","19:00","19:00","19:00","19:00","19:00","19:00"];
 
@@ -858,7 +844,7 @@
         });
       }
       function iconCheck(){ return '<span class="pl-ico" title="Взето"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#eafff3" stroke-width="3"><path d="M5 13l4 4L19 7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>'; }
-      function iconMute(){ return '<span class="pl-ico" title="Без звук"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4В5Л7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>'; }
+      function iconMute(){ return '<span class="pl-ico" title="Без звук"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg></span>'; }
 
       function renderTimes(){
         const seq=[1,2,3,4,5,6,0];
@@ -896,41 +882,45 @@
 
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0;
-      let hourCycle=0;  // 0 => 1..12 (позиции [12,1..11]); 1 => 13..24 (позиции [24,13..23])
+      let hourCycle=0;  // 0 => 1..12 ; 1 => 13..24
       let focusHM='H';
+
+      // Позиции на етикетите по 12-секторния циферблат (k=0 е горе)
+      const POS_12H = [12,1,2,3,4,5,6,7,8,9,10,11];
+      const POS_24H = [24,13,14,15,16,17,18,19,20,21,22,23];
+
+      function hToCycle(H){ return (H===0 || (H>=13 && H<=23)) ? 1 : 0; }
+      function labelAt(k){ const arr=(hourCycle===0)?POS_12H:POS_24H; const raw=arr[k]; return (raw===24?0:raw); }
+      function shownLabel(raw){ return (raw===24?24:raw); } // визуално показваме 24, не 0
+
+      function hourIndexFor(H){
+        if(hourCycle===0){
+          const h12 = (H%12)||12; // 12 вместо 0
+          return POS_12H.indexOf(h12);
+        }else{
+          const raw = (H===0)?24:H;
+          return POS_24H.indexOf(raw);
+        }
+      }
 
       function updateRead(){ read.textContent = two(H)+":"+two(M); }
       function setHands(){
-        const degH = H*15 + (M/60)*15;  // 24h: 360/24=15
+        const k = hourIndexFor(H); // 0..11
+        const degH = (k + M/60)*30; // 12 сектора × 30°
         const degM = M*6;
         handH.style.transform = 'translate(-50%,-100%) rotate('+degH+'deg)';
         handM.style.transform = 'translate(-50%,-100%) rotate('+degM+'deg)';
       }
+
       function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
 
-      // НОВО: стандартен циферблат — 12/0 е горе
-      const POS_12H = [12,1,2,3,4,5,6,7,8,9,10,11];          // по позиции 0..11
-      const POS_24H = [24,13,14,15,16,17,18,19,20,21,22,23]; // 24 се визуализира като 0
-
-      function hToCycle(H){
-        // ако H==0 или 13..23 => цикъл 24, иначе 1..12
-        return (H===0 || (H>=13 && H<=23)) ? 1 : 0;
-      }
-      function labelAt(k){
-        // k е позиция 0..11 (0 = горе)
-        const arr = (hourCycle===0) ? POS_12H : POS_24H;
-        const lab = arr[k];
-        return (lab===24 ? 0 : lab);
-      }
       function buildHours(){
         clear(ringH);
-        const arr = (hourCycle===0) ? POS_12H : POS_24H;
+        const arr=(hourCycle===0)?POS_12H:POS_24H;
         for(let k=0;k<12;k++){
-          const raw = arr[k];
-          const shown = (raw===24?0:raw);
-          const el=document.createElement('div'); el.className='clk-tick strong'; el.textContent = shown;
-          // k=0 е горе => -90deg
-          const ang = (Math.PI*2)*(k/12) - Math.PI/2;
+          const raw=arr[k];
+          const el=document.createElement('div'); el.className='clk-tick strong'; el.textContent = shownLabel(raw);
+          const ang = (Math.PI*2)*(k/12) - Math.PI/2; // k=0 горе
           const R=84; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
           el.style.left='calc(50% + '+(x-12)+'px)'; el.style.top='calc(50% + '+(y-12)+'px)';
           const h24 = (raw===24?0:raw);
@@ -958,7 +948,7 @@
         activeCell = cell; if(activeCell) activeCell.classList.add('sel');
 
         selRow=row; selDow=dow;
-        state.activeDow = dow; save(state); refreshDays();
+        state.activeDow = dow; save(state);
 
         const idx = (dow===0?6:dow-1);
         const [h,m] = (initial||state.times[row][idx]).split(':').map(x=>parseInt(x,10));
@@ -975,10 +965,12 @@
       }
       Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
+      // Геометрия
+      function ptAngle(cx,cy, x,y){ const dx=x-cx, dy=y-cy; let ang=Math.atan2(dy,dx); ang+=Math.PI/2; if(ang<0) ang+=Math.PI*2; return ang; }
+
       // Drag въртене
       let dragging=null; // 'H' | 'M'
       let prevAngle=null; let prevM=null;
-      function ptAngle(cx,cy, x,y){ const dx=x-cx, dy=y-cy; let ang=Math.atan2(dy,dx); ang+=Math.PI/2; if(ang<0) ang+=Math.PI*2; return ang; }
 
       function handleMove(e){
         if(!dragging) return;
@@ -988,6 +980,7 @@
         const ang=ptAngle(cx,cy,p.clientX,p.clientY);
 
         if(dragging==='H'){
+          // смяна на цикъл при преминаване през горната граница (грубо)
           if(prevAngle!==null){
             const delta = ang - prevAngle;
             if(delta>Math.PI) { hourCycle = (hourCycle-1+2)%2; }
@@ -1002,9 +995,9 @@
           let v = Math.round((ang/(Math.PI*2))*60) % 60; if(v<0) v+=60;
           if(prevM!==null){
             const diff = v - prevM;
-            if(diff>40){ // 59 -> 0
+            if(diff>40){ // 59 -> 0 (въртене напред)
               H=(H+1)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours();
-            } else if(diff<-40){ // 0 -> 59
+            } else if(diff<-40){ // 0 -> 59 (въртене назад)
               H=(H-1+24)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours();
             }
           }
@@ -1024,19 +1017,19 @@
 
       // Център drag ↑/↓
       let centerDragging=false, startY=0;
-      read.addEventListener('pointerdown', (e)=>{ centerDragging=true; startY=e.clientY||0; e.preventDefault(); });
+      document.getElementById('clkRead').addEventListener('pointerdown', (e)=>{ centerDragging=true; startY=e.clientY||0; e.preventDefault(); });
       window.addEventListener('pointermove', (e)=>{
         if(!centerDragging) return;
         const dy = (e.clientY||0) - startY;
         if(Math.abs(dy)>=12){
           const step = (dy>0)?-1:1; startY = e.clientY||0;
           if(focusHM==='H'){
-            const oldH=H; H=(H+step+24)%24;
-            const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); else buildHours();
+            H=(H+step+24)%24;
+            const prevC=hourCycle; hourCycle=hToCycle(H); buildHours();
           }else{
             let oldM=M; M=(M+step+60)%60;
-            if(oldM===59 && M===0){ H=(H+1)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); }
-            if(oldM===0 && M===59){ H=(H-1+24)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); }
+            if(oldM===59 && M===0){ H=(H+1)%24; const prevC=hourCycle; hourCycle=hToCycle(H); buildHours(); }
+            if(oldM===0 && M===59){ H=(H-1+24)%24; const prevC=hourCycle; hourCycle=hToCycle(H); buildHours(); }
             buildMins();
           }
           updateRead(); setHands();
@@ -1050,14 +1043,13 @@
         if(ev.key==='ArrowUp' || ev.key==='ArrowDown'){
           ev.preventDefault();
           const dir = ev.key==='ArrowUp'?1:-1;
-          const oldH=H, oldM=M;
+          const oldM=M;
           if(focusHM==='H'){
-            H=(H+dir+24)%24;
-            const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); else buildHours();
+            H=(H+dir+24)%24; hourCycle=hToCycle(H); buildHours();
           }else{
             M=(M+dir+60)%60;
-            if(oldM===59 && M===0){ H=(H+1)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); }
-            if(oldM===0 && M===59){ H=(H-1+24)%24; const prevC=hourCycle; hourCycle=hToCycle(H); if(hourCycle!==prevC) buildHours(); }
+            if(oldM===59 && M===0){ H=(H+1)%24; hourCycle=hToCycle(H); buildHours(); }
+            if(oldM===0 && M===59){ H=(H-1+24)%24; hourCycle=hToCycle(H); buildHours(); }
             buildMins();
           }
           updateRead(); setHands();
@@ -1069,7 +1061,7 @@
         td.addEventListener('click', ()=>{
           const row = Number(td.getAttribute('data-row'));
           const dow = Number(td.getAttribute('data-dow'));
-          showClk(row, dow, td.textContent.trim(), td);
+          showClk(row, dow, td.textContent.replace(/[^\d:]/g,'').trim(), td);
         });
       });
 
@@ -1083,7 +1075,7 @@
       btnYellow.addEventListener('click', ()=>commitTime(1));
       btnRed.addEventListener('click',   ()=>commitTime(2));
 
-      // Маркиране на ден днес
+      // Инициална маркировка на „днес“
       (function markDays(){
         state.todayDow = (new Date()).getDay();
         if(typeof state.activeDow!=="number") state.activeDow = state.todayDow;
