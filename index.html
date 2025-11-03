@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.30</title>
+  <title>БТ App 3 — v2.34</title>
 
   <!-- Без service worker за кеш -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -247,7 +247,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.30</span>
+        <span class="badge">v2.34</span>
       </div>
     </div>
   </div>
@@ -544,7 +544,7 @@
         <button id="btnRed" class="traffic-btn" aria-label="Запиши (червено)">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M3 9v6h4л5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </button>
       </div>
@@ -584,7 +584,7 @@
       function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
       function bgToISO_any(bg){
         var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
+        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+м4[2]+"-"+м4[1];
         return "";
       }
       var KEY="bt-progress";
@@ -710,10 +710,10 @@
             '<td class="actions">'+
               '<div class="actions">'+
                 '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5л5 5"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
                 '</button>'+
                 '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6л1 14h8л1-14"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
                 '</button>'+
               '</div>'+
             '</td>';
@@ -782,7 +782,7 @@
           wm.forEach((arr,k)=>{
             var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
             var btCount=arr.filter(z=>z.bt!==false).length;
-            pts.push({x:k,y:s/arr.length,label:labelWeek(k), bt:(btCount>=arr.length-бtCount)});
+            pts.push({x:k,y:s/arr.length,label:labelWeek(k), bt:(btCount>=arr.length - btCount)});
           });
         } else {
           var mm=new Map();
@@ -790,7 +790,7 @@
           mm.forEach((arr,k)=>{
             var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
             var btCount=arr.filter(z=>z.bt!==false).length;
-            pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length-бtCount)});
+            pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length - btCount)});
           });
         }
 
@@ -977,7 +977,7 @@
       [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', ()=>{
         const which = localStorage.getItem(KEY_SEL)||"n";
         const t=loadTim();
-        if(which==="м") t.m = getStr(hhM,mmM);
+        if(which==="m") t.m = getStr(hhM,mmM);
         else if(which==="n") t.n = getStr(hhN,mmN);
         else t.e = getStr(hhE,mmE);
         saveTim(t);
@@ -1002,7 +1002,7 @@
       function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||ensure(); }catch(_){ return ensure(); } }
       function save(t){ localStorage.setItem(KEY, JSON.stringify(t)); }
       function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
-      function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(ммSel.value||"00"); }
+      function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       const t0=ensure();
       setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
@@ -1052,7 +1052,7 @@
             const old = cell.querySelector('.pl-time-mute'); if(old) old.remove();
             if(f===2){
               const ico=document.createElement('span'); ico.className='pl-time-mute';
-              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9л6 6M15 9л-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4л5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
               cell.appendChild(ico);
             }
           }
@@ -1083,27 +1083,23 @@
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
 
-      /* ===== НОВА ЛОГИКА: 12-часов циферблат с обиколки 1→12 (първа), 13→24 (втора) ===== */
-      // ampmCycle = 0 (1..12), 1 (13..24)
-      let ampmCycle = 0;
-      let lastDispHour = 12; // 1..12 за детекция на преминаване през 12↔1
+      /* ===== 12-часов циферблат с обиколки 1→12, после 13→24 (24 вместо 0) ===== */
+      let ampmCycle = 0;     // 0 → 1..12; 1 → 13..24
+      let lastDispHour = 12; // 1..12, за детекция през 12↔1
 
       function hour24ToDisp(h24){
-        // връща {disp(1..12), cycle 0/1} като 24 се мапва към (12,1)
         if(h24===24) return {disp:12, cycle:1};
         const cycle = (h24>=13)?1:0;
         const disp = ((h24-1)%12)+1; // 1..12
         return {disp, cycle};
       }
       function dispToHour24(disp, cycle){
-        // от показан час (1..12) + цикъл → 1..24 (24 вместо 0)
         if(cycle===0) return disp;            // 1..12
-        return disp===12 ? 24 : (disp+12);    // 13..24, като 12 → 24
+        return disp===12 ? 24 : (disp+12);    // 13..24
       }
 
       function updateRead(){ read.textContent = two(H)+":"+two(M); }
       function setHands(){
-        // за стрелката на часа ползваме дисплейния 1..12
         const d = hour24ToDisp(H);
         const degH = (d.disp%12)*30 + (M/60)*30; // 12 горе
         const degM = M*6;
@@ -1114,7 +1110,6 @@
 
       function buildHours(){
         clear(ringH);
-        // Нареждаме 12 маркера: 12 най-горе, 1 вдясно-горе и т.н.
         const d = hour24ToDisp(H);
         ampmCycle = d.cycle;
         lastDispHour = d.disp;
@@ -1186,21 +1181,19 @@
       // Геометрия
       function ptAngle(cx,cy, x,y){ const dx=x-cx, dy=y-cy; let ang=Math.atan2(dy,dx); ang+=Math.PI/2; if(ang<0) ang+=Math.PI*2; return ang; }
       function angleToDispHour(ang){
-        // 0..2π, 0 = на горе (12); map → 1..12
         let frac = ang/(Math.PI*2); // 0..1
         let idx = Math.round(frac*12) % 12; // 0..11
         let disp = idx===0 ? 12 : idx; // 12 горе
         return disp;
       }
 
-      // Drag въртене – само за часове детектираме преминаване през 12↔1, за да сменим цикъла
+      // Drag въртене
       let dragging=null; // 'H' или 'M'
       function setFromAngleHours(ang){
         const disp = angleToDispHour(ang); // 1..12
-        // детекция на посоката около границата
         const prev = lastDispHour;
         if(disp!==prev){
-          const cw = ((disp - prev + 12) % 12) <= 6; // груба посока: по часовника, ако е <=6 стъпки
+          const cw = ((disp - prev + 12) % 12) <= 6;
           if(prev===12 && disp===1 && cw){ ampmCycle = (ampmCycle+1+2)%2; }
           else if(prev===1 && disp===12 && !cw){ ampmCycle = (ampmCycle-1+2)%2; }
           lastDispHour = disp;
@@ -1214,10 +1207,8 @@
       }
       function setFromAngleMins(ang){
         let v=Math.round((ang/(Math.PI*2))*60)%60; if(v<0) v+=60;
-        // пренасяне на час през 59→00 и обратно
         const prev = M;
         if(prev===59 && v===0){ // напред
-          // при минути 59→0 качваме часа; от 24 минава към 1
           H = (H===24) ? 1 : (H+1);
           const d=hour24ToDisp(H); ampmCycle=d.cycle; lastDispHour=d.disp;
         }else if(prev===0 && v===59){ // назад
@@ -1226,7 +1217,7 @@
         }
         M=v; updateRead(); setHands();
         ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); const t=[...ringM.children][M]; if(t) t.classList.add('sel'); focusHM='M';
-        buildHours(); // обнови селекцията на часовете, ако сме пренесли
+        buildHours(); // обнови селекцията на часовете
       }
 
       function handleMove(e){
@@ -1249,7 +1240,7 @@
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
-      // Център: превключване H/M; ↑/↓ коригират фокусираната част, като спазват 1..12 и 13..24
+      // Център: превключване H/M; ↑/↓ за фокуса
       read.addEventListener('click', ()=>{ focusHM = (focusHM==='H'?'M':'H'); });
       document.getElementById('clkCard').addEventListener('keydown', (ev)=>{
         if(ev.key==='Escape'){ hideClk(); return; }
@@ -1257,12 +1248,10 @@
           ev.preventDefault();
           const dir = ev.key==='ArrowUp'?1:-1;
           if(focusHM==='H'){
-            // въртим 1..24 с 24 след 23 и преди 1
             if(dir>0){ H = (H===24)?1:(H+1); } else { H = (H===1)?24:(H-1); }
             const d=hour24ToDisp(H); ampmCycle=d.cycle; lastDispHour=d.disp;
             updateRead(); setHands(); buildHours();
           }else{
-            // минути 0..59
             const prev=M;
             if(dir>0){
               if(prev===59){ M=0; H=(H===24)?1:(H+1); const d=hour24ToDisp(H); ampmCycle=d.cycle; lastDispHour=d.disp; buildHours(); }
