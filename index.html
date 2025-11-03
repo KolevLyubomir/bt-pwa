@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.35</title>
+  <title>БТ App 3 — v2.36</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -66,7 +66,7 @@
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== Стилове за „Данни“ ===== */
+    /* ===== „Данни“ ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -77,7 +77,7 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
-    /* Глобално скрити стрелки — по-долу ги връщаме САМО за Тегло */
+    /* глобално скриваме стрелките; после ги връщаме само за теглото */
     input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
@@ -86,19 +86,20 @@
 
     .field.date{ width:120px }
     .field.date input{ width:100% }
+
     .field.weight input{ font-weight:700; font-size:18px; width:9ch }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
-    /* Връщане на стрелките само за „Тегло (kg)” */
+    /* връщаме стрелките само за теглото */
     .field.weight input[type="number"]{
-      appearance: auto;
-      -webkit-appearance: auto;
-      -moz-appearance: auto;
+      appearance:auto;
+      -webkit-appearance:auto;
+      -moz-appearance:auto;
     }
     .field.weight input[type="number"]::-webkit-inner-spin-button,
     .field.weight input[type="number"]::-webkit-outer-spin-button{
-      -webkit-appearance: auto;
-      margin: 0;
+      -webkit-appearance:auto;
+      margin:0;
     }
 
     .bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
@@ -167,6 +168,8 @@
     .time-wrap{ display:flex; align-items:center; gap:6px }
     .time-row{ display:flex; align-items:center; gap:4px }
     .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
+    .time-row .colon{ opacity:.8; user-select:none; }
+
     select option.strong { font-weight:700; }
 
     /* ===== ProLact Slim+ таблица ===== */
@@ -244,7 +247,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.35</span>
+        <span class="badge">v2.36</span>
       </div>
     </div>
   </div>
@@ -589,6 +592,7 @@
       function save(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
       function sortDesc(a){ return a.slice().sort((x,y)=>y.date.localeCompare(x.date)); }
       function sortAsc(a){ return a.slice().sort((x,y)=>x.date.localeCompare(y.date)); }
+
       var dateText=document.getElementById("dateText"), calEl=document.getElementById("cal"),
           weight=document.getElementById("weight"), addBtn=document.getElementById("addBtn"),
           tb=document.querySelector("#tbl tbody"), pagerTop=document.getElementById("pagerTop"),
@@ -596,9 +600,11 @@
           chart=document.getElementById("chart"), pageSizeSel=document.getElementById("pageSize"),
           exportBtn=document.getElementById("exportBtn"), importBtn=document.getElementById("importBtn"),
           importFile=document.getElementById("importFile"), btFlag=document.getElementById("btFlag");
+
       var currentISO=localStorage.getItem("bt-last-date")||TODAY;
       if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO=TODAY;
       dateText.value=isoToBG_YY(currentISO);
+
       function prefillFor(iso){
         var data=load(); var rec=data.find(r=>r.date===iso);
         if(rec){
@@ -611,9 +617,12 @@
         btFlag.checked=true;
       }
       prefillFor(currentISO);
+
       var calYear=+currentISO.slice(0,4), calMonth=+currentISO.slice(5,7);
       function ymd(y,m,d){ return String(y).padStart(4,"0")+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0"); }
+
       function hasDataSet(){ var s=new Set(); load().forEach(r=>s.add(r.date)); return s; }
+
       function renderCalendar(){
         var set=hasDataSet(), y=calYear, m=calMonth;
         var first=new Date(Date.UTC(y,m-1,1));
@@ -635,13 +644,27 @@
       }
       function showCalendar(){ renderCalendar(); calEl.classList.add("show"); }
       function hideCalendar(){ calEl.classList.remove("show"); }
-      dateText.addEventListener("click",(e)=>{ e.stopPropagation(); calYear=+currentISO.slice(0,4); calMonth=+currentISO.slice(5,7); showCalendar(); });
+
+      dateText.addEventListener("click",(e)=>{
+        e.stopPropagation();
+        calYear=+currentISO.slice(0,4); calMonth=+currentISO.slice(5,7);
+        showCalendar();
+      });
       calEl.addEventListener("click",(e)=>{
         e.stopPropagation(); var t=e.target;
         if(t && t.id==="calPrev"){ calMonth--; if(calMonth===0){calMonth=12; calYear--; } renderCalendar(); return; }
         if(t && t.id==="calNext"){ calMonth++; if(calMonth===13){calMonth=1; calYear++; } renderCalendar(); return; }
         var btn=t.closest && t.closest(".day[data-iso]");
-        if(btn){ var iso=btn.getAttribute("data-iso"); if(iso<=TODAY){ currentISO=iso; localStorage.setItem("bt-last-date",iso); dateText.value=isoToBG_YY(iso); prefillFor(iso); hideCalendar(); } }
+        if(btn){
+          var iso=btn.getAttribute("data-iso");
+          if(iso<=TODAY){
+            currentISO=iso;
+            localStorage.setItem("bt-last-date",iso);
+            dateText.value=isoToBG_YY(iso);
+            prefillFor(iso);
+            hideCalendar();
+          }
+        }
       });
       document.addEventListener("click",(e)=>{ if(!calEl.contains(e.target) && e.target!==dateText) hideCalendar(); });
 
@@ -652,8 +675,14 @@
 
         var data=load(), prev=sortDesc(data).find(r=>r.date<iso), next=sortAsc(data).find(r=>r.date>iso);
         var ok=true, msgs=[];
-        if(prev){ var minP=prev.weight*0.95, maxP=prev.weight*1.05; if(w<minP||w>maxP){ ok=false; msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg"); } }
-        if(next){ var minN=next.weight*0.95, maxN=next.weight*1.05; if(w<minN||w>maxN){ ok=false; msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg"); } }
+        if(prev){
+          var minP=prev.weight*0.95, maxP=prev.weight*1.05;
+          if(w<minP||w>maxP){ ok=false; msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg"); }
+        }
+        if(next){
+          var minN=next.weight*0.95, maxN=next.weight*1.05;
+          if(w<minN||w>maxN){ ok=false; msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg"); }
+        }
         if(!ok){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
 
         var idx=data.findIndex(r=>r.date===iso);
@@ -668,7 +697,13 @@
       function setPS(v){ localStorage.setItem("bt-page-size",v); }
       var pageSize=getPS(), currentPage=1;
       (function(){ var v=(pageSize==="all")?"all":String(pageSize); var opt=document.querySelector('#pageSize option[value="'+v+'"]'); if(opt) pageSizeSel.value=v; })();
-      pageSizeSel.addEventListener("change", ()=>{ var v=pageSizeSel.value; pageSize=(v==="all")?"all":Number(v); setPS(v); currentPage=1; renderTable(); renderChart(); });
+      pageSizeSel.addEventListener("change", ()=>{
+        var v=pageSizeSel.value;
+        pageSize=(v==="all")?"all":Number(v);
+        setPS(v);
+        currentPage=1;
+        renderTable(); renderChart();
+      });
 
       var __currentSlice=[];
 
@@ -678,14 +713,31 @@
         var info=document.createElement("span"); info.className="info"; info.textContent=from+"-"+to+" от "+total; container.appendChild(info);
 
         var pagesTotal=Math.max(1,Math.ceil(total/eff)), frag=document.createDocumentFragment();
-        function pageBtn(n,active){ var b=document.createElement("button"); b.textContent=String(n); if(active) b.className="active";
-          b.addEventListener("click",()=>{currentPage=n; renderTable(); renderChart();}); return b; }
-        if(pagesTotal>1 && currentPage>1){ var prev=document.createElement("button"); prev.textContent="←";
-          prev.addEventListener("click",()=>{currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();}); frag.appendChild(prev); }
-        if(pagesTotal<=5){ for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage)); }
-        else{ var sp=currentPage-2; if(sp<1) sp=1; if(sp+4>pagesTotal) sp=pagesTotal-4; for(var pp=sp; pp<=sp+4; pp++) frag.appendChild(pageBtn(pp,pp===currentPage)); }
-        if(pagesTotal>1 && currentPage<pagesTotal){ var next=document.createElement("button"); next.textContent="→";
-          next.addEventListener("click",()=>{currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();}); frag.appendChild(next); }
+        function pageBtn(n,active){
+          var b=document.createElement("button");
+          b.textContent=String(n);
+          if(active) b.className="active";
+          b.addEventListener("click",()=>{currentPage=n; renderTable(); renderChart();});
+          return b;
+        }
+        if(pagesTotal>1 && currentPage>1){
+          var prev=document.createElement("button"); prev.textContent="←";
+          prev.addEventListener("click",()=>{currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();});
+          frag.appendChild(prev);
+        }
+        if(pagesTotal<=5){
+          for(var p=1;p<=pagesTotal;p++) frag.appendChild(pageBtn(p,p===currentPage));
+        } else {
+          var sp=currentPage-2;
+          if(sp<1) sp=1;
+          if(sp+4>pagesTotal) sp=pagesTotal-4;
+          for(var pp=sp; pp<=sp+4; pp++) frag.appendChild(pageBtn(pp,pp===currentPage));
+        }
+        if(pagesTotal>1 && currentPage<pagesTotal){
+          var next=document.createElement("button"); next.textContent="→";
+          next.addEventListener("click",()=>{currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();});
+          frag.appendChild(next);
+        }
         container.appendChild(frag);
       }
 
@@ -714,6 +766,7 @@
             '</td>';
           tb.appendChild(tr);
         });
+
         Array.from(tb.querySelectorAll('button[data-edit]')).forEach((b)=>{
           b.addEventListener("click",()=>{
             var iso=b.getAttribute("data-edit"); var rec=load().find(x=>x.date===iso);
@@ -726,18 +779,21 @@
         });
         Array.from(tb.querySelectorAll('button[data-del]')).forEach((b)=>{
           b.addEventListener("click",()=>{
-            var iso=b.getAttribute("data-del"); if(!confirm("Да изтрия записа за "+isoToBG_YY(iso)+"?")) return;
-            var data=load().filter(x=>x.date!==iso); save(data); renderTable(); renderChart();
+            var iso=b.getAttribute("data-del");
+            if(!confirm("Да изтрия записа за "+isoToBG_YY(iso)+"?")) return;
+            var data=load().filter(x=>x.date!==iso);
+            save(data); renderTable(); renderChart();
           });
         });
         buildPager(pagerBottom,total,eff);
       }
 
       function weekKey(iso){
-        var d=new Date(iso); d.setUTCHours(0,0,0,0); d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
+        var d=new Date(iso); d.setUTCHours(0,0,0,0);
+        d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
         var yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
         var week=Math.ceil((((d-yearStart)/86400000)+1)/7);
-        return d.getUTCDFullYear()+"-W"+String(week).padStart(2,"0");
+        return d.getUTCFullYear()+"-W"+String(week).padStart(2,"0");
       }
       function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
       function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
@@ -752,16 +808,22 @@
 
       function getChartRawData(){
         var mode=aggSel.value;
-        if(mode==="daily"){ var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(load()); return sortAsc(src); }
+        if(mode==="daily"){
+          var src=(__currentSlice && __currentSlice.length)?__currentSlice.slice():sortDesc(load());
+          return sortAsc(src);
+        }
         return sortAsc(load());
       }
 
       function renderChart(){
         var ctx=chart.getContext("2d"), rect=chart.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
-        chart.width=Math.round(rect.width*dpr); chart.height=Math.round(360*dpr); ctx.setTransform(dpr,0,0,dpr,0,0);
-        var w=rect.width, h=360; ctx.clearRect(0,0,w,h);
+        chart.width=Math.round(rect.width*dpr); chart.height=Math.round(360*dpr);
+        ctx.setTransform(dpr,0,0,dpr,0,0);
+        var w=rect.width, h=360;
+        ctx.clearRect(0,0,w,h);
 
-        var raw=getChartRawData(); if(!raw.length){
+        var raw=getChartRawData();
+        if(!raw.length){
           ctx.fillStyle="#9fb4ad";
           ctx.font="700 "+cssPx('--chart-values', 15)+"px system-ui";
           ctx.fillText("Няма данни",10,26);
@@ -791,16 +853,25 @@
 
         pts.sort((a,b)=>a.x.localeCompare(b.x));
         var vals=pts.map(p=>p.y).filter(n=>typeof n==="number");
+
         ctx.font="700 "+cssPx('--chart-values', 15)+"px system-ui";
-        if(vals.length<2){ ctx.fillStyle="#9fb4ad"; ctx.fillText("Добави поне 2 точки",10,26); return; }
+        if(vals.length<2){
+          ctx.fillStyle="#9fb4ad";
+          ctx.fillText("Добави поне 2 точки",10,26);
+          return;
+        }
 
         var min=Math.min(...vals), max=Math.max(...vals);
         var padL=48, padR=18, padT=16, padB=96, n=pts.length;
+
         function X(i){ return padL+(w-padL-padR)*(n<=1?0:i/(n-1)); }
         function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
         ctx.strokeStyle="#20343a"; ctx.lineWidth=1.1;
-        ctx.beginPath(); ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB); ctx.moveTo(padL,padT); ctx.lineTo(padL,h-padB); ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB);
+        ctx.moveTo(padL,padT);   ctx.lineTo(padL,h-padB);
+        ctx.stroke();
 
         for(var i=1;i<n;i++){
           var p0=pts[i-1], p1=pts[i];
@@ -817,16 +888,19 @@
         }
 
         ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle";
-        ctx.fillText(String(max.toFixed(1)),10,Y(max)); ctx.fillText(String(min.toFixed(1)),10,Y(min));
+        ctx.fillText(String(max.toFixed(1)),10,Y(max));
+        ctx.fillText(String(min.toFixed(1)),10,Y(min));
 
         var maxLabels=Math.min(16,n), step=Math.max(1,Math.floor(n/maxLabels));
         ctx.font="700 "+cssPx('--chart-label', 15)+"px system-ui";
+
         for(var j=0;j<n;j++){
           var pe=pts[j], x0=X(j), y0=h-padB;
+          const yVal = Y(pe.y);
+
           ctx.beginPath();
           ctx.fillStyle = pe.bt ? (getComputedStyle(document.documentElement).getPropertyValue('--line-orange').trim()||'#f59e0b')
                                 : (getComputedStyle(document.documentElement).getPropertyValue('--line-green').trim()||'#87f3c5');
-          const yVal = Y(pe.y);
           ctx.arc(x0, yVal, 3, 0, Math.PI*2);
           ctx.fill();
 
@@ -856,6 +930,7 @@
         a.href=url; a.download="bt-progress-export.json";
         document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
       });
+
       importBtn.addEventListener("click", ()=>importFile.click());
       importFile.addEventListener("change", ()=>{
         var f=importFile.files[0]; if(!f) return;
@@ -934,8 +1009,9 @@
           const r=JSON.parse(localStorage.getItem(KEY_TIM)||'');
           if(r && r.m && r.n && r.e) return r;
         }catch(_){}
-        localStorage.setItem(KEY_TIM, JSON.stringify({...DEF}));
-        return {...DEF};
+        const def={...DEF};
+        localStorage.setItem(KEY_TIM, JSON.stringify(def));
+        return def;
       }
       function loadTim(){ try{ return JSON.parse(localStorage.getItem(KEY_TIM))||ensureTim(); }catch(_){ return ensureTim(); } }
       function saveTim(t){ localStorage.setItem(KEY_TIM, JSON.stringify(t)); }
@@ -948,13 +1024,19 @@
       buildHourRange(hhE,18,23); buildMinutes5(mmE);
 
       function setOnly(which){
-        m.checked = (which==="m"); n.checked = (which==="n"); e.checked = (which==="e");
+        m.checked = (which==="m");
+        n.checked = (which==="n");
+        e.checked = (which==="e");
         boxM.style.display = (which==="m")?"block":"none";
         boxN.style.display = (which==="n")?"block":"none";
         boxE.style.display = (which==="e")?"block":"none";
         saveSel(which);
       }
-      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
+      function setFromStr(hhSel, mmSel, str){
+        const [H,M]=(str||"").split(":");
+        if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value;
+        if(!setSel(mmSel,M)) mmSel.value="00";
+      }
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       const which0=loadSel(); setOnly(which0);
@@ -966,6 +1048,7 @@
         setOnly(which);
         const t=loadTim(); saveTim(t);
       }));
+
       [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', ()=>{
         const which = localStorage.getItem(KEY_SEL)||"n";
         const t=loadTim();
@@ -989,16 +1072,35 @@
       buildHourRange(hhN,10,17); buildMinutes5(mmN);
       buildHourRange(hhE,18,23); buildMinutes5(mmE);
 
-      function ensure(){ try{ const r=JSON.parse(localStorage.getItem(KEY)||''); if(r&&r.m&&r.n&&r.e) return r; }catch(_){}
-        const def={...DEF}; localStorage.setItem(KEY, JSON.stringify(def)); return def; }
+      function ensure(){
+        try{
+          const r=JSON.parse(localStorage.getItem(KEY)||'');
+          if(r&&r.m&&r.n&&r.e) return r;
+        }catch(_){}
+        const def={...DEF};
+        localStorage.setItem(KEY, JSON.stringify(def));
+        return def;
+      }
       function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||ensure(); }catch(_){ return ensure(); } }
       function save(t){ localStorage.setItem(KEY, JSON.stringify(t)); }
-      function setFromStr(hhSel, mmSel, str){ const [H,M]=(str||"").split(":"); if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value; if(!setSel(mmSel,M)) mmSel.value="00"; }
+
+      function setFromStr(hhSel, mmSel, str){
+        const [H,M]=(str||"").split(":");
+        if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value;
+        if(!setSel(mmSel,M)) mmSel.value="00";
+      }
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       const t0=ensure();
       setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
-      function write(){ save({ m:getStr(hhM,mmM), n:getStr(hhN,mmN), e:getStr(hhE,mmE) }); }
+
+      function write(){
+        save({
+          m:getStr(hhM,mmM),
+          n:getStr(hhN,mmN),
+          e:getStr(hhE,mmE)
+        });
+      }
       [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', write));
       write();
     })();
@@ -1011,13 +1113,31 @@
       const DEF_T2 = ["19:00","19:00","19:00","19:00","19:00","19:00","19:00"];
 
       function getTodayDow(){ return (new Date()).getDay(); }
+
       function load(){
         try{
           const r=JSON.parse(localStorage.getItem(KEY)||"");
-          if(r && r.times && r.times.length===2 && r.flag && r.flag.length===2) return r;
+          if(r && r.times && r.times.length===2 && r.flag && r.flag.length===2){
+            // миграция: 24:xx → 00:xx
+            for(let row=0; row<2; row++){
+              for(let i=0;i<7;i++){
+                const s=r.times[row][i];
+                if(typeof s==="string" && s.startsWith("24:")){
+                  r.times[row][i]="00:"+s.slice(3);
+                }
+              }
+            }
+            return r;
+          }
         }catch(_){}
-        const init = { times:[ [...DEF_T1], [...DEF_T2] ], flag:[ [0,0,0,0,0,0,0],[0,0,0,0,0,0,0] ], todayDow:getTodayDow(), activeDow:getTodayDow() };
-        localStorage.setItem(KEY, JSON.stringify(init)); return init;
+        const init = {
+          times:[ [...DEF_T1], [...DEF_T2] ],
+          flag:[ [0,0,0,0,0,0,0],[0,0,0,0,0,0,0] ],
+          todayDow:getTodayDow(),
+          activeDow:getTodayDow()
+        };
+        localStorage.setItem(KEY, JSON.stringify(init));
+        return init;
       }
       function save(obj){ localStorage.setItem(KEY, JSON.stringify(obj)); }
       let state = load();
@@ -1040,7 +1160,9 @@
             cell.textContent = state.times[row][idx];
             cell.classList.remove('green','yellow','red','sel');
             const f = state.flag[row][idx]|0;
-            if(f===0) cell.classList.add('green'); else if(f===1) cell.classList.add('yellow'); else if(f===2) cell.classList.add('red');
+            if(f===0) cell.classList.add('green');
+            else if(f===1) cell.classList.add('yellow');
+            else if(f===2) cell.classList.add('red');
             const old = cell.querySelector('.pl-time-mute'); if(old) old.remove();
             if(f===2){
               const ico=document.createElement('span'); ico.className='pl-time-mute';
@@ -1055,7 +1177,7 @@
       TABLE.querySelectorAll('thead .pl-day').forEach(th=>{
         th.addEventListener('click', ()=>{
           state.activeDow = Number(th.getAttribute('data-dow'));
-          refreshDays(); save(state);
+          save(state); refreshDays();
         });
       });
 
@@ -1074,9 +1196,9 @@
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
 
-      /* ===== 12-часов циферблат с обиколки 1→12, после 13→24 (24 вместо 0) ===== */
-      let ampmCycle = 0;     // 0 → 1..12; 1 → 13..24
-      let lastDispHour = 12; // 1..12, за детекция през 12↔1
+      /* ===== 12-часов циферблат с две обиколки: сутрин (12..11), следобед (0,13..23) ===== */
+      let ampmCycle = 0;     // 0 → скала 12/1..11; 1 → скала 0,13..23
+      let lastDispHour = 12; // 1..12 за детекция през 12↔1
 
       function hour24ToDisp(h24){
         if(h24===24) return {disp:12, cycle:1};
@@ -1089,20 +1211,21 @@
         return disp===12 ? 24 : (disp+12);
       }
 
-      // Скалата се определя по правилото:
-      // 00:01–12:00  → сутрешна (циферблат 12,1..11)
-      // 12:01–24:00 → следобедна (циферблат 24,13..23)
+      // границите: 00:01–12:00 → сутрешна, 12:01–24:00 → следобедна
       function recomputeAmpmFromTime(){
         if (H > 12 || H === 24 || (H === 12 && M >= 1)) {
           ampmCycle = 1;
         } else {
           ampmCycle = 0;
         }
-        const d = hour24ToDisp(H === 24 ? 24 : H);
+        const d = hour24ToDisp(H);
         lastDispHour = d.disp;
       }
 
-      function updateRead(){ read.textContent = two(H)+":"+two(M); }
+      function updateRead(){
+        const hDisp = (H === 24 ? 0 : H);
+        read.textContent = two(hDisp)+":"+two(M);
+      }
       function setHands(){
         const d = hour24ToDisp(H);
         const degH = (d.disp%12)*30 + (M/60)*30;
@@ -1114,24 +1237,26 @@
 
       function buildHours(){
         clear(ringH);
-        // синхронизираме скалата според текущото време
+        // осъвременяваме обиколката според текущото H/M
         recomputeAmpmFromTime();
 
         for(let i=1;i<=12;i++){
           const el=document.createElement('div');
           el.className='clk-tick'+((i===12 || i===3 || i===6 || i===9)?' strong':'');
           el.dataset.disp = String(i);
-          // Етикети на часовете:
-          // сутрешна скала  → 12,1,2,...,11
-          // следобедна скала → 24,13,14,...,23
+
+          // етикети върху циферблата:
+          // сутрин → 12,1,2,...,11
+          // следобед → 0,13,14,...,23 (0 вместо 24 на върха)
           const label = (ampmCycle===0)
             ? (i===12 ? 12 : i)
-            : (i===12 ? 24 : (i+12));
+            : (i===12 ? 0 : (i+12));
           el.textContent = String(label);
 
           const ang = (Math.PI*2) * (i%12)/12 - Math.PI/2;
           const R=84; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
-          el.style.left='calc(50% + '+(x-12)+'px)'; el.style.top='calc(50% + '+(y-12)+'px)';
+          el.style.left='calc(50% + '+(x-12)+'px)';
+          el.style.top ='calc(50% + '+(y-12)+'px)';
 
           const h24 = dispToHour24(i, ampmCycle);
           if(h24===H) el.classList.add('sel');
@@ -1141,24 +1266,33 @@
             lastDispHour = i;
             recomputeAmpmFromTime();
             updateRead(); setHands();
-            ringH.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); el.classList.add('sel');
+            ringH.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
+            el.classList.add('sel');
             focusHM='H';
           });
 
           ringH.appendChild(el);
         }
-
       }
       function buildMins(){
         clear(ringM);
         for(let m=0; m<60; m++){
-          const el=document.createElement('div'); el.className='clk-tick'+((m%5===0)?' strong':'');
+          const el=document.createElement('div');
+          el.className='clk-tick'+((m%5===0)?' strong':'');
           el.textContent = (m%5===0)? m : '·';
           const ang = (Math.PI*2) * (m/60) - Math.PI/2;
           const R=124; const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
-          el.style.left='calc(50% + '+(x-12)+'px)'; el.style.top='calc(50% + '+(y-12)+'px)';
+          el.style.left='calc(50% + '+(x-12)+'px)';
+          el.style.top ='calc(50% + '+(y-12)+'px)';
           if(m===M) el.classList.add('sel');
-          el.addEventListener('click', ()=>{ M=m; updateRead(); setHands(); ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel')); el.classList.add('sel'); focusHM='M'; });
+          el.addEventListener('click', ()=>{
+            M=m;
+            recomputeAmpmFromTime();
+            updateRead(); setHands();
+            ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
+            el.classList.add('sel');
+            focusHM='M';
+          });
           ringM.appendChild(el);
         }
       }
@@ -1172,10 +1306,16 @@
 
         const idx = (dow===0?6:dow-1);
         const [h,m] = (initial||state.times[row][idx]).split(':').map(x=>parseInt(x,10));
-        H=isFinite(h)?h:8; M=isFinite(m)?m:0; focusHM='H';
+
+        let hh = isFinite(h) ? h : 8;
+        if (hh === 0) hh = 24; // 00:xx в таблицата → вътрешно 24:xx
+        H = hh;
+        M = isFinite(m) ? m : 0;
+        focusHM='H';
 
         recomputeAmpmFromTime();
-        updateRead(); setHands(); buildHours(); buildMins();
+        updateRead(); setHands();
+        buildHours(); buildMins();
 
         Modal.classList.add('show');
         Modal.setAttribute('aria-hidden','false');
@@ -1190,7 +1330,13 @@
       }
       Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
-      function ptAngle(cx,cy, x,y){ const dx=x-cx, dy=y-cy; let ang=Math.atan2(dy,dx); ang+=Math.PI/2; if(ang<0) ang+=Math.PI*2; return ang; }
+      function ptAngle(cx,cy, x,y){
+        const dx=x-cx, dy=y-cy;
+        let ang=Math.atan2(dy,dx);
+        ang+=Math.PI/2;
+        if(ang<0) ang+=Math.PI*2;
+        return ang;
+      }
       function angleToDispHour(ang){
         let frac = ang/(Math.PI*2);
         let idx = Math.round(frac*12) % 12;
@@ -1199,12 +1345,13 @@
       }
 
       let dragging=null;
+
       function setFromAngleHours(ang){
         const disp = angleToDispHour(ang);
         const prev = lastDispHour;
         if(disp!==prev){
           const cw = ((disp - prev + 12) % 12) <= 6;
-          // пресичане през 12↔1 сменя обиколката (AM/PM)
+          // пресичане през 12↔1 сменя AM/PM
           if(prev===12 && disp===1 && cw){
             ampmCycle = 1;
           } else if(prev===1 && disp===12 && !cw){
@@ -1213,37 +1360,37 @@
           lastDispHour = disp;
         }
         H = dispToHour24(disp, ampmCycle);
-        // финално определяме скалата по правилото 00:01–12:00 / 12:01–24:00
         recomputeAmpmFromTime();
         updateRead(); setHands();
         buildHours();
         focusHM='H';
       }
+
       function setFromAngleMins(ang){
         let v=Math.round((ang/(Math.PI*2))*60)%60; if(v<0) v+=60;
         const prev = M;
-        if(prev===59 && v===0){ // напред
+        if(prev===59 && v===0){
           H = (H===24) ? 1 : (H+1);
-        }else if(prev===0 && v===59){ // назад
+        } else if(prev===0 && v===59){
           H = (H===1) ? 24 : (H-1);
         }
         M=v;
-        // определяме скалата според новото време
         recomputeAmpmFromTime();
         updateRead(); setHands();
         ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
-        const tEl=[...ringM.children][M]; if(tEl) tEl.classList.add('sel'); focusHM='M';
-        // обновяваме и часовия циферблат (12..11 или 24..23)
+        const tEl=[...ringM.children][M]; if(tEl) tEl.classList.add('sel');
         buildHours();
+        focusHM='M';
       }
 
       function handleMove(e){
         if(!dragging) return;
         const rect=face.getBoundingClientRect();
         const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
-        const x=(e.touches?e.touches[0].clientX:e.clientX), y=(e.touches?e.touches[0].clientY:e.clientY);
-        const ang=ptAngle(cx,cy,x,y);
-        if(dragging==='H') setFromAngleHours(ang); else setFromAngleMins(ang);
+        const pt = e.touches? e.touches[0] : e;
+        const ang=ptAngle(cx,cy,pt.clientX,pt.clientY);
+        if(dragging==='H') setFromAngleHours(ang);
+        else setFromAngleMins(ang);
       }
       function startDrag(which, e){ dragging=which; handleMove(e); }
       function endDrag(){ dragging=null; }
@@ -1252,19 +1399,21 @@
       ringM.addEventListener('pointerdown', (e)=>{ e.preventDefault(); startDrag('M',e); });
       window.addEventListener('pointermove', handleMove, {passive:false});
       window.addEventListener('pointerup', endDrag);
+
       ringH.addEventListener('touchstart', (e)=>{ startDrag('H',e); }, {passive:false});
       ringM.addEventListener('touchstart', (e)=>{ startDrag('M',e); }, {passive:false});
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
       read.addEventListener('click', ()=>{ focusHM = (focusHM==='H'?'M':'H'); });
-      document.getElementById('clkCard').addEventListener('keydown', (ev)=>{
+      Card.addEventListener('keydown', (ev)=>{
         if(ev.key==='Escape'){ hideClk(); return; }
         if(ev.key==='ArrowUp' || ev.key==='ArrowDown'){
           ev.preventDefault();
           const dir = ev.key==='ArrowUp'?1:-1;
           if(focusHM==='H'){
-            if(dir>0){ H = (H===24)?1:(H+1); } else { H = (H===1)?24:(H-1); }
+            if(dir>0){ H = (H===24)?1:(H+1); }
+            else     { H = (H===1)?24:(H-1); }
             recomputeAmpmFromTime();
             updateRead(); setHands(); buildHours();
           }else{
@@ -1285,7 +1434,8 @@
               }
             }
             recomputeAmpmFromTime();
-            updateRead(); setHands(); buildMins(); buildHours();
+            updateRead(); setHands();
+            buildMins(); buildHours();
           }
         }
       });
@@ -1300,7 +1450,8 @@
 
       function commitTime(flag){
         const idx = (selDow===0?6:selDow-1);
-        state.times[selRow][idx] = two(H)+":"+two(M);
+        const hSave = (H === 24 ? 0 : H);  // 24 → 00 при запис
+        state.times[selRow][idx] = two(hSave)+":"+two(M);
         state.flag[selRow][idx] = flag|0;
         save(state); renderTimes(); hideClk();
       }
