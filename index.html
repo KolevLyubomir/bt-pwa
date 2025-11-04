@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.36</title>
+  <title>БТ App 3 — v2.37</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -247,7 +247,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.36</span>
+        <span class="badge">v2.37</span>
       </div>
     </div>
   </div>
@@ -1027,11 +1027,22 @@
         m.checked = (which==="m");
         n.checked = (which==="n");
         e.checked = (which==="e");
-        boxM.style.display = (which==="m")?"block":"none";
+        boxM.style.display = (which==="м")?"block":(which==="m")?"block":"none";
         boxN.style.display = (which==="n")?"block":"none";
         boxE.style.display = (which==="e")?"block":"none";
         saveSel(which);
       }
+      // поправка: горният ред да не бърка "м" → ще презапишем:
+      function setOnly(whichFix){
+        m.checked = (whichFix==="m");
+        n.checked = (whichFix==="n");
+        e.checked = (whichFix==="e");
+        boxM.style.display = (whichFix==="m")?"block":"none";
+        boxN.style.display = (whichFix==="n")?"block":"none";
+        boxE.style.display = (whichFix==="e")?"block":"none";
+        saveSel(whichFix);
+      }
+
       function setFromStr(hhSel, mmSel, str){
         const [H,M]=(str||"").split(":");
         if(!setSel(hhSel,H)) hhSel.value=hhSel.options[0].value;
@@ -1237,9 +1248,6 @@
 
       function buildHours(){
         clear(ringH);
-        // осъвременяваме обиколката според текущото H/M
-        recomputeAmpmFromTime();
-
         for(let i=1;i<=12;i++){
           const el=document.createElement('div');
           el.className='clk-tick'+((i===12 || i===3 || i===6 || i===9)?' strong':'');
@@ -1266,8 +1274,7 @@
             lastDispHour = i;
             recomputeAmpmFromTime();
             updateRead(); setHands();
-            ringH.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
-            el.classList.add('sel');
+            buildHours();
             focusHM='H';
           });
 
@@ -1350,12 +1357,9 @@
         const disp = angleToDispHour(ang);
         const prev = lastDispHour;
         if(disp!==prev){
-          const cw = ((disp - prev + 12) % 12) <= 6;
-          // пресичане през 12↔1 сменя AM/PM
-          if(prev===12 && disp===1 && cw){
-            ampmCycle = 1;
-          } else if(prev===1 && disp===12 && !cw){
-            ampmCycle = 0;
+          // всеки път, когато пресечем 12 ↔ 1 (в която и да е посока), обръщаме циферблата
+          if( (prev===12 && disp===1) || (prev===1 && disp===12) ){
+            ampmCycle = 1 - ampmCycle;
           }
           lastDispHour = disp;
         }
@@ -1412,8 +1416,15 @@
           ev.preventDefault();
           const dir = ev.key==='ArrowUp'?1:-1;
           if(focusHM==='H'){
+            const prevH = H;
             if(dir>0){ H = (H===24)?1:(H+1); }
             else     { H = (H===1)?24:(H-1); }
+
+            // при всяко преминаване през границите около 12/1 (12<->13, 24<->1) цикълът се сменя
+            if( (prevH===12 && H===13) || (prevH===13 && H===12) || (prevH===24 && H===1) || (prevH===1 && H===24) ){
+              ampmCycle = 1 - ampmCycle;
+            }
+
             recomputeAmpmFromTime();
             updateRead(); setHands(); buildHours();
           }else{
