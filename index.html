@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.37</title>
+  <title>БТ App 3 — v2.38</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -247,7 +247,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.37</span>
+        <span class="badge">v2.38</span>
       </div>
     </div>
   </div>
@@ -1027,20 +1027,10 @@
         m.checked = (which==="m");
         n.checked = (which==="n");
         e.checked = (which==="e");
-        boxM.style.display = (which==="м")?"block":(which==="m")?"block":"none";
+        boxM.style.display = (which==="m")?"block":"none";
         boxN.style.display = (which==="n")?"block":"none";
         boxE.style.display = (which==="e")?"block":"none";
         saveSel(which);
-      }
-      // поправка: горният ред да не бърка "м" → ще презапишем:
-      function setOnly(whichFix){
-        m.checked = (whichFix==="m");
-        n.checked = (whichFix==="n");
-        e.checked = (whichFix==="e");
-        boxM.style.display = (whichFix==="m")?"block":"none";
-        boxN.style.display = (whichFix==="n")?"block":"none";
-        boxE.style.display = (whichFix==="e")?"block":"none";
-        saveSel(whichFix);
       }
 
       function setFromStr(hhSel, mmSel, str){
@@ -1207,8 +1197,8 @@
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
 
-      /* ===== 12-часов циферблат с две обиколки: сутрин (12..11), следобед (0,13..23) ===== */
-      let ampmCycle = 0;     // 0 → скала 12/1..11; 1 → скала 0,13..23
+      /* ===== 12-часов циферблат с две обиколки: сутрин (12..11), следобед (24,13..23) ===== */
+      let ampmCycle = 0;     // 0 → скала 12/1..11; 1 → скала 24,13..23
       let lastDispHour = 12; // 1..12 за детекция през 12↔1
 
       function hour24ToDisp(h24){
@@ -1222,13 +1212,9 @@
         return disp===12 ? 24 : (disp+12);
       }
 
-      // границите: 00:01–12:00 → сутрешна, 12:01–24:00 → следобедна
+      // ам/пм: зависи само от часа, не от минутите
       function recomputeAmpmFromTime(){
-        if (H > 12 || H === 24 || (H === 12 && M >= 1)) {
-          ampmCycle = 1;
-        } else {
-          ampmCycle = 0;
-        }
+        ampmCycle = (H>=13 || H===24) ? 1 : 0;
         const d = hour24ToDisp(H);
         lastDispHour = d.disp;
       }
@@ -1255,10 +1241,10 @@
 
           // етикети върху циферблата:
           // сутрин → 12,1,2,...,11
-          // следобед → 0,13,14,...,23 (0 вместо 24 на върха)
+          // следобед → 24,13,14,...,23 (24 вместо 0 на върха)
           const label = (ampmCycle===0)
             ? (i===12 ? 12 : i)
-            : (i===12 ? 0 : (i+12));
+            : (i===12 ? 24 : (i+12));
           el.textContent = String(label);
 
           const ang = (Math.PI*2) * (i%12)/12 - Math.PI/2;
@@ -1271,7 +1257,6 @@
 
           el.addEventListener('click', ()=>{
             H = dispToHour24(i, ampmCycle);
-            lastDispHour = i;
             recomputeAmpmFromTime();
             updateRead(); setHands();
             buildHours();
@@ -1357,7 +1342,7 @@
         const disp = angleToDispHour(ang);
         const prev = lastDispHour;
         if(disp!==prev){
-          // всеки път, когато пресечем 12 ↔ 1 (в която и да е посока), обръщаме циферблата
+          // при всяко пресичане 12 ↔ 1 обръщаме AM/PM
           if( (prev===12 && disp===1) || (prev===1 && disp===12) ){
             ampmCycle = 1 - ampmCycle;
           }
@@ -1420,8 +1405,9 @@
             if(dir>0){ H = (H===24)?1:(H+1); }
             else     { H = (H===1)?24:(H-1); }
 
-            // при всяко преминаване през границите около 12/1 (12<->13, 24<->1) цикълът се сменя
-            if( (prevH===12 && H===13) || (prevH===13 && H===12) || (prevH===24 && H===1) || (prevH===1 && H===24) ){
+            // при преминаване през 12↔13 или 24↔1 обръщаме AM/PM
+            if( (prevH===12 && H===13) || (prevH===13 && H===12) ||
+                (prevH===24 && H===1)  || (prevH===1  && H===24) ){
               ampmCycle = 1 - ampmCycle;
             }
 
