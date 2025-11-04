@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.39</title>
+  <title>БТ App 3 — v2.40</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -210,7 +210,7 @@
     .clk-tick.strong{ font-weight:800 }
     .clk-tick.sel{ background:#22c55e; color:#06241b }
 
-    /* малки (междинни) минутки – вътрешен по-малък пръстен */
+    /* малки (междинни) минутки – по-малки и по-навътре */
     .clk-tick.minor{
       background:transparent;
       border-color:transparent;
@@ -255,7 +255,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.39</span>
+        <span class="badge">v2.40</span>
       </div>
     </div>
   </div>
@@ -403,12 +403,12 @@
               <thead>
                 <tr>
                   <th class="pl-day" data-dow="1">Пн</th>
-                  <th class="pl-day" data-дow="2">Вт</th>
-                  <th class="pl-day" data-дow="3">Ср</th>
-                  <th class="pl-day" data-дow="4">Чт</th>
-                  <th class="pl-day" data-дow="5">Пт</th>
-                  <th class="pl-day weekend" data-дow="6">Сб</th>
-                  <th class="pl-day weekend" data-дow="0">Нд</th>
+                  <th class="pl-day" data-dow="2">Вт</th>
+                  <th class="pl-day" data-dow="3">Ср</th>
+                  <th class="pl-day" data-dow="4">Чт</th>
+                  <th class="pl-day" data-dow="5">Пт</th>
+                  <th class="pl-day weekend" data-dow="6">Сб</th>
+                  <th class="pl-day weekend" data-dow="0">Нд</th>
                 </tr>
               </thead>
               <tbody>
@@ -552,7 +552,7 @@
         <button id="btnRed" class="traffic-btn" aria-label="Запиши (червено)">
           <svg viewBox="0 0 24 24" fill="none">
             <path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M3 9v6h4л5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </button>
       </div>
@@ -768,7 +768,7 @@
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
                 '</button>'+
                 '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6л1 14h8л1-14"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
                 '</button>'+
               '</div>'+
             '</td>';
@@ -872,13 +872,13 @@
         var min=Math.min(...vals), max=Math.max(...vals);
         var padL=48, padR=18, padT=16, padB=96, n=pts.length;
 
-        function X(i){ return padL+(w-падL-падR)*(n<=1?0:i/(n-1)); }
-        function Y(v){ return h-падB-((v-min)/((max-min)||1))*(h-падT-падB); }
+        function X(i){ return padL+(w-padL-padR)*(n<=1?0:i/(n-1)); }
+        function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
         ctx.strokeStyle="#20343a"; ctx.lineWidth=1.1;
         ctx.beginPath();
-        ctx.moveTo(padL,h-падB); ctx.lineTo(w-падR,h-падB);
-        ctx.moveTo(padL,padT);   ctx.lineTo(padL,h-падB);
+        ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB);
+        ctx.moveTo(padL,padT);   ctx.lineTo(padL,h-padB);
         ctx.stroke();
 
         for(var i=1;i<n;i++){
@@ -903,7 +903,7 @@
         ctx.font="700 "+cssPx('--chart-label', 15)+"px system-ui";
 
         for(var j=0;j<n;j++){
-          var pe=pts[j], x0=X(j), y0=h-падB;
+          var pe=pts[j], x0=X(j), y0=h-padB;
           const yVal = Y(pe.y);
 
           ctx.beginPath();
@@ -1175,7 +1175,7 @@
             const old = cell.querySelector('.pl-time-mute'); if(old) old.remove();
             if(f===2){
               const ico=document.createElement('span'); ico.className='pl-time-mute';
-              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9л-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4л5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
               cell.appendChild(ico);
             }
           }
@@ -1278,31 +1278,31 @@
       function buildMins(){
         clear(ringM);
         for(let m=0; m<60; m++){
-          const isMajor = (m%5===0);
-          const el=document.createElement('div');
-          el.className='clk-tick'+(isMajor?' strong':' minor');
-          el.dataset.min = String(m);
+          const isMajor = (m % 5 === 0);
+          const el = document.createElement('div');
+          el.className = 'clk-tick' + (isMajor ? ' strong' : ' minor');
           el.textContent = isMajor ? m : '·';
 
           const ang = (Math.PI*2) * (m/60) - Math.PI/2;
           const R = isMajor ? 124 : 112;
           const size = isMajor ? 24 : 10;
-          const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
+          const x = Math.cos(ang)*R;
+          const y = Math.sin(ang)*R;
           el.style.width = size+'px';
           el.style.height = size+'px';
-          el.style.left='calc(50% + '+(x-size/2)+'px)';
-          el.style.top ='calc(50% + '+(y-size/2)+'px)';
+          el.style.left = 'calc(50% + '+(x-size/2)+'px)';
+          el.style.top  = 'calc(50% + '+(y-size/2)+'px)';
 
           if(m===M) el.classList.add('sel');
 
           el.addEventListener('click', ()=>{
-            M=m;
+            M = m;
             recomputeAmpmFromTime();
             updateRead(); setHands();
             ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
             el.classList.add('sel');
             buildHours();
-            focusHM='M';
+            focusHM = 'M';
           });
 
           ringM.appendChild(el);
@@ -1387,8 +1387,7 @@
         recomputeAmpmFromTime();
         updateRead(); setHands();
         ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
-        const tEl = ringM.querySelector('.clk-tick[data-min="'+M+'"]');
-        if(tEl) tEl.classList.add('sel');
+        const tEl=[...ringM.children][M]; if(tEl) tEl.classList.add('sel');
         buildHours();
         focusHM='M';
       }
