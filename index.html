@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.41</title>
+  <title>БТ App 3 — v2.42</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -202,7 +202,7 @@
 
     .clk-face{ position:relative; width:290px; height:290px; margin:0 auto; border-radius:50%; border:1px solid #294047; background:#0b1317; touch-action:none }
     .clk-ring{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50% }
-    .clk-ring.hours{ width:200px; height:200px }
+    .clk-ring.hours{ width:190px; height:190px }   /* малко по-малък диаметър */
     .clk-ring.mins{ width:260px; height:260px }
 
     .clk-tick{
@@ -212,7 +212,7 @@
       border:1px solid transparent; background:#0f1a1d; user-select:none;
       transition:background .15s ease, border-color .15s ease, color .15s ease;
     }
-    .clk-tick.hour{ font-size:13px; }
+    .clk-tick.hour{ font-size:14px; }  /* часовете една идея по-големи */
     .clk-tick.strong{ font-weight:800 }
     .clk-tick.sel{ background:#22c55e; color:#06241b; }
 
@@ -252,7 +252,7 @@
       .prod-img{ width:64px; height:64px; border-radius:10px; }
       .clk-card{ width:306px }
       .clk-face{ width:272px; height:272px }
-      .clk-ring.hours{ width:188px; height:188px }
+      .clk-ring.hours{ width:180px; height:180px }
       .clk-ring.mins{ width:248px; height:248px }
       .clk-hand.hour{ height:64px } .clk-hand.min{ height:90px }
     }
@@ -266,7 +266,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.41</span>
+        <span class="badge">v2.42</span>
       </div>
     </div>
   </div>
@@ -332,7 +332,7 @@
               <input id="importFile" type="file" accept="application/json" style="display:none"/>
               <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 8v12M12 20л-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
+                  <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
                 </svg>
               </button>
             </div>
@@ -776,7 +776,7 @@
             '<td class="actions">'+
               '<div class="actions">'+
                 '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21л3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
                 '</button>'+
                 '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
@@ -1138,7 +1138,6 @@
         try{
           const r=JSON.parse(localStorage.getItem(KEY)||"");
           if(r && r.times && r.times.length===2 && r.flag && r.flag.length===2){
-            // миграция: 24:xx → 00:xx
             for(let row=0; row<2; row++){
               for(let i=0;i<7;i++){
                 const s=r.times[row][i];
@@ -1186,7 +1185,7 @@
             const old = cell.querySelector('.pl-time-mute'); if(old) old.remove();
             if(f===2){
               const ico=document.createElement('span'); ico.className='pl-time-mute';
-              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9л-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4л5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
               cell.appendChild(ico);
             }
           }
@@ -1217,13 +1216,13 @@
       let H=8, M=0, focusHM='H';
 
       /* ===== 12-часов циферблат с две обиколки: сутрин (12..11), следобед (24,13..23) ===== */
-      let ampmCycle = 0;     // 0 → скала 12/1..11; 1 → скала 24,13..23
-      let lastDispHour = 12; // 1..12 за детекция през 12↔1
+      let ampmCycle = 0;
+      let lastDispHour = 12;
 
       function hour24ToDisp(h24){
         if(h24===24) return {disp:12, cycle:1};
         const cycle = (h24>=13)?1:0;
-        const disp = ((h24-1)%12)+1; // 1..12
+        const disp = ((h24-1)%12)+1;
         return {disp, cycle};
       }
       function dispToHour24(disp, cycle){
@@ -1231,7 +1230,6 @@
         return disp===12 ? 24 : (disp+12);
       }
 
-      // ам/пм: зависи само от часа, не от минутите
       function recomputeAmpmFromTime(){
         ampmCycle = (H>=13 || H===24) ? 1 : 0;
         const d = hour24ToDisp(H);
@@ -1264,8 +1262,8 @@
           el.textContent = String(label);
 
           const ang = (Math.PI*2) * (i%12)/12 - Math.PI/2;
-          const R=84;
-          const SIZE=28;
+          const R=76;          /* по-навътре */
+          const SIZE=30;       /* леко по-големи кръгчета */
           const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
           el.style.width = SIZE+'px';
           el.style.height = SIZE+'px';
@@ -1333,7 +1331,7 @@
         const [h,m] = (initial||state.times[row][idx]).split(':').map(x=>parseInt(x,10));
 
         let hh = isFinite(h) ? h : 8;
-        if (hh === 0) hh = 24; // 00:xx в таблицата → вътрешно 24:xx
+        if (hh === 0) hh = 24;
         H = hh;
         M = isFinite(m) ? m : 0;
         focusHM='H';
