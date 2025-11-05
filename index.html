@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.43</title>
+  <title>БТ App 3 — v2.44</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -246,15 +246,15 @@
     .clk-read{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
       background:#10191c; border:1px solid #294047; border-radius:8px;
-      padding:2px 4px;
+      padding:1px 3px;
       font-weight:800; text-align:center;
       cursor:text; user-select:text;
       height:auto;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:2px;
-      font-size:15px;
+      gap:1px;
+      font-size:13px;
       min-width:auto;
     }
     .clk-read.active{
@@ -262,7 +262,7 @@
       box-shadow:0 0 0 1px #22c55e;
     }
     .clk-read-part{
-      width:2.6ch;
+      width:2.3ch;
       border:none;
       outline:none;
       background:transparent;
@@ -271,6 +271,7 @@
       font:inherit;
       padding:0;
       margin:0;
+      line-height:1.1;
     }
     .clk-read-part::selection{
       background:rgba(34,197,94,0.35);
@@ -308,7 +309,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.43</span>
+        <span class="badge">v2.44</span>
       </div>
     </div>
   </div>
@@ -374,7 +375,7 @@
               <input id="importFile" type="file" accept="application/json" style="display:none"/>
               <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 8v12M12 20l-4-4M12 20л4-4"></path><path d="M4 4h16"></path>
+                  <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
                 </svg>
               </button>
             </div>
@@ -609,8 +610,8 @@
         <button id="btnYellow" class="traffic-btn" aria-label="Запиши (жълто)"></button>
         <button id="btnRed" class="traffic-btn" aria-label="Запиши (червено)">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M9 9l6 6M15 9л-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M3 9v6h4л5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </button>
       </div>
@@ -666,8 +667,8 @@
     (function(){
       function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
       function bgToISO_any(bg){
-        var m2=bg.match(/^(\d{2})\.(\d{2})\.(\д{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-        var м4=bg.match(/^(\д{2})\.(\д{2})\.(\д{4})$/); if(м4) return м4[3]+"-"+м4[2]+"-"+м4[1];
+        var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
+        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
         return "";
       }
       var KEY="bt-progress";
@@ -685,7 +686,7 @@
           importFile=document.getElementById("importFile"), btFlag=document.getElementById("btFlag");
 
       var currentISO=localStorage.getItem("bt-last-date")||TODAY;
-      if(!/^\d{4}-\d{2}-\д{2}$/.test(currentISO)) currentISO=TODAY;
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO=TODAY;
       dateText.value=isoToBG_YY(currentISO);
 
       function prefillFor(iso){
@@ -840,10 +841,10 @@
             '<td class="actions">'+
               '<div class="actions">'+
                 '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5л5 5"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
                 '</button>'+
                 '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6л1 14h8л1-14"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2М7 6l1 14h8l1-14"></path></svg>'+
                 '</button>'+
               '</div>'+
             '</td>';
@@ -1037,7 +1038,7 @@
         var arr=load(), changed=false;
         for(var i=0;i<arr.length;i++){
           var r=arr[i];
-          if(typeof r.date==="string" && !/^\d{4}-\д{2}-\д{2}$/.test(r.date)){
+          if(typeof r.date==="string" && !/^\d{4}-\d{2}-\d{2}$/.test(r.date)){
             var iso=bgToISO_any(r.date); if(iso){ r.date=iso; changed=true; }
           }
           if(typeof r.bt==="undefined"){ r.bt=true; changed=true; }
@@ -1249,7 +1250,7 @@
             const old = cell.querySelector('.pl-time-mute'); if(old) old.remove();
             if(f===2){
               const ico=document.createElement('span'); ico.className='pl-time-mute';
-              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9л6 6M15 9л-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4л5 4V5Л7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
               cell.appendChild(ico);
             }
           }
@@ -1305,8 +1306,8 @@
       function updateRead(){
         if(!inpH || !inpM) return;
         const hDisp = (H === 24 ? 0 : H);
-        inpH.value = String(hDisp);
-        inpM.value = String(M);
+        inpH.value = two(hDisp);
+        inpM.value = two(M);
       }
       function setHands(){
         const d = hour24ToDisp(H);
@@ -1409,9 +1410,7 @@
         Modal.setAttribute('aria-hidden','false');
         document.body.style.overflow='hidden';
         Card.focus();
-        if(inpH){
-          setTimeout(()=>{ (focusHM==='H'?inpH:inpM).focus(); },0);
-        }
+        if(readBox) readBox.classList.remove('active');
       }
       function hideClk(){
         Modal.classList.remove('show');
@@ -1505,10 +1504,10 @@
         const oldH = H;
         const oldDisp = (oldH===24?0:oldH);
         const txt = (inpH.value||"").trim();
-        if(txt===""){ inpH.value = String(oldDisp); return; }
+        if(txt===""){ inpH.value = two(oldDisp); return; }
         let h = parseInt(txt,10);
         if(!Number.isFinite(h) || h<0 || h>24){
-          inpH.value = String(oldDisp);
+          inpH.value = two(oldDisp);
           return;
         }
         if(h===0 || h===24) h=24;
@@ -1523,10 +1522,10 @@
         if(!inpM) return;
         const oldM = M;
         const txt = (inpM.value||"").trim();
-        if(txt===""){ inpM.value = String(oldM); return; }
+        if(txt===""){ inpM.value = two(oldM); return; }
         let m = parseInt(txt,10);
         if(!Number.isFinite(m) || m<0 || m>60){
-          inpM.value = String(oldM);
+          inpM.value = two(oldM);
           return;
         }
         if(m===60) m=0;
