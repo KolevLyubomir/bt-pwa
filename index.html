@@ -243,64 +243,22 @@
 
     .clk-center-dot{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 0 2px #0b1317 }
 
-    .clk-read{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      background:#10191c; border:1px solid #294047; border-radius:8px; padding:4px 8px;
-      font-weight:800; min-width:78px; text-align:center; cursor:pointer; user-select:none }
-
-    /* Панел за цифрово въвеждане HH:MM */
-    .clk-num{
-      margin-top:10px;
-      padding:8px;
-      border-radius:10px;
-      border:1px solid #243840;
-      background:#0b1317;
-      display:none;
+    .clk-read{
+      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+      background:#10191c; border:1px solid #294047; border-radius:8px; padding:2px 6px;
+      font-weight:800; min-width:78px; text-align:center; cursor:text; user-select:text;
+      height:auto;
     }
-    .clk-num.show{ display:block; }
-    .clk-num-row{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:6px;
-      margin-bottom:8px;
-    }
-    .clk-num-row input{
-      width:48px;
+    .clk-read-input{
+      width:100%;
+      border:none;
+      outline:none;
+      background:transparent;
+      color:#e6f2ef;
       text-align:center;
-      font-size:18px;
-      font-weight:700;
-      background:#0d171b;
-      border:1px solid #2a3e41;
-      border-radius:8px;
-      padding:4px 6px;
-      color:#e6f2ef;
-    }
-    .clk-num-row span{
-      font-size:18px;
-      opacity:.85;
-      user-select:none;
-    }
-    .clk-num-actions{
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
-    }
-    .clk-num-actions button{
-      height:32px;
-      padding:4px 10px;
-      border-radius:8px;
-      border:1px solid #2a3e41;
-      background:#0d171b;
-      color:#e6f2ef;
-      font-size:13px;
-      cursor:pointer;
-    }
-    .clk-num-actions button.primary{
-      background:var(--accent);
-      border-color:var(--accent);
-      color:#06241b;
-      font-weight:700;
+      font:inherit;
+      padding:2px 0;
+      margin:0;
     }
 
     .clk-actions{ display:flex; gap:12px; justify-content:center; margin-top:12px }
@@ -619,19 +577,9 @@
         <div class="clk-hand hour" id="handH"></div>
         <div class="clk-hand min" id="handM"></div>
         <div class="clk-center-dot"></div>
-        <div class="clk-read" id="clkRead" title="Клик за въвеждане на H:M">08:00</div>
-      </div>
-
-      <!-- Цифрово въвеждане HH:MM при клик в центъра -->
-      <div class="clk-num" id="clkNum">
-        <div class="clk-num-row">
-          <input id="clkNumH" type="number" inputmode="numeric" min="0" max="24" placeholder="00">
-          <span>:</span>
-          <input id="clkNumM" type="number" inputmode="numeric" min="0" max="59" placeholder="00">
-        </div>
-        <div class="clk-num-actions">
-          <button id="clkNumCancel" type="button">Отказ</button>
-          <button id="clkNumOk" type="button" class="primary">ОК</button>
+        <div class="clk-read" id="clkRead">
+          <input id="clkEdit" class="clk-read-input" type="text"
+                 inputmode="numeric" autocomplete="off" spellcheck="false">
         </div>
       </div>
 
@@ -1220,7 +1168,7 @@
       write();
     })();
 
-    /* ===== ProLact Slim+ — таблица + модал часовник (drag + цифрово въвеждане) ===== */
+    /* ===== ProLact Slim+ — таблица + модал часовник (drag + директна редакция) ===== */
     (function(){
       const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
       const KEY='bt_pl_grid_v230';
@@ -1280,7 +1228,7 @@
             const old = cell.querySelector('.pl-time-mute'); if(old) old.remove();
             if(f===2){
               const ico=document.createElement('span'); ico.className='pl-time-mute';
-              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9л6 6M15 9л-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4л5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
+              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9л6 6M15 9л-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4л5 4V5Л7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
               cell.appendChild(ico);
             }
           }
@@ -1302,21 +1250,16 @@
       const ringM = document.getElementById('ringM');
       const handH = document.getElementById('handH');
       const handM = document.getElementById('handM');
-      const read  = document.getElementById('clkRead');
+      const readDiv  = document.getElementById('clkRead');
+      const readInput = document.getElementById('clkEdit');
       const btnGreen  = document.getElementById('btnGreen');
       const btnYellow = document.getElementById('btnYellow');
       const btnRed    = document.getElementById('btnRed');
 
-      const numWrap = document.getElementById('clkNum');
-      const numH    = document.getElementById('clkNumH');
-      const numM    = document.getElementById('clkNumM');
-      const numOk   = document.getElementById('clkNumOk');
-      const numCancel = document.getElementById('clkNumCancel');
-
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
 
-      /* ===== 12-часов циферблат с две обиколки: сутрин (1..12), втора (13..23,0) ===== */
+      /* ===== 12-часов циферблат с две обиколки: сутрин (1..12), втора (13..23,0/24) ===== */
       let ampmCycle = 0;
       let lastDispHour = 12;
 
@@ -1338,8 +1281,9 @@
       }
 
       function updateRead(){
+        if(!readInput) return;
         const hDisp = (H === 24 ? 0 : H);
-        read.textContent = two(hDisp)+":"+two(M);
+        readInput.value = two(hDisp)+":"+two(M);
       }
       function setHands(){
         const d = hour24ToDisp(H);
@@ -1357,7 +1301,7 @@
           el.className='clk-tick hour'+((i===12 || i===3 || i===6 || i===9)?' strong':'');
           el.dataset.disp = String(i);
 
-          // Римските винаги са I..XII; числовата стойност се сменя според цикъла
+          // Римските винаги са I..XII
           el.textContent = toRoman(i);
 
           const ang = (Math.PI*2) * (i%12)/12 - Math.PI/2;
@@ -1439,19 +1383,19 @@
         updateRead(); setHands();
         buildHours(); buildMins();
 
-        if(numWrap) numWrap.classList.remove('show');
-
         Modal.classList.add('show');
         Modal.setAttribute('aria-hidden','false');
         document.body.style.overflow='hidden';
         Card.focus();
+        if(readInput){
+          setTimeout(()=>{ readInput.focus(); readInput.select && readInput.select(); },0);
+        }
       }
       function hideClk(){
         Modal.classList.remove('show');
         Modal.setAttribute('aria-hidden','true');
         document.body.style.overflow='';
         if(activeCell){ activeCell.classList.remove('sel'); activeCell=null; }
-        if(numWrap) numWrap.classList.remove('show');
       }
       Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
@@ -1526,61 +1470,67 @@
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
-      // Център: вече НЕ превключва H/M, а отваря цифрово въвеждане
-      function openNumPad(){
-        if(!numWrap) return;
-        const hDisp = (H===24 ? 0 : H);
-        numH.value = two(hDisp);
-        numM.value = two(M);
-        numWrap.classList.add('show');
-        setTimeout(()=>{ numH.focus(); numH.select && numH.select(); },0);
-      }
-
-      read.addEventListener('click', (ev)=>{
-        ev.stopPropagation();
-        openNumPad();
-      });
-
-      if(numCancel){
-        numCancel.addEventListener('click', ()=>{
-          if(numWrap) numWrap.classList.remove('show');
+      // Директна редакция в центъра
+      if(readDiv && readInput){
+        readDiv.addEventListener('click', ()=>{
+          readInput.focus();
+          readInput.select && readInput.select();
         });
       }
-      if(numOk){
-        numOk.addEventListener('click', ()=>{
-          if(!numWrap) return;
-          let h = parseInt(numH.value,10);
-          let m = parseInt(numM.value,10);
 
-          if(!Number.isFinite(h) || h<0 || h>24){
-            alert("Часът трябва да е между 00 и 24.");
-            numH.focus(); return;
-          }
-          if(!Number.isFinite(m) || m<0 || m>59){
-            alert("Минутите трябва да са между 00 и 59.");
-            numM.focus(); return;
-          }
-          if(h===24 && m>0){
-            alert("24 е позволено само като 24:00.");
-            numM.focus(); return;
-          }
+      function applyReadEdit(){
+        if(!readInput) return;
+        const oldH = H, oldM = M;
+        const oldText = two(oldH===24?0:oldH)+":"+two(oldM);
+        const v = (readInput.value||"").trim();
+        const parts = v.split(":");
+        if(parts.length !== 2){
+          readInput.value = oldText;
+          return;
+        }
+        let h = parseInt(parts[0],10);
+        let m = parseInt(parts[1],10);
+        if(!Number.isFinite(h) || !Number.isFinite(m)){
+          readInput.value = oldText;
+          return;
+        }
+        if(h < 0 || h > 24 || m < 0 || m > 60){
+          readInput.value = oldText;
+          return;
+        }
+        // 0 и 24 -> вътрешно 24, показваме 00
+        if(h === 0 || h === 24) h = 24;
+        // 60 минути -> 00
+        if(m === 60) m = 0;
 
-          H = (h===0 ? 24 : h);
-          M = m;
-          recomputeAmpmFromTime();
-          updateRead(); setHands();
-          buildHours(); buildMins();
-          numWrap.classList.remove('show');
+        H = h;
+        M = m;
+        recomputeAmpmFromTime();
+        updateRead();
+        setHands();
+        buildHours();
+        buildMins();
+      }
+
+      if(readInput){
+        readInput.addEventListener('blur', ()=>{
+          applyReadEdit();
+        });
+        readInput.addEventListener('keydown', (ev)=>{
+          if(ev.key === 'Enter'){
+            ev.preventDefault();
+            applyReadEdit();
+            readInput.blur();
+          }else if(ev.key === 'Escape'){
+            ev.preventDefault();
+            updateRead();
+            readInput.blur();
+          }
         });
       }
 
       Card.addEventListener('keydown', (ev)=>{
         if(ev.key==='Escape'){
-          if(numWrap && numWrap.classList.contains('show')){
-            numWrap.classList.remove('show');
-            ev.stopPropagation();
-            return;
-          }
           hideClk();
           return;
         }
