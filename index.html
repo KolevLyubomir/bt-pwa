@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.49</title>
+  <title>БТ App 3 — v2.50</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -224,10 +224,10 @@
     .clk-tick.strong{ font-weight:800 }
     .clk-tick.sel{ background:#22c55e; color:#06241b; }
 
-    /* малки (междинни) минутки – по-малки и по-навътре */
+    /* малки (междинни) минутки – без бордер по подразбиране, да не правят "връв" */
     .clk-tick.minor{
       background:#0b1317;
-      border-color:#1c3037;
+      border-color:transparent;
       font-size:9px;
       color:#6b8b92;
     }
@@ -262,7 +262,7 @@
       box-shadow:0 0 0 1px #22c55e;
     }
     .clk-read-part{
-      width:2.0ch;                  /* по-компактно: по-малко празно вдясно/вляво */
+      width:2.0ch;
       border:none;
       outline:none;
       background:transparent;
@@ -279,8 +279,8 @@
     }
     .clk-read-colon{
       user-select:none;
-      padding:0;                    /* абсолютно без хоризонтален падинг */
-      margin:0 -1px;                /* леко „събира“ още към цифрите */
+      padding:0 1px;     /* малко въздух от двете страни */
+      margin:0;
       opacity:.9;
     }
 
@@ -311,7 +311,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.49</span>
+        <span class="badge">v2.50</span>
       </div>
     </div>
   </div>
