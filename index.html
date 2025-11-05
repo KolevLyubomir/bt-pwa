@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.52</title>
+  <title>БТ App 3 — v2.53</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -311,7 +311,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.52</span>
+        <span class="badge">v2.53</span>
       </div>
     </div>
   </div>
@@ -1363,8 +1363,8 @@
           el.textContent = isMajor ? m : '·';
 
           const ang = (Math.PI*2) * (m/60) - Math.PI/2;
-          const R = isMajor ? 124 : 108;       // малките точки по-навътре
-          const size = isMajor ? 24 : 8;       // малките точки още по-малки
+          const R = isMajor ? 124 : 108;
+          const size = isMajor ? 24 : 8;
           const x = Math.cos(ang)*R;
           const y = Math.sin(ang)*R;
           el.style.width = size+'px';
@@ -1396,7 +1396,9 @@
         state.activeDow = dow; save(state); refreshDays();
 
         const idx = (dow===0?6:dow-1);
-        const [h,m] = (initial||state.times[row][idx]).split(':').map(x=>parseInt(x,10));
+        const parts = (initial||state.times[row][idx]).split(':');
+        const h = parseInt(parts[0],10);
+        const m = parseInt(parts[1],10);
 
         let hh = isFinite(h) ? h : 8;
         if (hh === 0) hh = 24;
@@ -1494,7 +1496,7 @@
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
-      // ===== Директна редакция HH / MM – един поток от цифри, който се разпределя в HH:MM =====
+      // ===== Директна редакция HH / MM =====
       function setReadActive(on){
         if(!readBox) return;
         if(on) readBox.classList.add('active');
@@ -1520,70 +1522,97 @@
         }
       }
 
-      function applyStreamDigits(){
+      // context: 'H' = въвеждаме ново HH:MM (комбинирано), 'M' = пипаме само минутите
+      function applyStreamDigits(context){
         const digits = streamDigits.slice(0,4);
         const len = digits.length;
 
-        if(len === 0){
-          H = streamBaseH;
-          M = streamBaseM;
-          recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
-          return;
-        }
-
-        const d1 = digits[0];
-        const h1 = parseInt(d1,10);
-        if(!Number.isFinite(h1)){
-          H = streamBaseH; M = streamBaseM;
-          recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
-          return;
-        }
-
-        if(len === 1){
-          if(h1>=0 && h1<=24){
-            H = (h1===0 ? 24 : h1);
-            M = streamBaseM;
-          } else {
+        if(context === 'M'){
+          // Само минутите – часът остава базовия
+          if(len === 0){
             H = streamBaseH;
             M = streamBaseM;
+          } else if(len === 1){
+            const mv = parseInt(digits[0],10);
+            if(Number.isFinite(mv) && mv>=0 && mv<=60){
+              M = (mv===60?0:mv);
+            } else {
+              M = streamBaseM;
+            }
+            H = streamBaseH;
+          } else {
+            const mv = parseInt(digits.slice(-2).join(""),10);
+            if(Number.isFinite(mv) && mv>=0 && mv<=60){
+              M = (mv===60?0:mv);
+            } else {
+              M = streamBaseM;
+            }
+            H = streamBaseH;
           }
         } else {
-          const d2 = digits[1];
-          const firstIs012 = (h1>=0 && h1<=2);
-          let candidateHour = NaN;
-          if(firstIs012){
-            const d2n = parseInt(d2,10);
-            if(Number.isFinite(d2n)) candidateHour = h1*10 + d2n;
+          // Старото поведение — комбинирано HH:MM (811 → 08:11, 1025 → 10:25 и т.н.)
+          if(len === 0){
+            H = streamBaseH;
+            M = streamBaseM;
+            recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
+            return;
           }
-          let hourLockedAsTwo = false;
 
-          if(Number.isFinite(candidateHour) && candidateHour<=24){
-            hourLockedAsTwo = true;
-            H = (candidateHour===0 || candidateHour===24) ? 24 : candidateHour;
-          } else {
+          const d1 = digits[0];
+          const h1 = parseInt(d1,10);
+          if(!Number.isFinite(h1)){
+            H = streamBaseH;
+            M = streamBaseM;
+            recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
+            return;
+          }
+
+          if(len === 1){
             if(h1>=0 && h1<=24){
               H = (h1===0 ? 24 : h1);
+              M = streamBaseM;
             } else {
               H = streamBaseH;
-            }
-          }
-
-          const remainingDigits = hourLockedAsTwo ? digits.slice(2) : digits.slice(1);
-          if(remainingDigits.length === 0){
-            M = streamBaseM;
-          } else if(remainingDigits.length === 1){
-            const mv = parseInt(remainingDigits[0],10);
-            if(Number.isFinite(mv) && mv>=0 && mv<=60){
-              M = (mv===60?0:mv);
-            } else {
               M = streamBaseM;
             }
           } else {
-            const mv = parseInt(remainingDigits.slice(-2).join(""),10);
-            if(Number.isFinite(mv) && mv>=0 && mv<=60){
-              M = (mv===60?0:mv);
+            const d2 = digits[1];
+            const firstIs012 = (h1>=0 && h1<=2);
+            let candidateHour = NaN;
+            if(firstIs012){
+              const d2n = parseInt(d2,10);
+              if(Number.isFinite(d2n)) candidateHour = h1*10 + d2n;
+            }
+            let hourLockedAsTwo = false;
+
+            if(Number.isFinite(candidateHour) && candidateHour<=24){
+              hourLockedAsTwo = true;
+              H = (candidateHour===0 || candidateHour===24) ? 24 : candidateHour;
             } else {
+              if(h1>=0 && h1<=24){
+                H = (h1===0 ? 24 : h1);
+              } else {
+                H = streamBaseH;
+              }
+            }
+
+            const remainingDigits = hourLockedAsTwo ? digits.slice(2) : digits.slice(1);
+            if(remainingDigits.length === 0){
               M = streamBaseM;
+            } else if(remainingDigits.length === 1){
+              const mv = parseInt(remainingDigits[0],10);
+              if(Number.isFinite(mv) && mv>=0 && mv<=60){
+                M = (mv===60?0:mv);
+              } else {
+                M = streamBaseM;
+              }
+            } else {
+              const mv = parseInt(remainingDigits.slice(-2).join(""),10);
+              if(Number.isFinite(mv) && mv>=0 && mv<=60){
+                M = (mv===60?0:mv);
+              } else {
+                M = streamBaseM;
+              }
             }
           }
         }
@@ -1596,6 +1625,8 @@
       }
 
       function handleTimeKey(ev){
+        const context = (ev.target === inpM) ? 'M' : 'H';
+
         if(ev.key >= '0' && ev.key <= '9'){
           ev.preventDefault();
           ensureStreamStarted();
@@ -1603,12 +1634,12 @@
           if(streamDigits.length > 4){
             streamDigits = streamDigits.slice(-4);
           }
-          applyStreamDigits();
+          applyStreamDigits(context);
         } else if(ev.key === 'Backspace'){
           ev.preventDefault();
           if(streamActive && streamDigits.length){
             streamDigits.pop();
-            applyStreamDigits();
+            applyStreamDigits(context);
           }
         } else if(ev.key === 'Enter'){
           ev.preventDefault();
