@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.44</title>
+  <title>БТ App 3 — v2.45</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -246,15 +246,15 @@
     .clk-read{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
       background:#10191c; border:1px solid #294047; border-radius:8px;
-      padding:1px 3px;
+      padding:0 4px;                 /* по-малък вертикален padding */
       font-weight:800; text-align:center;
       cursor:text; user-select:text;
       height:auto;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:1px;
-      font-size:13px;
+      gap:2px;                       /* леко разстояние между H и M */
+      font-size:12px;                /* една идея по-дребно */
       min-width:auto;
     }
     .clk-read.active{
@@ -262,16 +262,16 @@
       box-shadow:0 0 0 1px #22c55e;
     }
     .clk-read-part{
-      width:2.3ch;
+      width:2.4ch;                   /* малко повече ширина за 2 цифри */
       border:none;
       outline:none;
       background:transparent;
       color:#e6f2ef;
       text-align:center;
       font:inherit;
-      padding:0;
+      padding:0;                     /* без вътрешен вертикален padding */
       margin:0;
-      line-height:1.1;
+      line-height:1;                 /* равномерно „дишане“ */
     }
     .clk-read-part::selection{
       background:rgba(34,197,94,0.35);
@@ -309,7 +309,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.44</span>
+        <span class="badge">v2.45</span>
       </div>
     </div>
   </div>
@@ -844,7 +844,7 @@
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
                 '</button>'+
                 '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2М7 6l1 14h8l1-14"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
                 '</button>'+
               '</div>'+
             '</td>';
@@ -1499,22 +1499,59 @@
         else readBox.classList.remove('active');
       }
 
+      // умен input: HH, HHH, HHHH -> час+минути
       function applyHourEdit(){
-        if(!inpH) return;
+        if(!inpH || !inpM) return;
+
         const oldH = H;
-        const oldDisp = (oldH===24?0:oldH);
-        const txt = (inpH.value||"").trim();
-        if(txt===""){ inpH.value = two(oldDisp); return; }
-        let h = parseInt(txt,10);
-        if(!Number.isFinite(h) || h<0 || h>24){
+        const oldDisp = (oldH===24 ? 0 : oldH);
+        const oldM = M;
+
+        // взимаме само цифрите от това, което е въведено
+        let raw = (inpH.value || "").replace(/\D+/g, "");
+
+        if(raw.length === 0){
+          // празно -> връщаме стария час с водеща нула
           inpH.value = two(oldDisp);
           return;
         }
-        if(h===0 || h===24) h=24;
-        H = h;
+
+        let newH = oldH;
+        let newM = oldM;
+
+        if(raw.length <= 2){
+          // само час (минутите не ги пипаме)
+          let h = parseInt(raw, 10);
+          if(Number.isFinite(h) && h >= 0 && h <= 24){
+            if(h === 0 || h === 24) h = 24;
+            newH = h;
+          }else{
+            // невалиден -> оставяме стария час
+          }
+        }else{
+          // HHMM (или HMM) – последните 2 цифри са минутите
+          let hourPart = raw.slice(0, raw.length - 2);
+          let minPart  = raw.slice(-2);
+
+          let h = parseInt(hourPart, 10);
+          if(Number.isFinite(h) && h >= 0 && h <= 24){
+            if(h === 0 || h === 24) h = 24;
+            newH = h;
+          } // иначе държим oldH
+
+          let m = parseInt(minPart, 10);
+          if(Number.isFinite(m) && m >= 0 && m <= 60){
+            if(m === 60) m = 0;
+            newM = m;
+          } // иначе държим oldM
+        }
+
+        H = newH;
+        M = newM;
         recomputeAmpmFromTime();
         updateRead();
         setHands();
+        buildMins();
         buildHours();
       }
 
