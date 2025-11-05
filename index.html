@@ -218,7 +218,7 @@
     }
     .clk-tick.hour{
       font-size:14px;
-      font-family:"Cinzel","Times New Roman",serif; /* древноримско усещане */
+      font-family:"Cinzel","Times New Roman",serif;
       letter-spacing:0.5px;
     }
     .clk-tick.strong{ font-weight:800 }
@@ -245,20 +245,40 @@
 
     .clk-read{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      background:#10191c; border:1px solid #294047; border-radius:8px; padding:2px 6px;
-      font-weight:800; min-width:78px; text-align:center; cursor:text; user-select:text;
+      background:#10191c; border:1px solid #294047; border-radius:8px;
+      padding:2px 4px;
+      font-weight:800; text-align:center;
+      cursor:text; user-select:text;
       height:auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:2px;
+      font-size:15px;
+      min-width:auto;
     }
-    .clk-read-input{
-      width:100%;
+    .clk-read.active{
+      border-color:#22c55e;
+      box-shadow:0 0 0 1px #22c55e;
+    }
+    .clk-read-part{
+      width:2.6ch;
       border:none;
       outline:none;
       background:transparent;
       color:#e6f2ef;
       text-align:center;
       font:inherit;
-      padding:2px 0;
+      padding:0;
       margin:0;
+    }
+    .clk-read-part::selection{
+      background:rgba(34,197,94,0.35);
+    }
+    .clk-read-colon{
+      user-select:none;
+      padding:0 1px;
+      opacity:.9;
     }
 
     .clk-actions{ display:flex; gap:12px; justify-content:center; margin-top:12px }
@@ -354,7 +374,7 @@
               <input id="importFile" type="file" accept="application/json" style="display:none"/>
               <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
+                  <path d="M12 8v12M12 20l-4-4M12 20л4-4"></path><path d="M4 4h16"></path>
                 </svg>
               </button>
             </div>
@@ -578,8 +598,9 @@
         <div class="clk-hand min" id="handM"></div>
         <div class="clk-center-dot"></div>
         <div class="clk-read" id="clkRead">
-          <input id="clkEdit" class="clk-read-input" type="text"
-                 inputmode="numeric" autocomplete="off" spellcheck="false">
+          <input id="clkH" class="clk-read-part" type="number" inputmode="numeric" min="0" max="24">
+          <span class="clk-read-colon">:</span>
+          <input id="clkM" class="clk-read-part" type="number" inputmode="numeric" min="0" max="60">
         </div>
       </div>
 
@@ -588,8 +609,8 @@
         <button id="btnYellow" class="traffic-btn" aria-label="Запиши (жълто)"></button>
         <button id="btnRed" class="traffic-btn" aria-label="Запиши (червено)">
           <svg viewBox="0 0 24 24" fill="none">
-            <path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M9 9l6 6M15 9л-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
+            <path d="M3 9v6h4л5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
           </svg>
         </button>
       </div>
@@ -645,8 +666,8 @@
     (function(){
       function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
       function bgToISO_any(bg){
-        var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
+        var m2=bg.match(/^(\d{2})\.(\d{2})\.(\д{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
+        var м4=bg.match(/^(\д{2})\.(\д{2})\.(\д{4})$/); if(м4) return м4[3]+"-"+м4[2]+"-"+м4[1];
         return "";
       }
       var KEY="bt-progress";
@@ -664,7 +685,7 @@
           importFile=document.getElementById("importFile"), btFlag=document.getElementById("btFlag");
 
       var currentISO=localStorage.getItem("bt-last-date")||TODAY;
-      if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO=TODAY;
+      if(!/^\d{4}-\d{2}-\д{2}$/.test(currentISO)) currentISO=TODAY;
       dateText.value=isoToBG_YY(currentISO);
 
       function prefillFor(iso){
@@ -819,10 +840,10 @@
             '<td class="actions">'+
               '<div class="actions">'+
                 '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5л5 5"></path></svg>'+
                 '</button>'+
                 '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8л1-14"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6л1 14h8л1-14"></path></svg>'+
                 '</button>'+
               '</div>'+
             '</td>';
@@ -1016,7 +1037,7 @@
         var arr=load(), changed=false;
         for(var i=0;i<arr.length;i++){
           var r=arr[i];
-          if(typeof r.date==="string" && !/^\d{4}-\d{2}-\d{2}$/.test(r.date)){
+          if(typeof r.date==="string" && !/^\d{4}-\д{2}-\д{2}$/.test(r.date)){
             var iso=bgToISO_any(r.date); if(iso){ r.date=iso; changed=true; }
           }
           if(typeof r.bt==="undefined"){ r.bt=true; changed=true; }
@@ -1168,7 +1189,7 @@
       write();
     })();
 
-    /* ===== ProLact Slim+ — таблица + модал часовник (drag + директна редакция) ===== */
+    /* ===== ProLact Slim+ — таблица + модал часовник (drag + директна редакция HH/MM) ===== */
     (function(){
       const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
       const KEY='bt_pl_grid_v230';
@@ -1250,8 +1271,9 @@
       const ringM = document.getElementById('ringM');
       const handH = document.getElementById('handH');
       const handM = document.getElementById('handM');
-      const readDiv  = document.getElementById('clkRead');
-      const readInput = document.getElementById('clkEdit');
+      const readBox  = document.getElementById('clkRead');
+      const inpH = document.getElementById('clkH');
+      const inpM = document.getElementById('clkM');
       const btnGreen  = document.getElementById('btnGreen');
       const btnYellow = document.getElementById('btnYellow');
       const btnRed    = document.getElementById('btnRed');
@@ -1281,9 +1303,10 @@
       }
 
       function updateRead(){
-        if(!readInput) return;
+        if(!inpH || !inpM) return;
         const hDisp = (H === 24 ? 0 : H);
-        readInput.value = two(hDisp)+":"+two(M);
+        inpH.value = String(hDisp);
+        inpM.value = String(M);
       }
       function setHands(){
         const d = hour24ToDisp(H);
@@ -1301,7 +1324,6 @@
           el.className='clk-tick hour'+((i===12 || i===3 || i===6 || i===9)?' strong':'');
           el.dataset.disp = String(i);
 
-          // Римските винаги са I..XII
           el.textContent = toRoman(i);
 
           const ang = (Math.PI*2) * (i%12)/12 - Math.PI/2;
@@ -1387,8 +1409,8 @@
         Modal.setAttribute('aria-hidden','false');
         document.body.style.overflow='hidden';
         Card.focus();
-        if(readInput){
-          setTimeout(()=>{ readInput.focus(); readInput.select && readInput.select(); },0);
+        if(inpH){
+          setTimeout(()=>{ (focusHM==='H'?inpH:inpM).focus(); },0);
         }
       }
       function hideClk(){
@@ -1396,6 +1418,7 @@
         Modal.setAttribute('aria-hidden','true');
         document.body.style.overflow='';
         if(activeCell){ activeCell.classList.remove('sel'); activeCell=null; }
+        if(readBox) readBox.classList.remove('active');
       }
       Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
@@ -1470,61 +1493,101 @@
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
-      // Директна редакция в центъра
-      if(readDiv && readInput){
-        readDiv.addEventListener('click', ()=>{
-          readInput.focus();
-          readInput.select && readInput.select();
-        });
+      // ===== Директна редакция HH / MM =====
+      function setReadActive(on){
+        if(!readBox) return;
+        if(on) readBox.classList.add('active');
+        else readBox.classList.remove('active');
       }
 
-      function applyReadEdit(){
-        if(!readInput) return;
-        const oldH = H, oldM = M;
-        const oldText = two(oldH===24?0:oldH)+":"+two(oldM);
-        const v = (readInput.value||"").trim();
-        const parts = v.split(":");
-        if(parts.length !== 2){
-          readInput.value = oldText;
+      function applyHourEdit(){
+        if(!inpH) return;
+        const oldH = H;
+        const oldDisp = (oldH===24?0:oldH);
+        const txt = (inpH.value||"").trim();
+        if(txt===""){ inpH.value = String(oldDisp); return; }
+        let h = parseInt(txt,10);
+        if(!Number.isFinite(h) || h<0 || h>24){
+          inpH.value = String(oldDisp);
           return;
         }
-        let h = parseInt(parts[0],10);
-        let m = parseInt(parts[1],10);
-        if(!Number.isFinite(h) || !Number.isFinite(m)){
-          readInput.value = oldText;
-          return;
-        }
-        if(h < 0 || h > 24 || m < 0 || m > 60){
-          readInput.value = oldText;
-          return;
-        }
-        // 0 и 24 -> вътрешно 24, показваме 00
-        if(h === 0 || h === 24) h = 24;
-        // 60 минути -> 00
-        if(m === 60) m = 0;
-
+        if(h===0 || h===24) h=24;
         H = h;
-        M = m;
         recomputeAmpmFromTime();
         updateRead();
         setHands();
         buildHours();
-        buildMins();
       }
 
-      if(readInput){
-        readInput.addEventListener('blur', ()=>{
-          applyReadEdit();
+      function applyMinuteEdit(){
+        if(!inpM) return;
+        const oldM = M;
+        const txt = (inpM.value||"").trim();
+        if(txt===""){ inpM.value = String(oldM); return; }
+        let m = parseInt(txt,10);
+        if(!Number.isFinite(m) || m<0 || m>60){
+          inpM.value = String(oldM);
+          return;
+        }
+        if(m===60) m=0;
+        M = m;
+        recomputeAmpmFromTime();
+        updateRead();
+        setHands();
+        buildMins();
+        buildHours();
+      }
+
+      if(inpH && inpM){
+        inpH.addEventListener('focus', ()=>{
+          focusHM='H';
+          setReadActive(true);
+          inpH.select && inpH.select();
         });
-        readInput.addEventListener('keydown', (ev)=>{
-          if(ev.key === 'Enter'){
+        inpM.addEventListener('focus', ()=>{
+          focusHM='M';
+          setReadActive(true);
+          inpM.select && inpM.select();
+        });
+
+        function maybeDeactivate(){
+          setTimeout(()=>{
+            const a = document.activeElement;
+            if(a!==inpH && a!==inpM){
+              setReadActive(false);
+            }
+          },0);
+        }
+
+        inpH.addEventListener('blur', ()=>{
+          applyHourEdit();
+          maybeDeactivate();
+        });
+        inpM.addEventListener('blur', ()=>{
+          applyMinuteEdit();
+          maybeDeactivate();
+        });
+
+        inpH.addEventListener('keydown', (ev)=>{
+          if(ev.key==='Enter'){
             ev.preventDefault();
-            applyReadEdit();
-            readInput.blur();
-          }else if(ev.key === 'Escape'){
+            applyHourEdit();
+            inpM.focus();
+          }else if(ev.key==='Escape'){
             ev.preventDefault();
             updateRead();
-            readInput.blur();
+            inpH.blur();
+          }
+        });
+        inpM.addEventListener('keydown', (ev)=>{
+          if(ev.key==='Enter'){
+            ev.preventDefault();
+            applyMinuteEdit();
+            inpM.blur();
+          }else if(ev.key==='Escape'){
+            ev.preventDefault();
+            updateRead();
+            inpM.blur();
           }
         });
       }
