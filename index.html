@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.57</title>
+  <title>БТ App 3 — v2.58</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -222,7 +222,7 @@
       letter-spacing:0.5px;
     }
     .clk-tick.strong{ font-weight:800 }
-    /* още по-изразен III / VI / IX / XII */
+    /* по-силно за III / VI / IX / XII */
     .clk-tick.hour.strong{
       font-weight:900;
       font-size:17px;
@@ -317,7 +317,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.57</span>
+        <span class="badge">v2.58</span>
       </div>
     </div>
   </div>
@@ -1366,7 +1366,9 @@
           const el = document.createElement('div');
           el.className = 'clk-tick' + (isMajor ? ' strong' : ' minor');
           el.dataset.min = String(m);
-          el.textContent = isMajor ? m : '·';
+
+          // ТУК Е ПРОМЯНАТА: 0 -> "60", останалите двуцифрени
+          el.textContent = isMajor ? (m===0 ? "60" : two(m)) : '·';
 
           const ang = (Math.PI*2) * (m/60) - Math.PI/2;
           const R = isMajor ? 124 : 108;
@@ -1605,7 +1607,7 @@
         buildHours();
       }
 
-      // нова логика: цифра за минутите според курсора (десетици / единици)
+      // цифра за минутите според позицията на курсора
       function applyMinuteDigitWithCaret(dChar, input){
         const d = parseInt(dChar,10);
         if(!Number.isFinite(d)) return;
@@ -1644,9 +1646,6 @@
         let pos = input.selectionStart;
         if(pos == null) pos = String(input.value||"").length;
 
-        // Симулираме триене на съответната позиция:
-        // ако сме в края (pos>1) -> трием единиците
-        // иначе -> трием десетиците
         if(pos > 1){
           ones = 0;
         } else {
@@ -1670,10 +1669,8 @@
         if(ev.key >= '0' && ev.key <= '9'){
           ev.preventDefault();
           if(context === 'M'){
-            // минутите: цифрата работи според позицията на курсора
             applyMinuteDigitWithCaret(ev.key, ev.target);
           } else {
-            // часът: комбинирани HH:MM
             ensureStreamStarted();
             streamDigits.push(ev.key);
             if(streamDigits.length>4) streamDigits = streamDigits.slice(-4);
@@ -1687,7 +1684,6 @@
               applyStreamDigitsForHour();
             }
           } else {
-            // минути – трием съответната цифра според позицията
             applyMinuteBackspace(ev.target);
           }
         } else if(ev.key === 'Enter'){
