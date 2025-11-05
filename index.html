@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.47</title>
+  <title>БТ App 3 — v2.48</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -272,6 +272,7 @@
       padding:0;
       margin:0;
       line-height:1;                 /* без излишно „дишане“ нагоре/надолу */
+      height:auto;                   /* НЕ зависи от --ctl-h */
     }
     .clk-read-part::selection{
       background:rgba(34,197,94,0.35);
@@ -309,7 +310,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.47</span>
+        <span class="badge">v2.48</span>
       </div>
     </div>
   </div>
@@ -668,7 +669,7 @@
       function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
       function bgToISO_any(bg){
         var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})\$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
+        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
         return "";
       }
       var KEY="bt-progress";
@@ -1190,7 +1191,7 @@
       write();
     })();
 
-    /* ===== ProLact Slim+ — таблица + модал часовник (drag + директна редакция HH/MM) ===== */
+    /* ===== ProLact Slim+ — таблица + модал часовник (drag + централен цифров вход) ===== */
     (function(){
       const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
       const KEY='bt_pl_grid_v230';
@@ -1492,146 +1493,154 @@
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
-      // ===== Директна редакция HH / MM (потоци: H -> M) =====
+      // ===== Директна редакция HH / MM – един поток от цифри, който се разпределя в HH:MM =====
       function setReadActive(on){
         if(!readBox) return;
         if(on) readBox.classList.add('active');
         else readBox.classList.remove('active');
       }
 
-      let editBaseH = 8;
-      let editBaseM = 0;
-      let hourDigits = "";
-      let minuteDigits = "";
-      let editPhase = 'H'; // 'H' или 'M'
+      let streamActive = false;
+      let streamBaseH = 8;
+      let streamBaseM = 0;
+      let streamDigits = []; // масив от '0'..'9'
 
-      function startEditSession(){
-        editBaseH = H;
-        editBaseM = M;
-        hourDigits = "";
-        minuteDigits = "";
-        editPhase = 'H';
+      function resetStream(){
+        streamActive = false;
+        streamDigits = [];
       }
 
-      function applyMinuteDigits(){
-        if(minuteDigits.length===0){
-          M = editBaseM;
-        } else {
-          let mv = parseInt(minuteDigits,10);
-          if(Number.isFinite(mv) && mv>=0 && mv<=60){
-            if(mv===60) mv=0;
-            M = mv;
-          } else {
-            M = editBaseM;
-          }
+      function ensureStreamStarted(){
+        if(!streamActive){
+          streamActive = true;
+          streamBaseH = H;
+          streamBaseM = M;
+          streamDigits = [];
         }
-        recomputeAmpmFromTime();
-        updateRead();
-        setHands();
-        buildMins();
-        buildHours();
       }
 
-      function applyHourTypingDigit(d){
-        // d е цифра '0'..'9'
-        if(editPhase !== 'H'){
-          // ако по някаква причина сме в M, игнорираме тук
+      function applyStreamDigits(){
+        const digits = streamDigits.slice(0,4); // макс 4 цифри
+        const len = digits.length;
+
+        if(len === 0){
+          H = streamBaseH;
+          M = streamBaseM;
+          recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
           return;
         }
-        hourDigits += d;
-        if(hourDigits.length === 1){
-          // първа цифра за часа
-          let h1 = parseInt(hourDigits,10);
-          if(Number.isFinite(h1) && h1>=0 && h1<=24){
-            if(h1===0) H = 24;
-            else H = h1;
-          }else{
-            H = editBaseH;
-          }
-          recomputeAmpmFromTime();
-          updateRead();
-          setHands();
-          buildMins();
-          buildHours();
-        } else if(hourDigits.length === 2){
-          // втора цифра: решаваме дали двете са час или първата е час, а втората отива в минути
-          let v = parseInt(hourDigits,10);
-          if(Number.isFinite(v) && v>=0 && v<=24){
-            // цялото число е валиден час -> 2-цифрен час, после минаваме към минути
-            if(v===0 || v===24) H = 24;
-            else H = v;
-            editPhase = 'M';
-            minuteDigits = "";
-            recomputeAmpmFromTime();
-            updateRead();
-            setHands();
-            buildMins();
-            buildHours();
-            // прехвърляме фокуса към минутите
-            if(inpM) inpM.focus();
+
+        const d1 = digits[0];
+        const h1 = parseInt(d1,10);
+        if(!Number.isFinite(h1)){
+          H = streamBaseH; M = streamBaseM;
+          recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
+          return;
+        }
+
+        if(len === 1){
+          if(h1>=0 && h1<=24){
+            H = (h1===0 ? 24 : h1);
+            M = streamBaseM;
           } else {
-            // 81, 73, 99 и т.н. -> първата цифра е час, втората става първа цифра за минути
-            let h1 = parseInt(hourDigits.charAt(0),10);
-            if(Number.isFinite(h1) && h1>=0 && h1<=24){
-              if(h1===0) H = 24;
-              else H = h1;
+            H = streamBaseH;
+            M = streamBaseM;
+          }
+        } else {
+          const d2 = digits[1];
+          const firstIs012 = (h1>=0 && h1<=2);
+          let candidateHour = NaN;
+          if(firstIs012){
+            const d2n = parseInt(d2,10);
+            if(Number.isFinite(d2n)) candidateHour = h1*10 + d2n;
+          }
+          let hourLockedAsTwo = false;
+
+          if(Number.isFinite(candidateHour) && candidateHour<=24){
+            hourLockedAsTwo = true;
+            H = (candidateHour===0 || candidateHour===24) ? 24 : candidateHour;
+          } else {
+            if(h1>=0 && h1<=24){
+              H = (h1===0 ? 24 : h1);
             } else {
-              H = editBaseH;
+              H = streamBaseH;
             }
-            minuteDigits = hourDigits.charAt(1);
-            editPhase = 'M';
-
-            // при 8 1 1: H=8, minuteDigits='1' => 01 минута
-            applyMinuteDigits();
-            if(inpM) inpM.focus();
           }
-        } else if(hourDigits.length > 2){
-          // ако по грешка се натрупат повече, пазим последните 2
-          hourDigits = hourDigits.slice(-2);
-        }
-      }
 
-      function handleMinuteDigit(d){
-        editPhase = 'M';
-        minuteDigits = (minuteDigits + d).slice(-2);
-        applyMinuteDigits();
-      }
-
-      function applyMinuteEditOnBlur(){
-        // за случаи когато някой е писал ръчно/пейстнал в минутите
-        const txt = (inpM.value || "").replace(/\D+/g,"");
-        if(!txt){
-          M = editBaseM;
-        }else{
-          let mv = parseInt(txt,10);
-          if(!Number.isFinite(mv) || mv<0 || mv>60){
-            M = editBaseM;
-          }else{
-            if(mv===60) mv=0;
-            M = mv;
+          const remainingDigits = hourLockedAsTwo ? digits.slice(2) : digits.slice(1);
+          if(remainingDigits.length === 0){
+            M = streamBaseM;
+          } else if(remainingDigits.length === 1){
+            const mv = parseInt(remainingDigits[0],10);
+            if(Number.isFinite(mv) && mv>=0 && mv<=60){
+              M = (mv===60?0:mv);
+            } else {
+              M = streamBaseM;
+            }
+          } else {
+            const mv = parseInt(remainingDigits.slice(-2).join(""),10);
+            if(Number.isFinite(mv) && mv>=0 && mv<=60){
+              M = (mv===60?0:mv);
+            } else {
+              M = streamBaseM;
+            }
           }
         }
+
         recomputeAmpmFromTime();
         updateRead();
         setHands();
         buildMins();
         buildHours();
+      }
+
+      function handleTimeKey(ev){
+        if(ev.key >= '0' && ev.key <= '9'){
+          ev.preventDefault();
+          ensureStreamStarted();
+          streamDigits.push(ev.key);
+          if(streamDigits.length > 4){
+            streamDigits = streamDigits.slice(-4);
+          }
+          applyStreamDigits();
+        } else if(ev.key === 'Backspace'){
+          ev.preventDefault();
+          if(streamActive && streamDigits.length){
+            streamDigits.pop();
+            applyStreamDigits();
+          }
+        } else if(ev.key === 'Enter'){
+          ev.preventDefault();
+          resetStream();
+          if(ev.target === inpH && inpM){
+            inpM.focus();
+          } else {
+            ev.target.blur();
+          }
+        } else if(ev.key === 'Escape'){
+          ev.preventDefault();
+          if(streamActive){
+            H = streamBaseH;
+            M = streamBaseM;
+            recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
+          }
+          resetStream();
+          ev.target.blur();
+        } else {
+          // Tab и др. – оставяме
+        }
       }
 
       if(inpH && inpM){
         inpH.addEventListener('focus', ()=>{
           focusHM='H';
           setReadActive(true);
-          startEditSession();
-          inpH.select && inpH.select();
+          resetStream();
         });
         inpM.addEventListener('focus', ()=>{
           focusHM='M';
           setReadActive(true);
-          editPhase = 'M';
-          minuteDigits = "";
-          editBaseM = M;
-          inpM.select && inpM.select();
+          resetStream();
         });
 
         function maybeDeactivate(){
@@ -1644,112 +1653,16 @@
         }
 
         inpH.addEventListener('blur', ()=>{
-          // при blur ние вече сме приложили час/минути по време на писане
-          updateRead();
+          resetStream();
           maybeDeactivate();
         });
         inpM.addEventListener('blur', ()=>{
-          applyMinuteEditOnBlur();
+          resetStream();
           maybeDeactivate();
         });
 
-        // ЧАСОВЕ – „стрийминг“ към минути
-        inpH.addEventListener('keydown', (ev)=>{
-          if(ev.key>='0' && ev.key<='9'){
-            ev.preventDefault();
-            applyHourTypingDigit(ev.key);
-          } else if(ev.key === 'Backspace'){
-            ev.preventDefault();
-            if(editPhase === 'H'){
-              if(hourDigits.length){
-                hourDigits = hourDigits.slice(0,-1);
-                if(hourDigits.length===0){
-                  H = editBaseH;
-                  M = editBaseM;
-                  recomputeAmpmFromTime();
-                  updateRead();
-                  setHands();
-                  buildMins();
-                  buildHours();
-                }else{
-                  // при 1 цифра – просто прилагаме отново
-                  let h1 = parseInt(hourDigits,10);
-                  if(Number.isFinite(h1) && h1>=0 && h1<=24){
-                    if(h1===0) H = 24; else H = h1;
-                  }else{
-                    H = editBaseH;
-                  }
-                  recomputeAmpmFromTime();
-                  updateRead();
-                  setHands();
-                  buildMins();
-                  buildHours();
-                }
-              }
-            } else {
-              // ако вече сме в минути, прехвърляме Backspace към минутите
-              if(minuteDigits.length){
-                minuteDigits = minuteDigits.slice(0,-1);
-                applyMinuteDigits();
-              } else {
-                // няма минутни цифри, връщаме се към часа
-                editPhase = 'H';
-              }
-            }
-          } else if(ev.key === 'Enter'){
-            ev.preventDefault();
-            // просто местим фокуса към минутите
-            if(inpM) inpM.focus();
-          } else if(ev.key === 'Escape'){
-            ev.preventDefault();
-            H = editBaseH;
-            M = editBaseM;
-            recomputeAmpmFromTime();
-            updateRead();
-            setHands();
-            buildMins();
-            buildHours();
-            inpH.blur();
-          } else {
-            // Tab и др. – оставяме по подразбиране
-          }
-        });
-
-        // МИНУТИ – двуцифрен буфер
-        inpM.addEventListener('keydown', (ev)=>{
-          if(ev.key>='0' && ev.key<='9'){
-            ev.preventDefault();
-            handleMinuteDigit(ev.key);
-          } else if(ev.key === 'Backspace'){
-            ev.preventDefault();
-            if(minuteDigits.length){
-              minuteDigits = minuteDigits.slice(0,-1);
-              applyMinuteDigits();
-            }else{
-              // няма буфер – връщаме се към старите минути
-              M = editBaseM;
-              recomputeAmpmFromTime();
-              updateRead();
-              setHands();
-              buildMins();
-              buildHours();
-            }
-          } else if(ev.key==='Enter'){
-            ev.preventDefault();
-            applyMinuteEditOnBlur();
-            inpM.blur();
-          } else if(ev.key==='Escape'){
-            ev.preventDefault();
-            H = editBaseH;
-            M = editBaseM;
-            recomputeAmpmFromTime();
-            updateRead();
-            setHands();
-            buildMins();
-            buildHours();
-            inpM.blur();
-          }
-        });
+        inpH.addEventListener('keydown', handleTimeKey);
+        inpM.addEventListener('keydown', handleTimeKey);
       }
 
       Card.addEventListener('keydown', (ev)=>{
