@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.59</title>
+  <title>БТ App 3 — v2.60</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -212,7 +212,8 @@
     .clk-tick{
       position:absolute; width:24px; height:24px; border-radius:50%;
       display:flex; align-items:center; justify-content:center;
-      font-size:11px; color:#d6ece6;
+      font-size:13px; /* увеличено леко за минутите */
+      color:#d6ece6;
       border:1px solid transparent; background:#0f1a1d; user-select:none;
       transition:background .15s ease, border-color .15s ease, color .15s ease;
     }
@@ -256,7 +257,7 @@
 
     .clk-center-dot{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 0 2px #0b1217 }
 
-    /* Централен правоъгълник – Verdana */
+    /* Централен правоъгълник – върнат стария UI шрифт + ~14px */
     .clk-read{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
       background:#10191c; border:1px solid #294047; border-radius:8px;
@@ -268,9 +269,9 @@
       align-items:center;
       justify-content:center;
       gap:2px;
-      font-size:16px;
+      font-size:14px;
       min-width:auto;
-      font-family:Verdana, Geneva, Tahoma, sans-serif;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif;
     }
     .clk-read.active{
       border-color:#22c55e;
@@ -326,7 +327,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.59</span>
+        <span class="badge">v2.60</span>
       </div>
     </div>
   </div>
