@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.67</title>
+  <title>БТ App 3 — v2.68</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -219,18 +219,15 @@
       text-shadow:0 0 3px rgba(0,0,0,.7);
     }
 
-    .clk-tick:not(.hour){
-      font-family:'Montserrat',system-ui,-apple-system,sans-serif;
-    }
-
-    .clk-tick.sel{
-      background:#22c55e; color:#06241b;
-    }
-
     .clk-tick.hour.sel{
+      background:#22c55e; color:#06241b;
       font-weight:900;
       text-shadow:0 0 4px rgba(0,0,0,.9);
       transform:scale(1.04);
+    }
+
+    .clk-tick:not(.hour){
+      font-family:'Montserrat',system-ui,-apple-system,sans-serif;
     }
 
     .clk-tick.minor{
@@ -317,6 +314,8 @@
       margin:0;
       opacity:.9;
       line-height:1;
+      position:relative;
+      top:-1px; /* леко вдигнат за оптически център */
     }
 
     .clk-actions{ display:flex; gap:12px; justify-content:center; margin-top:12px }
@@ -345,7 +344,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.67</span>
+        <span class="badge">v2.68</span>
       </div>
     </div>
   </div>
@@ -1396,6 +1395,21 @@
         }
       }
 
+      function refreshMinuteTicks(){
+        const children = ringM ? Array.from(ringM.children) : [];
+        children.forEach(el=>{
+          const m = parseInt(el.dataset.min,10);
+          if(!Number.isFinite(m)) return;
+          const isMajor = (m % 5 === 0);
+          el.classList.toggle('sel', m===M);
+          if(isMajor){
+            el.textContent = (m===0 ? "60" : two(m));
+          } else {
+            el.textContent = (m===M ? two(m) : '·');
+          }
+        });
+      }
+
       function buildMins(){
         clear(ringM);
         for(let m=0; m<60; m++){
@@ -1426,20 +1440,18 @@
           el.style.left = 'calc(50% + '+(x-size/2)+'px)';
           el.style.top  = 'calc(50% + '+(y-size/2)+'px)';
 
-          if(m===M) el.classList.add('sel');
-
           el.addEventListener('click', ()=>{
             M = m;
             recomputeAmpmFromTime();
             syncDigitsFromTime(); updateRead(); setHands();
-            ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
-            el.classList.add('sel');
+            refreshMinuteTicks();
             buildHours();
             focusHM = 'M';
           });
 
           ringM.appendChild(el);
         }
+        refreshMinuteTicks();
       }
 
       function setEditPos(newPos){
@@ -1636,8 +1648,7 @@
         M=v;
         recomputeAmpmFromTime();
         syncDigitsFromTime(); updateRead(); setHands();
-        ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
-        const tEl=[...ringM.children][M]; if(tEl) tEl.classList.add('sel');
+        refreshMinuteTicks();
         buildHours();
         focusHM='M';
       }
@@ -1692,6 +1703,7 @@
           startEditing(pos);
         }else{
           setEditPos(pos);
+          if(keyInput){ keyInput.focus(); }
         }
       }
 
