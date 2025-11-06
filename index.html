@@ -3,9 +3,8 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.62</title>
+  <title>БТ App 3 — v2.63</title>
 
-  <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
@@ -27,7 +26,6 @@
       --ctl-h:42px; --lbl-h:16px; --maxw:980px;
       --pill-w:168px;
 
-      /* ProLact таблица */
       --wk-green-d:#9fdcc7;
       --sel-orange:#f59e0b;
       --pl-font:12px;
@@ -40,7 +38,6 @@
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif
     }
 
-    /* ===== Горна лента ===== */
     .topbar-wrap{ position:sticky; top:0; z-index:10; background:#0b1215; border-bottom:1px solid var(--border); }
     .topbar{
       max-width:var(--maxw); margin:0 auto; padding:12px 16px;
@@ -54,7 +51,6 @@
       background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
     }
 
-    /* ===== Табове ===== */
     .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
     .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
     .tab-btn{
@@ -66,11 +62,9 @@
       color:#06241b; border-color:transparent; background:linear-gradient(90deg,#22c55e,#14b8a6);
     }
 
-    /* ===== Основно съдържание ===== */
     main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-    /* ===== „Данни“ ===== */
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
@@ -81,7 +75,6 @@
       background:#0d171b; border:1px solid #254046; color:var(--text);
       border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
     }
-    /* глобално скриваме стрелките; после ги връщаме само за теглото */
     input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
@@ -94,7 +87,6 @@
     .field.weight input{ font-weight:700; font-size:18px; width:9ch }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
-    /* връщаме стрелките само за теглото */
     .field.weight input[type="number"]{
       appearance:auto;
       -webkit-appearance:auto;
@@ -151,11 +143,9 @@
     .cal .day.today{ outline:1px dashed #5b8f98 }
     .cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
 
-    /* Панели */
     .tabpanel{ display:none }
     .tabpanel[aria-hidden="false"]{ display:block }
 
-    /* ====== ПРОГРАМА (общи) ====== */
     .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
     .prog-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
     .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
@@ -173,10 +163,8 @@
     .time-row{ display:flex; align-items:center; gap:4px }
     .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
     .time-row .colon{ opacity:.8; user-select:none; }
-
     select option.strong { font-weight:700; }
 
-    /* ===== ProLact Slim+ таблица ===== */
     .pl-wrap{ overflow-x:hidden }
     .pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
     .pl-table th, .pl-table td{
@@ -197,7 +185,6 @@
     .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
     .pl-time-mute{ display:inline-flex; margin-left:3px; vertical-align:middle }
 
-    /* ===== Модал часовник (drag) ===== */
     .clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100 }
     .clk.show{ display:flex; align-items:center; justify-content:center }
     .clk-card{ background:#0e1519; border:1px solid #20343a; border-radius:16px;
@@ -217,7 +204,7 @@
       border:1px solid transparent; background:#0f1a1d; user-select:none;
       transition:background .15s ease, border-color .15s ease, color .15s ease;
     }
-    /* Часовете (римските) – Marcellus */
+
     .clk-tick.hour{
       font-size:14px;
       font-family:"Marcellus","Times New Roman",serif;
@@ -229,14 +216,12 @@
       text-shadow:0 0 3px rgba(0,0,0,.7);
     }
 
-    /* Минутите (цифровите) – Montserrat */
     .clk-tick:not(.hour){
       font-family:'Montserrat',system-ui,-apple-system,sans-serif;
     }
 
     .clk-tick.sel{ background:#22c55e; color:#06241b; }
 
-    /* малки (междинни) минутки – без бордер по подразбиране */
     .clk-tick.minor{
       background:#0b1317;
       border-color:transparent;
@@ -249,7 +234,6 @@
       color:#06241b;
     }
 
-    /* „четвъртините“ 0 / 15 / 30 / 45 – по-едри и по-смели */
     .clk-tick.quarter{
       font-size:14px;
       font-weight:800;
@@ -262,19 +246,18 @@
 
     .clk-center-dot{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 0 2px #0b1217 }
 
-    /* Централен правоъгълник – малко по-голям шрифт, по-малко заобляне */
+    /* по-голям правоъгълник, малко по-голям шрифт */
     .clk-read{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      background:#10191c; border:1px solid #294047; border-radius:5px;
-      padding:0 3px;
+      background:#10191c; border:1px solid #294047; border-radius:6px;
+      padding:2px 6px;
       font-weight:800; text-align:center;
       cursor:text; user-select:text;
-      height:auto;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:2px;
-      font-size:17px;
+      gap:3px;
+      font-size:18px;
       min-width:auto;
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif;
     }
@@ -283,7 +266,7 @@
       box-shadow:0 0 0 1px #22c55e;
     }
     .clk-read-part{
-      width:2.0ch;
+      width:2.3ch;
       border:none;
       outline:none;
       background:transparent;
@@ -292,15 +275,12 @@
       font:inherit;
       padding:0;
       margin:0;
-      line-height:1;
+      line-height:1.1;
       height:auto;
     }
-    .clk-read-part::selection{
-      background:rgba(34,197,94,0.35);
-    }
+    .clk-read-part::selection{ background:rgba(34,197,94,0.35); }
     .clk-read-part.active{
-      background:rgba(34,197,94,0.22);
-      border-radius:4px;
+      color:#22c55e;
     }
     .clk-read-colon{
       user-select:none;
@@ -330,18 +310,16 @@
 </head>
 <body>
 
-  <!-- Горна лента -->
   <div class="topbar-wrap">
     <div class="topbar">
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.62</span>
+        <span class="badge">v2.63</span>
       </div>
     </div>
   </div>
 
-  <!-- Табове -->
   <div class="tabs-wrap" role="navigation" aria-label="Навигация">
     <div class="tabs" role="tablist">
       <button id="tab-data" class="tab-btn" role="tab" aria-controls="panel-data" aria-selected="true">Данни</button>
@@ -349,15 +327,12 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ: ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
-      <!-- Запис -->
       <section class="card">
         <h2 style="margin:0 0 10px">Запис</h2>
 
         <div class="inputs-row">
-          <!-- лява група -->
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
               <div class="lbl">Дата</div>
@@ -387,7 +362,6 @@
 
           <div class="spacer"></div>
 
-          <!-- дясна група -->
           <div class="inputs-row" style="gap:8px">
             <div class="field">
               <div class="lbl"></div>
@@ -410,7 +384,6 @@
         </div>
       </section>
 
-      <!-- Графика -->
       <section class="card">
         <h2 style="margin:0 0 10px">Графика</h2>
         <div class="inputs-row">
@@ -423,7 +396,6 @@
         <canvas id="chart"></canvas>
       </section>
 
-      <!-- Записи -->
       <section class="card">
         <h2 style="margin:0">Записи</h2>
 
@@ -465,14 +437,11 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ: ПРОГРАМА -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
-      <!-- 🟩 Основен пакет -->
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <!-- ProLact Slim+ — ТАБЛИЦА Пн–Нд × два часа -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
@@ -518,7 +487,6 @@
 
         <hr class="prog-sep"/>
 
-        <!-- OMNi-Biotic HETOX light -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
@@ -555,7 +523,6 @@
 
         <hr class="prog-sep"/>
 
-        <!-- Fortex Хитозан Плюс -->
         <div>
           <div class="prog-head">
             <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
@@ -591,7 +558,6 @@
         </div>
       </section>
 
-      <!-- 🟨 Допълнителен пакет -->
       <section class="card" id="pkg-extra">
         <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
         <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
@@ -601,7 +567,6 @@
         </ul>
       </section>
 
-      <!-- 💊 Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
         <p style="margin:0 0 8px; color:#9fb4ad">
@@ -616,7 +581,6 @@
     </main>
   </div>
 
-  <!-- МОДАЛ ЧАСОВНИК -->
   <div class="clk" id="clk" aria-hidden="true">
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време" tabindex="0">
       <div class="clk-face" id="clkFace">
@@ -647,12 +611,10 @@
 
   <script>
     "use strict";
-    /* ===== Помощни ===== */
     function two(n){ return String(n).padStart(2,"0"); }
     function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
     var TODAY = todayISO();
 
-    // Римски цифри (ползваме ги само за 1..12)
     function toRoman(num){
       const romans = [
         [1000,'M'],[900,'CM'],[500,'D'],[400,'CD'],
@@ -669,7 +631,6 @@
       return res;
     }
 
-    /* ===== Таб логика ===== */
     (function(){
       const tabs = [
         {btn: document.getElementById('tab-data'), panel: document.getElementById('panel-data')},
@@ -690,7 +651,6 @@
       }catch(_){ select(0); }
     })();
 
-    /* ===== „Данни“ ===== */
     (function(){
       function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
       function bgToISO_any(bg){
@@ -1082,7 +1042,6 @@
       initialRender();
     })();
 
-    /* ===== OMNi/Хитозан — помощни ===== */
     function buildHourRange(sel, fromH, toH){
       sel.innerHTML="";
       for(let h=fromH; h<=toH; h++){
@@ -1103,7 +1062,6 @@
     }
     function setSel(sel,val){ const opt=[...sel.options].find(o=>o.value===val); if(opt){ sel.value=val; return true;} return false; }
 
-    /* ===== OMNi-Биотик — 1 от 3 ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
       const KEY_SEL='bt_he_sel_v230';
@@ -1171,7 +1129,6 @@
       }));
     })();
 
-    /* ===== Хитозан Плюс ===== */
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
       const KEY='bt_ch_tim_v230';
@@ -1217,7 +1174,6 @@
       write();
     })();
 
-    /* ===== ProLact Slim+ — таблица + модал часовник (drag + централен цифров вход) ===== */
     (function(){
       const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
       const KEY='bt_pl_grid_v230';
@@ -1309,7 +1265,10 @@
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
 
-      /* ===== 12-часов циферблат с две обиколки: сутрин (1..12), втора (13..23,0/24) ===== */
+      // 4 цифри за HHMM
+      let digits = {d1:0,d2:0,d3:0,d4:0};
+      let editPos = 1; // 1,2,3,4
+
       let ampmCycle = 0;
       let lastDispHour = 12;
 
@@ -1330,12 +1289,24 @@
         lastDispHour = d.disp;
       }
 
-      function updateRead(){
-        if(!inpH || !inpM) return;
-        const hDisp = (H === 24 ? 0 : H);
-        inpH.value = two(hDisp);
-        inpM.value = two(M);
+      function syncDigitsFromTime(){
+        const hDisp = (H===24 ? 0 : H);
+        const hs = two(hDisp);
+        const ms = two(M);
+        digits.d1 = parseInt(hs[0],10)||0;
+        digits.d2 = parseInt(hs[1],10)||0;
+        digits.d3 = parseInt(ms[0],10)||0;
+        digits.d4 = parseInt(ms[1],10)||0;
       }
+      function renderDigits(){
+        if(!inpH || !inpM) return;
+        inpH.value = String(digits.d1)+String(digits.d2);
+        inpM.value = String(digits.d3)+String(digits.d4);
+      }
+      function updateRead(){
+        renderDigits();
+      }
+
       function setHands(){
         const d = hour24ToDisp(H);
         const degH = (d.disp%12)*30 + (M/60)*30;
@@ -1368,7 +1339,7 @@
           el.addEventListener('click', ()=>{
             H = dispToHour24(i, ampmCycle);
             recomputeAmpmFromTime();
-            updateRead(); setHands();
+            syncDigitsFromTime(); updateRead(); setHands();
             buildHours();
             focusHM='H';
           });
@@ -1412,7 +1383,7 @@
           el.addEventListener('click', ()=>{
             M = m;
             recomputeAmpmFromTime();
-            updateRead(); setHands();
+            syncDigitsFromTime(); updateRead(); setHands();
             ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
             el.classList.add('sel');
             buildHours();
@@ -1421,6 +1392,125 @@
 
           ringM.appendChild(el);
         }
+      }
+
+      function setReadActive(on){
+        if(!readBox) return;
+        if(on) readBox.classList.add('active');
+        else readBox.classList.remove('active');
+      }
+
+      function updateActiveCellHighlight(){
+        if(!inpH || !inpM) return;
+        inpH.classList.remove('active');
+        inpM.classList.remove('active');
+        setReadActive(true);
+
+        if(editPos<=2){
+          inpH.classList.add('active');
+          focusHM='H';
+        } else {
+          inpM.classList.add('active');
+          focusHM='M';
+        }
+      }
+      function setEditPos(newPos){
+        editPos = Math.max(1, Math.min(4,newPos));
+        updateActiveCellHighlight();
+      }
+
+      function commitDigitsToTime(){
+        const hourCandidate = digits.d1*10 + digits.d2;
+        const minCandidate  = digits.d3*10 + digits.d4;
+        if(hourCandidate>24 || minCandidate>60) return;
+
+        let newH = (hourCandidate===0?24:hourCandidate);
+        let newM = (minCandidate===60?0:minCandidate);
+
+        H = newH;
+        M = newM;
+
+        syncDigitsFromTime();
+        recomputeAmpmFromTime();
+        updateRead();
+        setHands();
+        buildMins();
+        buildHours();
+      }
+
+      function handleDigitCell(d){
+        if(d<0 || d>9) return;
+
+        if(editPos===1){
+          if(d>2) return;
+          digits.d1 = d;
+        } else if(editPos===2){
+          const cand = digits.d1*10 + d;
+          if(cand>24) return;
+          digits.d2 = d;
+        } else if(editPos===3){
+          if(d>6) return;
+          digits.d3 = d;
+        } else if(editPos===4){
+          const cand = digits.d3*10 + d;
+          if(cand>60) return;
+          digits.d4 = d;
+        }
+
+        commitDigitsToTime();
+        if(editPos<4) setEditPos(editPos+1);
+      }
+
+      function handleBackspaceCell(){
+        if(editPos===1) digits.d1=0;
+        else if(editPos===2) digits.d2=0;
+        else if(editPos===3) digits.d3=0;
+        else digits.d4=0;
+
+        commitDigitsToTime();
+      }
+
+      function handleTimeKey(ev){
+        const k = ev.key;
+
+        if(k === 'Tab' || k === 'Shift' || k === 'Alt' || k === 'Meta' || k.startsWith('F')) return;
+
+        if(k === 'ArrowLeft'){
+          ev.preventDefault();
+          setEditPos(editPos-1);
+          return;
+        }
+        if(k === 'ArrowRight'){
+          ev.preventDefault();
+          setEditPos(editPos+1);
+          return;
+        }
+
+        if(k === 'Backspace' || k === 'Delete'){
+          ev.preventDefault();
+          handleBackspaceCell();
+          return;
+        }
+
+        if(k === 'Enter'){
+          ev.preventDefault();
+          (ev.target.blur && ev.target.blur());
+          return;
+        }
+
+        if(k === 'Escape'){
+          ev.preventDefault();
+          (ev.target.blur && ev.target.blur());
+          return;
+        }
+
+        if(k >= '0' && k <= '9'){
+          ev.preventDefault();
+          handleDigitCell(parseInt(k,10));
+          return;
+        }
+
+        ev.preventDefault();
       }
 
       function showClk(row,dow,initial, cell){
@@ -1442,7 +1532,7 @@
         focusHM='H';
 
         recomputeAmpmFromTime();
-        updateRead(); setHands();
+        syncDigitsFromTime(); updateRead(); setHands();
         buildHours(); buildMins();
 
         Modal.classList.add('show');
@@ -1453,6 +1543,7 @@
         if(inpH) inpH.classList.remove('active');
         if(inpM) inpM.classList.remove('active');
       }
+
       function hideClk(){
         Modal.classList.remove('show');
         Modal.setAttribute('aria-hidden','true');
@@ -1491,7 +1582,7 @@
         }
         H = dispToHour24(disp, ampmCycle);
         recomputeAmpmFromTime();
-        updateRead(); setHands();
+        syncDigitsFromTime(); updateRead(); setHands();
         buildHours();
         focusHM='H';
       }
@@ -1506,7 +1597,7 @@
         }
         M=v;
         recomputeAmpmFromTime();
-        updateRead(); setHands();
+        syncDigitsFromTime(); updateRead(); setHands();
         ringM.querySelectorAll('.clk-tick').forEach(t=>t.classList.remove('sel'));
         const tEl=[...ringM.children][M]; if(tEl) tEl.classList.add('sel');
         buildHours();
@@ -1535,162 +1626,10 @@
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
-      /* ===== Директна редакция HH:MM с 4 „клетки“ ===== */
-
-      function setReadActive(on){
-        if(!readBox) return;
-        if(on) readBox.classList.add('active');
-        else readBox.classList.remove('active');
-      }
-
-      let editPos = 1; // 1: H десетки, 2: H единици, 3: M десетки, 4: M единици
-
-      function getDigitsHM(){
-        const hDisp = (H===24 ? 0 : H);
-        const hs = two(hDisp);
-        const ms = two(M);
-        return {
-          d1: parseInt(hs[0],10)||0,
-          d2: parseInt(hs[1],10)||0,
-          d3: parseInt(ms[0],10)||0,
-          d4: parseInt(ms[1],10)||0
-        };
-      }
-
-      function applyDigits(d1,d2,d3,d4){
-        let hour = d1*10 + d2;
-        let mins = d3*10 + d4;
-        if(hour>24) return;
-        if(mins>59) return;
-        H = (hour===0 ? 24 : hour);
-        M = mins;
-        recomputeAmpmFromTime();
-        updateRead();
-        setHands();
-        buildMins();
-        buildHours();
-      }
-
-      function updateActiveCellHighlight(){
-        if(!inpH || !inpM) return;
-        inpH.classList.remove('active');
-        inpM.classList.remove('active');
-        setReadActive(true);
-
-        if(editPos<=2){
-          inpH.classList.add('active');
-          inpH.focus();
-          const start = (editPos===1 ? 0 : 1);
-          const end = start+1;
-          try{ inpH.setSelectionRange(start,end); }catch(_){}
-          focusHM='H';
-        } else {
-          inpM.classList.add('active');
-          inpM.focus();
-          const start = (editPos===3 ? 0 : 1);
-          const end = start+1;
-          try{ inpM.setSelectionRange(start,end); }catch(_){}
-          focusHM='M';
-        }
-      }
-
-      function setEditPos(newPos){
-        editPos = Math.max(1, Math.min(4,newPos));
-        updateActiveCellHighlight();
-      }
-
-      function handleDigitCell(d){
-        const vals = getDigitsHM();
-        let {d1,d2,d3,d4} = vals;
-
-        if(editPos===1){
-          if(d>2) return;
-          d1 = d;
-          const hour = d1*10 + d2;
-          if(hour>24) return;
-        } else if(editPos===2){
-          d2 = d;
-          const hour = d1*10 + d2;
-          if(hour>24) return;
-        } else if(editPos===3){
-          if(d>5) return;
-          d3 = d;
-          const mins = d3*10 + d4;
-          if(mins>59) return;
-        } else {
-          d4 = d;
-          const mins = d3*10 + d4;
-          if(mins>59) return;
-        }
-
-        applyDigits(d1,d2,d3,d4);
-        if(editPos<4) setEditPos(editPos+1);
-      }
-
-      function handleBackspaceCell(){
-        const vals = getDigitsHM();
-        let {d1,d2,d3,d4} = vals;
-
-        if(editPos===1){
-          d1=0;
-          if(d1*10+d2>24){ d1=0; d2=0; }
-        } else if(editPos===2){
-          d2=0;
-          if(d1*10+d2>24){ d1=0; d2=0; }
-        } else if(editPos===3){
-          d3=0;
-          if(d3*10+d4>59){ d3=0; d4=0; }
-        } else {
-          d4=0;
-          if(d3*10+d4>59){ d3=0; d4=0; }
-        }
-        applyDigits(d1,d2,d3,d4);
-      }
-
-      function handleTimeKey(ev){
-        const k = ev.key;
-
-        if(k === 'Tab' || k === 'Shift' || k === 'Alt' || k === 'Meta' || k.startsWith('F')) return;
-
-        if(k === 'ArrowLeft'){
-          ev.preventDefault();
-          setEditPos(editPos-1);
-          return;
-        }
-        if(k === 'ArrowRight'){
-          ev.preventDefault();
-          setEditPos(editPos+1);
-          return;
-        }
-
-        if(k === 'Backspace' || k === 'Delete'){
-          ev.preventDefault();
-          handleBackspaceCell();
-          return;
-        }
-
-        if(k === 'Enter'){
-          ev.preventDefault();
-          ev.target.blur();
-          return;
-        }
-
-        if(k === 'Escape'){
-          ev.preventDefault();
-          ev.target.blur();
-          return;
-        }
-
-        if(k >= '0' && k <= '9'){
-          ev.preventDefault();
-          handleDigitCell(parseInt(k,10));
-          return;
-        }
-
-        ev.preventDefault();
-      }
-
       if(inpH && inpM){
+        inpH.readOnly = true;
+        inpM.readOnly = true;
+
         function maybeDeactivate(){
           setTimeout(()=>{
             const a=document.activeElement;
@@ -1704,9 +1643,11 @@
 
         inpH.addEventListener('focus', ()=>{
           if(editPos>2) editPos=1;
+          updateActiveCellHighlight();
         });
         inpM.addEventListener('focus', ()=>{
           if(editPos<=2) editPos=3;
+          updateActiveCellHighlight();
         });
 
         function handleClickInput(ev){
@@ -1751,7 +1692,7 @@
             }
 
             recomputeAmpmFromTime();
-            updateRead(); setHands(); buildHours();
+            syncDigitsFromTime(); updateRead(); setHands(); buildHours();
           }else{
             const prev=M;
             if(dir>0){
@@ -1770,7 +1711,7 @@
               }
             }
             recomputeAmpmFromTime();
-            updateRead(); setHands();
+            syncDigitsFromTime(); updateRead(); setHands();
             buildMins(); buildHours();
           }
         }
