@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.61</title>
+  <title>БТ App 3 — v2.62</title>
 
   <!-- Без service worker -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
@@ -262,10 +262,10 @@
 
     .clk-center-dot{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 0 2px #0b1217 }
 
-    /* Централен правоъгълник – по-едър шрифт */
+    /* Централен правоъгълник – малко по-голям шрифт, по-малко заобляне */
     .clk-read{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      background:#10191c; border:1px solid #294047; border-radius:8px;
+      background:#10191c; border:1px solid #294047; border-radius:5px;
       padding:0 3px;
       font-weight:800; text-align:center;
       cursor:text; user-select:text;
@@ -274,7 +274,7 @@
       align-items:center;
       justify-content:center;
       gap:2px;
-      font-size:16px; /* увеличено от 14px */
+      font-size:17px;
       min-width:auto;
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif;
     }
@@ -298,9 +298,13 @@
     .clk-read-part::selection{
       background:rgba(34,197,94,0.35);
     }
+    .clk-read-part.active{
+      background:rgba(34,197,94,0.22);
+      border-radius:4px;
+    }
     .clk-read-colon{
       user-select:none;
-      padding:0 1px;
+      padding:0 2px;
       margin:0;
       opacity:.9;
     }
@@ -332,7 +336,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.61</span>
+        <span class="badge">v2.62</span>
       </div>
     </div>
   </div>
@@ -1446,6 +1450,8 @@
         document.body.style.overflow='hidden';
         Card.focus();
         if(readBox) readBox.classList.remove('active');
+        if(inpH) inpH.classList.remove('active');
+        if(inpM) inpM.classList.remove('active');
       }
       function hideClk(){
         Modal.classList.remove('show');
@@ -1453,6 +1459,8 @@
         document.body.style.overflow='';
         if(activeCell){ activeCell.classList.remove('sel'); activeCell=null; }
         if(readBox) readBox.classList.remove('active');
+        if(inpH) inpH.classList.remove('active');
+        if(inpM) inpM.classList.remove('active');
       }
       Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
@@ -1527,101 +1535,35 @@
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
-      // ===== Директна редакция HH / MM =====
+      /* ===== Директна редакция HH:MM с 4 „клетки“ ===== */
+
       function setReadActive(on){
         if(!readBox) return;
         if(on) readBox.classList.add('active');
         else readBox.classList.remove('active');
       }
 
-      let streamActive = false;
-      let streamBaseH = 8;
-      let streamBaseM = 0;
-      let streamDigits = [];
+      let editPos = 1; // 1: H десетки, 2: H единици, 3: M десетки, 4: M единици
 
-      function resetStream(){
-        streamActive = false;
-        streamDigits = [];
+      function getDigitsHM(){
+        const hDisp = (H===24 ? 0 : H);
+        const hs = two(hDisp);
+        const ms = two(M);
+        return {
+          d1: parseInt(hs[0],10)||0,
+          d2: parseInt(hs[1],10)||0,
+          d3: parseInt(ms[0],10)||0,
+          d4: parseInt(ms[1],10)||0
+        };
       }
 
-      function ensureStreamStarted(){
-        if(!streamActive){
-          streamActive = true;
-          streamBaseH = H;
-          streamBaseM = M;
-          streamDigits = [];
-        }
-      }
-
-      function applyStreamDigitsForHour(){
-        const digits = streamDigits.slice(0,4);
-        const len = digits.length;
-
-        if(len === 0){
-          H = streamBaseH;
-          M = streamBaseM;
-          recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
-          return;
-        }
-
-        const d1 = digits[0];
-        const h1 = parseInt(d1,10);
-        if(!Number.isFinite(h1)){
-          H = streamBaseH;
-          M = streamBaseM;
-          recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
-          return;
-        }
-
-        if(len === 1){
-          if(h1>=0 && h1<=24){
-            H = (h1===0 ? 24 : h1);
-            M = streamBaseM;
-          } else {
-            H = streamBaseH;
-            M = streamBaseM;
-          }
-        } else {
-          const d2 = digits[1];
-          const firstIs012 = (h1>=0 && h1<=2);
-          let candidateHour = NaN;
-          if(firstIs012){
-            const d2n = parseInt(d2,10);
-            if(Number.isFinite(d2n)) candidateHour = h1*10 + d2n;
-          }
-          let hourLockedAsTwo = false;
-
-          if(Number.isFinite(candidateHour) && candidateHour<=24){
-            hourLockedAsTwo = true;
-            H = (candidateHour===0 || candidateHour===24) ? 24 : candidateHour;
-          } else {
-            if(h1>=0 && h1<=24){
-              H = (h1===0 ? 24 : h1);
-            } else {
-              H = streamBaseH;
-            }
-          }
-
-          const remainingDigits = hourLockedAsTwo ? digits.slice(2) : digits.slice(1);
-          if(remainingDigits.length === 0){
-            M = streamBaseM;
-          } else if(remainingDigits.length === 1){
-            const mv = parseInt(remainingDigits[0],10);
-            if(Number.isFinite(mv) && mv>=0 && mv<=60){
-              M = (mv===60?0:mv);
-            } else {
-              M = streamBaseM;
-            }
-          } else {
-            const mv = parseInt(remainingDigits.slice(-2).join(""),10);
-            if(Number.isFinite(mv) && mv>=0 && mv<=60){
-              M = (mv===60?0:mv);
-            } else {
-              M = streamBaseM;
-            }
-          }
-        }
-
+      function applyDigits(d1,d2,d3,d4){
+        let hour = d1*10 + d2;
+        let mins = d3*10 + d4;
+        if(hour>24) return;
+        if(mins>59) return;
+        H = (hour===0 ? 24 : hour);
+        M = mins;
         recomputeAmpmFromTime();
         updateRead();
         setHands();
@@ -1629,131 +1571,162 @@
         buildHours();
       }
 
-      function applyMinuteDigitWithCaret(dChar, input){
-        const d = parseInt(dChar,10);
-        if(!Number.isFinite(d)) return;
+      function updateActiveCellHighlight(){
+        if(!inpH || !inpM) return;
+        inpH.classList.remove('active');
+        inpM.classList.remove('active');
+        setReadActive(true);
 
-        const base = M;
-        let tens = Math.floor(base/10);
-        let ones = base % 10;
-
-        let pos = input.selectionStart;
-        if(pos == null) pos = String(input.value||"").length;
-
-        let cand;
-        if(pos <= 0){
-          cand = d*10 + ones;
+        if(editPos<=2){
+          inpH.classList.add('active');
+          inpH.focus();
+          const start = (editPos===1 ? 0 : 1);
+          const end = start+1;
+          try{ inpH.setSelectionRange(start,end); }catch(_){}
+          focusHM='H';
         } else {
-          cand = tens*10 + d;
+          inpM.classList.add('active');
+          inpM.focus();
+          const start = (editPos===3 ? 0 : 1);
+          const end = start+1;
+          try{ inpM.setSelectionRange(start,end); }catch(_){}
+          focusHM='M';
         }
-
-        if(!(cand>=0 && cand<=60)) return;
-        M = (cand===60?0:cand);
-
-        recomputeAmpmFromTime();
-        updateRead();
-        setHands();
-        buildMins();
-        buildHours();
       }
 
-      function applyMinuteBackspace(input){
-        const base = M;
-        let tens = Math.floor(base/10);
-        let ones = base % 10;
+      function setEditPos(newPos){
+        editPos = Math.max(1, Math.min(4,newPos));
+        updateActiveCellHighlight();
+      }
 
-        let pos = input.selectionStart;
-        if(pos == null) pos = String(input.value||"").length;
+      function handleDigitCell(d){
+        const vals = getDigitsHM();
+        let {d1,d2,d3,d4} = vals;
 
-        if(pos > 1){
-          ones = 0;
+        if(editPos===1){
+          if(d>2) return;
+          d1 = d;
+          const hour = d1*10 + d2;
+          if(hour>24) return;
+        } else if(editPos===2){
+          d2 = d;
+          const hour = d1*10 + d2;
+          if(hour>24) return;
+        } else if(editPos===3){
+          if(d>5) return;
+          d3 = d;
+          const mins = d3*10 + d4;
+          if(mins>59) return;
         } else {
-          tens = 0;
+          d4 = d;
+          const mins = d3*10 + d4;
+          if(mins>59) return;
         }
 
-        let cand = tens*10 + ones;
-        if(!(cand>=0 && cand<=60)) cand = 0;
-        M = (cand===60?0:cand);
+        applyDigits(d1,d2,d3,d4);
+        if(editPos<4) setEditPos(editPos+1);
+      }
 
-        recomputeAmpmFromTime();
-        updateRead();
-        setHands();
-        buildMins();
-        buildHours();
+      function handleBackspaceCell(){
+        const vals = getDigitsHM();
+        let {d1,d2,d3,d4} = vals;
+
+        if(editPos===1){
+          d1=0;
+          if(d1*10+d2>24){ d1=0; d2=0; }
+        } else if(editPos===2){
+          d2=0;
+          if(d1*10+d2>24){ d1=0; d2=0; }
+        } else if(editPos===3){
+          d3=0;
+          if(d3*10+d4>59){ d3=0; d4=0; }
+        } else {
+          d4=0;
+          if(d3*10+d4>59){ d3=0; d4=0; }
+        }
+        applyDigits(d1,d2,d3,d4);
       }
 
       function handleTimeKey(ev){
-        const context = (ev.target === inpM) ? 'M' : 'H';
+        const k = ev.key;
 
-        if(ev.key >= '0' && ev.key <= '9'){
+        if(k === 'Tab' || k === 'Shift' || k === 'Alt' || k === 'Meta' || k.startsWith('F')) return;
+
+        if(k === 'ArrowLeft'){
           ev.preventDefault();
-          if(context === 'M'){
-            applyMinuteDigitWithCaret(ev.key, ev.target);
-          } else {
-            ensureStreamStarted();
-            streamDigits.push(ev.key);
-            if(streamDigits.length>4) streamDigits = streamDigits.slice(-4);
-            applyStreamDigitsForHour();
-          }
-        } else if(ev.key === 'Backspace'){
-          ev.preventDefault();
-          if(context === 'H'){
-            if(streamActive && streamDigits.length){
-              streamDigits.pop();
-              applyStreamDigitsForHour();
-            }
-          } else {
-            applyMinuteBackspace(ev.target);
-          }
-        } else if(ev.key === 'Enter'){
-          ev.preventDefault();
-          resetStream();
-          if(ev.target === inpH && inpM){
-            inpM.focus();
-          } else {
-            ev.target.blur();
-          }
-        } else if(ev.key === 'Escape'){
-          ev.preventDefault();
-          if(context === 'H' && streamActive){
-            H = streamBaseH;
-            M = streamBaseM;
-            recomputeAmpmFromTime(); updateRead(); setHands(); buildMins(); buildHours();
-          }
-          resetStream();
-          ev.target.blur();
+          setEditPos(editPos-1);
+          return;
         }
+        if(k === 'ArrowRight'){
+          ev.preventDefault();
+          setEditPos(editPos+1);
+          return;
+        }
+
+        if(k === 'Backspace' || k === 'Delete'){
+          ev.preventDefault();
+          handleBackspaceCell();
+          return;
+        }
+
+        if(k === 'Enter'){
+          ev.preventDefault();
+          ev.target.blur();
+          return;
+        }
+
+        if(k === 'Escape'){
+          ev.preventDefault();
+          ev.target.blur();
+          return;
+        }
+
+        if(k >= '0' && k <= '9'){
+          ev.preventDefault();
+          handleDigitCell(parseInt(k,10));
+          return;
+        }
+
+        ev.preventDefault();
       }
 
       if(inpH && inpM){
-        inpH.addEventListener('focus', ()=>{
-          focusHM='H';
-          setReadActive(true);
-          resetStream();
-        });
-        inpM.addEventListener('focus', ()=>{
-          focusHM='M';
-          setReadActive(true);
-          resetStream();
-        });
-
         function maybeDeactivate(){
           setTimeout(()=>{
             const a=document.activeElement;
             if(a!==inpH && a!==inpM){
               setReadActive(false);
+              inpH.classList.remove('active');
+              inpM.classList.remove('active');
             }
           },0);
         }
 
-        inpH.addEventListener('blur', ()=>{
-          resetStream();
-          maybeDeactivate();
+        inpH.addEventListener('focus', ()=>{
+          if(editPos>2) editPos=1;
         });
-        inpM.addEventListener('blur', ()=>{
-          resetStream();
-          maybeDeactivate();
+        inpM.addEventListener('focus', ()=>{
+          if(editPos<=2) editPos=3;
         });
+
+        function handleClickInput(ev){
+          const input = ev.currentTarget;
+          const rect = input.getBoundingClientRect();
+          const x = ev.clientX - rect.left;
+          const half = rect.width/2;
+          if(input===inpH){
+            editPos = (x<half)?1:2;
+          } else {
+            editPos = (x<half)?3:4;
+          }
+          setEditPos(editPos);
+        }
+
+        inpH.addEventListener('click', handleClickInput);
+        inpM.addEventListener('click', handleClickInput);
+
+        inpH.addEventListener('blur', maybeDeactivate);
+        inpM.addEventListener('blur', maybeDeactivate);
 
         inpH.addEventListener('keydown', handleTimeKey);
         inpM.addEventListener('keydown', handleTimeKey);
