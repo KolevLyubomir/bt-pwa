@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.66</title>
+  <title>БТ App 3 — v2.67</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -205,7 +205,7 @@
       font-size:13px;
       color:#d6ece6;
       border:1px solid transparent; background:#0f1a1d; user-select:none;
-      transition:background .15s ease, border-color .15s ease, color .15s ease;
+      transition:background .15s ease, border-color .15s ease, color .15s ease, transform .12s ease;
     }
 
     .clk-tick.hour{
@@ -223,7 +223,15 @@
       font-family:'Montserrat',system-ui,-apple-system,sans-serif;
     }
 
-    .clk-tick.sel{ background:#22c55e; color:#06241b; }
+    .clk-tick.sel{
+      background:#22c55e; color:#06241b;
+    }
+
+    .clk-tick.hour.sel{
+      font-weight:900;
+      text-shadow:0 0 4px rgba(0,0,0,.9);
+      transform:scale(1.04);
+    }
 
     .clk-tick.minor{
       background:#0b1317;
@@ -235,6 +243,7 @@
       background:#22c55e;
       border-color:#22c55e;
       color:#06241b;
+      transform:scale(1.2);
     }
 
     .clk-tick.quarter{
@@ -252,9 +261,9 @@
     .clk-read{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
       background:#10191c; border:1px solid #294047; border-radius:6px;
-      padding:2px 6px 4px;
+      padding:3px 6px;
       font-weight:800; text-align:center;
-      cursor:text; user-select:none;
+      cursor:pointer;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -262,6 +271,12 @@
       font-size:18px;
       min-width:auto;
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif;
+      user-select:none;
+    }
+    .clk-read.editing{
+      border-color:#ffffff;
+      cursor:text;
+      user-select:text;
     }
 
     .clk-read-part{
@@ -277,14 +292,14 @@
       text-align:center;
       color:#e6f2ef;
       position:relative;
-      padding-bottom:1px;
+      line-height:1.1;
     }
 
     @keyframes clkBlink{
       0%,49%{ opacity:1; }
       50%,100%{ opacity:0; }
     }
-    .clk-digit.active::after{
+    .clk-read.editing .clk-digit.active::after{
       content:"";
       position:absolute;
       left:0;
@@ -301,8 +316,7 @@
       padding:0 3px;
       margin:0;
       opacity:.9;
-      position:relative;
-      top:-1px;
+      line-height:1;
     }
 
     .clk-actions{ display:flex; gap:12px; justify-content:center; margin-top:12px }
@@ -331,7 +345,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.66</span>
+        <span class="badge">v2.67</span>
       </div>
     </div>
   </div>
@@ -1294,6 +1308,7 @@
 
       let digits = {d1:0,d2:0,d3:0,d4:0};
       let editPos = 1;
+      let isEditing = false;
 
       let ampmCycle = 0;
       let lastDispHour = 12;
@@ -1332,7 +1347,7 @@
           const span = readBox.querySelector('.clk-digit[data-pos="'+pos+'"]');
           if(!span) continue;
           span.textContent = String(map[pos]);
-          span.classList.toggle('active', pos===editPos);
+          span.classList.toggle('active', isEditing && pos===editPos);
         }
       }
 
@@ -1488,9 +1503,16 @@
         Modal.setAttribute('aria-hidden','true');
         document.body.style.overflow='';
         if(activeCell){ activeCell.classList.remove('sel'); activeCell=null; }
+        stopEditing();
       }
 
       function handleTimeKey(ev){
+        if(!isEditing) return;
+
+        if(ev.ctrlKey || ev.metaKey){
+          return;
+        }
+
         const k = ev.key;
 
         if(k === 'Tab' || k === 'Shift' || k === 'Alt' || k.startsWith('F')) return;
@@ -1642,24 +1664,74 @@
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
+      function startEditing(pos){
+        isEditing = true;
+        if(readBox) readBox.classList.add('editing');
+        if(typeof pos==="number") setEditPos(pos);
+        else renderDigits();
+        if(keyInput){
+          keyInput.value="";
+          keyInput.focus();
+        }
+      }
+      function stopEditing(){
+        isEditing = false;
+        if(readBox) readBox.classList.remove('editing');
+        renderDigits();
+        if(keyInput){
+          keyInput.blur();
+          keyInput.value="";
+        }
+      }
+
       function handleReadClick(ev){
         if(!readBox) return;
         const digitSpan = ev.target.closest('.clk-digit');
-        if(digitSpan){
-          const pos = Number(digitSpan.getAttribute('data-pos'))||1;
+        const pos = digitSpan ? (Number(digitSpan.getAttribute('data-pos'))||editPos) : editPos;
+        if(!isEditing){
+          startEditing(pos);
+        }else{
           setEditPos(pos);
-          if(keyInput){
-            keyInput.focus();
-          }
         }
       }
 
       if(readBox){
         readBox.addEventListener('click', handleReadClick);
+        readBox.addEventListener('paste', (e)=>{
+          if(!isEditing) return;
+          const txt = (e.clipboardData && e.clipboardData.getData('text')) || "";
+          if(!txt) return;
+          e.preventDefault();
+          const nums = txt.replace(/\D+/g,"");
+          for(const ch of nums){
+            const d = ch.charCodeAt(0)-48;
+            if(d>=0 && d<=9) handleDigitCell(d);
+          }
+        });
       }
       if(keyInput){
         keyInput.addEventListener('keydown', handleTimeKey);
+        keyInput.addEventListener('input', ()=>{
+          if(!isEditing){
+            keyInput.value="";
+            return;
+          }
+          const txt = keyInput.value || "";
+          keyInput.value="";
+          const nums = txt.replace(/\D+/g,"");
+          for(const ch of nums){
+            const d = ch.charCodeAt(0)-48;
+            if(d>=0 && d<=9) handleDigitCell(d);
+          }
+        });
       }
+
+      document.addEventListener('click',(e)=>{
+        if(!isEditing) return;
+        if(readBox && readBox.contains(e.target)) return;
+        if(e.target === keyInput) return;
+        stopEditing();
+      });
 
       TABLE.querySelectorAll('.pl-time-cell').forEach(td=>{
         td.addEventListener('click', ()=>{
@@ -1690,6 +1762,7 @@
         recomputeAmpmFromTime();
         syncDigitsFromTime();
         editPos = 1;
+        stopEditing();
         updateRead();
         setHands();
         buildHours(); buildMins();
@@ -1697,11 +1770,6 @@
         Modal.classList.add('show');
         Modal.setAttribute('aria-hidden','false');
         document.body.style.overflow='hidden';
-
-        if(keyInput){
-          keyInput.value="";
-          keyInput.focus();
-        }
       }
 
       Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
