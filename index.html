@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.65</title>
+  <title>БТ App 3 — v2.66</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -13,7 +13,7 @@
   <link rel="manifest" href="manifest.webmanifest?v=1.39"/>
   <link rel="icon" href="assets/icons/icon-192.png?v=1.39"/>
 
-  <!-- Marcellus за римските + Montserrat за минутите -->
+  <!-- Marcellus за римските + Montserrat за минутните -->
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Marcellus&family=Montserrat:wght@400;600;700&display=swap"/>
 
@@ -187,9 +187,12 @@
 
     .clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100 }
     .clk.show{ display:flex; align-items:center; justify-content:center }
-    .clk-card{ background:#0e1519; border:1px solid #20343a; border-radius:16px;
-      padding:12px 12px 14px; width:330px; max-width:92vw; box-shadow:0 10px 40px rgba(0,0,0,.5); outline:none }
-    .clk-card:focus{ box-shadow:0 0 0 2px rgba(255,255,255,.08) inset }
+    .clk-card{
+      background:#0e1519; border:1px solid #20343a; border-radius:16px;
+      padding:12px 12px 14px; width:330px; max-width:92vw;
+      box-shadow:0 10px 40px rgba(0,0,0,.5); outline:none;
+      position:relative;
+    }
 
     .clk-face{ position:relative; width:290px; height:290px; margin:0 auto; border-radius:50%; border:1px solid #294047; background:#0b1317; touch-action:none }
     .clk-ring{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50% }
@@ -260,10 +263,7 @@
       min-width:auto;
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif;
     }
-    .clk-read.active{
-      border-color:#22c55e;
-      box-shadow:0 0 0 1px #22c55e;
-    }
+
     .clk-read-part{
       display:flex;
       align-items:center;
@@ -280,20 +280,6 @@
       padding-bottom:1px;
     }
 
-    /* Статично подчертани (редактирани) клетки */
-    .clk-digit.edited::after{
-      content:"";
-      position:absolute;
-      left:0;
-      right:0;
-      bottom:-1px;
-      height:2px;
-      background:#15803d;
-      border-radius:2px;
-      opacity:0.9;
-    }
-
-    /* Активна клетка – мигащ underline като курсор */
     @keyframes clkBlink{
       0%,49%{ opacity:1; }
       50%,100%{ opacity:0; }
@@ -305,16 +291,18 @@
       right:0;
       bottom:-1px;
       height:2px;
-      background:#22c55e;
+      background:#e6f2ef;
       border-radius:2px;
       animation:clkBlink 1s steps(2,start) infinite;
     }
 
     .clk-read-colon{
       user-select:none;
-      padding:0 2px;
+      padding:0 3px;
       margin:0;
       opacity:.9;
+      position:relative;
+      top:-1px;
     }
 
     .clk-actions{ display:flex; gap:12px; justify-content:center; margin-top:12px }
@@ -343,7 +331,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.65</span>
+        <span class="badge">v2.66</span>
       </div>
     </div>
   </div>
@@ -610,7 +598,7 @@
   </div>
 
   <div class="clk" id="clk" aria-hidden="true">
-    <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време" tabindex="0">
+    <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
       <div class="clk-face" id="clkFace">
         <div class="clk-ring mins" id="ringM"></div>
         <div class="clk-ring hours" id="ringH"></div>
@@ -618,8 +606,7 @@
         <div class="clk-hand min" id="handM"></div>
         <div class="clk-center-dot"></div>
 
-        <!-- Център: 4 отделни цифри (4 клетки) -->
-        <div class="clk-read" id="clkRead" tabindex="0">
+        <div class="clk-read" id="clkRead">
           <div id="clkH" class="clk-read-part" data-part="H">
             <span class="clk-digit" data-pos="1"></span>
             <span class="clk-digit" data-pos="2"></span>
@@ -631,6 +618,11 @@
           </div>
         </div>
       </div>
+
+      <!-- скрит input за цифрова клавиатура на смартфон -->
+      <input id="clkKeyInput" type="tel" inputmode="numeric" pattern="[0-9]*"
+             autocomplete="off" aria-hidden="true"
+             style="position:absolute; opacity:0; height:0; width:0; border:0; padding:0; pointer-events:none;"/>
 
       <div class="clk-actions">
         <button id="btnGreen" class="traffic-btn" aria-label="Запиши (зелено)"></button>
@@ -1292,6 +1284,7 @@
       const handH = document.getElementById('handH');
       const handM = document.getElementById('handM');
       const readBox  = document.getElementById('clkRead');
+      const keyInput = document.getElementById('clkKeyInput');
       const btnGreen  = document.getElementById('btnGreen');
       const btnYellow = document.getElementById('btnYellow');
       const btnRed    = document.getElementById('btnRed');
@@ -1299,10 +1292,8 @@
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
 
-      // 4 цифри за HHMM + флагове за редакция
       let digits = {d1:0,d2:0,d3:0,d4:0};
-      let editPos = 1; // 1,2,3,4
-      let editedFlags = [false,false,false,false];
+      let editPos = 1;
 
       let ampmCycle = 0;
       let lastDispHour = 12;
@@ -1336,21 +1327,12 @@
 
       function renderDigits(){
         if(!readBox) return;
-        const map = {
-          1: digits.d1,
-          2: digits.d2,
-          3: digits.d3,
-          4: digits.d4
-        };
+        const map = {1:digits.d1, 2:digits.d2, 3:digits.d3, 4:digits.d4};
         for(let pos=1; pos<=4; pos++){
           const span = readBox.querySelector('.clk-digit[data-pos="'+pos+'"]');
           if(!span) continue;
           span.textContent = String(map[pos]);
-          span.classList.remove('active','edited');
-          if(editedFlags[pos-1]) span.classList.add('edited');
-          if(readBox.classList.contains('active') && pos===editPos){
-            span.classList.add('active');
-          }
+          span.classList.toggle('active', pos===editPos);
         }
       }
 
@@ -1445,13 +1427,6 @@
         }
       }
 
-      function setReadActive(on){
-        if(!readBox) return;
-        if(on) readBox.classList.add('active');
-        else readBox.classList.remove('active');
-        renderDigits();
-      }
-
       function setEditPos(newPos){
         editPos = Math.max(1, Math.min(4,newPos));
         renderDigits();
@@ -1495,7 +1470,6 @@
           digits.d4 = d;
         }
 
-        editedFlags[editPos-1] = true;
         commitDigitsToTime();
         if(editPos<4) setEditPos(editPos+1);
       }
@@ -1506,14 +1480,20 @@
         else if(editPos===3) digits.d3=0;
         else digits.d4=0;
 
-        editedFlags[editPos-1] = true;
         commitDigitsToTime();
+      }
+
+      function hideClk(){
+        Modal.classList.remove('show');
+        Modal.setAttribute('aria-hidden','true');
+        document.body.style.overflow='';
+        if(activeCell){ activeCell.classList.remove('sel'); activeCell=null; }
       }
 
       function handleTimeKey(ev){
         const k = ev.key;
 
-        if(k === 'Tab' || k === 'Shift' || k === 'Alt' || k === 'Meta' || k.startsWith('F')) return;
+        if(k === 'Tab' || k === 'Shift' || k === 'Alt' || k.startsWith('F')) return;
 
         if(k === 'ArrowLeft'){
           ev.preventDefault();
@@ -1523,6 +1503,45 @@
         if(k === 'ArrowRight'){
           ev.preventDefault();
           setEditPos(editPos+1);
+          return;
+        }
+
+        if(k === 'ArrowUp' || k === 'ArrowDown'){
+          ev.preventDefault();
+          const dir = (k === 'ArrowUp') ? 1 : -1;
+          if(focusHM==='H'){
+            const prevH = H;
+            if(dir>0){ H = (H===24)?1:(H+1); }
+            else     { H = (H===1)?24:(H-1); }
+
+            if( (prevH===12 && H===13) || (prevH===13 && H===12) ||
+                (prevH===24 && H===1)  || (prevH===1  && H===24) ){
+              ampmCycle = 1 - ampmCycle;
+            }
+
+            recomputeAmpmFromTime();
+            syncDigitsFromTime(); updateRead(); setHands(); buildHours();
+          }else{
+            const prev=M;
+            if(dir>0){
+              if(prev===59){
+                M=0;
+                H=(H===24)?1:(H+1);
+              }else{
+                M=prev+1;
+              }
+            }else{
+              if(prev===0){
+                M=59;
+                H=(H===1)?24:(H-1);
+              }else{
+                M=prev-1;
+              }
+            }
+            recomputeAmpmFromTime();
+            syncDigitsFromTime(); updateRead(); setHands();
+            buildMins(); buildHours();
+          }
           return;
         }
 
@@ -1539,6 +1558,7 @@
 
         if(k === 'Escape'){
           ev.preventDefault();
+          hideClk();
           return;
         }
 
@@ -1550,48 +1570,6 @@
 
         ev.preventDefault();
       }
-
-      function showClk(row,dow,initial, cell){
-        if(activeCell) activeCell.classList.remove('sel');
-        activeCell = cell; if(activeCell) activeCell.classList.add('sel');
-
-        selRow=row; selDow=dow;
-        state.activeDow = dow; save(state); refreshDays();
-
-        const idx = (dow===0?6:dow-1);
-        const parts = (initial||state.times[row][idx]).split(':');
-        const h = parseInt(parts[0],10);
-        const m = parseInt(parts[1],10);
-
-        let hh = isFinite(h) ? h : 8;
-        if (hh === 0) hh = 24;
-        H = hh;
-        M = isFinite(m) ? m : 0;
-        focusHM='H';
-
-        recomputeAmpmFromTime();
-        syncDigitsFromTime();
-        editedFlags = [false,false,false,false];
-        editPos = 1;
-        updateRead();
-        setHands();
-        buildHours(); buildMins();
-
-        Modal.classList.add('show');
-        Modal.setAttribute('aria-hidden','false');
-        document.body.style.overflow='hidden';
-        Card.focus();
-        setReadActive(false);
-      }
-
-      function hideClk(){
-        Modal.classList.remove('show');
-        Modal.setAttribute('aria-hidden','true');
-        document.body.style.overflow='';
-        if(activeCell){ activeCell.classList.remove('sel'); activeCell=null; }
-        setReadActive(false);
-      }
-      Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
       function ptAngle(cx,cy, x,y){
         const dx=x-cx, dy=y-cy;
@@ -1667,63 +1645,21 @@
       function handleReadClick(ev){
         if(!readBox) return;
         const digitSpan = ev.target.closest('.clk-digit');
-        setReadActive(true);
         if(digitSpan){
           const pos = Number(digitSpan.getAttribute('data-pos'))||1;
           setEditPos(pos);
+          if(keyInput){
+            keyInput.focus();
+          }
         }
-        readBox.focus();
       }
 
       if(readBox){
         readBox.addEventListener('click', handleReadClick);
-        readBox.addEventListener('keydown', handleTimeKey);
-        readBox.addEventListener('blur', ()=>setReadActive(false));
       }
-
-      Card.addEventListener('keydown', (ev)=>{
-        if(ev.key==='Escape'){
-          hideClk();
-          return;
-        }
-        if(ev.key==='ArrowUp' || ev.key==='ArrowDown'){
-          ev.preventDefault();
-          const dir = ev.key==='ArrowUp'?1:-1;
-          if(focusHM==='H'){
-            const prevH = H;
-            if(dir>0){ H = (H===24)?1:(H+1); }
-            else     { H = (H===1)?24:(H-1); }
-
-            if( (prevH===12 && H===13) || (prevH===13 && H===12) ||
-                (prevH===24 && H===1)  || (prevH===1  && H===24) ){
-              ampmCycle = 1 - ampmCycle;
-            }
-
-            recomputeAmpmFromTime();
-            syncDigitsFromTime(); updateRead(); setHands(); buildHours();
-          }else{
-            const prev=M;
-            if(dir>0){
-              if(prev===59){
-                M=0;
-                H=(H===24)?1:(H+1);
-              }else{
-                M=prev+1;
-              }
-            }else{
-              if(prev===0){
-                M=59;
-                H=(H===1)?24:(H-1);
-              }else{
-                M=prev-1;
-              }
-            }
-            recomputeAmpmFromTime();
-            syncDigitsFromTime(); updateRead(); setHands();
-            buildMins(); buildHours();
-          }
-        }
-      });
+      if(keyInput){
+        keyInput.addEventListener('keydown', handleTimeKey);
+      }
 
       TABLE.querySelectorAll('.pl-time-cell').forEach(td=>{
         td.addEventListener('click', ()=>{
@@ -1732,6 +1668,43 @@
           showClk(row, dow, td.textContent.trim(), td);
         });
       });
+
+      function showClk(row,dow,initial, cell){
+        if(activeCell) activeCell.classList.remove('sel');
+        activeCell = cell; if(activeCell) activeCell.classList.add('sel');
+
+        selRow=row; selDow=dow;
+        state.activeDow = dow; save(state); refreshDays();
+
+        const idx = (dow===0?6:dow-1);
+        const parts = (initial||state.times[row][idx]).split(':');
+        const h = parseInt(parts[0],10);
+        const m = parseInt(parts[1],10);
+
+        let hh = isFinite(h) ? h : 8;
+        if (hh === 0) hh = 24;
+        H = hh;
+        M = isFinite(m) ? m : 0;
+        focusHM='H';
+
+        recomputeAmpmFromTime();
+        syncDigitsFromTime();
+        editPos = 1;
+        updateRead();
+        setHands();
+        buildHours(); buildMins();
+
+        Modal.classList.add('show');
+        Modal.setAttribute('aria-hidden','false');
+        document.body.style.overflow='hidden';
+
+        if(keyInput){
+          keyInput.value="";
+          keyInput.focus();
+        }
+      }
+
+      Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
       function commitTime(flag){
         const idx = (selDow===0?6:selDow-1);
