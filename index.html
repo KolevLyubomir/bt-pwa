@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.63</title>
+  <title>БТ App 3 — v2.64</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -246,13 +246,12 @@
 
     .clk-center-dot{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 0 2px #0b1217 }
 
-    /* по-голям правоъгълник, малко по-голям шрифт */
     .clk-read{
       position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
       background:#10191c; border:1px solid #294047; border-radius:6px;
       padding:2px 6px;
       font-weight:800; text-align:center;
-      cursor:text; user-select:text;
+      cursor:text; user-select:none;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -266,20 +265,20 @@
       box-shadow:0 0 0 1px #22c55e;
     }
     .clk-read-part{
-      width:2.3ch;
-      border:none;
-      outline:none;
-      background:transparent;
-      color:#e6f2ef;
-      text-align:center;
-      font:inherit;
-      padding:0;
-      margin:0;
-      line-height:1.1;
-      height:auto;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:1px;
+      min-width:0;
     }
-    .clk-read-part::selection{ background:rgba(34,197,94,0.35); }
-    .clk-read-part.active{
+    .clk-digit{
+      display:inline-block;
+      min-width:0.9ch;
+      text-align:center;
+      color:#e6f2ef;
+    }
+    .clk-digit.active,
+    .clk-digit.edited{
       color:#22c55e;
     }
     .clk-read-colon{
@@ -315,7 +314,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.63</span>
+        <span class="badge">v2.64</span>
       </div>
     </div>
   </div>
@@ -589,10 +588,18 @@
         <div class="clk-hand hour" id="handH"></div>
         <div class="clk-hand min" id="handM"></div>
         <div class="clk-center-dot"></div>
-        <div class="clk-read" id="clkRead">
-          <input id="clkH" class="clk-read-part" type="text" inputmode="numeric">
+
+        <!-- Нов център: 4 отделни цифри (4 клетки) -->
+        <div class="clk-read" id="clkRead" tabindex="0">
+          <div id="clkH" class="clk-read-part" data-part="H">
+            <span class="clk-digit" data-pos="1"></span>
+            <span class="clk-digit" data-pos="2"></span>
+          </div>
           <span class="clk-read-colon">:</span>
-          <input id="clkM" class="clk-read-part" type="text" inputmode="numeric">
+          <div id="clkM" class="clk-read-part" data-part="M">
+            <span class="clk-digit" data-pos="3"></span>
+            <span class="clk-digit" data-pos="4"></span>
+          </div>
         </div>
       </div>
 
@@ -1256,8 +1263,6 @@
       const handH = document.getElementById('handH');
       const handM = document.getElementById('handM');
       const readBox  = document.getElementById('clkRead');
-      const inpH = document.getElementById('clkH');
-      const inpM = document.getElementById('clkM');
       const btnGreen  = document.getElementById('btnGreen');
       const btnYellow = document.getElementById('btnYellow');
       const btnRed    = document.getElementById('btnRed');
@@ -1265,9 +1270,10 @@
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
 
-      // 4 цифри за HHMM
+      // 4 цифри за HHMM + маркери за редактирани клетки
       let digits = {d1:0,d2:0,d3:0,d4:0};
       let editPos = 1; // 1,2,3,4
+      let editedFlags = [false,false,false,false];
 
       let ampmCycle = 0;
       let lastDispHour = 12;
@@ -1298,11 +1304,27 @@
         digits.d3 = parseInt(ms[0],10)||0;
         digits.d4 = parseInt(ms[1],10)||0;
       }
+
       function renderDigits(){
-        if(!inpH || !inpM) return;
-        inpH.value = String(digits.d1)+String(digits.d2);
-        inpM.value = String(digits.d3)+String(digits.d4);
+        if(!readBox) return;
+        const map = {
+          1: digits.d1,
+          2: digits.d2,
+          3: digits.d3,
+          4: digits.d4
+        };
+        for(let pos=1; pos<=4; pos++){
+          const span = readBox.querySelector('.clk-digit[data-pos="'+pos+'"]');
+          if(!span) continue;
+          span.textContent = String(map[pos]);
+          span.classList.remove('active','edited');
+          if(editedFlags[pos-1]) span.classList.add('edited');
+          if(readBox.classList.contains('active') && pos===editPos){
+            span.classList.add('active');
+          }
+        }
       }
+
       function updateRead(){
         renderDigits();
       }
@@ -1398,25 +1420,12 @@
         if(!readBox) return;
         if(on) readBox.classList.add('active');
         else readBox.classList.remove('active');
+        renderDigits();
       }
 
-      function updateActiveCellHighlight(){
-        if(!inpH || !inpM) return;
-        inpH.classList.remove('active');
-        inpM.classList.remove('active');
-        setReadActive(true);
-
-        if(editPos<=2){
-          inpH.classList.add('active');
-          focusHM='H';
-        } else {
-          inpM.classList.add('active');
-          focusHM='M';
-        }
-      }
       function setEditPos(newPos){
         editPos = Math.max(1, Math.min(4,newPos));
-        updateActiveCellHighlight();
+        renderDigits();
       }
 
       function commitDigitsToTime(){
@@ -1457,6 +1466,7 @@
           digits.d4 = d;
         }
 
+        editedFlags[editPos-1] = true;
         commitDigitsToTime();
         if(editPos<4) setEditPos(editPos+1);
       }
@@ -1467,6 +1477,7 @@
         else if(editPos===3) digits.d3=0;
         else digits.d4=0;
 
+        editedFlags[editPos-1] = true;
         commitDigitsToTime();
       }
 
@@ -1494,13 +1505,11 @@
 
         if(k === 'Enter'){
           ev.preventDefault();
-          (ev.target.blur && ev.target.blur());
           return;
         }
 
         if(k === 'Escape'){
           ev.preventDefault();
-          (ev.target.blur && ev.target.blur());
           return;
         }
 
@@ -1532,16 +1541,18 @@
         focusHM='H';
 
         recomputeAmpmFromTime();
-        syncDigitsFromTime(); updateRead(); setHands();
+        syncDigitsFromTime();
+        editedFlags = [false,false,false,false];
+        editPos = 1;
+        updateRead();
+        setHands();
         buildHours(); buildMins();
 
         Modal.classList.add('show');
         Modal.setAttribute('aria-hidden','false');
         document.body.style.overflow='hidden';
         Card.focus();
-        if(readBox) readBox.classList.remove('active');
-        if(inpH) inpH.classList.remove('active');
-        if(inpM) inpM.classList.remove('active');
+        setReadActive(false);
       }
 
       function hideClk(){
@@ -1549,9 +1560,7 @@
         Modal.setAttribute('aria-hidden','true');
         document.body.style.overflow='';
         if(activeCell){ activeCell.classList.remove('sel'); activeCell=null; }
-        if(readBox) readBox.classList.remove('active');
-        if(inpH) inpH.classList.remove('active');
-        if(inpM) inpM.classList.remove('active');
+        setReadActive(false);
       }
       Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
@@ -1626,51 +1635,21 @@
       window.addEventListener('touchmove', handleMove, {passive:false});
       window.addEventListener('touchend', endDrag);
 
-      if(inpH && inpM){
-        inpH.readOnly = true;
-        inpM.readOnly = true;
-
-        function maybeDeactivate(){
-          setTimeout(()=>{
-            const a=document.activeElement;
-            if(a!==inpH && a!==inpM){
-              setReadActive(false);
-              inpH.classList.remove('active');
-              inpM.classList.remove('active');
-            }
-          },0);
+      function handleReadClick(ev){
+        if(!readBox) return;
+        const digitSpan = ev.target.closest('.clk-digit');
+        setReadActive(true);
+        if(digitSpan){
+          const pos = Number(digitSpan.getAttribute('data-pos'))||1;
+          setEditPos(pos);
         }
+        readBox.focus();
+      }
 
-        inpH.addEventListener('focus', ()=>{
-          if(editPos>2) editPos=1;
-          updateActiveCellHighlight();
-        });
-        inpM.addEventListener('focus', ()=>{
-          if(editPos<=2) editPos=3;
-          updateActiveCellHighlight();
-        });
-
-        function handleClickInput(ev){
-          const input = ev.currentTarget;
-          const rect = input.getBoundingClientRect();
-          const x = ev.clientX - rect.left;
-          const half = rect.width/2;
-          if(input===inpH){
-            editPos = (x<half)?1:2;
-          } else {
-            editPos = (x<half)?3:4;
-          }
-          setEditPos(editPos);
-        }
-
-        inpH.addEventListener('click', handleClickInput);
-        inpM.addEventListener('click', handleClickInput);
-
-        inpH.addEventListener('blur', maybeDeactivate);
-        inpM.addEventListener('blur', maybeDeactivate);
-
-        inpH.addEventListener('keydown', handleTimeKey);
-        inpM.addEventListener('keydown', handleTimeKey);
+      if(readBox){
+        readBox.addEventListener('click', handleReadClick);
+        readBox.addEventListener('keydown', handleTimeKey);
+        readBox.addEventListener('blur', ()=>setReadActive(false));
       }
 
       Card.addEventListener('keydown', (ev)=>{
