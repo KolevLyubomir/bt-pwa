@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.2</title>
+  <title>БТ App 3 — v2.1.3</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -359,16 +359,19 @@
     }
 
     .clk-actions{
-      display:flex;
-      flex-direction:column;
-      gap:8px;
       margin-top:12px;
     }
     .clk-actions-row{
       display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
       gap:10px;
-      justify-content:center;
     }
+    .clk-actions-group{
+      display:flex;
+      gap:10px;
+    }
+
     .clk-btn{
       border-radius:999px;
       border:1px solid #24343a;
@@ -512,7 +515,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.2</span>
+        <span class="badge">v2.1.3</span>
       </div>
     </div>
   </div>
@@ -817,24 +820,26 @@
               </svg>
             </span>
           </button>
-        </div>
-        <div class="clk-actions-row">
-          <button id="btnSaveOne" class="clk-btn primary" type="button" title="Запис за този ден">
-            <span class="clk-btn-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M5 13l4 4L19 7"></path>
-              </svg>
-            </span>
-          </button>
-          <button id="btnSaveAllDays" class="clk-btn" type="button" title="Запис за всички дни от този ред">
-            <span class="clk-btn-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M4 13l3 3 5-7"></path>
-                <path d="M11 13l3 3 6-8"></path>
-              </svg>
-            </span>
-          </button>
-          <button id="btnAudio" class="clk-btn audio" type="button" title="Аудио вкл/изкл за този час">
+
+          <div class="clk-actions-group">
+            <button id="btnSaveOne" class="clk-btn primary" type="button" title="Запис за този ден">
+              <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M5 13l4 4L19 7"></path>
+                </svg>
+              </span>
+            </button>
+            <button id="btnSaveAllDays" class="clk-btn" type="button" title="Запис за всички дни от този ред">
+              <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M4 13l3 3 5-7"></path>
+                  <path d="M11 13l3 3 6-8"></path>
+                </svg>
+              </span>
+            </button>
+          </div>
+
+          <button id="btnAudio" class="clk-btn audio big" type="button" title="Аудио вкл/изкл за този час">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
                 <g class="icon-sound">
@@ -1530,7 +1535,7 @@
           const dow = Number(cell.getAttribute('data-dow'));
           const idx=(dow===0?6:dow-1);
           const f = (state.flag[row] && state.flag[row][idx])|0;
-          if(f===2) return; // заглушените са червени, не ги оцветяваме по прием
+          if(f===2) return;
           if(dow!==todayDow) return;
           const st = getIntakeStateForSlot(row,dow);
           if(st==='upcoming') cell.classList.add('int-upcoming');
@@ -1625,10 +1630,6 @@
       }
       function blinkRow(row){
         const cells = Array.from(TABLE.querySelectorAll('.pl-time-cell[data-row="'+row+'"]'));
-        blinkCells(cells);
-      }
-      function blinkColumn(dow){
-        const cells = Array.from(TABLE.querySelectorAll('.pl-time-cell[data-dow="'+dow+'"]'));
         blinkCells(cells);
       }
 
@@ -2130,8 +2131,8 @@
         btnAudio.classList.remove('on','off');
         const idx = (selDow===0?6:selDow-1);
         const f = (state.flag[selRow] && state.flag[selRow][idx])|0;
-        if(f===2) btnAudio.classList.add('off');   // звук е изключен → зелен бутон, иконка звук
-        else      btnAudio.classList.add('on');    // звук е включен → червен бутон, иконка mute
+        if(f===2) btnAudio.classList.add('off');
+        else      btnAudio.classList.add('on');
       }
 
       function showClk(row,dow,initial, cell){
@@ -2236,6 +2237,8 @@
           localStorage.setItem(INTAKE_LOG_KEY, JSON.stringify(arr));
         }catch(_){}
         updateIntakeStates();
+        updateIntakeButtonForCurrent();
+        blinkCell(selRow, selDow);
         hideClk();
       }
 
