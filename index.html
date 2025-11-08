@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.70</title>
+  <title>БТ App 3 — v2.71</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -178,12 +178,21 @@
     .pl-day.today{ outline:1px dashed rgba(200,200,200,.55); outline-offset:-4px }
     .pl-day.active{ border-color:var(--sel-orange) }
 
-    .pl-time-cell{ cursor:pointer; user-select:none; font-weight:800; }
+    .pl-time-cell{ cursor:pointer; user-select:none; font-weight:800; position:relative; }
     .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
     .pl-time-cell.green{ background:#103d2a; border-color:#1e6147 }
     .pl-time-cell.yellow{ background:#3d3310; border-color:#6b5314 }
     .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
     .pl-time-mute{ display:inline-flex; margin-left:3px; vertical-align:middle }
+
+    @keyframes plBlink{
+      0%,100%{ box-shadow:0 0 0 0 rgba(34,197,94,0); background-color:inherit; }
+      40%{ box-shadow:0 0 0 2px rgba(34,197,94,.9); background-color:#102318; }
+      70%{ box-shadow:0 0 0 1px rgba(34,197,94,.5); }
+    }
+    .pl-blink{
+      animation:plBlink .45s ease-in-out;
+    }
 
     .clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100 }
     .clk.show{ display:flex; align-items:center; justify-content:center }
@@ -328,12 +337,72 @@
       top:-1px;
     }
 
-    .clk-actions{ display:flex; gap:12px; justify-content:center; margin-top:12px }
-    .traffic-btn{ width:28px; height:28px; border-radius:50%; border:2px solid #0b1215; cursor:pointer }
-    #btnGreen{ background:#22c55e }
-    #btnYellow{ background:#f59e0b }
-    #btnRed{ background:#ef4444; display:flex; align-items:center; justify-content:center }
-    #btnRed svg{ width:15px; height:15px; stroke:#0b1215; stroke-width:2; }
+    .clk-actions{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      margin-top:12px;
+    }
+    .clk-actions-row{
+      display:flex;
+      gap:6px;
+      justify-content:space-between;
+    }
+    .clk-btn{
+      flex:1 1 0;
+      border-radius:10px;
+      border:1px solid #24343a;
+      background:#0d171b;
+      color:#e6f2ef;
+      height:32px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:4px;
+      font-size:13px;
+      font-weight:600;
+      padding:4px 6px;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+      transition:background .12s ease,border-color .12s ease,transform .04s ease;
+    }
+    .clk-btn:active{
+      transform:scale(.97);
+    }
+    .clk-btn.primary{
+      background:#22c55e;
+      border-color:#22c55e;
+      color:#06241b;
+    }
+    .clk-btn.ghost{
+      background:#0d171b;
+      border-style:dashed;
+    }
+    .clk-btn.danger{
+      background:#3b1113;
+      border-color:#6b1414;
+      color:#ffe0e0;
+    }
+    .clk-btn.empty{
+      visibility:hidden;
+      pointer-events:none;
+    }
+    .clk-btn-icon{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .clk-btn-icon svg{
+      width:14px;
+      height:14px;
+      stroke:currentColor;
+      stroke-width:2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .clk-btn-label{
+      white-space:nowrap;
+    }
 
     @media (max-width: 380px){
       :root{ --pill-w:156px; --pl-font:11px; --pl-pad:2px; --pl-minw:44px }
@@ -354,7 +423,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.70</span>
+        <span class="badge">v2.71</span>
       </div>
     </div>
   </div>
@@ -648,14 +717,74 @@
              style="position:absolute; opacity:0; height:0; width:0; border:0; padding:0; pointer-events:none;"/>
 
       <div class="clk-actions">
-        <button id="btnGreen" class="traffic-btn" aria-label="Запиши (зелено)"></button>
-        <button id="btnYellow" class="traffic-btn" aria-label="Запиши (жълто)"></button>
-        <button id="btnRed" class="traffic-btn" aria-label="Запиши (червено)">
-          <svg viewBox="0 0 24 24" fill="none">
-            <path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path>
-          </svg>
-        </button>
+        <div class="clk-actions-row">
+          <button id="btnSaveOne" class="clk-btn primary" type="button">
+            <span class="clk-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 13l4 4L19 7"></path>
+              </svg>
+            </span>
+            <span class="clk-btn-label">Запис</span>
+          </button>
+          <button id="btnIntake" class="clk-btn ghost" type="button">
+            <span class="clk-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M8 5v14l11-7z"></path>
+              </svg>
+            </span>
+            <span class="clk-btn-label">Прием</span>
+          </button>
+          <button id="btnMuteOne" class="clk-btn danger" type="button">
+            <span class="clk-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 9v6h4l5 4V5L9 9H5z"></path>
+                <path d="M15 9l4-4"></path>
+                <path d="M15 15l4 4"></path>
+              </svg>
+            </span>
+            <span class="clk-btn-label">Заглуши</span>
+          </button>
+        </div>
+        <div class="clk-actions-row">
+          <button id="btnSaveAllDays" class="clk-btn" type="button">
+            <span class="clk-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M4 13l3 3 5-7"></path>
+                <path d="M11 13l3 3 6-8"></path>
+              </svg>
+            </span>
+            <span class="clk-btn-label">Запис за всички дни</span>
+          </button>
+          <button class="clk-btn empty" type="button" tabindex="-1" aria-hidden="true"></button>
+          <button id="btnMuteDay" class="clk-btn danger" type="button">
+            <span class="clk-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M6 8v4h3l4 4V4L9 8H6z"></path>
+                <path d="M6 16v4h3l3 3"></path>
+                <path d="M16 8v4h3l-3 3"></path>
+                <path d="M16 16v4"></path>
+                <path d="M4 4l16 16"></path>
+              </svg>
+            </span>
+            <span class="clk-btn-label">Заглуши за деня</span>
+          </button>
+        </div>
+        <div class="clk-actions-row">
+          <button class="clk-btn empty" type="button" tabindex="-1" aria-hidden="true"></button>
+          <button class="clk-btn empty" type="button" tabindex="-1" aria-hidden="true"></button>
+          <button id="btnMuteRow" class="clk-btn danger" type="button">
+            <span class="clk-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M5 8v4h3l4 4V4L8 8H5z"></path>
+                <path d="M5 16v4"></path>
+                <path d="M15 8v4h4l-4 4"></path>
+                <path d="M15 16v4"></path>
+                <path d="M4 4l16 16"></path>
+              </svg>
+            </span>
+            <span class="clk-btn-label">Заглуши за всички дни</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -1236,8 +1365,8 @@
       function load(){
         try{
           const r=JSON.parse(localStorage.getItem(KEY)||"");
-          if(r && r.times && r.times.length===2 && r.flag && r.flag.length===2){
-            for(let row=0; row<2; row++){
+          if(r && r.times && r.times.length>=1 && r.flag && r.flag.length===r.times.length){
+            for(let row=0; row<r.times.length; row++){
               for(let i=0;i<7;i++){
                 const s=r.times[row][i];
                 if(typeof s==="string" && s.startsWith("24:")){
@@ -1245,6 +1374,8 @@
                 }
               }
             }
+            if(typeof r.todayDow!=="number") r.todayDow=getTodayDow();
+            if(typeof r.activeDow!=="number") r.activeDow=r.todayDow;
             return r;
           }
         }catch(_){}
@@ -1270,14 +1401,14 @@
       }
       function renderTimes(){
         const seq=[1,2,3,4,5,6,0];
-        for(let row=0; row<2; row++){
+        for(let row=0; row<state.times.length; row++){
           for(let i=0;i<7;i++){
             const dow = seq[i], idx=(dow===0?6:dow-1);
             const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
             if(!cell) continue;
             cell.textContent = state.times[row][idx];
             cell.classList.remove('green','yellow','red','sel');
-            const f = state.flag[row][idx]|0;
+            const f = (state.flag[row] && state.flag[row][idx])|0;
             if(f===0) cell.classList.add('green');
             else if(f===1) cell.classList.add('yellow');
             else if(f===2) cell.classList.add('red');
@@ -1308,9 +1439,13 @@
       const handM = document.getElementById('handM');
       const readBox  = document.getElementById('clkRead');
       const keyInput = document.getElementById('clkKeyInput');
-      const btnGreen  = document.getElementById('btnGreen');
-      const btnYellow = document.getElementById('btnYellow');
-      const btnRed    = document.getElementById('btnRed');
+
+      const btnSaveOne   = document.getElementById('btnSaveOne');
+      const btnSaveAll   = document.getElementById('btnSaveAllDays');
+      const btnIntake    = document.getElementById('btnIntake');
+      const btnMuteOne   = document.getElementById('btnMuteOne');
+      const btnMuteDay   = document.getElementById('btnMuteDay');
+      const btnMuteRow   = document.getElementById('btnMuteRow');
 
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
@@ -1321,6 +1456,76 @@
 
       let ampmCycle = 0;
       let lastDispHour = 12;
+
+      function timeStrToMin(str){
+        const parts=(str||"00:00").split(":");
+        let h=parseInt(parts[0],10), m=parseInt(parts[1],10);
+        if(!Number.isFinite(h)) h=0;
+        if(!Number.isFinite(m)) m=0;
+        if(h<0) h=0; if(h>23) h=23;
+        if(m<0) m=0; if(m>59) m=59;
+        return h*60+m;
+      }
+      function minToTime(min){
+        const MAX=23*60+59;
+        if(!Number.isFinite(min)) min=0;
+        if(min<0) min=0;
+        if(min>MAX) min=MAX;
+        const h=Math.floor(min/60), m=min%60;
+        return two(h)+":"+two(m);
+      }
+
+      function normalizeColumnAfterChange(rowIndex, dayIdx, newMinutes){
+        const N = state.times.length;
+        if(N<=0) return;
+        const MAX=23*60+59;
+
+        const col=new Array(N);
+        for(let r=0;r<N;r++){
+          col[r] = timeStrToMin(state.times[r][dayIdx] || "00:00");
+        }
+
+        let k=rowIndex;
+        let minAllowed = (k>0) ? (col[k-1] + 1) : 0;
+        let maxAllowed = MAX - ((N-1)-k);
+
+        let nm = newMinutes;
+        if(nm<minAllowed) nm=minAllowed;
+        if(nm>maxAllowed) nm=maxAllowed;
+        col[k]=nm;
+
+        for(let r=k+1;r<N;r++){
+          if(col[r] <= col[r-1]) col[r] = col[r-1] + 1;
+        }
+        if(col[N-1]>MAX){
+          col[N-1]=MAX;
+          for(let r=N-2;r>=0;r--){
+            if(col[r]>=col[r+1]) col[r]=Math.max(0,col[r+1]-1);
+          }
+        }
+
+        for(let r=0;r<N;r++){
+          state.times[r][dayIdx] = minToTime(col[r]);
+        }
+      }
+
+      function blinkCells(cells){
+        if(!cells || !cells.length) return;
+        cells.forEach(el=> el.classList.add('pl-blink'));
+        setTimeout(()=> cells.forEach(el=> el.classList.remove('pl-blink')), 450);
+      }
+      function blinkCell(row,dow){
+        const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
+        if(cell) blinkCells([cell]);
+      }
+      function blinkRow(row){
+        const cells = Array.from(TABLE.querySelectorAll('.pl-time-cell[data-row="'+row+'"]'));
+        blinkCells(cells);
+      }
+      function blinkColumn(dow){
+        const cells = Array.from(TABLE.querySelectorAll('.pl-time-cell[data-dow="'+dow+'"]'));
+        blinkCells(cells);
+      }
 
       function hour24ToDisp(h24){
         if(h24===24) return {disp:12, cycle:1};
@@ -1441,8 +1646,8 @@
           el.textContent = isMajor ? (m===0 ? "60" : two(m)) : '·';
 
           const ang = (Math.PI*2) * (m/60) - Math.PI/2;
-          const R = isMajor ? 120 : 108;      // по-малко радиус за кратните на 5
-          const size = isMajor ? 20 : 8;      // и по-малко кръгче, да не удря бордера
+          const R = isMajor ? 120 : 108;
+          const size = isMajor ? 20 : 8;
           const x = Math.cos(ang)*R;
           const y = Math.sin(ang)*R;
           el.style.width = size+'px';
@@ -1839,17 +2044,117 @@
 
       Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
-      function commitTime(flag){
+      function applyTimeForCurrentCell(normalizeAllDays){
         const idx = (selDow===0?6:selDow-1);
         const hSave = (H === 24 ? 0 : H);
-        state.times[selRow][idx] = two(hSave)+":"+two(M);
-        state.flag[selRow][idx] = flag|0;
-        save(state); renderTimes(); hideClk();
+        const newMinutes = hSave*60 + M;
+
+        if(normalizeAllDays){
+          for(let d=0; d<7; d++){
+            normalizeColumnAfterChange(selRow, d, newMinutes);
+          }
+        }else{
+          normalizeColumnAfterChange(selRow, idx, newMinutes);
+        }
       }
 
-      btnGreen.addEventListener('click', ()=>commitTime(0));
-      btnYellow.addEventListener('click', ()=>commitTime(1));
-      btnRed.addEventListener('click',   ()=>commitTime(2));
+      function handleSaveOne(){
+        applyTimeForCurrentCell(false);
+        save(state);
+        renderTimes();
+        blinkCell(selRow, selDow);
+        hideClk();
+      }
+
+      function handleSaveAllDays(){
+        applyTimeForCurrentCell(true);
+        save(state);
+        renderTimes();
+        blinkRow(selRow);
+        hideClk();
+      }
+
+      function handleMuteOne(){
+        const idx = (selDow===0?6:selDow-1);
+        applyTimeForCurrentCell(false);
+
+        const cur = (state.flag[selRow] && state.flag[selRow][idx])|0;
+        const next = (cur===2 ? 0 : 2);
+        state.flag[selRow][idx] = next;
+
+        save(state);
+        renderTimes();
+        blinkCell(selRow, selDow);
+        hideClk();
+      }
+
+      function handleMuteDay(){
+        const idx = (selDow===0?6:selDow-1);
+        applyTimeForCurrentCell(false);
+
+        let shouldMute = false;
+        for(let r=0; r<state.flag.length; r++){
+          if((state.flag[r] && state.flag[r][idx]) !== 2){
+            shouldMute = true; break;
+          }
+        }
+        for(let r=0; r<state.flag.length; r++){
+          if(!state.flag[r]) state.flag[r] = [0,0,0,0,0,0,0];
+          state.flag[r][idx] = shouldMute ? 2 : 0;
+        }
+
+        save(state);
+        renderTimes();
+        blinkColumn(selDow);
+        hideClk();
+      }
+
+      function handleMuteRow(){
+        const row = selRow;
+        let shouldMute = false;
+        for(let i=0; i<7; i++){
+          if((state.flag[row] && state.flag[row][i]) !== 2){
+            shouldMute = true; break;
+          }
+        }
+        if(!state.flag[row]) state.flag[row]=[0,0,0,0,0,0,0];
+        for(let i=0;i<7;i++){
+          state.flag[row][i] = shouldMute ? 2 : 0;
+        }
+        save(state);
+        renderTimes();
+        blinkRow(row);
+        hideClk();
+      }
+
+      function handleIntake(){
+        try{
+          const LOG_KEY='bt_intake_log_v1';
+          const raw = localStorage.getItem(LOG_KEY);
+          const arr = raw ? JSON.parse(raw) : [];
+          const now = new Date();
+          const isoDate = now.toISOString().slice(0,10);
+          const hSave = (H===24?0:H);
+          const tStr = two(hSave)+":"+two(M);
+          const idx = (selDow===0?6:selDow-1);
+          arr.push({
+            ts: now.toISOString(),
+            date: isoDate,
+            dow: selDow,
+            row: selRow,
+            time: tStr
+          });
+          localStorage.setItem(LOG_KEY, JSON.stringify(arr));
+        }catch(_){}
+        hideClk();
+      }
+
+      btnSaveOne.addEventListener('click', handleSaveOne);
+      btnSaveAll.addEventListener('click', handleSaveAllDays);
+      btnMuteOne.addEventListener('click', handleMuteOne);
+      btnMuteDay.addEventListener('click', handleMuteDay);
+      btnMuteRow.addEventListener('click', handleMuteRow);
+      btnIntake.addEventListener('click', handleIntake);
 
       (function markDays(){
         state.todayDow = (new Date()).getDay();
