@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.1</title>
+  <title>БТ App 3 — v2.1.2</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -191,7 +191,6 @@
       border-color:#facc15;
       animation:plOverdueBlink 1s ease-in-out infinite;
     }
-    .pl-time-mute{ display:inline-flex; margin-left:3px; vertical-align:middle }
 
     @keyframes plBlink{
       0%,100%{
@@ -362,7 +361,7 @@
     .clk-actions{
       display:flex;
       flex-direction:column;
-      gap:6px;
+      gap:8px;
       margin-top:12px;
     }
     .clk-actions-row{
@@ -384,6 +383,10 @@
       -webkit-tap-highlight-color:transparent;
       transition:background .12s ease,border-color .12s ease,transform .04s ease;
       flex:0 0 auto;
+    }
+    .clk-btn.big{
+      width:56px;
+      height:56px;
     }
     .clk-btn:active{
       transform:scale(.96);
@@ -412,12 +415,29 @@
       justify-content:center;
     }
     .clk-btn-icon svg{
-      width:18px;
-      height:18px;
+      width:20px;
+      height:20px;
       stroke:currentColor;
       stroke-width:2;
       stroke-linecap:round;
       stroke-linejoin:round;
+    }
+
+    /* Прием — икона часовник + капсула */
+    .clk-btn.intake svg .pill-clock-circle,
+    .clk-btn.intake svg .pill-clock-pill{
+      fill:none;
+      stroke:currentColor;
+      stroke-width:1.8;
+    }
+    .clk-btn.intake svg .pill-clock-hands{
+      stroke:currentColor;
+      stroke-width:1.8;
+      stroke-linecap:round;
+    }
+    .clk-btn.intake.solid svg .pill-clock-circle,
+    .clk-btn.intake.solid svg .pill-clock-pill{
+      fill:currentColor;
     }
 
     /* Състояния за бутона Прием */
@@ -452,6 +472,27 @@
       }
     }
 
+    /* Аудио — само за този час */
+    .clk-btn.audio{
+      background:#0d171b;
+      border-color:#24343a;
+      color:#e6f2ef;
+    }
+    .clk-btn.audio.on{
+      background:#3b1113;
+      border-color:#6b1414;
+      color:#ffe0e0;
+    }
+    .clk-btn.audio.off{
+      background:#22c55e;
+      border-color:#22c55e;
+      color:#06241b;
+    }
+    .clk-btn.audio svg .icon-sound{ display:none; }
+    .clk-btn.audio svg .icon-mute{ display:block; }
+    .clk-btn.audio.off svg .icon-sound{ display:block; }
+    .clk-btn.audio.off svg .icon-mute{ display:none; }
+
     @media (max-width: 380px){
       :root{ --pill-w:156px; --pl-font:11px; --pl-pad:2px; --pl-minw:44px }
       .time-row select{ min-width:48px; }
@@ -471,7 +512,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.1</span>
+        <span class="badge">v2.1.2</span>
       </div>
     </div>
   </div>
@@ -766,6 +807,18 @@
 
       <div class="clk-actions">
         <div class="clk-actions-row">
+          <button id="btnIntake" class="clk-btn intake big" type="button" title="Прием">
+            <span class="clk-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
+                <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
+                <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
+              </svg>
+            </span>
+          </button>
+        </div>
+        <div class="clk-actions-row">
           <button id="btnSaveOne" class="clk-btn primary" type="button" title="Запис за този ден">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
@@ -773,24 +826,6 @@
               </svg>
             </span>
           </button>
-          <button id="btnIntake" class="clk-btn intake" type="button" title="Прием">
-            <span class="clk-btn-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M8 5v14l11-7z"></path>
-              </svg>
-            </span>
-          </button>
-          <button id="btnMuteOne" class="clk-btn danger" type="button" title="Заглуши този час">
-            <span class="clk-btn-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M5 9v6h4l5 4V5L9 9H5z"></path>
-                <path d="M15 9l4-4"></path>
-                <path d="M15 15l4 4"></path>
-              </svg>
-            </span>
-          </button>
-        </div>
-        <div class="clk-actions-row">
           <button id="btnSaveAllDays" class="clk-btn" type="button" title="Запис за всички дни от този ред">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
@@ -799,30 +834,17 @@
               </svg>
             </span>
           </button>
-          <button class="clk-btn empty" type="button" tabindex="-1" aria-hidden="true"></button>
-          <button id="btnMuteDay" class="clk-btn danger" type="button" title="Заглуши за деня (колона)">
+          <button id="btnAudio" class="clk-btn audio" type="button" title="Аудио вкл/изкл за този час">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
-                <path d="M6 8v4h3l4 4V4L9 8H6z"></path>
-                <path d="M6 16v4h3l3 3"></path>
-                <path d="M16 8v4h3l-3 3"></path>
-                <path d="M16 16v4"></path>
-                <path d="M4 4l16 16"></path>
-              </svg>
-            </span>
-          </button>
-        </div>
-        <div class="clk-actions-row">
-          <button class="clk-btn empty" type="button" tabindex="-1" aria-hidden="true"></button>
-          <button class="clk-btn empty" type="button" tabindex="-1" aria-hidden="true"></button>
-          <button id="btnMuteRow" class="clk-btn danger" type="button" title="Заглуши за всички дни (ред)">
-            <span class="clk-btn-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M5 8v4h3l4 4V4L8 8H5z"></path>
-                <path d="M5 16v4"></path>
-                <path d="M15 8v4h4l-4 4"></path>
-                <path d="M15 16v4"></path>
-                <path d="M4 4l16 16"></path>
+                <g class="icon-sound">
+                  <path d="M5 9v6h3l4 4V5L8 9H5z"></path>
+                  <path d="M16 9a3 3 0 0 1 0 6"></path>
+                </g>
+                <g class="icon-mute">
+                  <path d="M5 9v6h3l4 4V5L8 9H5z"></path>
+                  <path d="M18 9l-4 4m0-4l4 4"></path>
+                </g>
               </svg>
             </span>
           </button>
@@ -1463,12 +1485,6 @@
             cell.classList.remove('red','sel','int-upcoming','int-done','int-overdue');
             const f = (state.flag[row] && state.flag[row][idx])|0;
             if(f===2) cell.classList.add('red');
-            const old = cell.querySelector('.pl-time-mute'); if(old) old.remove();
-            if(f===2){
-              const ico=document.createElement('span'); ico.className='pl-time-mute';
-              ico.innerHTML='<svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#ffcccc" stroke-width="2"><path d="M9 9l6 6M15 9l-6 6" stroke-linecap="round" stroke-linejoin="round"></path><path d="M3 9v6h4l5 4V5L7 9H3z" stroke-linecap="round" stroke-linejoin="round"></path></svg>';
-              cell.appendChild(ico);
-            }
           }
         }
       }
@@ -1545,9 +1561,7 @@
       const btnSaveOne   = document.getElementById('btnSaveOne');
       const btnSaveAll   = document.getElementById('btnSaveAllDays');
       const btnIntake    = document.getElementById('btnIntake');
-      const btnMuteOne   = document.getElementById('btnMuteOne');
-      const btnMuteDay   = document.getElementById('btnMuteDay');
-      const btnMuteRow   = document.getElementById('btnMuteRow');
+      const btnAudio     = document.getElementById('btnAudio');
 
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
@@ -2104,11 +2118,20 @@
 
       function updateIntakeButtonForCurrent(){
         if(!btnIntake) return;
-        btnIntake.classList.remove('upcoming','overdue','done');
+        btnIntake.classList.remove('upcoming','overdue','done','solid');
         const st = getIntakeStateForSlot(selRow, selDow);
         if(st==='upcoming') btnIntake.classList.add('upcoming');
         else if(st==='overdue') btnIntake.classList.add('overdue');
-        else if(st==='done') btnIntake.classList.add('done');
+        else if(st==='done'){ btnIntake.classList.add('done','solid'); }
+      }
+
+      function updateAudioButtonForCurrent(){
+        if(!btnAudio) return;
+        btnAudio.classList.remove('on','off');
+        const idx = (selDow===0?6:selDow-1);
+        const f = (state.flag[selRow] && state.flag[selRow][idx])|0;
+        if(f===2) btnAudio.classList.add('off');   // звук е изключен → зелен бутон, иконка звук
+        else      btnAudio.classList.add('on');    // звук е включен → червен бутон, иконка mute
       }
 
       function showClk(row,dow,initial, cell){
@@ -2138,6 +2161,7 @@
         buildHours(); buildMins();
 
         updateIntakeButtonForCurrent();
+        updateAudioButtonForCurrent();
 
         Modal.classList.add('show');
         Modal.setAttribute('aria-hidden','false');
@@ -2178,7 +2202,7 @@
         hideClk();
       }
 
-      function handleMuteOne(){
+      function handleAudioToggle(){
         const idx = (selDow===0?6:selDow-1);
         applyTimeForCurrentCell(false);
 
@@ -2189,48 +2213,8 @@
         save(state);
         renderTimes();
         updateIntakeStates();
+        updateAudioButtonForCurrent();
         blinkCell(selRow, selDow);
-        hideClk();
-      }
-
-      function handleMuteDay(){
-        const idx = (selDow===0?6:selDow-1);
-        applyTimeForCurrentCell(false);
-
-        let shouldMute = false;
-        for(let r=0; r<state.flag.length; r++){
-          if((state.flag[r] && state.flag[r][idx]) !== 2){
-            shouldMute = true; break;
-          }
-        }
-        for(let r=0; r<state.flag.length; r++){
-          if(!state.flag[r]) state.flag[r] = [0,0,0,0,0,0,0];
-          state.flag[r][idx] = shouldMute ? 2 : 0;
-        }
-
-        save(state);
-        renderTimes();
-        updateIntakeStates();
-        blinkColumn(selDow);
-        hideClk();
-      }
-
-      function handleMuteRow(){
-        const row = selRow;
-        let shouldMute = false;
-        for(let i=0; i<7; i++){
-          if((state.flag[row] && state.flag[row][i]) !== 2){
-            shouldMute = true; break;
-          }
-        }
-        if(!state.flag[row]) state.flag[row]=[0,0,0,0,0,0,0];
-        for(let i=0;i<7;i++){
-          state.flag[row][i] = shouldMute ? 2 : 0;
-        }
-        save(state);
-        renderTimes();
-        updateIntakeStates();
-        blinkRow(row);
         hideClk();
       }
 
@@ -2257,9 +2241,7 @@
 
       btnSaveOne.addEventListener('click', handleSaveOne);
       btnSaveAll.addEventListener('click', handleSaveAllDays);
-      btnMuteOne.addEventListener('click', handleMuteOne);
-      btnMuteDay.addEventListener('click', handleMuteDay);
-      btnMuteRow.addEventListener('click', handleMuteRow);
+      btnAudio.addEventListener('click', handleAudioToggle);
       btnIntake.addEventListener('click', handleIntake);
 
       (function markDays(){
