@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.71</title>
+  <title>БТ App 3 — v2.1.1</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -178,20 +178,42 @@
     .pl-day.today{ outline:1px dashed rgba(200,200,200,.55); outline-offset:-4px }
     .pl-day.active{ border-color:var(--sel-orange) }
 
-    .pl-time-cell{ cursor:pointer; user-select:none; font-weight:800; position:relative; }
+    .pl-time-cell{
+      cursor:pointer; user-select:none; font-weight:800; position:relative;
+      background:transparent;
+    }
     .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
-    .pl-time-cell.green{ background:#103d2a; border-color:#1e6147 }
-    .pl-time-cell.yellow{ background:#3d3310; border-color:#6b5314 }
     .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
+    .pl-time-cell.int-upcoming{ background:#3d3310; border-color:#6b5314 }
+    .pl-time-cell.int-done{ background:#103d2a; border-color:#1e6147 }
+    .pl-time-cell.int-overdue{
+      background:#3d3310;
+      border-color:#facc15;
+      animation:plOverdueBlink 1s ease-in-out infinite;
+    }
     .pl-time-mute{ display:inline-flex; margin-left:3px; vertical-align:middle }
 
     @keyframes plBlink{
-      0%,100%{ box-shadow:0 0 0 0 rgba(34,197,94,0); background-color:inherit; }
-      40%{ box-shadow:0 0 0 2px rgba(34,197,94,.9); background-color:#102318; }
-      70%{ box-shadow:0 0 0 1px rgba(34,197,94,.5); }
+      0%,100%{
+        box-shadow:0 0 0 0 rgba(34,197,94,0);
+        background-color:inherit;
+      }
+      20%,50%,80%{
+        box-shadow:0 0 0 2px rgba(34,197,94,.75);
+        background-color:#102318;
+      }
     }
     .pl-blink{
-      animation:plBlink .45s ease-in-out;
+      animation:plBlink .9s ease-in-out 3;
+    }
+
+    @keyframes plOverdueBlink{
+      0%,100%{
+        box-shadow:0 0 0 0 rgba(250,204,21,0);
+      }
+      50%{
+        box-shadow:0 0 0 2px rgba(250,204,21,.9);
+      }
     }
 
     .clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100 }
@@ -345,29 +367,26 @@
     }
     .clk-actions-row{
       display:flex;
-      gap:6px;
-      justify-content:space-between;
+      gap:10px;
+      justify-content:center;
     }
     .clk-btn{
-      flex:1 1 0;
-      border-radius:10px;
+      border-radius:999px;
       border:1px solid #24343a;
       background:#0d171b;
       color:#e6f2ef;
-      height:32px;
+      width:44px;
+      height:44px;
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:4px;
-      font-size:13px;
-      font-weight:600;
-      padding:4px 6px;
       cursor:pointer;
       -webkit-tap-highlight-color:transparent;
       transition:background .12s ease,border-color .12s ease,transform .04s ease;
+      flex:0 0 auto;
     }
     .clk-btn:active{
-      transform:scale(.97);
+      transform:scale(.96);
     }
     .clk-btn.primary{
       background:#22c55e;
@@ -393,15 +412,44 @@
       justify-content:center;
     }
     .clk-btn-icon svg{
-      width:14px;
-      height:14px;
+      width:18px;
+      height:18px;
       stroke:currentColor;
       stroke-width:2;
       stroke-linecap:round;
       stroke-linejoin:round;
     }
-    .clk-btn-label{
-      white-space:nowrap;
+
+    /* Състояния за бутона Прием */
+    .clk-btn.intake{
+      background:#0d171b;
+      border-color:#24343a;
+      color:#e6f2ef;
+    }
+    .clk-btn.intake.upcoming{
+      background:#f59e0b;
+      border-color:#f59e0b;
+      color:#041306;
+    }
+    .clk-btn.intake.overdue{
+      background:#facc15;
+      border-color:#facc15;
+      color:#3b1f00;
+      animation:intakeBtnBlink 1s ease-in-out infinite;
+    }
+    .clk-btn.intake.done{
+      background:#22c55e;
+      border-color:#22c55e;
+      color:#06241b;
+      animation:none;
+    }
+    @keyframes intakeBtnBlink{
+      0%,100%{
+        box-shadow:0 0 0 0 rgba(250,204,21,0);
+      }
+      50%{
+        box-shadow:0 0 0 3px rgba(250,204,21,.9);
+      }
     }
 
     @media (max-width: 380px){
@@ -423,7 +471,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.71</span>
+        <span class="badge">v2.1.1</span>
       </div>
     </div>
   </div>
@@ -718,23 +766,21 @@
 
       <div class="clk-actions">
         <div class="clk-actions-row">
-          <button id="btnSaveOne" class="clk-btn primary" type="button">
+          <button id="btnSaveOne" class="clk-btn primary" type="button" title="Запис за този ден">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M5 13l4 4L19 7"></path>
               </svg>
             </span>
-            <span class="clk-btn-label">Запис</span>
           </button>
-          <button id="btnIntake" class="clk-btn ghost" type="button">
+          <button id="btnIntake" class="clk-btn intake" type="button" title="Прием">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M8 5v14l11-7z"></path>
               </svg>
             </span>
-            <span class="clk-btn-label">Прием</span>
           </button>
-          <button id="btnMuteOne" class="clk-btn danger" type="button">
+          <button id="btnMuteOne" class="clk-btn danger" type="button" title="Заглуши този час">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M5 9v6h4l5 4V5L9 9H5z"></path>
@@ -742,21 +788,19 @@
                 <path d="M15 15l4 4"></path>
               </svg>
             </span>
-            <span class="clk-btn-label">Заглуши</span>
           </button>
         </div>
         <div class="clk-actions-row">
-          <button id="btnSaveAllDays" class="clk-btn" type="button">
+          <button id="btnSaveAllDays" class="clk-btn" type="button" title="Запис за всички дни от този ред">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M4 13l3 3 5-7"></path>
                 <path d="M11 13l3 3 6-8"></path>
               </svg>
             </span>
-            <span class="clk-btn-label">Запис за всички дни</span>
           </button>
           <button class="clk-btn empty" type="button" tabindex="-1" aria-hidden="true"></button>
-          <button id="btnMuteDay" class="clk-btn danger" type="button">
+          <button id="btnMuteDay" class="clk-btn danger" type="button" title="Заглуши за деня (колона)">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M6 8v4h3l4 4V4L9 8H6z"></path>
@@ -766,13 +810,12 @@
                 <path d="M4 4l16 16"></path>
               </svg>
             </span>
-            <span class="clk-btn-label">Заглуши за деня</span>
           </button>
         </div>
         <div class="clk-actions-row">
           <button class="clk-btn empty" type="button" tabindex="-1" aria-hidden="true"></button>
           <button class="clk-btn empty" type="button" tabindex="-1" aria-hidden="true"></button>
-          <button id="btnMuteRow" class="clk-btn danger" type="button">
+          <button id="btnMuteRow" class="clk-btn danger" type="button" title="Заглуши за всички дни (ред)">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none">
                 <path d="M5 8v4h3l4 4V4L8 8H5z"></path>
@@ -782,7 +825,6 @@
                 <path d="M4 4l16 16"></path>
               </svg>
             </span>
-            <span class="clk-btn-label">Заглуши за всички дни</span>
           </button>
         </div>
       </div>
@@ -1359,6 +1401,7 @@
       const KEY='bt_pl_grid_v230';
       const DEF_T1 = ["08:00","08:00","08:00","08:00","08:00","08:00","08:00"];
       const DEF_T2 = ["19:00","19:00","19:00","19:00","19:00","19:00","19:00"];
+      const INTAKE_LOG_KEY='bt_intake_log_v1';
 
       function getTodayDow(){ return (new Date()).getDay(); }
 
@@ -1389,6 +1432,16 @@
         return init;
       }
       function save(obj){ localStorage.setItem(KEY, JSON.stringify(obj)); }
+
+      function loadIntakeLog(){
+        try{
+          const raw = localStorage.getItem(INTAKE_LOG_KEY);
+          if(!raw) return [];
+          const arr = JSON.parse(raw);
+          return Array.isArray(arr)?arr:[];
+        }catch(_){ return []; }
+      }
+
       let state = load();
 
       function refreshDays(){
@@ -1407,11 +1460,9 @@
             const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
             if(!cell) continue;
             cell.textContent = state.times[row][idx];
-            cell.classList.remove('green','yellow','red','sel');
+            cell.classList.remove('red','sel','int-upcoming','int-done','int-overdue');
             const f = (state.flag[row] && state.flag[row][idx])|0;
-            if(f===0) cell.classList.add('green');
-            else if(f===1) cell.classList.add('yellow');
-            else if(f===2) cell.classList.add('red');
+            if(f===2) cell.classList.add('red');
             const old = cell.querySelector('.pl-time-mute'); if(old) old.remove();
             if(f===2){
               const ico=document.createElement('span'); ico.className='pl-time-mute';
@@ -1421,7 +1472,58 @@
           }
         }
       }
-      refreshDays(); renderTimes();
+
+      function timeStrToMin(str){
+        const parts=(str||"00:00").split(":");
+        let h=parseInt(parts[0],10), m=parseInt(parts[1],10);
+        if(!Number.isFinite(h)) h=0;
+        if(!Number.isFinite(m)) m=0;
+        if(h<0) h=0; if(h>23) h=23;
+        if(m<0) m=0; if(m>59) m=59;
+        return h*60+m;
+      }
+
+      function getIntakeStateForSlot(row,dow){
+        const now = new Date();
+        const todayIso = TODAY;
+        const todayDow = now.getDay();
+        if(dow !== todayDow) return 'normal';
+        const idx = (dow===0?6:dow-1);
+        const tStr = state.times[row][idx];
+        const planMin = timeStrToMin(tStr);
+        const nowMin = now.getHours()*60 + now.getMinutes();
+        const log = loadIntakeLog();
+        const has = log.some(e=>e && e.date===todayIso && e.dow===dow && e.row===row);
+        if(has) return 'done';
+        if(nowMin >= planMin){
+          return 'overdue';
+        }
+        if(nowMin >= planMin - 30){
+          return 'upcoming';
+        }
+        return 'normal';
+      }
+
+      function updateIntakeStates(){
+        const now = new Date();
+        const todayDow = now.getDay();
+        const cells = TABLE.querySelectorAll('.pl-time-cell');
+        cells.forEach(cell=>{
+          cell.classList.remove('int-upcoming','int-done','int-overdue');
+          const row = Number(cell.getAttribute('data-row'));
+          const dow = Number(cell.getAttribute('data-dow'));
+          const idx=(dow===0?6:dow-1);
+          const f = (state.flag[row] && state.flag[row][idx])|0;
+          if(f===2) return; // заглушените са червени, не ги оцветяваме по прием
+          if(dow!==todayDow) return;
+          const st = getIntakeStateForSlot(row,dow);
+          if(st==='upcoming') cell.classList.add('int-upcoming');
+          else if(st==='overdue') cell.classList.add('int-overdue');
+          else if(st==='done') cell.classList.add('int-done');
+        });
+      }
+
+      refreshDays(); renderTimes(); updateIntakeStates();
 
       TABLE.querySelectorAll('thead .pl-day').forEach(th=>{
         th.addEventListener('click', ()=>{
@@ -1457,24 +1559,6 @@
       let ampmCycle = 0;
       let lastDispHour = 12;
 
-      function timeStrToMin(str){
-        const parts=(str||"00:00").split(":");
-        let h=parseInt(parts[0],10), m=parseInt(parts[1],10);
-        if(!Number.isFinite(h)) h=0;
-        if(!Number.isFinite(m)) m=0;
-        if(h<0) h=0; if(h>23) h=23;
-        if(m<0) m=0; if(m>59) m=59;
-        return h*60+m;
-      }
-      function minToTime(min){
-        const MAX=23*60+59;
-        if(!Number.isFinite(min)) min=0;
-        if(min<0) min=0;
-        if(min>MAX) min=MAX;
-        const h=Math.floor(min/60), m=min%60;
-        return two(h)+":"+two(m);
-      }
-
       function normalizeColumnAfterChange(rowIndex, dayIdx, newMinutes){
         const N = state.times.length;
         if(N<=0) return;
@@ -1482,7 +1566,13 @@
 
         const col=new Array(N);
         for(let r=0;r<N;r++){
-          col[r] = timeStrToMin(state.times[r][dayIdx] || "00:00");
+          const parts = (state.times[r][dayIdx]||"00:00").split(':');
+          let h=parseInt(parts[0],10), m=parseInt(parts[1],10);
+          if(!Number.isFinite(h)) h=0;
+          if(!Number.isFinite(m)) m=0;
+          if(h<0) h=0; if(h>23) h=23;
+          if(m<0) m=0; if(m>59) m=59;
+          col[r] = h*60+m;
         }
 
         let k=rowIndex;
@@ -1505,14 +1595,15 @@
         }
 
         for(let r=0;r<N;r++){
-          state.times[r][dayIdx] = minToTime(col[r]);
+          const h=Math.floor(col[r]/60), m=col[r]%60;
+          state.times[r][dayIdx] = two(h)+":"+two(m);
         }
       }
 
       function blinkCells(cells){
         if(!cells || !cells.length) return;
         cells.forEach(el=> el.classList.add('pl-blink'));
-        setTimeout(()=> cells.forEach(el=> el.classList.remove('pl-blink')), 450);
+        setTimeout(()=> cells.forEach(el=> el.classList.remove('pl-blink')), 900*3);
       }
       function blinkCell(row,dow){
         const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
@@ -2011,6 +2102,15 @@
         });
       });
 
+      function updateIntakeButtonForCurrent(){
+        if(!btnIntake) return;
+        btnIntake.classList.remove('upcoming','overdue','done');
+        const st = getIntakeStateForSlot(selRow, selDow);
+        if(st==='upcoming') btnIntake.classList.add('upcoming');
+        else if(st==='overdue') btnIntake.classList.add('overdue');
+        else if(st==='done') btnIntake.classList.add('done');
+      }
+
       function showClk(row,dow,initial, cell){
         if(activeCell) activeCell.classList.remove('sel');
         activeCell = cell; if(activeCell) activeCell.classList.add('sel');
@@ -2037,6 +2137,8 @@
         setHands();
         buildHours(); buildMins();
 
+        updateIntakeButtonForCurrent();
+
         Modal.classList.add('show');
         Modal.setAttribute('aria-hidden','false');
         document.body.style.overflow='hidden';
@@ -2062,6 +2164,7 @@
         applyTimeForCurrentCell(false);
         save(state);
         renderTimes();
+        updateIntakeStates();
         blinkCell(selRow, selDow);
         hideClk();
       }
@@ -2070,6 +2173,7 @@
         applyTimeForCurrentCell(true);
         save(state);
         renderTimes();
+        updateIntakeStates();
         blinkRow(selRow);
         hideClk();
       }
@@ -2084,6 +2188,7 @@
 
         save(state);
         renderTimes();
+        updateIntakeStates();
         blinkCell(selRow, selDow);
         hideClk();
       }
@@ -2105,6 +2210,7 @@
 
         save(state);
         renderTimes();
+        updateIntakeStates();
         blinkColumn(selDow);
         hideClk();
       }
@@ -2123,20 +2229,19 @@
         }
         save(state);
         renderTimes();
+        updateIntakeStates();
         blinkRow(row);
         hideClk();
       }
 
       function handleIntake(){
         try{
-          const LOG_KEY='bt_intake_log_v1';
-          const raw = localStorage.getItem(LOG_KEY);
+          const raw = localStorage.getItem(INTAKE_LOG_KEY);
           const arr = raw ? JSON.parse(raw) : [];
           const now = new Date();
           const isoDate = now.toISOString().slice(0,10);
           const hSave = (H===24?0:H);
           const tStr = two(hSave)+":"+two(M);
-          const idx = (selDow===0?6:selDow-1);
           arr.push({
             ts: now.toISOString(),
             date: isoDate,
@@ -2144,8 +2249,9 @@
             row: selRow,
             time: tStr
           });
-          localStorage.setItem(LOG_KEY, JSON.stringify(arr));
+          localStorage.setItem(INTAKE_LOG_KEY, JSON.stringify(arr));
         }catch(_){}
+        updateIntakeStates();
         hideClk();
       }
 
@@ -2159,8 +2265,10 @@
       (function markDays(){
         state.todayDow = (new Date()).getDay();
         if(typeof state.activeDow!=="number") state.activeDow = state.todayDow;
-        save(state); refreshDays();
+        save(state); refreshDays(); updateIntakeStates();
       })();
+
+      setInterval(updateIntakeStates, 60000);
     })();
   </script>
 </body>
