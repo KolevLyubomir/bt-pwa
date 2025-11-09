@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.3</title>
+  <title>БТ App 3 — v2.1.4</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -147,7 +147,19 @@
     .tabpanel[aria-hidden="false"]{ display:block }
 
     .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
-    .prog-head{ display:flex; align-items:center; gap:12px; margin-bottom:6px }
+    .prog-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:6px;
+    }
+    .prog-head-main{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:0;
+    }
     .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
     .prog-pill{
       display:flex; flex-direction:column; gap:6px;
@@ -156,8 +168,12 @@
     }
     .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
     .prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
-    .prog-cap{ font-weight:700 }
+    .prog-cap{ font-weight:700; font-size:14px; }
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
+
+    .prog-intake-btn{
+      flex:0 0 auto;
+    }
 
     .time-wrap{ display:flex; align-items:center; gap:6px }
     .time-row{ display:flex; align-items:center; gap:4px }
@@ -173,10 +189,20 @@
       min-width:var(--pl-minw);
       transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
     }
-    .pl-day{ cursor:pointer; user-select:none; font-weight:800 }
+    .pl-day{
+      cursor:pointer;
+      user-select:none;
+      font-weight:800;
+    }
     .pl-day.weekend{ color:var(--wk-green-d) }
-    .pl-day.today{ outline:1px dashed rgba(200,200,200,.55); outline-offset:-4px }
-    .pl-day.active{ border-color:var(--sel-orange) }
+    .pl-day.today{
+      border-color:var(--sel-orange);
+      border-style:solid;
+    }
+    .pl-day.active:not(.today){
+      border-color:var(--sel-orange);
+      border-style:dashed;
+    }
 
     .pl-time-cell{
       cursor:pointer; user-select:none; font-weight:800; position:relative;
@@ -377,8 +403,8 @@
       border:1px solid #24343a;
       background:#0d171b;
       color:#e6f2ef;
-      width:44px;
-      height:44px;
+      width:46px;
+      height:46px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -388,8 +414,8 @@
       flex:0 0 auto;
     }
     .clk-btn.big{
-      width:56px;
-      height:56px;
+      width:64px;
+      height:64px;
     }
     .clk-btn:active{
       transform:scale(.96);
@@ -418,8 +444,8 @@
       justify-content:center;
     }
     .clk-btn-icon svg{
-      width:20px;
-      height:20px;
+      width:32px;
+      height:32px;
       stroke:currentColor;
       stroke-width:2;
       stroke-linecap:round;
@@ -515,7 +541,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.3</span>
+        <span class="badge">v2.1.4</span>
       </div>
     </div>
   </div>
@@ -644,8 +670,21 @@
 
         <div>
           <div class="prog-head">
-            <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
-            <span class="prog-cap">ProLact Slim+ — два приема</span>
+            <div class="prog-head-main">
+              <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
+              <span class="prog-cap">ProLact Slim+</span>
+            </div>
+            <button id="btnProgIntakePL" class="clk-btn intake big prog-intake-btn" type="button"
+                    title="Прием ProLact Slim+" style="display:none">
+              <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
+                  <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                  <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
+                  <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
+                </svg>
+              </span>
+            </button>
           </div>
 
           <div class="pl-wrap">
@@ -689,8 +728,10 @@
 
         <div>
           <div class="prog-head">
-            <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
-            <span class="prog-cap">OMNi-Biotic HETOX light</span>
+            <div class="prog-head-main">
+              <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
+              <span class="prog-cap">OMNi-Biotic HETOX light</span>
+            </div>
           </div>
 
           <div class="prog-row" role="group" aria-label="HETOX — 1 от 3">
@@ -725,8 +766,10 @@
 
         <div>
           <div class="prog-head">
-            <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
-            <span class="prog-cap">Fortex Хитозан Плюс</span>
+            <div class="prog-head-main">
+              <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
+              <span class="prog-cap">Fortex Хитозан Плюс</span>
+            </div>
           </div>
 
           <div class="prog-row" role="group" aria-label="Хитозан Плюс">
@@ -829,7 +872,7 @@
                 </svg>
               </span>
             </button>
-            <button id="btnSaveAllDays" class="clk-btn" type="button" title="Запис за всички дни от този ред">
+            <button id="btnSaveAllDays" class="clk-btn primary" type="button" title="Запис за всички дни от този ред">
               <span class="clk-btn-icon">
                 <svg viewBox="0 0 24 24" fill="none">
                   <path d="M4 13l3 3 5-7"></path>
@@ -1425,6 +1468,7 @@
 
     (function(){
       const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
+      const btnProgIntakePL = document.getElementById('btnProgIntakePL');
       const KEY='bt_pl_grid_v230';
       const DEF_T1 = ["08:00","08:00","08:00","08:00","08:00","08:00","08:00"];
       const DEF_T2 = ["19:00","19:00","19:00","19:00","19:00","19:00","19:00"];
@@ -1465,8 +1509,16 @@
           const raw = localStorage.getItem(INTAKE_LOG_KEY);
           if(!raw) return [];
           const arr = JSON.parse(raw);
-          return Array.isArray(arr)?arr:[];
+          if(!Array.isArray(arr)) return [];
+          const filtered = arr.filter(e=>e && e.date===TODAY);
+          if(filtered.length !== arr.length){
+            localStorage.setItem(INTAKE_LOG_KEY, JSON.stringify(filtered));
+          }
+          return filtered;
         }catch(_){ return []; }
+      }
+      function saveIntakeLog(arr){
+        localStorage.setItem(INTAKE_LOG_KEY, JSON.stringify(arr));
       }
 
       let state = load();
@@ -1492,6 +1544,7 @@
             if(f===2) cell.classList.add('red');
           }
         }
+        updateProgIntakeButton();
       }
 
       function timeStrToMin(str){
@@ -1525,9 +1578,86 @@
         return 'normal';
       }
 
+      function toggleIntakeAt(row,dow){
+        let log = loadIntakeLog();
+        const idxEntry = log.findIndex(e=>e && e.date===TODAY && e.dow===dow && e.row===row);
+        if(idxEntry>=0){
+          log.splice(idxEntry,1);
+          saveIntakeLog(log);
+          return false;
+        }else{
+          const now = new Date();
+          const idxDay = (dow===0?6:dow-1);
+          const tStr = state.times[row][idxDay];
+          log.push({
+            ts: now.toISOString(),
+            date: TODAY,
+            dow,
+            row,
+            time: tStr
+          });
+          saveIntakeLog(log);
+          return true;
+        }
+      }
+
+      function updateProgIntakeButton(){
+        if(!btnProgIntakePL) return;
+        const now = new Date();
+        const todayDow = now.getDay();
+        const idxDay = (todayDow===0?6:todayDow-1);
+
+        btnProgIntakePL.classList.remove('upcoming','overdue','done','solid');
+
+        if(todayDow<0 || todayDow>6){
+          btnProgIntakePL.style.display='none';
+          btnProgIntakePL.removeAttribute('data-row');
+          btnProgIntakePL.removeAttribute('data-dow');
+          return;
+        }
+
+        const nowMin = now.getHours()*60 + now.getMinutes();
+        let best=null;
+
+        for(let row=0; row<state.times.length; row++){
+          const tStr = state.times[row][idxDay];
+          const planMin = timeStrToMin(tStr);
+          const st = getIntakeStateForSlot(row, todayDow);
+          if(st==='upcoming' || st==='overdue'){
+            if(!best || planMin<best.planMin){
+              best={row,dow:todayDow,planMin,status:st};
+            }
+          }
+        }
+
+        if(!best){
+          btnProgIntakePL.style.display='none';
+          btnProgIntakePL.removeAttribute('data-row');
+          btnProgIntakePL.removeAttribute('data-dow');
+          return;
+        }
+
+        btnProgIntakePL.style.display='flex';
+        btnProgIntakePL.dataset.row = String(best.row);
+        btnProgIntakePL.dataset.dow = String(best.dow);
+
+        if(best.status==='upcoming'){
+          btnProgIntakePL.classList.add('upcoming');
+        }else if(best.status==='overdue'){
+          btnProgIntakePL.classList.add('overdue');
+        }
+      }
+
       function updateIntakeStates(){
         const now = new Date();
         const todayDow = now.getDay();
+
+        if(todayDow !== state.todayDow){
+          state.todayDow = todayDow;
+          save(state);
+          refreshDays();
+        }
+
         const cells = TABLE.querySelectorAll('.pl-time-cell');
         cells.forEach(cell=>{
           cell.classList.remove('int-upcoming','int-done','int-overdue');
@@ -1542,6 +1672,22 @@
           else if(st==='overdue') cell.classList.add('int-overdue');
           else if(st==='done') cell.classList.add('int-done');
         });
+
+        updateProgIntakeButton();
+      }
+
+      function blinkCells(cells){
+        if(!cells || !cells.length) return;
+        cells.forEach(el=> el.classList.add('pl-blink'));
+        setTimeout(()=> cells.forEach(el=> el.classList.remove('pl-blink')), 900*3);
+      }
+      function blinkCell(row,dow){
+        const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
+        if(cell) blinkCells([cell]);
+      }
+      function blinkRow(row){
+        const cells = Array.from(TABLE.querySelectorAll('.pl-time-cell[data-row="'+row+'"]'));
+        blinkCells(cells);
       }
 
       refreshDays(); renderTimes(); updateIntakeStates();
@@ -1617,20 +1763,6 @@
           const h=Math.floor(col[r]/60), m=col[r]%60;
           state.times[r][dayIdx] = two(h)+":"+two(m);
         }
-      }
-
-      function blinkCells(cells){
-        if(!cells || !cells.length) return;
-        cells.forEach(el=> el.classList.add('pl-blink'));
-        setTimeout(()=> cells.forEach(el=> el.classList.remove('pl-blink')), 900*3);
-      }
-      function blinkCell(row,dow){
-        const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
-        if(cell) blinkCells([cell]);
-      }
-      function blinkRow(row){
-        const cells = Array.from(TABLE.querySelectorAll('.pl-time-cell[data-row="'+row+'"]'));
-        blinkCells(cells);
       }
 
       function hour24ToDisp(h24){
@@ -2220,32 +2352,33 @@
       }
 
       function handleIntake(){
-        try{
-          const raw = localStorage.getItem(INTAKE_LOG_KEY);
-          const arr = raw ? JSON.parse(raw) : [];
-          const now = new Date();
-          const isoDate = now.toISOString().slice(0,10);
-          const hSave = (H===24?0:H);
-          const tStr = two(hSave)+":"+two(M);
-          arr.push({
-            ts: now.toISOString(),
-            date: isoDate,
-            dow: selDow,
-            row: selRow,
-            time: tStr
-          });
-          localStorage.setItem(INTAKE_LOG_KEY, JSON.stringify(arr));
-        }catch(_){}
+        const nowDone = toggleIntakeAt(selRow, selDow);
         updateIntakeStates();
         updateIntakeButtonForCurrent();
-        blinkCell(selRow, selDow);
-        hideClk();
+        updateProgIntakeButton();
+        if(nowDone){
+          blinkCell(selRow, selDow);
+        }
       }
 
       btnSaveOne.addEventListener('click', handleSaveOne);
       btnSaveAll.addEventListener('click', handleSaveAllDays);
       btnAudio.addEventListener('click', handleAudioToggle);
       btnIntake.addEventListener('click', handleIntake);
+
+      if(btnProgIntakePL){
+        btnProgIntakePL.addEventListener('click', ()=>{
+          const row = Number(btnProgIntakePL.dataset.row);
+          const dow = Number(btnProgIntakePL.dataset.dow);
+          if(!Number.isFinite(row) || !Number.isFinite(dow)) return;
+          const nowDone = toggleIntakeAt(row, dow);
+          updateIntakeStates();
+          updateProgIntakeButton();
+          if(nowDone){
+            blinkCell(row, dow);
+          }
+        });
+      }
 
       (function markDays(){
         state.todayDow = (new Date()).getDay();
