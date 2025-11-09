@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.4</title>
+  <title>БТ App 3 — v2.1.5</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -173,6 +173,12 @@
 
     .prog-intake-btn{
       flex:0 0 auto;
+      width:56px;
+      height:56px;
+    }
+    .prog-intake-btn .clk-btn-icon svg{
+      width:36px;
+      height:36px;
     }
 
     .time-wrap{ display:flex; align-items:center; gap:6px }
@@ -194,7 +200,9 @@
       user-select:none;
       font-weight:800;
     }
-    .pl-day.weekend{ color:var(--wk-green-d) }
+    .pl-day.weekend{
+      color:#fecaca;
+    }
     .pl-day.today{
       border-color:var(--sel-orange);
       border-style:solid;
@@ -211,11 +219,17 @@
     .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
     .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
     .pl-time-cell.int-upcoming{ background:#3d3310; border-color:#6b5314 }
-    .pl-time-cell.int-done{ background:#103d2a; border-color:#1e6147 }
+    .pl-time-cell.int-done{
+      background:#166f3b;
+      border-color:#1e6147;
+    }
     .pl-time-cell.int-overdue{
       background:#3d3310;
       border-color:#facc15;
       animation:plOverdueBlink 1s ease-in-out infinite;
+    }
+    .pl-time-cell.active-day{
+      box-shadow:0 0 0 2px rgba(245,158,11,0.7) inset;
     }
 
     @keyframes plBlink{
@@ -403,8 +417,8 @@
       border:1px solid #24343a;
       background:#0d171b;
       color:#e6f2ef;
-      width:46px;
-      height:46px;
+      width:40px;
+      height:40px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -414,8 +428,8 @@
       flex:0 0 auto;
     }
     .clk-btn.big{
-      width:64px;
-      height:64px;
+      width:72px;
+      height:72px;
     }
     .clk-btn:active{
       transform:scale(.96);
@@ -444,15 +458,14 @@
       justify-content:center;
     }
     .clk-btn-icon svg{
-      width:32px;
-      height:32px;
+      width:40px;
+      height:40px;
       stroke:currentColor;
       stroke-width:2;
       stroke-linecap:round;
       stroke-linejoin:round;
     }
 
-    /* Прием — икона часовник + капсула */
     .clk-btn.intake svg .pill-clock-circle,
     .clk-btn.intake svg .pill-clock-pill{
       fill:none;
@@ -466,10 +479,9 @@
     }
     .clk-btn.intake.solid svg .pill-clock-circle,
     .clk-btn.intake.solid svg .pill-clock-pill{
-      fill:currentColor;
+      fill:none;
     }
 
-    /* Състояния за бутона Прием */
     .clk-btn.intake{
       background:#0d171b;
       border-color:#24343a;
@@ -501,7 +513,6 @@
       }
     }
 
-    /* Аудио — само за този час */
     .clk-btn.audio{
       background:#0d171b;
       border-color:#24343a;
@@ -541,7 +552,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.4</span>
+        <span class="badge">v2.1.5</span>
       </div>
     </div>
   </div>
@@ -846,7 +857,6 @@
         </div>
       </div>
 
-      <!-- скрит input за цифрова клавиатура на смартфон -->
       <input id="clkKeyInput" type="tel" inputmode="numeric" pattern="[0-9]*"
              autocomplete="off" aria-hidden="true"
              style="position:absolute; opacity:0; height:0; width:0; border:0; padding:0; pointer-events:none;"/>
@@ -1523,6 +1533,18 @@
 
       let state = load();
 
+      function refreshActiveColumnHighlight(){
+        const cells = TABLE.querySelectorAll('.pl-time-cell');
+        cells.forEach(cell=>{
+          const dow = Number(cell.getAttribute('data-dow'));
+          if(state.activeDow !== state.todayDow && dow === state.activeDow){
+            cell.classList.add('active-day');
+          }else{
+            cell.classList.remove('active-day');
+          }
+        });
+      }
+
       function refreshDays(){
         const ths = TABLE.querySelectorAll('thead .pl-day');
         ths.forEach(th=>{
@@ -1530,7 +1552,9 @@
           th.classList.toggle('today', dow===state.todayDow);
           th.classList.toggle('active', dow===state.activeDow);
         });
+        refreshActiveColumnHighlight();
       }
+
       function renderTimes(){
         const seq=[1,2,3,4,5,6,0];
         for(let row=0; row<state.times.length; row++){
@@ -1539,11 +1563,12 @@
             const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
             if(!cell) continue;
             cell.textContent = state.times[row][idx];
-            cell.classList.remove('red','sel','int-upcoming','int-done','int-overdue');
+            cell.classList.remove('red','sel','int-upcoming','int-done','int-overdue','active-day');
             const f = (state.flag[row] && state.flag[row][idx])|0;
             if(f===2) cell.classList.add('red');
           }
         }
+        refreshActiveColumnHighlight();
         updateProgIntakeButton();
       }
 
@@ -1673,6 +1698,7 @@
           else if(st==='done') cell.classList.add('int-done');
         });
 
+        refreshActiveColumnHighlight();
         updateProgIntakeButton();
       }
 
@@ -2044,7 +2070,7 @@
           }else{
             const prev=M;
             if(dir>0){
-              if(prev===59){
+              если(prev===59){
                 M=0;
                 H=(H===24)?1:(H+1);
               }else{
@@ -2255,7 +2281,7 @@
         const st = getIntakeStateForSlot(selRow, selDow);
         if(st==='upcoming') btnIntake.classList.add('upcoming');
         else if(st==='overdue') btnIntake.classList.add('overdue');
-        else if(st==='done'){ btnIntake.classList.add('done','solid'); }
+        else if(st==='done'){ btnIntake.classList.add('done'); }
       }
 
       function updateAudioButtonForCurrent(){
