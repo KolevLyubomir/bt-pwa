@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.7</title>
+  <title>БТ App 3 — v2.1.8</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -201,16 +201,16 @@
       font-weight:800;
     }
     .pl-day.weekend{
-      color:#fecaca;
-      background:#3b1111;
+      background:transparent;
+      color:#f97373;
     }
     .pl-day.today{
       border-color:var(--sel-orange);
       border-style:solid;
     }
     .pl-day.active:not(.today){
-      border-color:var(--sel-orange);
-      border-style:dashed;
+      border-color:transparent;
+      border-style:solid;
     }
 
     .pl-time-cell{
@@ -218,7 +218,7 @@
       background:transparent;
     }
     .pl-time-cell.active-day{
-      border-color:var(--sel-orange);
+      /* без допълнителна рамка за активна колона — само статусите я променят */
     }
     .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
     .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
@@ -263,6 +263,17 @@
       padding:12px 12px 14px; width:330px; max-width:92vw;
       box-shadow:0 10px 40px rgba(0,0,0,.5); outline:none;
       position:relative;
+    }
+
+    .clk-header{
+      margin-bottom:6px;
+      padding:0 2px 4px;
+    }
+    .clk-meta{
+      font-size:11px;
+      opacity:0.8;
+      text-transform:lowercase;
+      color:var(--muted);
     }
 
     .clk-face{ position:relative; width:290px; height:290px; margin:0 auto; border-radius:50%; border:1px solid #294047; background:#0b1317; touch-action:none }
@@ -406,11 +417,11 @@
       display:flex;
       justify-content:space-between;
       align-items:flex-end;
-      gap:10px;
+      gap:8px;
     }
     .clk-actions-group{
       display:flex;
-      gap:10px;
+      gap:8px;
     }
 
     .clk-btn{
@@ -418,8 +429,8 @@
       border:1px solid #24343a;
       background:#0d171b;
       color:#e6f2ef;
-      width:40px;
-      height:40px;
+      width:34px;
+      height:34px;
       display:flex;
       align-items:center;
       justify-content:center;
@@ -429,12 +440,12 @@
       flex:0 0 auto;
     }
     .clk-btn.big{
-      width:72px;
-      height:72px;
+      width:52px;
+      height:52px;
     }
     .clk-btn.big .clk-btn-icon svg{
-      width:44px;
-      height:44px;
+      width:34px;
+      height:34px;
     }
     .clk-btn:active{
       transform:scale(.96);
@@ -463,8 +474,8 @@
       justify-content:center;
     }
     .clk-btn-icon svg{
-      width:40px;
-      height:40px;
+      width:24px;
+      height:24px;
       stroke:currentColor;
       stroke-width:2;
       stroke-linecap:round;
@@ -557,7 +568,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.7</span>
+        <span class="badge">v2.1.8</span>
       </div>
     </div>
   </div>
@@ -842,6 +853,15 @@
 
   <div class="clk" id="clk" aria-hidden="true">
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
+
+      <div class="clk-header">
+        <div class="clk-meta">
+          <span id="clk-product"></span>
+          &nbsp;&middot;&nbsp;
+          <span id="clk-weekday"></span>
+        </div>
+      </div>
+
       <div class="clk-face" id="clkFace">
         <div class="clk-ring mins" id="ringM"></div>
         <div class="clk-ring hours" id="ringH"></div>
@@ -1746,6 +1766,9 @@
       const btnIntake    = document.getElementById('btnIntake');
       const btnAudio     = document.getElementById('btnAudio');
 
+      const clkProductEl = document.getElementById('clk-product');
+      const clkWeekdayEl = document.getElementById('clk-weekday');
+
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
 
@@ -2305,6 +2328,21 @@
 
         selRow=row; selDow=dow;
         state.activeDow = dow; save(state); refreshDays();
+
+        if(clkProductEl){
+          var prod = "ProLact Slim+";
+          var pkg = TABLE.closest ? TABLE.closest('#pkg-core') : null;
+          if(pkg){
+            var capEl = pkg.querySelector('.prog-head-main .prog-cap');
+            if(capEl && capEl.textContent){ prod = capEl.textContent; }
+          }
+          clkProductEl.textContent = prod.toLowerCase();
+        }
+        if(clkWeekdayEl){
+          var names = ['неделя','понеделник','вторник','сряда','четвъртък','петък','събота'];
+          var w = (dow>=0 && dow<names.length)?names[dow]:"";
+          clkWeekdayEl.textContent = w;
+        }
 
         const idx = (dow===0?6:dow-1);
         const parts = (initial||state.times[row][idx]).split(':');
