@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.6</title>
+  <title>БТ App 3 — v2.1.7</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -32,59 +32,140 @@
       --pl-pad:3px;
       --pl-minw:46px;
     }
-    *{ box-sizing:border-box } html,body{ height:100% }
+
+    *{ box-sizing:border-box }
+    html,body{ height:100% }
+
     body{
-      margin:0; background:var(--bg); color:var(--text);
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif;
     }
 
-    .topbar-wrap{ position:sticky; top:0; z-index:10; background:#0b1215; border-bottom:1px solid var(--border); }
-    .topbar{
-      max-width:var(--maxw); margin:0 auto; padding:12px 16px;
-      display:flex; align-items:center; justify-content:center; gap:10px;
+    .topbar-wrap{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:#0b1215;
+      border-bottom:1px solid var(--border);
     }
-    .topbar .brand{ display:flex; align-items:center; gap:10px; font-weight:800 }
+    .topbar{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+    }
+    .topbar .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:800;
+    }
     .topbar .brand img{ width:24px; height:24px }
     .topbar .title{ font-size:18px; font-weight:800 }
     .topbar .badge{
       font-size:12px; font-weight:800; color:#06241b;
-      background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
+      background:linear-gradient(90deg,#22c55e,#14b8a6);
+      padding:2px 8px; border-radius:10px;
     }
 
-    .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
-    .tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
+    .tabs-wrap{
+      background:#0b1215;
+      border-bottom:1px solid var(--border);
+    }
+    .tabs{
+      max-width:var(--maxw);
+      margin:0 auto;
+      padding:10px 16px;
+      display:flex;
+      gap:8px;
+    }
     .tab-btn{
-      -webkit-tap-highlight-color: transparent;
-      appearance:none; border:1px solid var(--border); background:#0d171b; color:#e6f2ef;
-      padding:12px 18px; border-radius:10px; cursor:pointer; font-weight:800; font-size:16px; transition:.15s ease;
+      -webkit-tap-highlight-color:transparent;
+      appearance:none;
+      border:1px solid var(--border);
+      background:#0d171b;
+      color:#e6f2ef;
+      padding:12px 18px;
+      border-radius:10px;
+      cursor:pointer;
+      font-weight:800;
+      font-size:16px;
+      transition:.15s ease;
     }
     .tab-btn[aria-selected="true"]{
-      color:#06241b; border-color:transparent; background:linear-gradient(90deg,#22c55e,#14b8a6);
+      color:#06241b;
+      border-color:transparent;
+      background:linear-gradient(90deg,#22c55e,#14b8a6);
     }
 
-    main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
-    .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
+    main{
+      max-width:var(--maxw);
+      margin:20px auto;
+      padding:0 16px 40px;
+      display:grid;
+      gap:16px;
+      align-content:start;
+    }
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:14px;
+      padding:16px;
+    }
 
     .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
     .spacer{ flex:1 1 auto }
     .field{ display:flex; flex-direction:column; justify-content:flex-end }
-    .lbl{ height:var(--lbl-h); line-height:var(--lbl-h); font-size:12px; color:var(--muted); margin:0 0 6px 0 }
+    .lbl{
+      height:var(--lbl-h);
+      line-height:var(--lbl-h);
+      font-size:12px;
+      color:var(--muted);
+      margin:0 0 6px 0;
+    }
     .ctl{ display:flex; align-items:center }
 
     input,select,button{
-      background:#0d171b; border:1px solid #254046; color:var(--text);
-      border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
+      background:#0d171b;
+      border:1px solid #254046;
+      color:var(--text);
+      border-radius:10px;
+      padding:8px 10px;
+      font-size:14px;
+      height:var(--ctl-h);
     }
-    input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
+    input[type="number"]{
+      appearance:textfield;
+      -webkit-appearance:none;
+      -moz-appearance:textfield;
+    }
     input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
+    input[type="number"]::-webkit-inner-spin-button{
+      -webkit-appearance:none;
+      margin:0;
+    }
 
-    button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
+    button{ cursor:pointer }
+    button.primary{
+      background:var(--accent);
+      border-color:var(--accent);
+      color:#06241b;
+      font-weight:700;
+    }
 
     .field.date{ width:120px }
     .field.date input{ width:100% }
 
-    .field.weight input{ font-weight:700; font-size:18px; width:9ch }
+    .field.weight input{
+      font-weight:700;
+      font-size:18px;
+      width:9ch;
+    }
     .field.weight input:focus{ outline:2px solid #2b6e66 }
 
     .field.weight input[type="number"]{
@@ -98,14 +179,32 @@
       margin:0;
     }
 
-    .bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
-      border:1px solid #334a4f; background:#0d171b; border-radius:10px }
+    .bt-only{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      width:var(--ctl-h);
+      height:var(--ctl-h);
+      border:1px solid #334a4f;
+      background:#0d171b;
+      border-radius:10px;
+    }
     .bt-only input{ width:16px; height:16px; margin:0 }
     .bt-only[title]{ cursor:pointer }
 
     table{ width:100%; border-collapse:collapse }
-    colgroup col.date{ width:70px } colgroup col.w{ width:70px } colgroup col.act{ width:auto }
-    th,td{ padding:3px 4px; border-bottom:1px solid #20343a; font-size:13px; line-height:1.15; white-space:nowrap; text-align:left; vertical-align:middle }
+    colgroup col.date{ width:70px }
+    colgroup col.w{ width:70px }
+    colgroup col.act{ width:auto }
+    th,td{
+      padding:3px 4px;
+      border-bottom:1px solid #20343a;
+      font-size:13px;
+      line-height:1.15;
+      white-space:nowrap;
+      text-align:left;
+      vertical-align:middle;
+    }
     th{ color:var(--muted); font-weight:600 }
     th.date,td.date{ padding-right:1px }
     th.w,td.w{ text-align:right; padding-left:2px }
@@ -114,29 +213,129 @@
     .wCell{ text-align:right }
     .wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
 
-    .actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
-    .icon{ display:inline-flex; align-items:center; justify-content:center; border:1px solid #2a3e41; background:#0d171b; border-radius:8px; padding:4px 6px; color:#fff; height:var(--ctl-h) }
-    .icon svg{ width:16px; height:16px; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round }
-    .icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
+    .actions{
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+      justify-content:flex-start;
+    }
+    .icon{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid #2a3e41;
+      background:#0d171b;
+      border-radius:8px;
+      padding:4px 6px;
+      color:#fff;
+      height:var(--ctl-h);
+    }
+    .icon svg{
+      width:16px;
+      height:16px;
+      stroke:currentColor;
+      stroke-linecap:round;
+      stroke-linejoin:round;
+    }
+    .icon.danger{
+      border-color:#3a2222;
+      background:#161112;
+      color:#ffd5d5;
+    }
 
-    .recbar{ display:flex; align-items:center; gap:8px; justify-content:flex-start; margin:8px 0; flex-wrap:wrap }
+    .recbar{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      justify-content:flex-start;
+      margin:8px 0;
+      flex-wrap:wrap;
+    }
 
-    .pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
-    .pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
-    .pager button{ background:#0d171b; border:1px solid #2a3e41; color:#fff; padding:4px 8px; border-radius:8px; font-size:13px }
-    .pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
+    .pager{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:flex-start;
+      margin-top:8px;
+    }
+    .pager .info{
+      color:var(--muted);
+      font-size:12px;
+      margin:0 8px 0 0;
+    }
+    .pager button{
+      background:#0d171b;
+      border:1px solid #2a3e41;
+      color:#fff;
+      padding:4px 8px;
+      border-radius:8px;
+      font-size:13px;
+    }
+    .pager button.active{
+      background:var(--accent);
+      color:#06241b;
+      border-color:var(--accent);
+    }
 
-    canvas{ width:100%; height:360px; display:block; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
+    canvas{
+      width:100%;
+      height:360px;
+      display:block;
+      margin-top:8px;
+      background:#0b1215;
+      border:1px solid #1a2a2f;
+      border-radius:8px;
+    }
 
-    .date-wrap{ position:relative } #dateText[readonly]{ cursor:pointer }
-    .cal{ position:absolute; z-index:10; top:calc(var(--ctl-h) + 6px); left:0; background:#0e1518; border:1px solid #20343a; border-radius:12px;
-      box-shadow:0 8px 30px rgba(0,0,0,.35); padding:10px; width:auto; display:none }
+    .date-wrap{ position:relative }
+    #dateText[readonly]{ cursor:pointer }
+
+    .cal{
+      position:absolute;
+      z-index:10;
+      top:calc(var(--ctl-h) + 6px);
+      left:0;
+      background:#0e1518;
+      border:1px solid #20343a;
+      border-radius:12px;
+      box-shadow:0 8px 30px rgba(0,0,0,.35);
+      padding:10px;
+      width:auto;
+      display:none;
+    }
     .cal.show{ display:block }
-    .cal .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px }
+    .cal .cal-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:8px;
+      gap:8px;
+    }
     .cal .cal-title{ font-weight:700; text-transform:capitalize }
-    .cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
-    .cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
-    .cal .day{ width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid transparent }
+    .cal-grid{
+      display:grid;
+      grid-template-columns:repeat(7,36px);
+      gap:6px;
+      justify-content:center;
+    }
+    .cal .dow{
+      color:var(--muted);
+      font-size:11px;
+      text-align:center;
+      line-height:36px;
+      height:36px;
+    }
+    .cal .day{
+      width:36px;
+      height:36px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:8px;
+      border:1px solid transparent;
+    }
     .cal .day:hover{ border-color:#27454a }
     .cal .day.disabled{ opacity:.35; pointer-events:none }
     .cal .day.has{ background:var(--has); color:#092218 }
@@ -146,7 +345,13 @@
     .tabpanel{ display:none }
     .tabpanel[aria-hidden="false"]{ display:block }
 
-    .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
+    .prog-row{
+      display:flex;
+      align-items:flex-start;
+      gap:12px;
+      flex-wrap:wrap;
+      margin:8px 0 0;
+    }
     .prog-head{
       display:flex;
       align-items:center;
@@ -160,38 +365,78 @@
       gap:12px;
       min-width:0;
     }
-    .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
-    .prog-pill{
-      display:flex; flex-direction:column; gap:6px;
-      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-      width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
+    .prod-img{
+      width:76px;
+      height:76px;
+      object-fit:contain;
+      border-radius:12px;
+      background:#0d171b;
+      border:1px solid #254046;
     }
-    .prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .prog-pill{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding:8px 10px;
+      background:#0d171b;
+      border:1px solid #254046;
+      border-radius:10px;
+      width:var(--pill-w);
+      min-width:var(--pill-w);
+      max-width:var(--pill-w);
+    }
+    .prog-pill label{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      cursor:pointer;
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
     .prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
     .prog-cap{ font-weight:700; font-size:14px; }
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
     .prog-intake-btn{
       flex:0 0 auto;
-      width:56px;
-      height:56px;
+      width:40px;
+      height:40px;
     }
     .prog-intake-btn .clk-btn-icon svg{
-      width:36px;
-      height:36px;
+      width:30px;
+      height:30px;
     }
 
     .time-wrap{ display:flex; align-items:center; gap:6px }
     .time-row{ display:flex; align-items:center; gap:4px }
-    .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
+    .time-row select{
+      min-width:54px;
+      padding:6px 8px;
+      height:36px;
+      font-size:14px;
+    }
     .time-row .colon{ opacity:.8; user-select:none; }
     select option.strong { font-weight:700; }
 
     .pl-wrap{ overflow-x:hidden }
-    .pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
+    .pl-table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:3px;
+      table-layout:fixed;
+    }
     .pl-table th, .pl-table td{
-      border:1px solid #20343a; border-radius:10px; text-align:center;
-      padding:var(--pl-pad); font-size:var(--pl-font); line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+      border:1px solid #20343a;
+      border-radius:10px;
+      text-align:center;
+      padding:var(--pl-pad);
+      font-size:var(--pl-font);
+      line-height:1.05;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
       min-width:var(--pl-minw);
       transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
     }
@@ -201,7 +446,7 @@
       font-weight:800;
     }
     .pl-day.weekend{
-      color:#fecaca;
+      color:#f97373;
     }
     .pl-day.today{
       border-color:var(--sel-orange);
@@ -213,14 +458,25 @@
     }
 
     .pl-time-cell{
-      cursor:pointer; user-select:none; font-weight:800; position:relative;
+      cursor:pointer;
+      user-select:none;
+      font-weight:800;
+      position:relative;
       background:transparent;
     }
-    .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
-    .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
-    .pl-time-cell.int-upcoming{ background:#3d3310; border-color:#6b5314 }
+    .pl-time-cell.sel{
+      box-shadow:0 0 0 2px var(--sel-orange) inset;
+    }
+    .pl-time-cell.red{
+      background:#3d1010;
+      border-color:#6b1414;
+    }
+    .pl-time-cell.int-upcoming{
+      background:#3d3310;
+      border-color:#6b5314;
+    }
     .pl-time-cell.int-done{
-      background:#166f3b;
+      background:#1a8f48;
       border-color:#1e6147;
     }
     .pl-time-cell.int-overdue{
@@ -252,26 +508,77 @@
       }
     }
 
-    .clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100 }
-    .clk.show{ display:flex; align-items:center; justify-content:center }
+    .clk{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,.45);
+      z-index:100;
+    }
+    .clk.show{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
     .clk-card{
-      background:#0e1519; border:1px solid #20343a; border-radius:16px;
-      padding:12px 12px 14px; width:330px; max-width:92vw;
-      box-shadow:0 10px 40px rgba(0,0,0,.5); outline:none;
+      background:#0e1519;
+      border:1px solid #20343a;
+      border-radius:16px;
+      padding:10px 12px 14px;
+      width:330px;
+      max-width:92vw;
+      box-shadow:0 10px 40px rgba(0,0,0,.5);
+      outline:none;
       position:relative;
     }
 
-    .clk-face{ position:relative; width:290px; height:290px; margin:0 auto; border-radius:50%; border:1px solid #294047; background:#0b1317; touch-action:none }
-    .clk-ring{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50% }
+    .clk-header{
+      margin-bottom:6px;
+      text-align:center;
+    }
+    .clk-header-prod{
+      font-size:13px;
+      font-weight:700;
+      color:#e6f2ef;
+    }
+    .clk-header-day{
+      font-size:12px;
+      color:#9fb4ad;
+    }
+
+    .clk-face{
+      position:relative;
+      width:290px;
+      height:290px;
+      margin:0 auto;
+      border-radius:50%;
+      border:1px solid #294047;
+      background:#0b1317;
+      touch-action:none;
+    }
+    .clk-ring{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      border-radius:50%;
+    }
     .clk-ring.hours{ width:190px; height:190px }
     .clk-ring.mins{ width:260px; height:260px }
 
     .clk-tick{
-      position:absolute; width:24px; height:24px; border-radius:50%;
-      display:flex; align-items:center; justify-content:center;
+      position:absolute;
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
       font-size:13px;
       color:#d6ece6;
-      border:1px solid transparent; background:#0f1a1d; user-select:none;
+      border:1px solid transparent;
+      background:#0f1a1d;
+      user-select:none;
       transition:background .15s ease, border-color .15s ease, color .15s ease, transform .12s ease;
     }
 
@@ -285,9 +592,9 @@
       font-size:17px;
       text-shadow:0 0 3px rgba(0,0,0,.7);
     }
-
     .clk-tick.hour.sel{
-      background:#22c55e; color:#06241b;
+      background:#22c55e;
+      color:#06241b;
       font-weight:900;
       text-shadow:0 0 4px rgba(0,0,0,.9);
       transform:scale(1.04);
@@ -315,7 +622,6 @@
       font-weight:800;
       text-shadow:0 0 3px rgba(0,0,0,.6);
     }
-
     .clk-tick.strong.sel,
     .clk-tick.quarter.sel{
       background:#22c55e;
@@ -326,17 +632,53 @@
       text-shadow:0 0 3px rgba(0,0,0,.7);
     }
 
-    .clk-hand{ position:absolute; left:50%; top:50%; transform-origin:50% 100%; pointer-events:none }
-    .clk-hand.hour{ width:6px; height:68px; background:#e7faf4; border-radius:3px; transform:translate(-50%,-100%) rotate(0deg); box-shadow:0 0 0 1px #0b1215 inset }
-    .clk-hand.min{ width:3px; height:96px; background:#cde7df; border-radius:2px; transform:translate(-50%,-100%) rotate(0deg); box-shadow:0 0 0 1px #0b1215 inset }
+    .clk-hand{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform-origin:50% 100%;
+      pointer-events:none;
+    }
+    .clk-hand.hour{
+      width:6px;
+      height:68px;
+      background:#e7faf4;
+      border-radius:3px;
+      transform:translate(-50%,-100%) rotate(0deg);
+      box-shadow:0 0 0 1px #0b1215 inset;
+    }
+    .clk-hand.min{
+      width:3px;
+      height:96px;
+      background:#cde7df;
+      border-radius:2px;
+      transform:translate(-50%,-100%) rotate(0deg);
+      box-shadow:0 0 0 1px #0b1215 inset;
+    }
 
-    .clk-center-dot{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 0 2px #0b1217 }
+    .clk-center-dot{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      width:10px;
+      height:10px;
+      background:#fff;
+      border-radius:50%;
+      box-shadow:0 0 0 2px #0b1217;
+    }
 
     .clk-read{
-      position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
-      background:#10191c; border:1px solid #294047; border-radius:6px;
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      background:#10191c;
+      border:1px solid #294047;
+      border-radius:6px;
       padding:3px 6px;
-      font-weight:800; text-align:center;
+      font-weight:800;
+      text-align:center;
       cursor:pointer;
       display:flex;
       align-items:center;
@@ -396,7 +738,7 @@
     }
 
     .clk-actions{
-      margin-top:12px;
+      margin-top:6px;
     }
     .clk-actions-row{
       display:flex;
@@ -425,12 +767,10 @@
       flex:0 0 auto;
     }
     .clk-btn.big{
-      width:72px;
-      height:72px;
+      width:60px;
+      height:60px;
     }
-    .clk-btn:active{
-      transform:scale(.96);
-    }
+    .clk-btn:active{ transform:scale(.96); }
     .clk-btn.primary{
       background:#22c55e;
       border-color:#22c55e;
@@ -449,18 +789,27 @@
       visibility:hidden;
       pointer-events:none;
     }
+
     .clk-btn-icon{
       display:inline-flex;
       align-items:center;
       justify-content:center;
     }
     .clk-btn-icon svg{
-      width:40px;
-      height:40px;
+      width:24px;
+      height:24px;
       stroke:currentColor;
       stroke-width:2;
       stroke-linecap:round;
       stroke-linejoin:round;
+    }
+    .clk-btn.big .clk-btn-icon svg{
+      width:28px;
+      height:28px;
+    }
+    .clk-btn.intake.big .clk-btn-icon svg{
+      width:32px;
+      height:32px;
     }
 
     .clk-btn.intake svg .pill-clock-circle,
@@ -502,12 +851,8 @@
       animation:none;
     }
     @keyframes intakeBtnBlink{
-      0%,100%{
-        box-shadow:0 0 0 0 rgba(250,204,21,0);
-      }
-      50%{
-        box-shadow:0 0 0 3px rgba(250,204,21,.9);
-      }
+      0%,100%{ box-shadow:0 0 0 0 rgba(250,204,21,0); }
+      50%{ box-shadow:0 0 0 3px rgba(250,204,21,.9); }
     }
 
     .clk-btn.audio{
@@ -530,15 +875,21 @@
     .clk-btn.audio.off svg .icon-sound{ display:block; }
     .clk-btn.audio.off svg .icon-mute{ display:none; }
 
-    @media (max-width: 380px){
-      :root{ --pill-w:156px; --pl-font:11px; --pl-pad:2px; --pl-minw:44px }
+    @media (max-width:380px){
+      :root{
+        --pill-w:156px;
+        --pl-font:11px;
+        --pl-pad:2px;
+        --pl-minw:44px;
+      }
       .time-row select{ min-width:48px; }
       .prod-img{ width:64px; height:64px; border-radius:10px; }
       .clk-card{ width:306px }
       .clk-face{ width:272px; height:272px }
       .clk-ring.hours{ width:180px; height:180px }
       .clk-ring.mins{ width:248px; height:248px }
-      .clk-hand.hour{ height:64px } .clk-hand.min{ height:90px }
+      .clk-hand.hour{ height:64px }
+      .clk-hand.min{ height:90px }
     }
   </style>
 </head>
@@ -549,7 +900,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.6</span>
+        <span class="badge">v2.1.7</span>
       </div>
     </div>
   </div>
@@ -590,7 +941,8 @@
 
             <div class="field" style="min-width:100px">
               <div class="lbl"></div>
-              <button id="addBtn" class="primary" type="button" style="height:var(--ctl-h); min-width:100px">Добави</button>
+              <button id="addBtn" class="primary" type="button"
+                      style="height:var(--ctl-h); min-width:100px">Добави</button>
             </div>
           </div>
 
@@ -601,7 +953,8 @@
               <div class="lbl"></div>
               <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 16V4M12 4l-4 4M12 4l4 4"></path><path d="M4 20h16"></path>
+                  <path d="M12 16V4M12 4l-4 4M12 4l4 4"></path>
+                  <path d="M4 20h16"></path>
                 </svg>
               </button>
             </div>
@@ -610,7 +963,8 @@
               <input id="importFile" type="file" accept="application/json" style="display:none"/>
               <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path><path d="M4 4h16"></path>
+                  <path d="M12 8v12M12 20l-4-4M12 20l4-4"></path>
+                  <path d="M4 4h16"></path>
                 </svg>
               </button>
             </div>
@@ -648,8 +1002,13 @@
         </div>
 
         <div class="pager" id="pagerTop"></div>
+
         <table id="tbl">
-          <colgroup><col class="date"><col class="w"><col class="act"></colgroup>
+          <colgroup>
+            <col class="date">
+            <col class="w">
+            <col class="act">
+          </colgroup>
           <thead id="theadTop">
             <tr>
               <th class="date">Дата</th>
@@ -666,6 +1025,7 @@
             </tr>
           </tfoot>
         </table>
+
         <div class="pager" id="pagerBottom"></div>
       </section>
     </main>
@@ -751,6 +1111,7 @@
                 </div>
               </div>
             </span>
+
             <span class="prog-pill">
               <label><input type="checkbox" id="he-n" checked> Обед</label>
               <div id="he-tp-n" class="time-wrap" style="display:block">
@@ -759,6 +1120,7 @@
                 </div>
               </div>
             </span>
+
             <span class="prog-pill">
               <label><input type="checkbox" id="he-e"> Вечер</label>
               <div id="he-tp-e" class="time-wrap" style="display:none">
@@ -789,6 +1151,7 @@
                 </div>
               </div>
             </span>
+
             <span class="prog-pill">
               <label><input type="checkbox" id="ch-n" checked disabled> Обед</label>
               <div id="ch-tp-n" class="time-wrap">
@@ -797,6 +1160,7 @@
                 </div>
               </div>
             </span>
+
             <span class="prog-pill">
               <label><input type="checkbox" id="ch-e" checked disabled> Вечер</label>
               <div id="ch-tp-e" class="time-wrap">
@@ -834,6 +1198,12 @@
 
   <div class="clk" id="clk" aria-hidden="true">
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
+
+      <div class="clk-header">
+        <div id="clkHeaderProd" class="clk-header-prod">ProLact Slim+</div>
+        <div id="clkHeaderDay" class="clk-header-day">Понеделник</div>
+      </div>
+
       <div class="clk-face" id="clkFace">
         <div class="clk-ring mins" id="ringM"></div>
         <div class="clk-ring hours" id="ringH"></div>
@@ -879,6 +1249,7 @@
                 </svg>
               </span>
             </button>
+
             <button id="btnSaveAllDays" class="clk-btn primary" type="button" title="Запис за всички дни от този ред">
               <span class="clk-btn-icon">
                 <svg viewBox="0 0 24 24" fill="none">
@@ -911,7 +1282,11 @@
   <script>
     "use strict";
     function two(n){ return String(n).padStart(2,"0"); }
-    function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
+    function todayISO(){
+      var d=new Date();
+      d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+      return d.toISOString().slice(0,10);
+    }
     var TODAY = todayISO();
 
     function toRoman(num){
@@ -951,32 +1326,50 @@
     })();
 
     (function(){
-      function isoToBG_YY(iso){ if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return ""; var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10); return d+"."+m+"."+y.slice(2); }
+      function isoToBG_YY(iso){
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)) return "";
+        var y=iso.slice(0,4), m=iso.slice(5,7), d=iso.slice(8,10);
+        return d+"."+m+"."+y.slice(2);
+      }
       function bgToISO_any(bg){
-        var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/); if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
-        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/); if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
+        var m2=bg.match(/^(\d{2})\.(\d{2})\.(\d{2})$/);
+        if(m2) return "20"+m2[3]+"-"+m2[2]+"-"+m2[1];
+        var m4=bg.match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+        if(m4) return m4[3]+"-"+m4[2]+"-"+m4[1];
         return "";
       }
+
       var KEY="bt-progress";
-      function load(){ try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }catch(_) { return []; } }
+      function load(){
+        try{ return JSON.parse(localStorage.getItem(KEY)||"[]"); }
+        catch(_){ return []; }
+      }
       function save(a){ localStorage.setItem(KEY, JSON.stringify(a)); }
       function sortDesc(a){ return a.slice().sort((x,y)=>y.date.localeCompare(x.date)); }
       function sortAsc(a){ return a.slice().sort((x,y)=>x.date.localeCompare(y.date)); }
 
-      var dateText=document.getElementById("dateText"), calEl=document.getElementById("cal"),
-          weight=document.getElementById("weight"), addBtn=document.getElementById("addBtn"),
-          tb=document.querySelector("#tbl tbody"), pagerTop=document.getElementById("pagerTop"),
-          pagerBottom=document.getElementById("pagerBottom"), aggSel=document.getElementById("aggSel"),
-          chart=document.getElementById("chart"), pageSizeSel=document.getElementById("pageSize"),
-          exportBtn=document.getElementById("exportBtn"), importBtn=document.getElementById("importBtn"),
-          importFile=document.getElementById("importFile"), btFlag=document.getElementById("btFlag");
+      var dateText=document.getElementById("dateText"),
+          calEl=document.getElementById("cal"),
+          weight=document.getElementById("weight"),
+          addBtn=document.getElementById("addBtn"),
+          tb=document.querySelector("#tbl tbody"),
+          pagerTop=document.getElementById("pagerTop"),
+          pagerBottom=document.getElementById("pagerBottom"),
+          aggSel=document.getElementById("aggSel"),
+          chart=document.getElementById("chart"),
+          pageSizeSel=document.getElementById("pageSize"),
+          exportBtn=document.getElementById("exportBtn"),
+          importBtn=document.getElementById("importBtn"),
+          importFile=document.getElementById("importFile"),
+          btFlag=document.getElementById("btFlag");
 
       var currentISO=localStorage.getItem("bt-last-date")||TODAY;
       if(!/^\d{4}-\d{2}-\d{2}$/.test(currentISO)) currentISO=TODAY;
       dateText.value=isoToBG_YY(currentISO);
 
       function prefillFor(iso){
-        var data=load(); var rec=data.find(r=>r.date===iso);
+        var data=load();
+        var rec=data.find(r=>r.date===iso);
         if(rec){
           weight.value=(typeof rec.weight==="number")?rec.weight:"";
           btFlag.checked = (rec.bt!==false);
@@ -991,7 +1384,11 @@
       var calYear=+currentISO.slice(0,4), calMonth=+currentISO.slice(5,7);
       function ymd(y,m,d){ return String(y).padStart(4,"0")+"-"+String(m).padStart(2,"0")+"-"+String(d).padStart(2,"0"); }
 
-      function hasDataSet(){ var s=new Set(); load().forEach(r=>s.add(r.date)); return s; }
+      function hasDataSet(){
+        var s=new Set();
+        load().forEach(r=>s.add(r.date));
+        return s;
+      }
 
       function renderCalendar(){
         var set=hasDataSet(), y=calYear, m=calMonth;
@@ -999,14 +1396,18 @@
         var startDow=(first.getUTCDay()+6)%7;
         var daysInMonth=new Date(Date.UTC(y,m,0)).getUTCDate();
         var title=new Date(Date.UTC(y,m-1,1)).toLocaleDateString("bg-BG",{year:"numeric",month:"long"});
+
         var html='<div class="cal-head"><button id="calPrev" type="button">←</button><div class="cal-title">'+title+'</div><button id="calNext" type="button">→</button></div>';
         html+='<div class="cal-grid">';
         ["Пн","Вт","Ср","Чт","Пт","Сб","Нд"].forEach(x=>html+='<div class="dow">'+x+'</div>');
         for(var i=0;i<startDow;i++) html+='<div class="day disabled"></div>';
         for(var d=1; d<=daysInMonth; d++){
           var iso=ymd(y,m,d), future=(iso>TODAY);
-          var cls=["day"]; if(iso===currentISO) cls.push("sel"); if(iso===TODAY) cls.push("today");
-          if(set.has(iso)) cls.push("has"); if(future) cls.push("disabled");
+          var cls=["day"];
+          if(iso===currentISO) cls.push("sel");
+          if(iso===TODAY) cls.push("today");
+          if(set.has(iso)) cls.push("has");
+          if(future) cls.push("disabled");
           html+='<button type="button" class="'+cls.join(" ")+'" data-iso="'+iso+'">'+d+'</button>';
         }
         html+='</div>';
@@ -1017,13 +1418,26 @@
 
       dateText.addEventListener("click",(e)=>{
         e.stopPropagation();
-        calYear=+currentISO.slice(0,4); calMonth=+currentISO.slice(5,7);
+        calYear=+currentISO.slice(0,4);
+        calMonth=+currentISO.slice(5,7);
         showCalendar();
       });
+
       calEl.addEventListener("click",(e)=>{
-        e.stopPropagation(); var t=e.target;
-        if(t && t.id==="calPrev"){ calMonth--; if(calMonth===0){calMonth=12; calYear--; } renderCalendar(); return; }
-        if(t && t.id==="calNext"){ calMonth++; if(calMonth===13){calMonth=1; calYear++; } renderCalendar(); return; }
+        e.stopPropagation();
+        var t=e.target;
+        if(t && t.id==="calPrev"){
+          calMonth--;
+          if(calMonth===0){ calMonth=12; calYear--; }
+          renderCalendar();
+          return;
+        }
+        if(t && t.id==="calNext"){
+          calMonth++;
+          if(calMonth===13){ calMonth=1; calYear++; }
+          renderCalendar();
+          return;
+        }
         var btn=t.closest && t.closest(".day[data-iso]");
         if(btn){
           var iso=btn.getAttribute("data-iso");
@@ -1036,43 +1450,77 @@
           }
         }
       });
-      document.addEventListener("click",(e)=>{ if(!calEl.contains(e.target) && e.target!==dateText) hideCalendar(); });
+
+      document.addEventListener("click",(e)=>{
+        if(!calEl.contains(e.target) && e.target!==dateText) hideCalendar();
+      });
 
       addBtn.addEventListener("click", ()=>{
         var iso=currentISO;
-        if(iso>TODAY){ alert("Датата е в бъдещето."); return; }
-        var w=Number(weight.value); if(!(w>0)){ alert("Въведи тегло > 0."); return; }
+        if(iso>TODAY){
+          alert("Датата е в бъдещето.");
+          return;
+        }
+        var w=Number(weight.value);
+        if(!(w>0)){
+          alert("Въведи тегло > 0.");
+          return;
+        }
 
-        var data=load(), prev=sortDesc(data).find(r=>r.date<iso), next=sortAsc(data).find(r=>r.date>iso);
+        var data=load();
+        var prev=sortDesc(data).find(r=>r.date<iso);
+        var next=sortAsc(data).find(r=>r.date>iso);
         var ok=true, msgs=[];
         if(prev){
           var minP=prev.weight*0.95, maxP=prev.weight*1.05;
-          if(w<minP||w>maxP){ ok=false; msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg"); }
+          if(w<minP||w>maxP){
+            ok=false;
+            msgs.push("спрямо "+isoToBG_YY(prev.date)+": "+minP.toFixed(1)+"–"+maxP.toFixed(1)+" kg");
+          }
         }
         if(next){
           var minN=next.weight*0.95, maxN=next.weight*1.05;
-          if(w<minN||w>maxN){ ok=false; msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg"); }
+          if(w<minN||w>maxN){
+            ok=false;
+            msgs.push("спрямо "+isoToBG_YY(next.date)+": "+minN.toFixed(1)+"–"+maxN.toFixed(1)+" kg");
+          }
         }
-        if(!ok){ alert("Извън допустимите граници:\n"+msgs.join("\n")); return; }
+        if(!ok){
+          alert("Извън допустимите граници:\n"+msgs.join("\n"));
+          return;
+        }
 
         var idx=data.findIndex(r=>r.date===iso);
         var rec={date: iso, weight: w, bt: !!btFlag.checked};
         if(idx>=0) data[idx]=rec; else data.push(rec);
         save(data);
-        renderTable(); renderChart();
+        renderTable();
+        renderChart();
       });
 
       var PAGE_SIZES=[7,14,28,84,112,168,336,"all"];
-      function getPS(){ var v=localStorage.getItem("bt-page-size"); if(v==="all") return "all"; var n=Number(v); return (PAGE_SIZES.indexOf(n)>=0)?n:28; }
+      function getPS(){
+        var v=localStorage.getItem("bt-page-size");
+        if(v==="all") return "all";
+        var n=Number(v);
+        return (PAGE_SIZES.indexOf(n)>=0)?n:28;
+      }
       function setPS(v){ localStorage.setItem("bt-page-size",v); }
+
       var pageSize=getPS(), currentPage=1;
-      (function(){ var v=(pageSize==="all")?"all":String(pageSize); var opt=document.querySelector('#pageSize option[value="'+v+'"]'); if(opt) pageSizeSel.value=v; })();
+      (function(){
+        var v=(pageSize==="all")?"all":String(pageSize);
+        var opt=document.querySelector('#pageSize option[value="'+v+'"]');
+        if(opt) pageSizeSel.value=v;
+      })();
+
       pageSizeSel.addEventListener("change", ()=>{
         var v=pageSizeSel.value;
         pageSize=(v==="all")?"all":Number(v);
         setPS(v);
         currentPage=1;
-        renderTable(); renderChart();
+        renderTable();
+        renderChart();
       });
 
       var __currentSlice=[];
@@ -1080,19 +1528,31 @@
       function buildPager(container,total,eff){
         container.innerHTML="";
         var start=(currentPage-1)*eff, from=total?start+1:0, to=Math.min(start+eff,total);
-        var info=document.createElement("span"); info.className="info"; info.textContent=from+"-"+to+" от "+total; container.appendChild(info);
+        var info=document.createElement("span");
+        info.className="info";
+        info.textContent=from+"-"+to+" от "+total;
+        container.appendChild(info);
 
         var pagesTotal=Math.max(1,Math.ceil(total/eff)), frag=document.createDocumentFragment();
         function pageBtn(n,active){
           var b=document.createElement("button");
           b.textContent=String(n);
           if(active) b.className="active";
-          b.addEventListener("click",()=>{currentPage=n; renderTable(); renderChart();});
+          b.addEventListener("click",()=>{
+            currentPage=n;
+            renderTable();
+            renderChart();
+          });
           return b;
         }
         if(pagesTotal>1 && currentPage>1){
-          var prev=document.createElement("button"); prev.textContent="←";
-          prev.addEventListener("click",()=>{currentPage=Math.max(1,currentPage-1); renderTable(); renderChart();});
+          var prev=document.createElement("button");
+          prev.textContent="←";
+          prev.addEventListener("click",()=>{
+            currentPage=Math.max(1,currentPage-1);
+            renderTable();
+            renderChart();
+          });
           frag.appendChild(prev);
         }
         if(pagesTotal<=5){
@@ -1104,20 +1564,31 @@
           for(var pp=sp; pp<=sp+4; pp++) frag.appendChild(pageBtn(pp,pp===currentPage));
         }
         if(pagesTotal>1 && currentPage<pagesTotal){
-          var next=document.createElement("button"); next.textContent="→";
-          next.addEventListener("click",()=>{currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();});
+          var next=document.createElement("button");
+          next.textContent="→";
+          next.addEventListener("click",()=>{
+            currentPage=Math.min(pagesTotal,currentPage+1);
+            renderTable();
+            renderChart();
+          });
           frag.appendChild(next);
         }
         container.appendChild(frag);
       }
 
       function renderTable(){
-        var all=sortDesc(load()), total=all.length, eff=(pageSize==="all")?(total||1):pageSize;
-        var pages=Math.max(1,Math.ceil(total/eff)); if(currentPage>pages) currentPage=pages;
-        var start=(currentPage-1)*eff, slice=all.slice(start,start+eff); __currentSlice=slice.slice();
+        var all=sortDesc(load());
+        var total=all.length;
+        var eff=(pageSize==="all")?(total||1):pageSize;
+        var pages=Math.max(1,Math.ceil(total/eff));
+        if(currentPage>pages) currentPage=pages;
+        var start=(currentPage-1)*eff;
+        var slice=all.slice(start,start+eff);
+        __currentSlice=slice.slice();
 
         buildPager(pagerTop,total,eff);
         tb.innerHTML="";
+
         slice.forEach((r)=>{
           var tr=document.createElement("tr");
           var s=Number(r.weight).toFixed(1).split(".");
@@ -1127,10 +1598,15 @@
             '<td class="actions">'+
               '<div class="actions">'+
                 '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21l3-1 11-11-2-2L4 18z"></path><path d="M14 5l5 5"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+
+                  '<path d="M3 21l3-1 11-11-2-2L4 18z"></path>'+
+                  '<path d="M14 5l5 5"></path>'+
+                  '</svg>'+
                 '</button>'+
                 '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
-                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path></svg>'+
+                  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+
+                  '<path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path>'+
+                  '</svg>'+
                 '</button>'+
               '</div>'+
             '</td>';
@@ -1139,41 +1615,59 @@
 
         Array.from(tb.querySelectorAll('button[data-edit]')).forEach((b)=>{
           b.addEventListener("click",()=>{
-            var iso=b.getAttribute("data-edit"); var rec=load().find(x=>x.date===iso);
+            var iso=b.getAttribute("data-edit");
+            var rec=load().find(x=>x.date===iso);
             if(rec){
-              currentISO=iso; localStorage.setItem("bt-last-date",iso);
-              dateText.value=isoToBG_YY(iso); prefillFor(iso);
+              currentISO=iso;
+              localStorage.setItem("bt-last-date",iso);
+              dateText.value=isoToBG_YY(iso);
+              prefillFor(iso);
               window.scrollTo({top:0,behavior:"smooth"});
             }
           });
         });
+
         Array.from(tb.querySelectorAll('button[data-del]')).forEach((b)=>{
           b.addEventListener("click",()=>{
             var iso=b.getAttribute("data-del");
             if(!confirm("Да изтрия записа за "+isoToBG_YY(iso)+"?")) return;
             var data=load().filter(x=>x.date!==iso);
-            save(data); renderTable(); renderChart();
+            save(data);
+            renderTable();
+            renderChart();
           });
         });
+
         buildPager(pagerBottom,total,eff);
       }
 
       function weekKey(iso){
-        var d=new Date(iso); d.setUTCHours(0,0,0,0);
+        var d=new Date(iso);
+        d.setUTCHours(0,0,0,0);
         d.setUTCDate(d.getUTCDate()+4-(d.getUTCDay()||7));
         var yearStart=new Date(Date.UTC(d.getUTCFullYear(),0,1));
         var week=Math.ceil((((d-yearStart)/86400000)+1)/7);
         return d.getUTCFullYear()+"-W"+String(week).padStart(2,"0");
       }
-      function monthKey(iso){ var d=new Date(iso); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0"); }
-      function labelWeek(k){ var s=k.split("-W"); return "С"+s[1]+"."+String(s[0]).slice(2); }
-      function labelMonth(k){ var s=k.split("-"); return s[1]+"."+String(s[0]).slice(2); }
+      function monthKey(iso){
+        var d=new Date(iso);
+        return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0");
+      }
+      function labelWeek(k){
+        var s=k.split("-W");
+        return "С"+s[1]+"."+String(s[0]).slice(2);
+      }
+      function labelMonth(k){
+        var s=k.split("-");
+        return s[1]+"."+String(s[0]).slice(2);
+      }
 
       aggSel.addEventListener("change", ()=>renderChart());
 
       function cssPx(name, fallback){
         var v=getComputedStyle(document.documentElement).getPropertyValue(name).trim();
-        var n=parseFloat(v); return Number.isFinite(n)?n:fallback;
+        var n=parseFloat(v);
+        return Number.isFinite(n)?n:fallback;
       }
 
       function getChartRawData(){
@@ -1186,9 +1680,12 @@
       }
 
       function renderChart(){
-        var ctx=chart.getContext("2d"), rect=chart.getBoundingClientRect(), dpr=window.devicePixelRatio||1;
-        chart.width=Math.round(rect.width*dpr); chart.height=Math.round(360*dpr);
-        ctx.setTransform(dpr,0,0,dpr,0,0);
+        var ctx=chart.getContext("2d");
+        var rect=chart.getBoundingClientRect();
+        var dpr=window.devicePixelRatio||1;
+        chart.width=Math.round(rect.width*dpr);
+        chart.height=Math.round(360*dpr);
+        ctx.setTransform(dpr,0,0,dpr,0);
         var w=rect.width, h=360;
         ctx.clearRect(0,0,w,h);
 
@@ -1205,17 +1702,25 @@
           pts=raw.map(r=>({x:r.date,y:r.weight,label:isoToBG_YY(r.date), bt:(r.bt!==false)}));
         } else if(mode==="weekly"){
           var wm=new Map();
-          raw.forEach(r=>{ var k=weekKey(r.date); (wm.get(k)||wm.set(k,[]).get(k)).push(r); });
+          raw.forEach(r=>{
+            var k=weekKey(r.date);
+            (wm.get(k)||wm.set(k,[]).get(k)).push(r);
+          });
           wm.forEach((arr,k)=>{
-            var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
+            var s=0;
+            for(var i=0;i<arr.length;i++) s+=arr[i].weight;
             var btCount=arr.filter(z=>z.bt!==false).length;
             pts.push({x:k,y:s/arr.length,label:labelWeek(k), bt:(btCount>=arr.length - btCount)});
           });
         } else {
           var mm=new Map();
-          raw.forEach(r=>{ var k=monthKey(r.date); (mm.get(k)||mm.set(k,[]).get(k)).push(r); });
+          raw.forEach(r=>{
+            var k=monthKey(r.date);
+            (mm.get(k)||mm.set(k,[]).get(k)).push(r);
+          });
           mm.forEach((arr,k)=>{
-            var s=0; for(var i=0;i<arr.length;i++) s+=arr[i].weight;
+            var s=0;
+            for(var i=0;i<arr.length;i++) s+=arr[i].weight;
             var btCount=arr.filter(z=>z.bt!==false).length;
             pts.push({x:k,y:s/arr.length,label:labelMonth(k), bt:(btCount>=arr.length - btCount)});
           });
@@ -1237,19 +1742,25 @@
         function X(i){ return padL+(w-padL-padR)*(n<=1?0:i/(n-1)); }
         function Y(v){ return h-padB-((v-min)/((max-min)||1))*(h-padT-padB); }
 
-        ctx.strokeStyle="#20343a"; ctx.lineWidth=1.1;
+        ctx.strokeStyle="#20343a";
+        ctx.lineWidth=1.1;
         ctx.beginPath();
-        ctx.moveTo(padL,h-padB); ctx.lineTo(w-padR,h-padB);
-        ctx.moveTo(padL,padT);   ctx.lineTo(padL,h-padB);
+        ctx.moveTo(padL,h-padB);
+        ctx.lineTo(w-padR,h-padB);
+        ctx.moveTo(padL,padT);
+        ctx.lineTo(padL,h-padB);
         ctx.stroke();
 
         for(var i=1;i<n;i++){
           var p0=pts[i-1], p1=pts[i];
           var bothBT = (p0.bt && p1.bt);
           var bothNon = (!p0.bt && !p1.bt);
-          ctx.strokeStyle = bothBT ? (getComputedStyle(document.documentElement).getPropertyValue('--line-orange').trim()||'#f59e0b')
-                          : bothNon ? (getComputedStyle(document.documentElement).getPropertyValue('--line-green').trim()||'#87f3c5')
-                          : (getComputedStyle(document.documentElement).getPropertyValue('--line-neutral').trim()||'#2dd4bf');
+          ctx.strokeStyle =
+            bothBT ?
+              (getComputedStyle(document.documentElement).getPropertyValue('--line-orange').trim()||'#f59e0b') :
+            bothNon ?
+              (getComputedStyle(document.documentElement).getPropertyValue('--line-green').trim()||'#87f3c5') :
+              (getComputedStyle(document.documentElement).getPropertyValue('--line-neutral').trim()||'#2dd4bf');
           ctx.lineWidth=2.0;
           ctx.beginPath();
           ctx.moveTo(X(i-1), Y(p0.y));
@@ -1257,7 +1768,8 @@
           ctx.stroke();
         }
 
-        ctx.fillStyle="#d9ebe5"; ctx.textBaseline="middle";
+        ctx.fillStyle="#d9ebe5";
+        ctx.textBaseline="middle";
         ctx.fillText(String(max.toFixed(1)),10,Y(max));
         ctx.fillText(String(min.toFixed(1)),10,Y(min));
 
@@ -1266,55 +1778,71 @@
 
         for(var j=0;j<n;j++){
           var pe=pts[j], x0=X(j), y0=h-padB;
-          const yVal = Y(pe.y);
+          var yVal=Y(pe.y);
 
           ctx.beginPath();
-          ctx.fillStyle = pe.bt ? (getComputedStyle(document.documentElement).getPropertyValue('--line-orange').trim()||'#f59e0b')
-                                : (getComputedStyle(document.documentElement).getPropertyValue('--line-green').trim()||'#87f3c5');
+          ctx.fillStyle = pe.bt ?
+            (getComputedStyle(document.documentElement).getPropertyValue('--line-orange').trim()||'#f59e0b') :
+            (getComputedStyle(document.documentElement).getPropertyValue('--line-green').trim()||'#87f3c5');
           ctx.arc(x0, yVal, 3, 0, Math.PI*2);
           ctx.fill();
 
           ctx.save();
-          ctx.font = "600 11px system-ui";
-          ctx.fillStyle = "#9fb4ad";
-          ctx.textBaseline = "bottom"; ctx.textAlign = "left";
-          const txt = pe.y.toFixed(1); const tw = ctx.measureText(txt).width;
-          let xText = x0 + 5;
-          if (xText + tw > w - padR - 2) xText = (w - padR - 2) - tw;
-          if (xText < padL + 2) xText = padL + 2;
-          ctx.fillText(txt, xText, yVal - 4);
+          ctx.font="600 11px system-ui";
+          ctx.fillStyle="#9fb4ad";
+          ctx.textBaseline="bottom";
+          ctx.textAlign="left";
+          var txt=pe.y.toFixed(1);
+          var tw=ctx.measureText(txt).width;
+          var xText=x0+5;
+          if(xText+tw>w-padR-2) xText=(w-padR-2)-tw;
+          if(xText<padL+2) xText=padL+2;
+          ctx.fillText(txt,xText,yVal-4);
           ctx.restore();
 
           if(j%step===0){
-            ctx.save(); ctx.translate(x0,y0+64); ctx.rotate(-Math.PI/2);
-            ctx.fillStyle="#e7faf4"; ctx.fillText(pe.label,0,0); ctx.restore();
+            ctx.save();
+            ctx.translate(x0,y0+64);
+            ctx.rotate(-Math.PI/2);
+            ctx.fillStyle="#e7faf4";
+            ctx.fillText(pe.label,0,0);
+            ctx.restore();
           }
         }
       }
 
       exportBtn.addEventListener("click", ()=>{
-        var data = load();
-        var blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
-        var url = URL.createObjectURL(blob);
-        var a = document.createElement("a");
-        a.href=url; a.download="bt-progress-export.json";
-        document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+        var data=load();
+        var blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+        var url=URL.createObjectURL(blob);
+        var a=document.createElement("a");
+        a.href=url;
+        a.download="bt-progress-export.json";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
       });
 
       importBtn.addEventListener("click", ()=>importFile.click());
       importFile.addEventListener("change", ()=>{
-        var f=importFile.files[0]; if(!f) return;
+        var f=importFile.files[0];
+        if(!f) return;
         var fr=new FileReader();
-        fr.onload = () => {
+        fr.onload=()=>{
           try{
-            var arr = JSON.parse(fr.result||"[]");
+            var arr=JSON.parse(fr.result||"[]");
             if(!Array.isArray(arr)) throw new Error("Невалиден формат");
-            arr = arr
-              .filter(r => r && typeof r.date==="string" && typeof r.weight==="number")
-              .map(r => ({ date:r.date, weight:r.weight, bt:(r.bt!==false) }));
-            save(arr); renderTable(); renderChart();
+            arr=arr
+              .filter(r=>r && typeof r.date==="string" && typeof r.weight==="number")
+              .map(r=>({date:r.date,weight:r.weight,bt:(r.bt!==false)}));
+            save(arr);
+            renderTable();
+            renderChart();
             alert("Импортът е успешен. Записите са презаредени.");
-          }catch(e){ alert("Грешка при импорт: "+e.message); }
+          }catch(e){
+            alert("Грешка при импорт: "+e.message);
+          }
           importFile.value="";
         };
         fr.readAsText(f);
@@ -1325,7 +1853,8 @@
         for(var i=0;i<arr.length;i++){
           var r=arr[i];
           if(typeof r.date==="string" && !/^\d{4}-\d{2}-\d{2}$/.test(r.date)){
-            var iso=bgToISO_any(r.date); if(iso){ r.date=iso; changed=true; }
+            var iso=bgToISO_any(r.date);
+            if(iso){ r.date=iso; changed=true; }
           }
           if(typeof r.bt==="undefined"){ r.bt=true; changed=true; }
         }
@@ -1335,7 +1864,8 @@
       function initialRender(){
         migrateDatesAndBT();
         prefillFor(currentISO);
-        renderTable(); renderChart();
+        renderTable();
+        renderChart();
         window.addEventListener("resize", ()=>renderChart(), {passive:true});
       }
       initialRender();
@@ -1345,7 +1875,8 @@
       sel.innerHTML="";
       for(let h=fromH; h<=toH; h++){
         const o=document.createElement("option");
-        o.value=two(h); o.textContent=o.value;
+        o.value=two(h);
+        o.textContent=o.value;
         if(h===8 || h===12 || h===19) o.className="strong";
         sel.appendChild(o);
       }
@@ -1354,23 +1885,35 @@
       sel.innerHTML="";
       for(let m=0; m<60; m+=5){
         const o=document.createElement("option");
-        o.value=two(m); o.textContent=o.value;
+        o.value=two(m);
+        o.textContent=o.value;
         if(m%15===0) o.className="strong";
         sel.appendChild(o);
       }
     }
-    function setSel(sel,val){ const opt=[...sel.options].find(o=>o.value===val); if(opt){ sel.value=val; return true;} return false; }
+    function setSel(sel,val){
+      const opt=[...sel.options].find(o=>o.value===val);
+      if(opt){ sel.value=val; return true; }
+      return false;
+    }
 
     (function(){
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
       const KEY_SEL='bt_he_sel_v230';
       const KEY_TIM='bt_he_tim_v230';
 
-      const m=document.getElementById('he-m'), n=document.getElementById('he-n'), e=document.getElementById('he-e');
-      const boxM=document.getElementById('he-tp-m'), boxN=document.getElementById('he-tp-n'), boxE=document.getElementById('he-tp-e');
-      const hhM=document.getElementById('he-hh-m'), mmM=document.getElementById('he-mm-m');
-      const hhN=document.getElementById('he-hh-n'), mmN=document.getElementById('he-mm-n');
-      const hhE=document.getElementById('he-hh-e'), mmE=document.getElementById('he-mm-e');
+      const m=document.getElementById('he-m'),
+            n=document.getElementById('he-n'),
+            e=document.getElementById('he-e');
+      const boxM=document.getElementById('he-tp-m'),
+            boxN=document.getElementById('he-tp-n'),
+            boxE=document.getElementById('he-tp-e');
+      const hhM=document.getElementById('he-hh-m'),
+            mmM=document.getElementById('he-mm-m');
+      const hhN=document.getElementById('he-hh-n'),
+            mmN=document.getElementById('he-mm-n');
+      const hhE=document.getElementById('he-hh-e'),
+            mmE=document.getElementById('he-mm-e');
 
       function ensureTim(){
         try{
@@ -1381,7 +1924,10 @@
         localStorage.setItem(KEY_TIM, JSON.stringify(def));
         return def;
       }
-      function loadTim(){ try{ return JSON.parse(localStorage.getItem(KEY_TIM))||ensureTim(); }catch(_){ return ensureTim(); } }
+      function loadTim(){
+        try{ return JSON.parse(localStorage.getItem(KEY_TIM))||ensureTim(); }
+        catch(_){ return ensureTim(); }
+      }
       function saveTim(t){ localStorage.setItem(KEY_TIM, JSON.stringify(t)); }
 
       function loadSel(){ return localStorage.getItem(KEY_SEL)||"n"; }
@@ -1408,14 +1954,18 @@
       }
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
-      const which0=loadSel(); setOnly(which0);
+      const which0=loadSel();
+      setOnly(which0);
       const t0=ensureTim();
-      setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
+      setFromStr(hhM,mmM,t0.m);
+      setFromStr(hhN,mmN,t0.n);
+      setFromStr(hhE,mmE,t0.e);
 
       [m,n,e].forEach(el=>el.addEventListener('change',()=>{
         const which = el===m ? "m" : el===n ? "n" : "e";
         setOnly(which);
-        const t=loadTim(); saveTim(t);
+        const t=loadTim();
+        saveTim(t);
       }));
 
       [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', ()=>{
@@ -1432,9 +1982,12 @@
       const DEF={m:"08:00", n:"12:00", e:"19:00"};
       const KEY='bt_ch_tim_v230';
 
-      const hhM=document.getElementById('ch-hh-m'), mmM=document.getElementById('ch-mm-m');
-      const hhN=document.getElementById('ch-hh-n'), mmN=document.getElementById('ch-mm-n');
-      const hhE=document.getElementById('ch-hh-e'), mmE=document.getElementById('ch-mm-e');
+      const hhM=document.getElementById('ch-hh-m'),
+            mmM=document.getElementById('ch-mm-m');
+      const hhN=document.getElementById('ch-hh-n'),
+            mmN=document.getElementById('ch-mm-n');
+      const hhE=document.getElementById('ch-hh-e'),
+            mmE=document.getElementById('ch-mm-e');
 
       buildHourRange(hhM,0,9);  buildMinutes5(mmM);
       buildHourRange(hhN,10,17); buildMinutes5(mmN);
@@ -1449,7 +2002,10 @@
         localStorage.setItem(KEY, JSON.stringify(def));
         return def;
       }
-      function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||ensure(); }catch(_){ return ensure(); } }
+      function load(){
+        try{ return JSON.parse(localStorage.getItem(KEY))||ensure(); }
+        catch(_){ return ensure(); }
+      }
       function save(t){ localStorage.setItem(KEY, JSON.stringify(t)); }
 
       function setFromStr(hhSel, mmSel, str){
@@ -1460,7 +2016,9 @@
       function getStr(hhSel, mmSel){ return (hhSel.value||"00")+":"+(mmSel.value||"00"); }
 
       const t0=ensure();
-      setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
+      setFromStr(hhM,mmM,t0.m);
+      setFromStr(hhN,mmN,t0.n);
+      setFromStr(hhE,mmE,t0.e);
 
       function write(){
         save({
@@ -1474,8 +2032,11 @@
     })();
 
     (function(){
-      const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
+      const TABLE = document.getElementById('pl-table');
+      if(!TABLE) return;
+
       const btnProgIntakePL = document.getElementById('btnProgIntakePL');
+
       const KEY='bt_pl_grid_v230';
       const DEF_T1 = ["08:00","08:00","08:00","08:00","08:00","08:00","08:00"];
       const DEF_T2 = ["19:00","19:00","19:00","19:00","19:00","19:00","19:00"];
@@ -1549,7 +2110,8 @@
         const seq=[1,2,3,4,5,6,0];
         for(let row=0; row<state.times.length; row++){
           for(let i=0;i<7;i++){
-            const dow = seq[i], idx=(dow===0?6:dow-1);
+            const dow = seq[i];
+            const idx=(dow===0?6:dow-1);
             const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
             if(!cell) continue;
             cell.textContent = state.times[row][idx];
@@ -1577,6 +2139,7 @@
         const todayIso = TODAY;
         const todayDow = now.getDay();
         if(dow !== todayDow) return 'normal';
+
         const idx = (dow===0?6:dow-1);
         const tStr = state.times[row][idx];
         const planMin = timeStrToMin(tStr);
@@ -1584,12 +2147,8 @@
         const log = loadIntakeLog();
         const has = log.some(e=>e && e.date===todayIso && e.dow===dow && e.row===row);
         if(has) return 'done';
-        if(nowMin >= planMin){
-          return 'overdue';
-        }
-        if(nowMin >= planMin - 30){
-          return 'upcoming';
-        }
+        if(nowMin >= planMin) return 'overdue';
+        if(nowMin >= planMin - 30) return 'upcoming';
         return 'normal';
       }
 
@@ -1698,20 +2257,23 @@
         setTimeout(()=> cells.forEach(el=> el.classList.remove('pl-blink')), 900*3);
       }
       function blinkCell(row,dow){
-        const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
+        const cell=TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
         if(cell) blinkCells([cell]);
       }
       function blinkRow(row){
-        const cells = Array.from(TABLE.querySelectorAll('.pl-time-cell[data-row="'+row+'"]'));
+        const cells=Array.from(TABLE.querySelectorAll('.pl-time-cell[data-row="'+row+'"]'));
         blinkCells(cells);
       }
 
-      refreshDays(); renderTimes(); updateIntakeStates();
+      refreshDays();
+      renderTimes();
+      updateIntakeStates();
 
       TABLE.querySelectorAll('thead .pl-day').forEach(th=>{
         th.addEventListener('click', ()=>{
           state.activeDow = Number(th.getAttribute('data-dow'));
-          save(state); refreshDays();
+          save(state);
+          refreshDays();
         });
       });
 
@@ -1730,43 +2292,56 @@
       const btnIntake    = document.getElementById('btnIntake');
       const btnAudio     = document.getElementById('btnAudio');
 
+      const headerProd = document.getElementById('clkHeaderProd');
+      const headerDay  = document.getElementById('clkHeaderDay');
+      const PROD_NAME = "ProLact Slim+";
+      const DOW_FULL = {
+        1:"Понеделник",
+        2:"Вторник",
+        3:"Сряда",
+        4:"Четвъртък",
+        5:"Петък",
+        6:"Събота",
+        0:"Неделя"
+      };
+
       let selRow=0, selDow=1, activeCell=null;
       let H=8, M=0, focusHM='H';
 
-      let digits = {d1:0,d2:0,d3:0,d4:0};
-      let editPos = 1;
-      let isEditing = false;
+      let digits={d1:0,d2:0,d3:0,d4:0};
+      let editPos=1;
+      let isEditing=false;
 
-      let ampmCycle = 0;
-      let lastDispHour = 12;
+      let ampmCycle=0;
+      let lastDispHour=12;
 
       function normalizeColumnAfterChange(rowIndex, dayIdx, newMinutes){
-        const N = state.times.length;
+        const N=state.times.length;
         if(N<=0) return;
         const MAX=23*60+59;
 
         const col=new Array(N);
         for(let r=0;r<N;r++){
-          const parts = (state.times[r][dayIdx]||"00:00").split(':');
+          const parts=(state.times[r][dayIdx]||"00:00").split(':');
           let h=parseInt(parts[0],10), m=parseInt(parts[1],10);
           if(!Number.isFinite(h)) h=0;
           if(!Number.isFinite(m)) m=0;
           if(h<0) h=0; if(h>23) h=23;
           if(m<0) m=0; if(m>59) m=59;
-          col[r] = h*60+m;
+          col[r]=h*60+m;
         }
 
         let k=rowIndex;
-        let minAllowed = (k>0) ? (col[k-1] + 1) : 0;
-        let maxAllowed = MAX - ((N-1)-k);
+        let minAllowed=(k>0)?(col[k-1]+1):0;
+        let maxAllowed=MAX-((N-1)-k);
 
-        let nm = newMinutes;
+        let nm=newMinutes;
         if(nm<minAllowed) nm=minAllowed;
         if(nm>maxAllowed) nm=maxAllowed;
         col[k]=nm;
 
         for(let r=k+1;r<N;r++){
-          if(col[r] <= col[r-1]) col[r] = col[r-1] + 1;
+          if(col[r]<=col[r-1]) col[r]=col[r-1]+1;
         }
         if(col[N-1]>MAX){
           col[N-1]=MAX;
@@ -1777,85 +2352,89 @@
 
         for(let r=0;r<N;r++){
           const h=Math.floor(col[r]/60), m=col[r]%60;
-          state.times[r][dayIdx] = two(h)+":"+two(m);
+          state.times[r][dayIdx]=two(h)+":"+two(m);
         }
       }
 
       function hour24ToDisp(h24){
-        if(h24===24) return {disp:12, cycle:1};
-        const cycle = (h24>=13)?1:0;
-        const disp = ((h24-1)%12)+1;
-        return {disp, cycle};
+        if(h24===24) return {disp:12,cycle:1};
+        const cycle=(h24>=13)?1:0;
+        const disp=((h24-1)%12)+1;
+        return {disp,cycle};
       }
-      function dispToHour24(disp, cycle){
+      function dispToHour24(disp,cycle){
         if(cycle===0) return disp;
-        return disp===12 ? 24 : (disp+12);
+        return disp===12?24:(disp+12);
       }
 
       function recomputeAmpmFromTime(){
-        ampmCycle = (H>=13 || H===24) ? 1 : 0;
-        const d = hour24ToDisp(H);
-        lastDispHour = d.disp;
+        ampmCycle=(H>=13 || H===24)?1:0;
+        const d=hour24ToDisp(H);
+        lastDispHour=d.disp;
       }
 
       function syncDigitsFromTime(){
-        const hDisp = (H===24 ? 0 : H);
-        const hs = two(hDisp);
-        const ms = two(M);
-        digits.d1 = parseInt(hs[0],10)||0;
-        digits.d2 = parseInt(hs[1],10)||0;
-        digits.d3 = parseInt(ms[0],10)||0;
-        digits.d4 = parseInt(ms[1],10)||0;
+        const hDisp=(H===24?0:H);
+        const hs=two(hDisp);
+        const ms=two(M);
+        digits.d1=parseInt(hs[0],10)||0;
+        digits.d2=parseInt(hs[1],10)||0;
+        digits.d3=parseInt(ms[0],10)||0;
+        digits.d4=parseInt(ms[1],10)||0;
       }
 
       function renderDigits(){
         if(!readBox) return;
-        const map = {1:digits.d1, 2:digits.d2, 3:digits.d3, 4:digits.d4};
-        for(let pos=1; pos<=4; pos++){
-          const span = readBox.querySelector('.clk-digit[data-pos="'+pos+'"]');
+        const map={1:digits.d1,2:digits.d2,3:digits.d3,4:digits.d4};
+        for(let pos=1;pos<=4;pos++){
+          const span=readBox.querySelector('.clk-digit[data-pos="'+pos+'"]');
           if(!span) continue;
-          span.textContent = String(map[pos]);
+          span.textContent=String(map[pos]);
           span.classList.toggle('active', isEditing && pos===editPos);
         }
       }
 
-      function updateRead(){
-        renderDigits();
-      }
+      function updateRead(){ renderDigits(); }
 
       function setHands(){
-        const d = hour24ToDisp(H);
-        const degH = (d.disp%12)*30 + (M/60)*30;
-        const degM = M*6;
-        handH.style.transform = 'translate(-50%,-100%) rotate('+degH+'deg)';
-        handM.style.transform = 'translate(-50%,-100%) rotate('+degM+'deg)';
+        const d=hour24ToDisp(H);
+        const degH=(d.disp%12)*30 + (M/60)*30;
+        const degM=M*6;
+        handH.style.transform='translate(-50%,-100%) rotate('+degH+'deg)';
+        handM.style.transform='translate(-50%,-100%) rotate('+degM+'deg)';
       }
-      function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
+
+      function clear(node){
+        while(node.firstChild) node.removeChild(node.firstChild);
+      }
 
       function buildHours(){
         clear(ringH);
         for(let i=1;i<=12;i++){
           const el=document.createElement('div');
-          el.className='clk-tick hour'+((i===12 || i===3 || i===6 || i===9)?' strong':'');
-          el.dataset.disp = String(i);
-          el.textContent = toRoman(i);
+          el.className='clk-tick hour'+((i===12||i===3||i===6||i===9)?' strong':'');
+          el.dataset.disp=String(i);
+          el.textContent=toRoman(i);
 
-          const ang = (Math.PI*2) * (i%12)/12 - Math.PI/2;
+          const ang=(Math.PI*2)*(i%12)/12 - Math.PI/2;
           const R=76;
           const SIZE=30;
-          const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
-          el.style.width = SIZE+'px';
-          el.style.height = SIZE+'px';
+          const x=Math.cos(ang)*R;
+          const y=Math.sin(ang)*R;
+          el.style.width=SIZE+'px';
+          el.style.height=SIZE+'px';
           el.style.left='calc(50% + '+(x-SIZE/2)+'px)';
-          el.style.top ='calc(50% + '+(y-SIZE/2)+'px)';
+          el.style.top='calc(50% + '+(y-SIZE/2)+'px)';
 
-          const h24 = dispToHour24(i, ampmCycle);
+          const h24=dispToHour24(i,ampmCycle);
           if(h24===H) el.classList.add('sel');
 
           el.addEventListener('click', ()=>{
-            H = dispToHour24(i, ampmCycle);
+            H=dispToHour24(i,ampmCycle);
             recomputeAmpmFromTime();
-            syncDigitsFromTime(); updateRead(); setHands();
+            syncDigitsFromTime();
+            updateRead();
+            setHands();
             buildHours();
             focusHM='H';
           });
@@ -1865,16 +2444,16 @@
       }
 
       function refreshMinuteTicks(){
-        const children = ringM ? Array.from(ringM.children) : [];
+        const children=ringM?Array.from(ringM.children):[];
         children.forEach(el=>{
-          const m = parseInt(el.dataset.min,10);
+          const m=parseInt(el.dataset.min,10);
           if(!Number.isFinite(m)) return;
-          const isMajor = (m % 5 === 0);
+          const isMajor=(m%5===0);
           el.classList.toggle('sel', m===M);
           if(isMajor){
-            el.textContent = (m===0 ? "60" : two(m));
-          } else {
-            el.textContent = '·';
+            el.textContent=(m===0?"60":two(m));
+          }else{
+            el.textContent='·';
           }
         });
       }
@@ -1882,37 +2461,39 @@
       function buildMins(){
         clear(ringM);
         for(let m=0; m<60; m++){
-          const isMajor = (m % 5 === 0);
-          const isQuarter = (m===0 || m===15 || m===30 || m===45);
+          const isMajor=(m%5===0);
+          const isQuarter=(m===0||m===15||m===30||m===45);
 
-          let cls = 'clk-tick';
+          let cls='clk-tick';
           if(isMajor){
-            cls += ' strong';
-            if(isQuarter) cls += ' quarter';
-          } else {
-            cls += ' minor';
+            cls+=' strong';
+            if(isQuarter) cls+=' quarter';
+          }else{
+            cls+=' minor';
           }
 
-          const el = document.createElement('div');
-          el.className = cls;
-          el.dataset.min = String(m);
+          const el=document.createElement('div');
+          el.className=cls;
+          el.dataset.min=String(m);
 
-          el.textContent = isMajor ? (m===0 ? "60" : two(m)) : '·';
+          el.textContent=isMajor ? (m===0?"60":two(m)) : '·';
 
-          const ang = (Math.PI*2) * (m/60) - Math.PI/2;
-          const R = isMajor ? 120 : 108;
-          const size = isMajor ? 20 : 8;
-          const x = Math.cos(ang)*R;
-          const y = Math.sin(ang)*R;
-          el.style.width = size+'px';
-          el.style.height = size+'px';
-          el.style.left = 'calc(50% + '+(x-size/2)+'px)';
-          el.style.top  = 'calc(50% + '+(y-size/2)+'px)';
+          const ang=(Math.PI*2)*(m/60) - Math.PI/2;
+          const R=isMajor?120:108;
+          const size=isMajor?20:8;
+          const x=Math.cos(ang)*R;
+          const y=Math.sin(ang)*R;
+          el.style.width=size+'px';
+          el.style.height=size+'px';
+          el.style.left='calc(50% + '+(x-size/2)+'px)';
+          el.style.top ='calc(50% + '+(y-size/2)+'px)';
 
           el.addEventListener('click', ()=>{
-            M = m;
+            M=m;
             recomputeAmpmFromTime();
-            syncDigitsFromTime(); updateRead(); setHands();
+            syncDigitsFromTime();
+            updateRead();
+            setHands();
             refreshMinuteTicks();
             buildHours();
             focusHM='M';
@@ -1924,15 +2505,15 @@
       }
 
       function commitDigitsToTime(){
-        const hourCandidate = digits.d1*10 + digits.d2;
-        const minCandidate  = digits.d3*10 + digits.d4;
+        const hourCandidate=digits.d1*10 + digits.d2;
+        const minCandidate =digits.d3*10 + digits.d4;
         if(hourCandidate>24 || minCandidate>60) return;
 
-        let newH = (hourCandidate===0?24:hourCandidate);
-        let newM = (minCandidate===60?0:minCandidate);
+        let newH=(hourCandidate===0?24:hourCandidate);
+        let newM=(minCandidate===60?0:minCandidate);
 
-        H = newH;
-        M = newM;
+        H=newH;
+        M=newM;
 
         syncDigitsFromTime();
         recomputeAmpmFromTime();
@@ -1943,18 +2524,18 @@
       }
 
       function validateOnMove(oldPos,newPos){
-        const hourCandidate = digits.d1*10 + digits.d2;
-        const minCandidate  = digits.d3*10 + digits.d4;
-        const invalidHour = hourCandidate>24;
-        const invalidMin  = minCandidate>60;
+        const hourCandidate=digits.d1*10 + digits.d2;
+        const minCandidate =digits.d3*10 + digits.d4;
+        const invalidHour=hourCandidate>24;
+        const invalidMin =minCandidate>60;
 
-        const movingWithinHour = ( (oldPos===1 && newPos===2) || (oldPos===2 && newPos===1) );
-        const leavingHour = (oldPos===1 || oldPos===2) && !(newPos===1 || newPos===2);
+        const movingWithinHour=( (oldPos===1 && newPos===2) || (oldPos===2 && newPos===1) );
+        const leavingHour=(oldPos===1||oldPos===2) && !(newPos===1||newPos===2);
 
         if(movingWithinHour || leavingHour){
           if(!invalidHour && !invalidMin){
             commitDigitsToTime();
-          } else if(invalidHour){
+          }else if(invalidHour){
             const hDisp=(H===24?0:H);
             const hs=two(hDisp);
             digits.d1=parseInt(hs[0],10)||0;
@@ -1962,13 +2543,13 @@
           }
         }
 
-        const movingWithinMin = ( (oldPos===3 && newPos===4) || (oldPos===4 && newPos===3) );
-        const leavingMin = (oldPos===3 || oldPos===4) && !(newPos===3 || newPos===4);
+        const movingWithinMin=( (oldPos===3 && newPos===4) || (oldPos===4 && newPos===3) );
+        const leavingMin=(oldPos===3||oldPos===4) && !(newPos===3||newPos===4);
 
         if(movingWithinMin || leavingMin){
           if(!invalidHour && !invalidMin){
             commitDigitsToTime();
-          } else if(invalidMin){
+          }else if(invalidMin){
             const ms=two(M);
             digits.d3=parseInt(ms[0],10)||0;
             digits.d4=parseInt(ms[1],10)||0;
@@ -1977,27 +2558,22 @@
       }
 
       function setEditPos(newPos){
-        const oldPos = editPos;
-        const clamped = Math.max(1, Math.min(4,newPos));
-        if(oldPos !== clamped){
-          validateOnMove(oldPos, clamped);
+        const oldPos=editPos;
+        const clamped=Math.max(1,Math.min(4,newPos));
+        if(oldPos!==clamped){
+          validateOnMove(oldPos,clamped);
         }
-        editPos = clamped;
+        editPos=clamped;
         renderDigits();
       }
 
       function handleDigitCell(d){
         if(d<0 || d>9) return;
 
-        if(editPos===1){
-          digits.d1 = d;
-        } else if(editPos===2){
-          digits.d2 = d;
-        } else if(editPos===3){
-          digits.d3 = d;
-        } else if(editPos===4){
-          digits.d4 = d;
-        }
+        if(editPos===1) digits.d1=d;
+        else if(editPos===2) digits.d2=d;
+        else if(editPos===3) digits.d3=d;
+        else digits.d4=d;
 
         commitDigitsToTime();
         if(editPos<4) setEditPos(editPos+1);
@@ -2022,41 +2598,38 @@
 
       function handleTimeKey(ev){
         if(!isEditing) return;
+        if(ev.ctrlKey || ev.metaKey) return;
 
-        if(ev.ctrlKey || ev.metaKey){
-          return;
-        }
+        const k=ev.key;
+        if(k==='Tab' || k==='Shift' || k==='Alt' || k.startsWith('F')) return;
 
-        const k = ev.key;
-
-        if(k === 'Tab' || k === 'Shift' || k === 'Alt' || k.startsWith('F')) return;
-
-        if(k === 'ArrowLeft'){
+        if(k==='ArrowLeft'){
           ev.preventDefault();
           setEditPos(editPos-1);
           return;
         }
-        if(k === 'ArrowRight'){
+        if(k==='ArrowRight'){
           ev.preventDefault();
           setEditPos(editPos+1);
           return;
         }
-
-        if(k === 'ArrowUp' || k === 'ArrowDown'){
+        if(k==='ArrowUp' || k==='ArrowDown'){
           ev.preventDefault();
-          const dir = (k === 'ArrowUp') ? 1 : -1;
+          const dir=(k==='ArrowUp')?1:-1;
           if(focusHM==='H'){
-            const prevH = H;
-            if(dir>0){ H = (H===24)?1:(H+1); }
-            else     { H = (H===1)?24:(H-1); }
+            const prevH=H;
+            if(dir>0){ H=(H===24)?1:(H+1); }
+            else     { H=(H===1)?24:(H-1); }
 
             if( (prevH===12 && H===13) || (prevH===13 && H===12) ||
                 (prevH===24 && H===1)  || (prevH===1  && H===24) ){
-              ampmCycle = 1 - ampmCycle;
+              ampmCycle=1-ampmCycle;
             }
-
             recomputeAmpmFromTime();
-            syncDigitsFromTime(); updateRead(); setHands(); buildHours();
+            syncDigitsFromTime();
+            updateRead();
+            setHands();
+            buildHours();
           }else{
             const prev=M;
             if(dir>0){
@@ -2075,30 +2648,32 @@
               }
             }
             recomputeAmpmFromTime();
-            syncDigitsFromTime(); updateRead(); setHands();
-            buildMins(); buildHours();
+            syncDigitsFromTime();
+            updateRead();
+            setHands();
+            buildMins();
+            buildHours();
           }
           return;
         }
 
-        if(k === 'Backspace' || k === 'Delete'){
+        if(k==='Backspace' || k==='Delete'){
           ev.preventDefault();
           handleBackspaceCell();
           return;
         }
 
-        if(k === 'Enter'){
+        if(k==='Enter'){
           ev.preventDefault();
           return;
         }
-
-        if(k === 'Escape'){
+        if(k==='Escape'){
           ev.preventDefault();
           hideClk();
           return;
         }
 
-        if(k >= '0' && k <= '9'){
+        if(k>='0' && k<='9'){
           ev.preventDefault();
           handleDigitCell(parseInt(k,10));
           return;
@@ -2107,7 +2682,7 @@
         ev.preventDefault();
       }
 
-      function ptAngle(cx,cy, x,y){
+      function ptAngle(cx,cy,x,y){
         const dx=x-cx, dy=y-cy;
         let ang=Math.atan2(dy,dx);
         ang+=Math.PI/2;
@@ -2115,42 +2690,45 @@
         return ang;
       }
       function angleToDispHour(ang){
-        let frac = ang/(Math.PI*2);
-        let idx = Math.round(frac*12) % 12;
-        let disp = idx===0 ? 12 : idx;
+        let frac=ang/(Math.PI*2);
+        let idx=Math.round(frac*12)%12;
+        let disp=idx===0?12:idx;
         return disp;
       }
 
       let dragging=null;
-
       function setFromAngleHours(ang){
-        const disp = angleToDispHour(ang);
-        const prev = lastDispHour;
+        const disp=angleToDispHour(ang);
+        const prev=lastDispHour;
         if(disp!==prev){
           if( (prev===12 && disp===1) || (prev===1 && disp===12) ){
-            ampmCycle = 1 - ampmCycle;
+            ampmCycle=1-ampmCycle;
           }
-          lastDispHour = disp;
+          lastDispHour=disp;
         }
-        H = dispToHour24(disp, ampmCycle);
+        H=dispToHour24(disp,ampmCycle);
         recomputeAmpmFromTime();
-        syncDigitsFromTime(); updateRead(); setHands();
+        syncDigitsFromTime();
+        updateRead();
+        setHands();
         buildHours();
         focusHM='H';
       }
-
       function setFromAngleMins(ang){
-        let v=Math.round((ang/(Math.PI*2))*60)%60; if(v<0) v+=60;
-        const prev = M;
+        let v=Math.round((ang/(Math.PI*2))*60)%60;
+        if(v<0) v+=60;
+        const prev=M;
         if(prev===59 && v===0){
-          H = (H===24) ? 1 : (H+1);
-        } else if(prev===0 && v===59){
-          H = (H===1) ? 24 : (H-1);
+          H=(H===24)?1:(H+1);
+        }else if(prev===0 && v===59){
+          H=(H===1)?24:(H-1);
         }
         M=v;
         recomputeAmpmFromTime();
-        syncDigitsFromTime(); updateRead(); setHands();
-        refreshMinuteTicks();
+        syncDigitsFromTime();
+        updateRead();
+        setHands();
+        buildMins();
         buildHours();
         focusHM='M';
       }
@@ -2158,27 +2736,41 @@
       function handleMove(e){
         if(!dragging) return;
         const rect=face.getBoundingClientRect();
-        const cx=rect.left+rect.width/2, cy=rect.top+rect.height/2;
-        const pt = e.touches? e.touches[0] : e;
+        const cx=rect.left+rect.width/2;
+        const cy=rect.top+rect.height/2;
+        const pt=e.touches?e.touches[0]:e;
         const ang=ptAngle(cx,cy,pt.clientX,pt.clientY);
         if(dragging==='H') setFromAngleHours(ang);
         else setFromAngleMins(ang);
       }
-      function startDrag(which, e){ dragging=which; handleMove(e); }
+      function startDrag(which,e){
+        dragging=which;
+        handleMove(e);
+      }
       function endDrag(){ dragging=null; }
 
-      ringH.addEventListener('pointerdown', (e)=>{ e.preventDefault(); startDrag('H',e); });
-      ringM.addEventListener('pointerdown', (e)=>{ e.preventDefault(); startDrag('M',e); });
-      window.addEventListener('pointermove', handleMove, {passive:false});
-      window.addEventListener('pointerup', endDrag);
+      ringH.addEventListener('pointerdown',(e)=>{
+        e.preventDefault();
+        startDrag('H',e);
+      });
+      ringM.addEventListener('pointerdown',(e)=>{
+        e.preventDefault();
+        startDrag('M',e);
+      });
+      window.addEventListener('pointermove',handleMove,{passive:false});
+      window.addEventListener('pointerup',endDrag);
 
-      ringH.addEventListener('touchstart', (e)=>{ startDrag('H',e); }, {passive:false});
-      ringM.addEventListener('touchstart', (e)=>{ startDrag('M',e); }, {passive:false});
-      window.addEventListener('touchmove', handleMove, {passive:false});
-      window.addEventListener('touchend', endDrag);
+      ringH.addEventListener('touchstart',(e)=>{
+        startDrag('H',e);
+      },{passive:false});
+      ringM.addEventListener('touchstart',(e)=>{
+        startDrag('M',e);
+      },{passive:false});
+      window.addEventListener('touchmove',handleMove,{passive:false});
+      window.addEventListener('touchend',endDrag);
 
       function startEditing(pos){
-        isEditing = true;
+        isEditing=true;
         if(readBox) readBox.classList.add('editing');
         if(typeof pos==="number") setEditPos(pos);
         else renderDigits();
@@ -2189,8 +2781,8 @@
       }
       function stopEditing(){
         if(isEditing){
-          const hourCandidate = digits.d1*10 + digits.d2;
-          const minCandidate  = digits.d3*10 + digits.d4;
+          const hourCandidate=digits.d1*10 + digits.d2;
+          const minCandidate =digits.d3*10 + digits.d4;
           if(hourCandidate<=24 && minCandidate<=60){
             commitDigitsToTime();
           }else{
@@ -2198,7 +2790,7 @@
             updateRead();
           }
         }
-        isEditing = false;
+        isEditing=false;
         if(readBox) readBox.classList.remove('editing');
         renderDigits();
         if(keyInput){
@@ -2209,42 +2801,42 @@
 
       function handleReadClick(ev){
         if(!readBox) return;
-        const digitSpan = ev.target.closest('.clk-digit');
-        const pos = digitSpan ? (Number(digitSpan.getAttribute('data-pos'))||editPos) : editPos;
+        const digitSpan=ev.target.closest('.clk-digit');
+        const pos=digitSpan ? (Number(digitSpan.getAttribute('data-pos'))||editPos) : editPos;
         if(!isEditing){
           startEditing(pos);
         }else{
           setEditPos(pos);
-          if(keyInput){ keyInput.focus(); }
+          if(keyInput) keyInput.focus();
         }
       }
 
       if(readBox){
-        readBox.addEventListener('click', handleReadClick);
-        readBox.addEventListener('paste', (e)=>{
+        readBox.addEventListener('click',handleReadClick);
+        readBox.addEventListener('paste',(e)=>{
           if(!isEditing) return;
-          const txt = (e.clipboardData && e.clipboardData.getData('text')) || "";
+          const txt=(e.clipboardData && e.clipboardData.getData('text'))||"";
           if(!txt) return;
           e.preventDefault();
-          const nums = txt.replace(/\D+/g,"");
+          const nums=txt.replace(/\D+/g,"");
           for(const ch of nums){
-            const d = ch.charCodeAt(0)-48;
+            const d=ch.charCodeAt(0)-48;
             if(d>=0 && d<=9) handleDigitCell(d);
           }
         });
       }
       if(keyInput){
-        keyInput.addEventListener('keydown', handleTimeKey);
-        keyInput.addEventListener('input', ()=>{
+        keyInput.addEventListener('keydown',handleTimeKey);
+        keyInput.addEventListener('input',()=>{
           if(!isEditing){
             keyInput.value="";
             return;
           }
-          const txt = keyInput.value || "";
+          const txt=keyInput.value||"";
           keyInput.value="";
-          const nums = txt.replace(/\D+/g,"");
+          const nums=txt.replace(/\D+/g,"");
           for(const ch of nums){
-            const d = ch.charCodeAt(0)-48;
+            const d=ch.charCodeAt(0)-48;
             if(d>=0 && d<=9) handleDigitCell(d);
           }
         });
@@ -2253,61 +2845,69 @@
       document.addEventListener('click',(e)=>{
         if(!isEditing) return;
         if(readBox && readBox.contains(e.target)) return;
-        if(e.target === keyInput) return;
+        if(e.target===keyInput) return;
         stopEditing();
       });
 
       TABLE.querySelectorAll('.pl-time-cell').forEach(td=>{
-        td.addEventListener('click', ()=>{
-          const row = Number(td.getAttribute('data-row'));
-          const dow = Number(td.getAttribute('data-dow'));
-          showClk(row, dow, td.textContent.trim(), td);
+        td.addEventListener('click',()=>{
+          const row=Number(td.getAttribute('data-row'));
+          const dow=Number(td.getAttribute('data-dow'));
+          showClk(row,dow,td.textContent.trim(),td);
         });
       });
 
       function updateIntakeButtonForCurrent(){
         if(!btnIntake) return;
         btnIntake.classList.remove('upcoming','overdue','done','solid');
-        const st = getIntakeStateForSlot(selRow, selDow);
+        const st=getIntakeStateForSlot(selRow,selDow);
         if(st==='upcoming') btnIntake.classList.add('upcoming');
         else if(st==='overdue') btnIntake.classList.add('overdue');
-        else if(st==='done'){ btnIntake.classList.add('done'); }
+        else if(st==='done') btnIntake.classList.add('done');
       }
 
       function updateAudioButtonForCurrent(){
         if(!btnAudio) return;
         btnAudio.classList.remove('on','off');
-        const idx = (selDow===0?6:selDow-1);
-        const f = (state.flag[selRow] && state.flag[selRow][idx])|0;
+        const idx=(selDow===0?6:selDow-1);
+        const f=(state.flag[selRow] && state.flag[selRow][idx])|0;
         if(f===2) btnAudio.classList.add('off');
         else      btnAudio.classList.add('on');
       }
 
-      function showClk(row,dow,initial, cell){
+      function showClk(row,dow,initial,cell){
         if(activeCell) activeCell.classList.remove('sel');
-        activeCell = cell; if(activeCell) activeCell.classList.add('sel');
+        activeCell=cell;
+        if(activeCell) activeCell.classList.add('sel');
 
-        selRow=row; selDow=dow;
-        state.activeDow = dow; save(state); refreshDays();
+        selRow=row;
+        selDow=dow;
+        state.activeDow=dow;
+        save(state);
+        refreshDays();
 
-        const idx = (dow===0?6:dow-1);
-        const parts = (initial||state.times[row][idx]).split(':');
-        const h = parseInt(parts[0],10);
-        const m = parseInt(parts[1],10);
+        if(headerProd) headerProd.textContent=PROD_NAME;
+        if(headerDay) headerDay.textContent=DOW_FULL[dow] || "";
 
-        let hh = isFinite(h) ? h : 8;
-        if (hh === 0) hh = 24;
-        H = hh;
-        M = isFinite(m) ? m : 0;
+        const idx=(dow===0?6:dow-1);
+        const parts=(initial || state.times[row][idx]).split(':');
+        const h=parseInt(parts[0],10);
+        const m=parseInt(parts[1],10);
+
+        let hh=isFinite(h)?h:8;
+        if(hh===0) hh=24;
+        H=hh;
+        M=isFinite(m)?m:0;
         focusHM='H';
 
         recomputeAmpmFromTime();
         syncDigitsFromTime();
-        editPos = 1;
+        editPos=1;
         stopEditing();
         updateRead();
         setHands();
-        buildHours(); buildMins();
+        buildHours();
+        buildMins();
 
         updateIntakeButtonForCurrent();
         updateAudioButtonForCurrent();
@@ -2317,19 +2917,21 @@
         document.body.style.overflow='hidden';
       }
 
-      Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
+      Modal.addEventListener('click',(e)=>{
+        if(e.target===Modal) hideClk();
+      });
 
       function applyTimeForCurrentCell(normalizeAllDays){
-        const idx = (selDow===0?6:selDow-1);
-        const hSave = (H === 24 ? 0 : H);
-        const newMinutes = hSave*60 + M;
+        const idx=(selDow===0?6:selDow-1);
+        const hSave=(H===24?0:H);
+        const newMinutes=hSave*60 + M;
 
         if(normalizeAllDays){
           for(let d=0; d<7; d++){
-            normalizeColumnAfterChange(selRow, d, newMinutes);
+            normalizeColumnAfterChange(selRow,d,newMinutes);
           }
         }else{
-          normalizeColumnAfterChange(selRow, idx, newMinutes);
+          normalizeColumnAfterChange(selRow,idx,newMinutes);
         }
       }
 
@@ -2338,7 +2940,7 @@
         save(state);
         renderTimes();
         updateIntakeStates();
-        blinkCell(selRow, selDow);
+        blinkCell(selRow,selDow);
         hideClk();
       }
 
@@ -2352,57 +2954,55 @@
       }
 
       function handleAudioToggle(){
-        const idx = (selDow===0?6:selDow-1);
+        const idx=(selDow===0?6:selDow-1);
         applyTimeForCurrentCell(false);
 
-        const cur = (state.flag[selRow] && state.flag[selRow][idx])|0;
-        const next = (cur===2 ? 0 : 2);
-        state.flag[selRow][idx] = next;
+        const cur=(state.flag[selRow] && state.flag[selRow][idx])|0;
+        const next=(cur===2?0:2);
+        state.flag[selRow][idx]=next;
 
         save(state);
         renderTimes();
         updateIntakeStates();
         updateAudioButtonForCurrent();
-        blinkCell(selRow, selDow);
+        blinkCell(selRow,selDow);
         hideClk();
       }
 
       function handleIntake(){
-        const nowDone = toggleIntakeAt(selRow, selDow);
+        const nowDone=toggleIntakeAt(selRow,selDow);
         updateIntakeStates();
         updateIntakeButtonForCurrent();
         updateProgIntakeButton();
-        if(nowDone){
-          blinkCell(selRow, selDow);
-        }
+        if(nowDone) blinkCell(selRow,selDow);
       }
 
-      btnSaveOne.addEventListener('click', handleSaveOne);
-      btnSaveAll.addEventListener('click', handleSaveAllDays);
-      btnAudio.addEventListener('click', handleAudioToggle);
-      btnIntake.addEventListener('click', handleIntake);
+      btnSaveOne.addEventListener('click',handleSaveOne);
+      btnSaveAll.addEventListener('click',handleSaveAllDays);
+      btnAudio.addEventListener('click',handleAudioToggle);
+      btnIntake.addEventListener('click',handleIntake);
 
       if(btnProgIntakePL){
-        btnProgIntakePL.addEventListener('click', ()=>{
-          const row = Number(btnProgIntakePL.dataset.row);
-          const dow = Number(btnProgIntakePL.dataset.dow);
+        btnProgIntakePL.addEventListener('click',()=>{
+          const row=Number(btnProgIntakePL.dataset.row);
+          const dow=Number(btnProgIntakePL.dataset.dow);
           if(!Number.isFinite(row) || !Number.isFinite(dow)) return;
-          const nowDone = toggleIntakeAt(row, dow);
+          const nowDone=toggleIntakeAt(row,dow);
           updateIntakeStates();
           updateProgIntakeButton();
-          if(nowDone){
-            blinkCell(row, dow);
-          }
+          if(nowDone) blinkCell(row,dow);
         });
       }
 
       (function markDays(){
-        state.todayDow = (new Date()).getDay();
-        if(typeof state.activeDow!=="number") state.activeDow = state.todayDow;
-        save(state); refreshDays(); updateIntakeStates();
+        state.todayDow=(new Date()).getDay();
+        if(typeof state.activeDow!=="number") state.activeDow=state.todayDow;
+        save(state);
+        refreshDays();
+        updateIntakeStates();
       })();
 
-      setInterval(updateIntakeStates, 60000);
+      setInterval(updateIntakeStates,60000);
     })();
   </script>
 </body>
