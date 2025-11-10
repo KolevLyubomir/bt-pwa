@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.8</title>
+  <title>БТ App 3 — v2.1.9</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -900,7 +900,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.8</span>
+        <span class="badge">v2.1.9</span>
       </div>
     </div>
   </div>
@@ -1047,7 +1047,7 @@
               <span class="clk-btn-icon">
                 <svg viewBox="0 0 24 24" fill="none">
                   <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                  <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                  <path class="pill-clock-hands" d="M9 6.5v3л2 1.5"></path>
                   <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
                   <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
                 </svg>
@@ -1600,12 +1600,12 @@
                 '<button class="icon" title="Редакция" data-edit="'+r.date+'" aria-label="Редакция" type="button">'+
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+
                   '<path d="M3 21l3-1 11-11-2-2L4 18z"></path>'+
-                  '<path d="M14 5l5 5"></path>'+
+                  '<path d="M14 5л5 5"></path>'+
                   '</svg>'+
                 '</button>'+
                 '<button class="icon danger" title="Изтрий" data-del="'+r.date+'" aria-label="Изтрий" type="button">'+
                   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">'+
-                  '<path d="M3 6h18M8 6V4h8v2M7 6l1 14h8l1-14"></path>'+
+                  '<path d="M3 6h18M8 6V4h8v2M7 6l1 14h8л1-14"></path>'+
                   '</svg>'+
                 '</button>'+
               '</div>'+
@@ -1685,7 +1685,7 @@
         var dpr=window.devicePixelRatio||1;
         chart.width=Math.round(rect.width*dpr);
         chart.height=Math.round(360*dpr);
-        ctx.setTransform(dpr,0,0,dpr,0);
+        ctx.setTransform(dpr,0,0,dpr,0,0);   /* ← тук е поправката */
         var w=rect.width, h=360;
         ctx.clearRect(0,0,w,h);
 
@@ -2238,7 +2238,7 @@
           const row = Number(cell.getAttribute('data-row'));
           const dow = Number(cell.getAttribute('data-dow'));
           const idx=(dow===0?6:dow-1);
-          const f = (state.flag[row] && state.flag[row][idx])|0;
+          const f=(state.flag[row] && state.flag[row][idx])|0;
           if(f===2) return;
           if(dow!==todayDow) return;
           const st = getIntakeStateForSlot(row,dow);
