@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.10</title>
+  <title>БТ App 3 — v2.1.11</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -171,8 +171,7 @@
     .prog-cap{ font-weight:700; font-size:13px; }
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
-    /* Десният бутон до ProLact – по-малък и с по-малко празно място;
-       когато е жълт/оранжев – още ~20% по-малък */
+    /* Десният бутон до ProLact – размер ОК, иконата ~30% по-голяма */
     .prog-intake-btn{
       flex:0 0 auto;
       padding:0;
@@ -181,8 +180,8 @@
       padding:0;
     }
     .prog-intake-btn .clk-btn-icon svg{
-      width:26px;
-      height:26px;
+      width:32px;
+      height:32px;
     }
     .prog-intake-btn.upcoming,
     .prog-intake-btn.overdue{
@@ -191,8 +190,8 @@
     }
     .prog-intake-btn.upcoming .clk-btn-icon svg,
     .prog-intake-btn.overdue .clk-btn-icon svg{
-      width:22px;
-      height:22px;
+      width:28px;
+      height:28px;
     }
 
     .time-wrap{ display:flex; align-items:center; gap:6px }
@@ -466,18 +465,15 @@
       height:34px;
     }
 
-    /* В модала – бутонът за Прием по-компактен, иконата по-голяма */
+    /* В модала – Прием и Аудио: еднакъв бутон, по-големи икони */
     #clk .clk-btn.big{
       width:44px;
       height:44px;
     }
-    #clk #btnIntake .clk-btn-icon svg{
-      width:34px;
-      height:34px;
-    }
+    #clk #btnIntake .clk-btn-icon svg,
     #clk #btnAudio .clk-btn-icon svg{
-      width:32px;
-      height:32px;
+      width:38px;
+      height:38px;
     }
 
     .clk-btn:active{
@@ -601,7 +597,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.10</span>
+        <span class="badge">v2.1.11</span>
       </div>
     </div>
   </div>
@@ -2324,14 +2320,6 @@
         if(readBox && readBox.contains(e.target)) return;
         if(e.target === keyInput) return;
         stopEditing();
-      });
-
-      TABLE.querySelectorAll('pl-time-cell').forEach(td=>{
-        td.addEventListener('click', ()=>{
-          const row = Number(td.getAttribute('data-row'));
-          const dow = Number(td.getAttribute('data-dow'));
-          showClk(row, dow, td.textContent.trim(), td);
-        });
       });
 
       TABLE.querySelectorAll('.pl-time-cell').forEach(td=>{
