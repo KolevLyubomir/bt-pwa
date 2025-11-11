@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.8</title>
+  <title>БТ App 3 — v2.1.9</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -171,20 +171,20 @@
     .prog-cap{ font-weight:700; font-size:13px; }
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
+    /* Десният бутон до ProLact – 20% по-малък, иконата относително по-голяма */
     .prog-intake-btn{
       flex:0 0 auto;
-      width:52px;
-      height:52px;
+      width:42px;
+      height:42px;
     }
     .prog-intake-btn .clk-btn-icon svg{
-      width:40px;
-      height:40px;
+      width:38px;
+      height:38px;
     }
 
     .time-wrap{ display:flex; align-items:center; gap:6px }
     .time-row{ display:flex; align-items:center; gap:4px }
     .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
-    .time-row .colon{ opacity:.8; user-select:none; }
     select option.strong { font-weight:700; }
 
     .pl-wrap{ overflow-x:hidden }
@@ -217,9 +217,7 @@
       cursor:pointer; user-select:none; font-weight:800; position:relative;
       background:transparent;
     }
-    .pl-time-cell.active-day{
-      /* без допълнителна рамка за активна колона — само статусите я променят */
-    }
+    
     .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
     .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
     .pl-time-cell.int-upcoming{ background:#3d3310; border-color:#6b5314 }
@@ -265,11 +263,19 @@
       position:relative;
     }
 
+    /* Заглавие в модала: продукт по-голям, ден отдолу */
     .clk-header{
       margin-bottom:6px;
       padding:0 2px 4px;
+      text-align:center;
     }
-    .clk-meta{
+    .clk-product-title{
+      font-size:13px;
+      font-weight:700;
+      text-transform:none;
+      margin-bottom:2px;
+    }
+    .clk-day{
       font-size:11px;
       opacity:0.8;
       text-transform:lowercase;
@@ -411,7 +417,7 @@
     }
 
     .clk-actions{
-      margin-top:12px;
+      margin-top:8px; /* беше 12px – леко по-нагоре към часовника */
     }
     .clk-actions-row{
       display:flex;
@@ -447,6 +453,25 @@
       width:34px;
       height:34px;
     }
+
+    /* В модала – Прием и Аудио ~10% по-малки, иконата по-голяма */
+    #clk .clk-btn.big{
+      width:47px;
+      height:47px;
+    }
+    #clk #btnIntake .clk-btn-icon svg,
+    #clk #btnAudio .clk-btn-icon svg{
+      width:32px;
+      height:32px;
+    }
+
+    /* Запазване и Запазване за ред – ~20% по-малки */
+    #clk #btnSaveOne,
+    #clk #btnSaveAllDays{
+      width:27px;
+      height:27px;
+    }
+
     .clk-btn:active{
       transform:scale(.96);
     }
@@ -568,7 +593,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.8</span>
+        <span class="badge">v2.1.9</span>
       </div>
     </div>
   </div>
@@ -855,11 +880,8 @@
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
 
       <div class="clk-header">
-        <div class="clk-meta">
-          <span id="clk-product"></span>
-          &nbsp;&middot;&nbsp;
-          <span id="clk-weekday"></span>
-        </div>
+        <div id="clk-product" class="clk-product-title"></div>
+        <div id="clk-weekday" class="clk-day"></div>
       </div>
 
       <div class="clk-face" id="clkFace">
@@ -2336,7 +2358,7 @@
             var capEl = pkg.querySelector('.prog-head-main .prog-cap');
             if(capEl && capEl.textContent){ prod = capEl.textContent; }
           }
-          clkProductEl.textContent = prod.toLowerCase();
+          clkProductEl.textContent = prod;
         }
         if(clkWeekdayEl){
           var names = ['неделя','понеделник','вторник','сряда','четвъртък','петък','събота'];
