@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v2.1.9</title>
+  <title>БТ App 3 — v2.1.10</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -171,15 +171,28 @@
     .prog-cap{ font-weight:700; font-size:13px; }
     .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
-    /* Десният бутон до ProLact – 20% по-малък, иконата относително по-голяма */
+    /* Десният бутон до ProLact – по-малък и с по-малко празно място;
+       когато е жълт/оранжев – още ~20% по-малък */
     .prog-intake-btn{
       flex:0 0 auto;
-      width:42px;
-      height:42px;
+      padding:0;
+    }
+    .prog-intake-btn .clk-btn-icon{
+      padding:0;
     }
     .prog-intake-btn .clk-btn-icon svg{
-      width:38px;
-      height:38px;
+      width:26px;
+      height:26px;
+    }
+    .prog-intake-btn.upcoming,
+    .prog-intake-btn.overdue{
+      width:28px;
+      height:28px;
+    }
+    .prog-intake-btn.upcoming .clk-btn-icon svg,
+    .prog-intake-btn.overdue .clk-btn-icon svg{
+      width:22px;
+      height:22px;
     }
 
     .time-wrap{ display:flex; align-items:center; gap:6px }
@@ -217,7 +230,6 @@
       cursor:pointer; user-select:none; font-weight:800; position:relative;
       background:transparent;
     }
-    
     .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
     .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
     .pl-time-cell.int-upcoming{ background:#3d3310; border-color:#6b5314 }
@@ -417,7 +429,7 @@
     }
 
     .clk-actions{
-      margin-top:8px; /* беше 12px – леко по-нагоре към часовника */
+      margin-top:8px;
     }
     .clk-actions-row{
       display:flex;
@@ -454,22 +466,18 @@
       height:34px;
     }
 
-    /* В модала – Прием и Аудио ~10% по-малки, иконата по-голяма */
+    /* В модала – бутонът за Прием по-компактен, иконата по-голяма */
     #clk .clk-btn.big{
-      width:47px;
-      height:47px;
+      width:44px;
+      height:44px;
     }
-    #clk #btnIntake .clk-btn-icon svg,
+    #clk #btnIntake .clk-btn-icon svg{
+      width:34px;
+      height:34px;
+    }
     #clk #btnAudio .clk-btn-icon svg{
       width:32px;
       height:32px;
-    }
-
-    /* Запазване и Запазване за ред – ~20% по-малки */
-    #clk #btnSaveOne,
-    #clk #btnSaveAllDays{
-      width:27px;
-      height:27px;
     }
 
     .clk-btn:active{
@@ -593,7 +601,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v2.1.9</span>
+        <span class="badge">v2.1.10</span>
       </div>
     </div>
   </div>
@@ -726,7 +734,7 @@
               <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
               <span class="prog-cap">ProLact Slim+</span>
             </div>
-            <button id="btnProgIntakePL" class="clk-btn intake big prog-intake-btn" type="button"
+            <button id="btnProgIntakePL" class="clk-btn intake prog-intake-btn" type="button"
                     title="Прием ProLact Slim+" style="display:none">
               <span class="clk-btn-icon">
                 <svg viewBox="0 0 24 24" fill="none">
@@ -2316,6 +2324,14 @@
         if(readBox && readBox.contains(e.target)) return;
         if(e.target === keyInput) return;
         stopEditing();
+      });
+
+      TABLE.querySelectorAll('pl-time-cell').forEach(td=>{
+        td.addEventListener('click', ()=>{
+          const row = Number(td.getAttribute('data-row'));
+          const dow = Number(td.getAttribute('data-dow'));
+          showClk(row, dow, td.textContent.trim(), td);
+        });
       });
 
       TABLE.querySelectorAll('.pl-time-cell').forEach(td=>{
