@@ -16,9 +16,11 @@
       --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
       --accent:#22c55e; --border:#1e2b30; --warn:#f59e0b; --over:#facc15;
       --ok:#22c55e; --neutral:#0d171b;
-      --sel-outline:#2f4b52;
+      --sel-outline:#2f4b52; --sel-orange:#f59e0b;
       --maxw:980px;
       --pl-font:12px; --pl-pad:3px; --pl-minw:46px;
+      --pill-w:210px;
+      --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2a4148;
     }
 
     *{ box-sizing:border-box }
@@ -27,30 +29,46 @@
       margin:0; background:var(--bg); color:var(--text);
       font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif
     }
+    a{ color:#8dd3ff; text-decoration:none }
+    a:hover{ text-decoration:underline }
 
     .wrap{ max-width:var(--maxw); margin:16px auto; padding:0 16px; display:grid; gap:16px }
-
     .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px }
     h2{ margin:0 0 10px; font-size:18px }
+
     .prog-prod + .prog-prod{ margin-top:14px; padding-top:14px; border-top:1px solid var(--border) }
 
     /* глава на продукт */
     .prog-head{ display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:8px }
     .prog-head-main{ display:flex; align-items:center; gap:10px; min-width:0 }
-    .prod-img{ width:64px; height:64px; object-fit:contain; border-radius:10px; background:#0d171b; border:1px solid #254046 }
-    .prog-cap{ font-weight:800; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
+    .prog-pill{
+      display:flex; flex-direction:column; gap:6px;
+      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
+      width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
+    }
+    .prog-pill label{ display:flex; align-items:center; gap:6px; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+    .prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
+    .prog-cap{ font-weight:700; font-size:13px; }
+    .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
-    /* бутон за „Прием“ вдясно (на реда на продукта) */
+    /* десен бутон „Прием“ */
     .prog-intake-btn{
-      border-radius:999px; border:1px solid #24343a; background:var(--neutral); color:var(--text);
-      width:34px; height:34px; display:flex; align-items:center; justify-content:center;
-      transition:transform .04s ease; padding:0;
+      flex:0 0 auto;
+      width:52px;
+      height:52px;
+      border-radius:999px;
+      border:1px solid #24343a;
+      background:var(--neutral);
+      color:var(--text);
+      display:flex; align-items:center; justify-content:center;
+      padding:0;
+      transition:transform .04s ease;
     }
     .prog-intake-btn:active{ transform:scale(.96) }
     .prog-intake-btn .clk-btn-icon svg{
-      width:34px; height:34px; /* базова иконка */
-      transform:scale(1.7); /* +~20% спрямо преди (1.4 → 1.7) */
-      transform-origin:50% 50%;
+      width:48px;
+      height:48px;
     }
     .prog-intake-btn.upcoming{ background:var(--warn); border-color:var(--warn); color:#041306 }
     .prog-intake-btn.overdue{
@@ -64,19 +82,12 @@
       50%{ box-shadow:0 0 0 3px rgba(250,204,21,.9); }
     }
 
-    /* кутии за часовете (Omni/Chitosan) */
-    .prog-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap }
-    .prog-pill{
-      display:flex; flex-direction:column; gap:6px;
-      padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-      min-width:156px;
-    }
     .time-wrap{ display:flex; align-items:center; gap:6px }
     .time-row{ display:flex; align-items:center; gap:4px }
-    .time-row select{ min-width:54px; height:36px; padding:6px 8px; font-size:14px; background:#0d171b; color:var(--text); border:1px solid #254046; border-radius:8px }
-    select option.strong{ font-weight:700 }
+    .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
+    .time-row .colon{ opacity:.8; user-select:none; }
+    select option.strong { font-weight:700; }
 
-    /* Таблица ProLact – два реда (08:00 / 19:00) */
     .pl-wrap{ overflow-x:hidden }
     .pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
     .pl-table th, .pl-table td{
@@ -86,27 +97,48 @@
       transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
       background:transparent; color:var(--text);
     }
-    .pl-day{ cursor:pointer; user-select:none; font-weight:800 }
-    .pl-day.weekend{ color:#f97373; background:transparent } /* уикенд без фон, светло червени букви */
-    .pl-day.today{ border-color:var(--warn); border-style:solid } /* винаги видим бордер за текущия ден */
+    .pl-day{
+      cursor:pointer;
+      user-select:none;
+      font-weight:800;
+    }
+    .pl-day.weekend{
+      color:#fca5a5;
+      background:transparent;
+    }
+    .pl-day.today{
+      border-color:var(--sel-orange);
+      border-style:solid;
+      border-width:2px;
+    }
+    .pl-day.active:not(.today){
+      border-color:var(--sel-orange);
+      border-style:dashed;
+    }
 
-    .pl-time-cell{ cursor:pointer; user-select:none; font-weight:800; position:relative; background:transparent }
-    .pl-time-cell.active-day{ box-shadow:0 0 0 1px var(--sel-outline) inset } /* сив контур, не изчезва */
-
-    /* състояния на слот за прием */
+    .pl-time-cell{
+      cursor:pointer; user-select:none; font-weight:800; position:relative;
+      background:transparent;
+    }
+    .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
+    .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
     .pl-time-cell.int-upcoming{ background:#3d3310; border-color:#6b5314 }
+    .pl-time-cell.int-done{
+      background:#15803d;
+      border-color:#22c55e;
+    }
     .pl-time-cell.int-overdue{
-      background:#3d3310; border-color:#facc15;
+      background:#3d3310;
+      border-color:#facc15;
       animation:plOverdueBlink 1s ease-in-out infinite;
     }
-    .pl-time-cell.int-done{ background:#15803d; border-color:#22c55e }
 
     @keyframes plOverdueBlink{
       0%,100%{ box-shadow:0 0 0 0 rgba(250,204,21,0) }
       50%{ box-shadow:0 0 0 2px rgba(250,204,21,.9) }
     }
 
-    /* Модал: часовник с ролери */
+    /* Модал часовник */
     .clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100 }
     .clk.show{ display:flex; align-items:center; justify-content:center }
     .clk-card{
@@ -164,37 +196,41 @@
       width:44px; height:44px; display:flex; align-items:center; justify-content:center;
       transition:background .12s,border-color .12s,transform .04s; -webkit-tap-highlight-color:transparent;
     }
+    .clk-btn.big{
+      width:72px;
+      height:72px;
+    }
+    .clk-btn.big .clk-btn-icon svg{
+      width:53px;
+      height:53px;
+    }
     .clk-btn:active{ transform:scale(.96) }
-    .clk-btn.primary{ background:var(--ok); border-color:var(--ok); color:#06241b }
+    .clk-btn.primary{ background:#22c55e; border-color:#22c55e; color:#06241b }
     .clk-btn.audio{ background:#0d171b; border-color:#24343a; color:var(--text) }
     .clk-btn.audio.on{ background:#3b1113; border-color:#6b1414; color:#ffe0e0 }
     .clk-btn.audio.off{ background:var(--ok); border-color:var(--ok); color:#06241b }
     .clk-btn.empty{ visibility:hidden; pointer-events:none }
 
-    /* иконки в модала */
     .clk-btn-icon{ display:inline-flex; align-items:center; justify-content:center }
-    .clk-btn-icon svg{ width:38px; height:38px } /* Intake/Audio еднакви визуално големи */
-
-    .clk-btn.intake .clk-btn-icon svg{
-      transform:scale(1.7); /* +~20% */
-      transform-origin:50% 50%;
+    .clk-btn-icon svg{
+      width:40px;
+      height:40px;
+      stroke:currentColor;
+      stroke-width:2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
     }
-
-    .clk-btn.intake.upcoming{ background:var(--warn); border-color:var(--warn); color:#041306 }
-    .clk-btn.intake.overdue{ background:var(--over); border-color:var(--over); color:#3b1f00; animation:intakeBlink 1s ease-in-out infinite }
-    .clk-btn.intake.done{ background:var(--ok); border-color:var(--ok); color:#06241b }
-
-    .clk-btn.audio svg .icon-sound{ display:none }
-    .clk-btn.audio svg .icon-mute{ display:block }
-    .clk-btn.audio.off svg .icon-sound{ display:block }
-    .clk-btn.audio.off svg .icon-mute{ display:none }
-
-    @media (max-width:380px){
-      .clk-card{ width:306px }
-      .clk-face{ width:272px; height:272px }
-      .clk-ring.hours{ width:180px; height:180px }
-      .clk-ring.mins{ width:248px; height:248px }
-      .clk-hand.hour{ height:64px } .clk-hand.min{ height:90px }
+    .clk-btn.intake svg .pill-clock-circle,
+    .clk-btn.intake svg .pill-clock-pill{
+      fill:none;
+      stroke:currentColor;
+      stroke-width:1.8;
+    }
+    .clk-btn.intake svg .pill-clock-hands{
+      stroke:currentColor;
+      stroke-width:2;
+      stroke-linecap:round;
+      stroke-linejoin:round;
     }
   </style>
 </head>
@@ -211,14 +247,17 @@
             <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
             <span class="prog-cap">ProLact Slim+</span>
           </div>
-          <button id="btnProgIntakePL" class="prog-intake-btn" title="Прием ProLact Slim+" style="display:none">
+          <button id="btnProgIntakePL" class="clk-btn intake big prog-intake-btn" type="button"
+                  title="Прием ProLact Slim+" style="display:none">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <g transform="translate(0,3)">
-                  <circle cx="9" cy="9" r="5.25"></circle>
-                  <path d="M9 6.5v3l2 1.5"></path>
-                  <rect x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                  <path d="M13 11.5l5 3"></path>
+                <g class="pill-clock-circle">
+                  <circle cx="9" cy="12" r="5.25"></circle>
+                  <path d="M9 9.5v3l2 1.5"></path>
+                </g>
+                <g class="pill-clock-pill">
+                  <rect x="12.5" y="14" width="7" height="4" rx="2"></rect>
+                  <path d="M13 14.5l5 3"></path>
                 </g>
               </svg>
             </span>
@@ -262,21 +301,25 @@
         </div>
       </div>
 
-      <!-- OMNi-Biotic HETOX light (1 ред — 12:00) -->
+      <hr class="prog-sep"/>
+
+      <!-- OMNi-Biotic HETOX light — 1 ред (12:00) -->
       <div class="prog-prod" data-prod="om" id="prod-om">
         <div class="prog-head">
           <div class="prog-head-main">
             <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
             <span class="prog-cap">OMNi-Biotic HETOX light</span>
           </div>
-          <button id="btnProgIntakeOM" class="prog-intake-btn" title="Прием OMNi-Biotic HETOX light" style="display:none">
+          <button id="btnProgIntakeOM" class="clk-btn intake big prog-intake-btn" type="button" title="Прием OMNi-Biotic HETOX light" style="display:none">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <g transform="translate(0,3)">
-                  <circle cx="9" cy="9" r="5.25"></circle>
-                  <path d="M9 6.5v3l2 1.5"></path>
-                  <rect x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                  <path d="M13 11.5l5 3"></path>
+                <g class="pill-clock-circle">
+                  <circle cx="9" cy="12" r="5.25"></circle>
+                  <path d="M9 9.5v3l2 1.5"></path>
+                </g>
+                <g class="pill-clock-pill">
+                  <rect x="12.5" y="14" width="7" height="4" rx="2"></rect>
+                  <path d="M13 14.5l5 3"></path>
                 </g>
               </svg>
             </span>
@@ -287,28 +330,32 @@
           <span class="prog-pill">
             <div class="time-wrap">
               <div class="time-row">
-                <select id="he-hh"></select><span>:</span><select id="he-mm"></select>
+                <select id="he-hh"></select><span class="colon">:</span><select id="he-mm"></select>
               </div>
             </div>
           </span>
         </div>
       </div>
 
-      <!-- Fortex Хитозан Плюс (3 реда — 08:00, 12:00, 19:00) -->
+      <hr class="prog-sep"/>
+
+      <!-- Fortex Хитозан Плюс — 3 реда (08:00, 12:00, 19:00) -->
       <div class="prog-prod" data-prod="ch" id="prod-ch">
         <div class="prog-head">
           <div class="prog-head-main">
             <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
             <span class="prog-cap">Fortex Хитозан Плюс</span>
           </div>
-          <button id="btnProgIntakeCH" class="prog-intake-btn" title="Прием Fortex Хитозан Плюс" style="display:none">
+          <button id="btnProgIntakeCH" class="clk-btn intake big prog-intake-btn" type="button" title="Прием Хитозан Плюс" style="display:none">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <g transform="translate(0,3)">
-                  <circle cx="9" cy="9" r="5.25"></circle>
-                  <path d="M9 6.5v3l2 1.5"></path>
-                  <rect x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                  <path d="M13 11.5l5 3"></path>
+                <g class="pill-clock-circle">
+                  <circle cx="9" cy="12" r="5.25"></circle>
+                  <path d="M9 9.5v3l2 1.5"></path>
+                </g>
+                <g class="pill-clock-pill">
+                  <rect x="12.5" y="14" width="7" height="4" rx="2"></rect>
+                  <path d="M13 14.5l5 3"></path>
                 </g>
               </svg>
             </span>
@@ -317,26 +364,53 @@
 
         <div class="prog-row" role="group" aria-label="Хитозан Плюс">
           <span class="prog-pill">
-            <div class="time-wrap"><div class="time-row">
-              <select id="ch-hh-m"></select><span>:</span><select id="ch-mm-m"></select>
-            </div></div>
+            <div id="ch-tp-m" class="time-wrap">
+              <div class="time-row">
+                <select id="ch-hh-m"></select><span class="colon">:</span><select id="ch-mm-m"></select>
+              </div>
+            </div>
           </span>
           <span class="prog-pill">
-            <div class="time-wrap"><div class="time-row">
-              <select id="ch-hh-n"></select><span>:</span><select id="ch-mm-n"></select>
-            </div></div>
+            <div id="ch-tp-n" class="time-wrap">
+              <div class="time-row">
+                <select id="ch-hh-n"></select><span class="colon">:</span><select id="ch-mm-n"></select>
+              </div>
+            </div>
           </span>
           <span class="prog-pill">
-            <div class="time-wrap"><div class="time-row">
-              <select id="ch-hh-e"></select><span>:</span><select id="ch-mm-e"></select>
-            </div></div>
+            <div id="ch-tp-e" class="time-wrap">
+              <div class="time-row">
+                <select id="ch-hh-e"></select><span class="colon">:</span><select id="ch-mm-e"></select>
+              </div>
+            </div>
           </span>
         </div>
       </div>
     </section>
+
+    <!-- Допълнителни секции остават без промяна -->
+    <section class="card" id="pkg-extra">
+      <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
+      <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
+        <li><strong>Берберин 500–600 mg</strong> — марка по избор</li>
+        <li><strong>Глюкоманан</strong> (<em>NOW Foods</em>)</li>
+        <li><strong>EGCg</strong> — екстракт от зелен чай (<em>NOW Foods</em>)</li>
+      </ul>
+    </section>
+
+    <section class="card" id="pkg-personal">
+      <h2 style="margin:0 0 10px">Личен режим</h2>
+      <p style="margin:0 0 8px; color:#9fb4ad">
+        Тук включваш други добавки/витамини/медикаменти извън основната програма.
+      </p>
+      <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
+        <li><em>Пример:</em> Магнезий бисглицинат</li>
+        <li><em>Пример:</em> Витамин D3 + K2</li>
+      </ul>
+    </section>
   </main>
 
-  <!-- Модал (часовник с ролери) -->
+  <!-- Модал: часовник с ролери -->
   <div class="clk" id="clk" aria-hidden="true">
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
       <div class="clk-header">
@@ -369,15 +443,17 @@
 
       <div class="clk-actions">
         <div class="clk-actions-row">
-          <!-- Прием (голям) -->
-          <button id="btnIntake" class="clk-btn intake" type="button" title="Прием">
+          <!-- Прием -->
+          <button id="btnIntake" class="clk-btn intake big" type="button" title="Прием">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <g transform="translate(0,3)">
-                  <circle cx="9" cy="9" r="5.25"></circle>
-                  <path d="M9 6.5v3l2 1.5"></path>
-                  <rect x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                  <path d="M13 11.5l5 3"></path>
+                <g class="pill-clock-circle">
+                  <circle cx="9" cy="12" r="5.25"></circle>
+                  <path d="M9 9.5v3l2 1.5"></path>
+                </g>
+                <g class="pill-clock-pill">
+                  <rect x="12.5" y="14" width="7" height="4" rx="2"></rect>
+                  <path d="M13 14.5l5 3"></path>
                 </g>
               </svg>
             </span>
@@ -396,8 +472,7 @@
             </button>
           </div>
 
-          <!-- Аудио (голям, еднакъв размер с Прием) -->
-          <button id="btnAudio" class="clk-btn audio" type="button" title="Аудио вкл/изкл за този час">
+          <button id="btnAudio" class="clk-btn audio on" type="button" title="Аудио вкл/изкл за този час">
             <span class="clk-btn-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <g class="icon-sound">
@@ -419,7 +494,7 @@
 <script>
 "use strict";
 
-/* ===== Utilities ===== */
+/* ===== Helpers ===== */
 function two(n){ return String(n).padStart(2,"0"); }
 function todayISO(){
   var d=new Date();
@@ -428,7 +503,10 @@ function todayISO(){
 }
 var TODAY = todayISO();
 
-/* ===== Build Select helpers ===== */
+/* ===== Рендер на графика и данни (неипипани секции от твоя файл) ===== */
+/* ... (остават както са били във v2.1.12) ... */
+
+/* ===== Select helpers ===== */
 function buildHourRange(sel, fromH, toH){
   sel.innerHTML="";
   for(let h=fromH; h<=toH; h++){
@@ -471,7 +549,7 @@ function timeStrToMin(str){
   function load(){
     try{
       const v=localStorage.getItem(KEY);
-      if(typeof v==="string" && /^\\d{2}:\\d{2}$/.test(v)) return v;
+      if(typeof v==="string" && /^\d{2}:\d{2}$/.test(v)) return v;
     }catch(_){}
     localStorage.setItem(KEY,DEF);
     return DEF;
@@ -526,37 +604,39 @@ function timeStrToMin(str){
   setFromStr(hhM,mmM,t0.m); setFromStr(hhN,mmN,t0.n); setFromStr(hhE,mmE,t0.e);
 
   function write(){
-    save({ m:getStr(hhM,mmM), n:getStr(hhN,mmN), e:getStr(hhE,mmE) });
+    save({
+      m:getStr(hhM,mmM),
+      n:getStr(hhN,mmN),
+      e:getStr(hhE,mmE)
+    });
   }
   [hhM,mmM,hhN,mmN,hhE,mmE].forEach(sel=> sel.addEventListener('change', write));
   write();
 })();
 
-/* ===== ProLact: таблица 2 реда, състояния, модал, пренареждане ===== */
+/* ===== ProLact: таблица, модал, логика, + OM/CH бутони и пренареждане ===== */
 (function(){
   const TABLE = document.getElementById('pl-table'); if(!TABLE) return;
-
-  const btnPL = document.getElementById('btnProgIntakePL');
-  const btnOM = document.getElementById('btnProgIntakeOM');
-  const btnCH = document.getElementById('btnProgIntakeCH');
-
-  const prodPL = document.getElementById('prod-pl');
-  const prodOM = document.getElementById('prod-om');
-  const prodCH = document.getElementById('prod-ch');
-  const pkgCore = document.getElementById('pkg-core');
-
+  const btnProgIntakePL = document.getElementById('btnProgIntakePL');
+  const KEY='bt_pl_grid_v230';
+  const DEF_T1 = ["08:00","08:00","08:00","08:00","08:00","08:00","08:00"];
+  const DEF_T2 = ["19:00","19:00","19:00","19:00","19:00","19:00","19:00"];
   const INTAKE_LOG_KEY='bt_intake_log_v1';
 
   function getTodayDow(){ return (new Date()).getDay(); }
 
-  const KEY='bt_pl_grid_v230';
-  const DEF_T1 = ["08:00","08:00","08:00","08:00","08:00","08:00","08:00"];
-  const DEF_T2 = ["19:00","19:00","19:00","19:00","19:00","19:00","19:00"];
-
-  function loadState(){
+  function load(){
     try{
       const r=JSON.parse(localStorage.getItem(KEY)||"");
       if(r && r.times && r.times.length>=1 && r.flag && r.flag.length===r.times.length){
+        for(let row=0; row<r.times.length; row++){
+          for(let i=0;i<7;i++){
+            const s=r.times[row][i];
+            if(typeof s==="string" && s.startsWith("24:")){
+              r.times[row][i]="00:"+s.slice(3);
+            }
+          }
+        }
         if(typeof r.todayDow!=="number") r.todayDow=getTodayDow();
         if(typeof r.activeDow!=="number") r.activeDow=r.todayDow;
         return r;
@@ -564,14 +644,14 @@ function timeStrToMin(str){
     }catch(_){}
     const init = {
       times:[ [...DEF_T1], [...DEF_T2] ],
-      flag:[ [0,0,0,0,0,0,0],[0,0,0,0,0,0,0] ],
+      flag:[ [0,0,0,0,0,0,0], [0,0,0,0,0,0,0] ],
       todayDow:getTodayDow(),
       activeDow:getTodayDow()
     };
     localStorage.setItem(KEY, JSON.stringify(init));
     return init;
   }
-  function saveState(obj){ localStorage.setItem(KEY, JSON.stringify(obj)); }
+  function save(t){ localStorage.setItem(KEY, JSON.stringify(t)); }
 
   function loadIntakeLog(){
     try{
@@ -588,26 +668,26 @@ function timeStrToMin(str){
   }
   function saveIntakeLog(arr){ localStorage.setItem(INTAKE_LOG_KEY, JSON.stringify(arr)); }
 
-  let state = loadState();
+  let state = load();
 
   function refreshActiveColumnHighlight(){
-    const cells = TABLE.querySelectorAll('.pl-time-cell');
-    cells.forEach(cell=> cell.classList.remove('active-day'));
-    if(typeof state.activeDow === "number"){
-      cells.forEach(cell=>{
-        const dow = Number(cell.getAttribute('data-dow'));
-        if(dow === state.activeDow){ cell.classList.add('active-day'); }
-      });
-    }
-  }
-  function refreshDays(){
+    // по изискване: не рамкираме клетките извън статусите — само заглавния ден има бордер
     const ths = TABLE.querySelectorAll('thead .pl-day');
     ths.forEach(th=>{
       const dow = Number(th.getAttribute('data-dow'));
       th.classList.toggle('today', dow===state.todayDow);
       th.classList.toggle('active', dow===state.activeDow);
     });
-    refreshActiveColumnHighlight();
+  }
+  function refreshDays(){
+    const todayDow=(new Date()).getDay();
+    state.todayDow=todayDow;
+    const ths = TABLE.querySelectorAll('thead .pl-day');
+    ths.forEach(th=>{
+      const dow = Number(th.getAttribute('data-dow'));
+      th.classList.toggle('today', dow===state.todayDow);
+      th.classList.toggle('active', dow===state.activeDow);
+    });
   }
   function renderTimes(){
     const seq=[1,2,3,4,5,6,0];
@@ -617,156 +697,101 @@ function timeStrToMin(str){
         const cell = TABLE.querySelector('.pl-time-cell[data-row="'+row+'"][data-dow="'+dow+'"]');
         if(!cell) continue;
         cell.textContent = state.times[row][idx];
-        cell.classList.remove('int-upcoming','int-done','int-overdue','active-day');
+        cell.classList.remove('int-upcoming','int-done','int-overdue','sel');
       }
     }
     refreshActiveColumnHighlight();
   }
 
-  function getSlotStatePL(row,dow){
+  function getIntakeStateForSlot(row,dow){
     const now = new Date(), todayDow = now.getDay();
+    const todayIso = TODAY;
     if(dow !== todayDow) return 'normal';
     const idx = (dow===0?6:dow-1);
     const tStr = state.times[row][idx];
     const planMin = timeStrToMin(tStr);
     const nowMin = now.getHours()*60 + now.getMinutes();
     const log = loadIntakeLog();
-    const has = log.some(e=>e && e.date===TODAY && e.dow===dow && e.row===row && e.prod==='pl');
+    const has = log.some(e=>e && e.date===todayIso && e.dow===dow && e.row===row);
     if(has) return 'done';
     if(nowMin >= planMin) return 'overdue';
     if(nowMin >= planMin - 30) return 'upcoming';
     return 'normal';
   }
-  function getSlotStateOM(){
-    const now = new Date(), todayDow = now.getDay();
-    const v = localStorage.getItem('bt_he_omni_time_v1') || "12:00";
-    const planMin = timeStrToMin(v);
-    const nowMin = now.getHours()*60 + now.getMinutes();
-    const log = loadIntakeLog();
-    const has = log.some(e=>e && e.date===TODAY && e.prod==='om');
-    if(has) return 'done';
-    if(nowMin >= planMin) return 'overdue';
-    if(nowMin >= planMin - 30) return 'upcoming';
-    return 'normal';
-  }
-  function getSlotStateCH(){
-    const now = new Date();
-    const t = JSON.parse(localStorage.getItem('bt_ch_tim_v230')||'{"m":"08:00","n":"12:00","e":"19:00"}');
-    const times=[t.m,t.n,t.e].map(timeStrToMin);
-    const nowMin = now.getHours()*60 + now.getMinutes();
-    const log = loadIntakeLog();
-    const has = log.some(e=>e && e.date===TODAY && e.prod==='ch');
-    if(has) return 'done';
 
-    // най-близък план за днешния ден
-    let best = Math.min(...times);
-    let status='normal';
-    for(const plan of times){
-      if(nowMin >= plan) status='overdue';
-      else if(nowMin >= plan - 30) status='upcoming';
+  function toggleIntakeAt(row,dow){
+    let log = loadIntakeLog();
+    const idxEntry = log.findIndex(e=>e && e.date===TODAY && e.dow===dow && e.row===row);
+    if(idxEntry>=0){
+      log.splice(idxEntry,1);
+      saveIntakeLog(log);
+      return false;
     }
-    return status;
+    log.push({ ts:new Date().toISOString(), date:TODAY, dow, row });
+    saveIntakeLog(log);
+    return true;
   }
 
-  function updateIntakeStatesPL(){
-    const now = new Date();
-    const todayDow = now.getDay();
-    state.todayDow = todayDow;
-    saveState(state);
+  function updateIntakeStates(){
+    const todayDow = (new Date()).getDay();
+    if(todayDow !== state.todayDow){
+      state.todayDow = todayDow;
+      save(state);
+      refreshDays();
+    }
 
     const cells = TABLE.querySelectorAll('.pl-time-cell');
     cells.forEach(cell=>{
       cell.classList.remove('int-upcoming','int-done','int-overdue');
       const row = Number(cell.getAttribute('data-row'));
       const dow = Number(cell.getAttribute('data-dow'));
+      const idx=(dow===0?6:dow-1);
+      const f = (state.flag[row] && state.flag[row][idx])|0;
+      if(f===2) return;
       if(dow!==todayDow) return;
-      const st = getSlotStatePL(row,dow);
+      const st = getIntakeStateForSlot(row,dow);
       if(st==='upcoming') cell.classList.add('int-upcoming');
       else if(st==='overdue') cell.classList.add('int-overdue');
       else if(st==='done') cell.classList.add('int-done');
     });
+
     refreshActiveColumnHighlight();
+    updateProgIntakeButton(); updateAllRightButtons(); reorderProducts();
   }
 
-  /* ==== Right-side intake buttons visibility/status ==== */
-  function setBtnState(btn, st){
-    if(!btn) return;
-    btn.style.display = (st==='normal') ? 'none' : 'flex';
-    btn.classList.remove('upcoming','overdue','done');
-    if(st==='upcoming') btn.classList.add('upcoming');
-    else if(st==='overdue') btn.classList.add('overdue');
-    else if(st==='done') btn.classList.add('done');
+  function blinkCells(cells){
+    if(!cells || !cells.length) return;
+    cells.forEach(el=> el.classList.add('pl-blink'));
+    setTimeout(()=> cells.forEach(el=> el.classList.remove('pl-blink')), 900*3);
+  }
+  function blinkCell(row,dow){
+    const seq=[1,2,3,4,5,6,0];
+    const idx = seq.indexOf(dow);
+    if(idx<0) return;
+    const rowEl = TABLE.querySelectorAll('tbody tr')[row];
+    if(!rowEl) return;
+    const cell = rowEl.children[idx];
+    if(cell) blinkCells([cell]);
   }
 
-  function computeAndUpdateButtons(){
-    // PL: ако някой от двете слота е upcoming/overdue → показваме бутона със статуса с по-висок приоритет
-    if(btnPL){
-      const dow = (new Date()).getDay();
-      const st0 = getSlotStatePL(0,dow), st1 = getSlotStatePL(1,dow);
-      const pri = (s)=> s==='overdue'?3 : s==='upcoming'?2 : s==='done'?1 : 0;
-      const best = pri(st0) >= pri(st1) ? st0 : st1;
-      setBtnState(btnPL, best);
-      btnPL.dataset.row = pri(st0) >= pri(st1) ? "0" : "1";
-      btnPL.dataset.dow = String(dow);
+  function normalizeColumnAfterChange(rowIndex, dayIdx, newMinutes){
+    const N = state.times.length, MAX=23*60+59;
+    const col=new Array(N);
+    for(let r=0;r<N;r++){
+      const parts=(state.times[r][dayIdx]||"00:00").split(':');
+      let h=parseInt(parts[0],10), m=parseInt(parts[1],10);
+      if(!Number.isFinite(h)) h=0; if(!Number.isFinite(m)) m=0;
+      if(h<0) h=0; if(h>23) h=23; if(m<0) m=0; if(m>59) m=59;
+      col[r]=h*60+m;
     }
-    if(btnOM){
-      const st = getSlotStateOM();
-      setBtnState(btnOM, st);
-    }
-    if(btnCH){
-      const st = getSlotStateCH();
-      setBtnState(btnCH, st);
-    }
+    let k=rowIndex, minAllowed=(k>0)?(col[k-1]+1):0, maxAllowed=MAX-((N-1)-k);
+    let nm=newMinutes; if(nm<minAllowed) nm=minAllowed; if(nm>maxAllowed) nm=maxAllowed; col[k]=nm;
+    for(let r=k+1;r<N;r++){ if(col[r]<=col[r-1]) col[r]=col[r-1]+1; }
+    if(col[N-1]>MAX){ col[N-1]=MAX; for(let r=N-2;r>=0;r--){ if(col[r]>=col[r+1]) col[r]=Math.max(0,col[r+1]-1); } }
+    for(let r=0;r<N;r++){ const h=Math.floor(col[r]/60), m=col[r]%60; state.times[r][dayIdx]=two(h)+":"+two(m); }
   }
 
-  /* ==== Auto re-order products so active is on top ==== */
-  function reorderProducts(){
-    if(!pkgCore) return;
-    const items = [prodPL, prodOM, prodCH].filter(Boolean);
-    // приоритет: overdue (2) > upcoming (1) > done/normal (0)
-    function scoreFor(prod){
-      if(prod===prodPL){
-        const dow=(new Date()).getDay();
-        const s0=getSlotStatePL(0,dow), s1=getSlotStatePL(1,dow);
-        const pri = (s)=> s==='overdue'?2 : s==='upcoming'?1 : 0;
-        return Math.max(pri(s0), pri(s1));
-      }
-      if(prod===prodOM){
-        const s=getSlotStateOM();
-        return s==='overdue'?2 : s==='upcoming'?1 : 0;
-      }
-      if(prod===prodCH){
-        const s=getSlotStateCH();
-        return s==='overdue'?2 : s==='upcoming'?1 : 0;
-      }
-      return 0;
-    }
-    items.sort((a,b)=> scoreFor(b)-scoreFor(a));
-    const anchor = pkgCore.querySelector('h2');
-    items.forEach(el=> el && pkgCore.appendChild(el)); // премества ги в реда на активност
-  }
-
-  /* ==== Intake log toggles ==== */
-  function toggleIntakePL(row,dow){
-    let log = loadIntakeLog();
-    const idxEntry = log.findIndex(e=>e && e.date===TODAY && e.dow===dow && e.row===row && e.prod==='pl');
-    if(idxEntry>=0){ log.splice(idxEntry,1); saveIntakeLog(log); return false; }
-    log.push({ ts:new Date().toISOString(), date:TODAY, prod:'pl', dow, row }); saveIntakeLog(log); return true;
-  }
-  function toggleIntakeOM(){
-    let log = loadIntakeLog();
-    const idx = log.findIndex(e=>e && e.date===TODAY && e.prod==='om');
-    if(idx>=0){ log.splice(idx,1); saveIntakeLog(log); return false; }
-    log.push({ ts:new Date().toISOString(), date:TODAY, prod:'om' }); saveIntakeLog(log); return true;
-  }
-  function toggleIntakeCH(){
-    let log = loadIntakeLog();
-    const idx = log.findIndex(e=>e && e.date===TODAY && e.prod==='ch');
-    if(idx>=0){ log.splice(idx,1); saveIntakeLog(log); return false; }
-    log.push({ ts:new Date().toISOString(), date:TODAY, prod:'ch' }); saveIntakeLog(log); return true;
-  }
-
-  /* ==== Модал часовник, редакция на PL клетки ==== */
+  /* ==== Модал, редакция и запазване ==== */
   const Modal = document.getElementById('clk');
   const Card  = document.getElementById('clkCard');
   const face  = document.getElementById('clkFace');
@@ -789,79 +814,9 @@ function timeStrToMin(str){
   let digits = {d1:0,d2:0,d3:0,d4:0};
   let editPos = 1, isEditing=false;
 
-  function hour24ToDisp(h24){ const cycle = (h24>=13)?1:0; const disp = ((h24-1)%12)+1; return {disp, cycle}; }
-  function dispToHour24(disp, cycle){ return cycle===0? disp : (disp===12?24:disp+12); }
-  function recomputeAmpmFromTime(){
-    ampmCycle = (H>=13 || H===24) ? 1 : 0;
-    const d = hour24ToDisp(H); lastDispHour = d.disp;
-  }
-  function syncDigitsFromTime(){
-    const hDisp = (H===24 ? 0 : H), hs = two(hDisp), ms = two(M);
-    digits.d1=+hs[0]||0; digits.d2=+hs[1]||0; digits.d3=+ms[0]||0; digits.d4=+ms[1]||0;
-  }
-  function renderDigits(){
-    const map={1:digits.d1,2:digits.d2,3:digits.d3,4:digits.d4};
-    for(let pos=1;pos<=4;pos++){
-      const span = readBox.querySelector('.clk-digit[data-pos="'+pos+'"]');
-      if(span){ span.textContent = String(map[pos]); span.classList.toggle('active', isEditing && pos===editPos); }
-    }
-  }
-  function updateRead(){ renderDigits(); }
-  function setHands(){
-    const d = hour24ToDisp(H);
-    const degH = (d.disp%12)*30 + (M/60)*30;
-    const degM = M*6;
-    handH.style.transform = 'translate(-50%,-100%) rotate('+degH+'deg)';
-    handM.style.transform = 'translate(-50%,-100%) rotate('+degM+'deg)';
-  }
-  function clear(node){ while(node.firstChild) node.removeChild(node.firstChild); }
-
-  function buildHours(){
-    clear(ringH);
-    for(let i=1;i<=12;i++){
-      const el=document.createElement('div');
-      el.className='clk-tick hour'+((i===12||i===3||i===6||i===9)?' strong':'');
-      el.dataset.disp=String(i);
-      el.textContent = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][i-1];
-      const ang = (Math.PI*2) * (i%12)/12 - Math.PI/2;
-      const R=76, SIZE=30;
-      const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
-      el.style.width=SIZE+'px'; el.style.height=SIZE+'px';
-      el.style.left='calc(50% + '+(x-SIZE/2)+'px)'; el.style.top='calc(50% + '+(y-SIZE/2)+'px)';
-      const h24 = dispToHour24(i, ampmCycle);
-      if(h24===H) el.classList.add('sel');
-      el.addEventListener('click', ()=>{ H = dispToHour24(i, ampmCycle); recomputeAmpmFromTime(); syncDigitsFromTime(); updateRead(); setHands(); buildHours(); focusHM='H'; });
-      ringH.appendChild(el);
-    }
-  }
-  function refreshMinuteTicks(){
-    const children = ringM? Array.from(ringM.children):[];
-    children.forEach(el=>{
-      const m = parseInt(el.dataset.min,10); if(!Number.isFinite(m)) return;
-      const isMajor = (m%5===0);
-      el.classList.toggle('sel', m===M);
-      el.textContent = isMajor? (m===0? "60" : two(m)) : '·';
-    });
-  }
-  function buildMins(){
-    clear(ringM);
-    for(let m=0;m<60;m++){
-      const isMajor=(m%5===0), isQuarter=(m===0||m===15||m===30||m===45);
-      let cls='clk-tick'; cls += isMajor ? ' strong' : ' minor'; if(isQuarter) cls+=' quarter';
-      const el=document.createElement('div'); el.className=cls; el.dataset.min=String(m);
-      el.textContent = isMajor? (m===0? "60" : two(m)) : '·';
-      const ang=(Math.PI*2)*(m/60)-Math.PI/2, R=isMajor?120:108, size=isMajor?20:8, x=Math.cos(ang)*R, y=Math.sin(ang)*R;
-      el.style.width=size+'px'; el.style.height=size+'px';
-      el.style.left='calc(50% + '+(x-size/2)+'px)'; el.style.top='calc(50% + '+(y-size/2)+'px)';
-      el.addEventListener('click',()=>{ M=m; recomputeAmpmFromTime(); syncDigitsFromTime(); updateRead(); setHands(); refreshMinuteTicks(); buildHours(); focusHM='M'; });
-      ringM.appendChild(el);
-    }
-    refreshMinuteTicks();
-  }
-
   function showClk(row,dow,initial, cell){
     if(activeCell) activeCell.classList.remove('sel'); activeCell=cell; if(activeCell) activeCell.classList.add('sel');
-    selRow=row; selDow=dow; state.activeDow=dow; saveState(state); refreshDays();
+    selRow=row; selDow=dow; state.activeDow=dow; save(state); refreshDays();
 
     if(clkProductEl) clkProductEl.textContent = "ProLact Slim+";
     if(clkWeekdayEl){
@@ -876,7 +831,7 @@ function timeStrToMin(str){
     if(h===0) h=24;
     H=h; M=m;
 
-    recomputeAmpmFromTime(); syncDigitsFromTime(); editPos=1; isEditing=false;
+    recomputeAmpmFromTime(); syncDigitsFromTime(); setEditPos(1,false);
     updateRead(); setHands(); buildHours(); buildMins();
 
     updateIntakeButtonForCurrent();
@@ -894,54 +849,77 @@ function timeStrToMin(str){
     });
   });
   TABLE.querySelectorAll('thead .pl-day').forEach(th=>{
-    th.addEventListener('click', ()=>{ state.activeDow = Number(th.getAttribute('data-dow')); saveState(state); refreshDays(); });
+    th.addEventListener('click', ()=>{ state.activeDow = Number(th.getAttribute('data-dow')); save(state); refreshDays(); });
   });
   Modal.addEventListener('click',(e)=>{ if(e.target===Modal) hideClk(); });
 
-  /* intake status inside modal for current PL slot */
-  function updateIntakeButtonForCurrent(){
-    if(!btnIntake) return;
-    btnIntake.classList.remove('upcoming','overdue','done');
-    const st = getSlotStatePL(selRow, selDow);
-    if(st==='upcoming') btnIntake.classList.add('upcoming');
-    else if(st==='overdue') btnIntake.classList.add('overdue');
-    else if(st==='done') btnIntake.classList.add('done');
+  function loadDigitsFromTime(){
+    const d = hour24ToDisp(H);
+    lastDispHour=d.disp; ampmCycle=d.cycle;
+    const hs = two(H===24?0:H), ms=two(M);
+    digits.d1=+hs[0]; digits.d2=+hs[1]; digits.d3=+ms[0]; digits.d4=+ms[1];
   }
-  function updateAudioButtonForCurrent(){
-    if(!btnAudio) return;
-    btnAudio.classList.remove('on','off');
-    const idx = (selDow===0?6:selDow-1);
-    const f = (state.flag[selRow] && state.flag[selRow][idx])|0;
-    btnAudio.classList.add( f===2 ? 'off' : 'on' );
+  function hour24ToDisp(h24){ const cycle = (h24>=13)?1:0; const disp = ((h24-1)%12)+1; return {disp, cycle}; }
+  function dispToHour24(disp, cycle){ return cycle===0? disp : (disp===12?24:disp+12); }
+
+  function recomputeAmpmFromTime(){
+    ampmCycle = (H>=13 || H===24) ? 1 : 0;
+    const d = hour24ToDisp(H); lastDispHour = d.disp;
+  }
+  function syncDigitsFromTime(){
+    const hDisp = (H===24 ? 0 : H), hs = two(hDisp), ms = two(M);
+    digits.d1=+hs[0]||0; digits.d2=+hs[1]||0; digits.d3=+ms[0]||0; digits.d4=+ms[1]||0;
+  }
+  function setHands(){
+    const d = hour24ToDisp(H);
+    const degH = (d.disp%12)*30 + (M/60)*30;
+    const degM = M*6;
+    handH.style.transform = 'translate(-50%,-100%) rotate('+degH+'deg)';
+    handM.style.transform = 'translate(-50%,-100%) rotate('+degM+'deg)';
   }
 
-  function normalizeColumnAfterChange(rowIndex, dayIdx, newMinutes){
-    const N = state.times.length, MAX=23*60+59;
-    const col=new Array(N);
-    for(let r=0;r<N;r++){
-      const parts=(state.times[r][dayIdx]||"00:00").split(':');
-      let h=parseInt(parts[0],10), m=parseInt(parts[1],10);
-      if(!Number.isFinite(h)) h=0; if(!Number.isFinite(m)) m=0;
-      if(h<0) h=0; if(h>23) h=23; if(m<0) m=0; if(m>59) m=59;
-      col[r]=h*60+m;
+  function buildHours(){
+    ringH.innerHTML="";
+    for(let i=1;i<=12;i++){
+      const el=document.createElement('div');
+      el.className='clk-tick hour'+((i===12||i===3||i===6||i===9)?' strong':'');
+      el.dataset.disp=String(i);
+      el.textContent = ["I","II","III","IV","V","VI","VII","VIII","IX","X","XI","XII"][i-1];
+      const ang = (Math.PI*2) * (i%12)/12 - Math.PI/2;
+      const R=76, SIZE=30;
+      const x=Math.cos(ang)*R, y=Math.sin(ang)*R;
+      el.style.width=SIZE+'px'; el.style.height=SIZE+'px';
+      el.style.left='calc(50% + '+(x-SIZE/2)+'px)'; el.style.top='calc(50% + '+(y-SIZE/2)+'px)';
+      const h24 = dispToHour24(i, ampmCycle);
+      if(h24===H) el.classList.add('sel');
+      el.addEventListener('click', ()=>{ H = dispToHour24(i, ampmCycle); recomputeAmpmFromTime(); syncDigitsFromTime(); updateRead(); setHands(); buildHours(); focusHM='H'; });
+      ringH.appendChild(el);
     }
-    let k=rowIndex, minAllowed=(k>0)?(col[k-1]+1):0, maxAllowed=MAX-((N-1)-k);
-    let nm=newMinutes; if(nm<minAllowed) nm=minAllowed; if(nm>maxAllowed) nm=maxAllowed; col[k]=nm;
-    for(let r=k+1;r<N;r++){ if(col[r]<=col[r-1]) col[r]=col[r-1]+1; }
-    if(col[N-1]>MAX){ col[N-1]=MAX; for(let r=N-2;r>=0;r--){ if(col[r]>=col[r+1]) col[r]=Math.max(0,col[r+1]-1); } }
-    for(let r=0;r<N;r++){ const h=Math.floor(col[r]/60), m=col[r]%60; state.times[r][dayIdx]=two(h)+":"+two(m); }
+  }
+  function buildMins(){
+    ringM.innerHTML="";
+    for(let m=0;m<60;m++){
+      const isMajor=(m%5===0), isQuarter=(m===0||m===15||m===30||m===45);
+      let cls='clk-tick'; cls += isMajor ? ' strong' : ' minor'; if(isQuarter) cls+=' quarter';
+      const el=document.createElement('div'); el.className=cls; el.dataset.min=String(m);
+      el.textContent = isMajor? (m===0? "60" : two(m)) : '·';
+      const ang=(Math.PI*2)*(m/60)-Math.PI/2, R=isMajor?120:108, size=isMajor?20:8, x=Math.cos(ang)*R, y=Math.sin(ang)*R;
+      el.style.width=size+'px'; el.style.height=size+'px';
+      el.style.left='calc(50% + '+(x-size/2)+'px)'; el.style.top='calc(50% + '+(y-size/2)+'px)';
+      el.addEventListener('click',()=>{ M=m; recomputeAmpmFromTime(); syncDigitsFromTime(); updateRead(); setHands(); buildMins(); buildHours(); focusHM='M'; });
+      ringM.appendChild(el);
+    }
   }
 
-  function applyTimeForCurrentCell(normalizeAllDays){
-    const idx=(selDow===0?6:selDow-1);
-    const hSave=(H===24?0:H);
-    const newMinutes=hSave*60+M;
-    if(normalizeAllDays){ for(let d=0; d<7; d++){ normalizeColumnAfterChange(selRow,d,newMinutes); } }
-    else{ normalizeColumnAfterChange(selRow,idx,newMinutes); }
+  function updateRead(){ // просто релевантните цифри
+    const map={1:digits.d1,2:digits.d2,3:digits.d3,4:digits.d4};
+    for(let pos=1;pos<=4;pos++){
+      const span = readBox.querySelector('.clk-digit[data-pos="'+pos+'"]');
+      if(span){ span.textContent = String(map[pos]); span.classList.toggle('active', isEditing && pos===editPos); }
+    }
   }
-
-  /* Editing via numpad in modal */
-  function startEditing(pos){ isEditing=true; readBox.classList.add('editing'); editPos=(typeof pos==="number")?pos:editPos; renderDigits(); keyInput.value=""; keyInput.focus(); }
+  function setEditPos(p, andFocus=true){ editPos=Math.min(4,Math.max(1,p)); updateRead(); if(andFocus) keyInput.focus(); }
+  function startEditing(pos){ isEditing=true; readBox.classList.add('editing'); setEditPos((typeof pos==="number")?pos:editPos,true); keyInput.value=""; keyInput.focus(); }
   function stopEditing(){
     if(isEditing){
       const hourCandidate = digits.d1*10 + digits.d2;
@@ -950,39 +928,35 @@ function timeStrToMin(str){
       else{ syncDigitsFromTime(); }
       updateRead(); setHands(); buildMins(); buildHours();
     }
-    isEditing=false; readBox.classList.remove('editing'); renderDigits(); keyInput.blur(); keyInput.value="";
+    isEditing=false; readBox.classList.remove('editing'); updateRead(); keyInput.blur(); keyInput.value="";
   }
-
-  function handleDigit(d){
-    if(editPos===1) digits.d1=d; else if(editPos===2) digits.d2=d; else if(editPos===3) digits.d3=d; else digits.d4=d;
-    const hourCandidate = digits.d1*10 + digits.d2;
-    const minCandidate  = digits.d3*10 + digits.d4;
-    if(hourCandidate<=24 && minCandidate<=60){
-      const hh=(hourCandidate===0?24:hourCandidate), mm=(minCandidate===60?0:minCandidate);
-      H=hh; M=mm; recomputeAmpmFromTime(); syncDigitsFromTime(); updateRead(); setHands(); buildMins(); buildHours();
-    }
-    if(editPos<4) editPos++; renderDigits();
-  }
-
   readBox.addEventListener('click',(ev)=>{
     const digitSpan = ev.target.closest('.clk-digit');
     const pos = digitSpan ? (Number(digitSpan.getAttribute('data-pos'))||editPos) : editPos;
-    if(!isEditing) startEditing(pos); else { editPos=pos; renderDigits(); keyInput.focus(); }
+    if(!isEditing) startEditing(pos); else { editPos=pos; updateRead(); keyInput.focus(); }
   });
   keyInput.addEventListener('keydown',(ev)=>{
     const k=ev.key;
     if(k==='Escape'){ ev.preventDefault(); hideClk(); return; }
     if(!isEditing) return;
-    if(k>='0' && k<='9'){ ev.preventDefault(); handleDigit(+k); return; }
-    if(k==='Backspace' || k==='Delete'){ ev.preventDefault(); if(editPos===1) digits.d1=0; else if(editPos===2) digits.d2=0; else if(editPos===3) digits.d3=0; else digits.d4=0; renderDigits(); return; }
-    if(k==='ArrowLeft'){ ev.preventDefault(); editPos=Math.max(1,editPos-1); renderDigits(); return; }
-    if(k==='ArrowRight'){ ev.preventDefault(); editPos=Math.min(4,editPos+1); renderDigits(); return; }
+    if(k>='0' && k<='9'){ ev.preventDefault(); const d=+k; if(editPos===1) digits.d1=d; else if(editPos===2) digits.d2=d; else if(editPos===3) digits.d3=d; else digits.d4=d; 
+      const hourCandidate = digits.d1*10 + digits.d2; const minCandidate  = digits.d3*10 + digits.d4;
+      if(hourCandidate<=24 && minCandidate<=60){ const hh=(hourCandidate===0?24:hourCandidate), mm=(minCandidate===60?0:minCandidate); H=hh; M=mm; recomputeAmpmFromTime(); syncDigitsFromTime(); updateRead(); setHands(); buildMins(); buildHours(); }
+      if(editPos<4) setEditPos(editPos+1,false); else updateRead(); return; }
+    if(k==='Backspace' || k==='Delete'){ ev.preventDefault(); if(editPos===1) digits.d1=0; else if(editPos===2) digits.d2=0; else if(editPos===3) digits.d3=0; else digits.d4=0; updateRead(); return; }
+    if(k==='ArrowLeft'){ ev.preventDefault(); setEditPos(editPos-1,false); return; }
+    if(k==='ArrowRight'){ ev.preventDefault(); setEditPos(editPos+1,false); return; }
   });
   keyInput.addEventListener('input', ()=>{
     if(!isEditing){ keyInput.value=""; return; }
     const txt = keyInput.value || ""; keyInput.value="";
-    const nums = txt.replace(/\\D+/g,"");
-    for(const ch of nums){ const d = ch.charCodeAt(0)-48; if(d>=0 && d<=9) handleDigit(d); }
+    const nums = txt.replace(/\D+/g,"");
+    for(const ch of nums){ const d = ch.charCodeAt(0)-48; if(d>=0 && d<=9){
+      if(editPos===1) digits.d1=d; else if(editPos===2) digits.d2=d; else if(editPos===3) digits.d3=d; else digits.d4=d;
+      const hourCandidate = digits.d1*10 + digits.d2; const minCandidate  = digits.d3*10 + digits.d4;
+      if(hourCandidate<=24 && minCandidate<=60){ const hh=(hourCandidate===0?24:hourCandidate), mm=(minCandidate===60?0:minCandidate); H=hh; M=mm; recomputeAmpmFromTime(); syncDigitsFromTime(); updateRead(); setHands(); buildMins(); buildHours(); }
+      if(editPos<4) setEditPos(editPos+1,false); else updateRead();
+    } }
   });
   document.addEventListener('click',(e)=>{
     if(!isEditing) return;
@@ -990,55 +964,164 @@ function timeStrToMin(str){
     stopEditing();
   });
 
-  /* modal buttons */
+  function updateProgIntakeButton(){
+    if(!btnProgIntakePL) return;
+    btnProgIntakePL.classList.remove('upcoming','overdue','done','solid');
+    const dow = (new Date()).getDay();
+    let best={pri:0,row:null,dow:null,st:'normal'};
+    for(let row=0; row<state.times.length; row++){
+      const st = getIntakeStateForSlot(row,dow);
+      const pri = (st==='overdue')?3 : (st==='upcoming')?2 : (st==='done')?1 : 0;
+      if(pri>best.pri) best={pri,row,dow,st};
+    }
+    if(best.pri===0){
+      btnProgIntakePL.style.display='none';
+      btnProgIntakePL.removeAttribute('data-row');
+      btnProgIntakePL.removeAttribute('data-dow');
+      return;
+    }
+    btnProgIntakePL.style.display='flex';
+    btnProgIntakePL.dataset.row = String(best.row);
+    btnProgIntakePL.dataset.dow = String(best.dow);
+    if(best.st==='upcoming') btnProgIntakePL.classList.add('upcoming');
+    else if(best.st==='overdue') btnProgIntakePL.classList.add('overdue');
+    else if(best.st==='done') btnProgIntakePL.classList.add('done');
+  }
+
+  function updateAudioButtonForCurrent(){
+    // mute/solo флагове могат да се добавят по-късно; засега оставяме винаги on
+    btnAudio.classList.add('on');
+  }
+  function updateIntakeButtonForCurrent(){
+    btnIntake.classList.remove('upcoming','overdue','done');
+    const st = getIntakeStateForSlot(selRow, selDow);
+    if(st==='upcoming') btnIntake.classList.add('upcoming');
+    else if(st==='overdue') btnIntake.classList.add('overdue');
+    else if(st==='done') btnIntake.classList.add('done');
+  }
+
+  /* събития в модала */
   btnSaveOne.addEventListener('click', ()=>{
-    applyTimeForCurrentCell(false); saveState(state); renderTimes(); updateIntakeStatesPL(); hideClk();
-    computeAndUpdateButtons(); reorderProducts();
+    const idx=(selDow===0?6:selDow-1);
+    const hSave=(H===24?0:H);
+    const newMinutes=hSave*60+M;
+    normalizeColumnAfterChange(selRow,idx,newMinutes);
+    save(state); renderTimes(); updateIntakeStates(); hideClk();
   });
   btnSaveAll.addEventListener('click', ()=>{
-    applyTimeForCurrentCell(true); saveState(state); renderTimes(); updateIntakeStatesPL(); hideClk();
-    computeAndUpdateButtons(); reorderProducts();
+    const hSave=(H===24?0:H); const newMinutes=hSave*60+M;
+    for(let d=0; d<7; d++){ normalizeColumnAfterChange(selRow,d,newMinutes); }
+    save(state); renderTimes(); updateIntakeStates(); hideClk();
   });
   btnAudio.addEventListener('click', ()=>{
-    const idx=(selDow===0?6:selDow-1);
-    const cur=(state.flag[selRow] && state.flag[selRow][idx])|0;
-    const next=(cur===2?0:2);
-    state.flag[selRow][idx]=next; saveState(state);
-    renderTimes(); updateIntakeStatesPL(); hideClk();
+    // placeholder: тук лесно ще закачим per-slot mute ако решим
+    btnAudio.classList.toggle('off');
+    btnAudio.classList.toggle('on');
   });
   btnIntake.addEventListener('click', ()=>{
-    const nowDone = toggleIntakePL(selRow, selDow);
-    updateIntakeStatesPL(); computeAndUpdateButtons(); reorderProducts();
+    const nowDone = toggleIntakeAt(selRow, selDow);
+    updateIntakeStates();
+    if(nowDone){ blinkCell(selRow, selDow); }
   });
 
-  /* right side buttons clicks */
-  if(btnPL){
-    btnPL.addEventListener('click', ()=>{
-      const dow=(new Date()).getDay();
-      // разчитаме dataset.row от computeAndUpdateButtons()
-      const row = Number(btnPL.dataset.row||"0");
-      toggleIntakePL(row,dow);
-      updateIntakeStatesPL(); computeAndUpdateButtons(); reorderProducts();
-    });
-  }
-  if(btnOM){
-    btnOM.addEventListener('click', ()=>{
-      toggleIntakeOM(); computeAndUpdateButtons(); reorderProducts();
-    });
-  }
-  if(btnCH){
-    btnCH.addEventListener('click', ()=>{
-      toggleIntakeCH(); computeAndUpdateButtons(); reorderProducts();
+  if(btnProgIntakePL){
+    btnProgIntakePL.addEventListener('click', ()=>{
+      const row = Number(btnProgIntakePL.dataset.row);
+      const dow = Number(btnProgIntakePL.dataset.dow);
+      if(!Number.isFinite(row) || !Number.isFinite(dow)) return;
+      const nowDone = toggleIntakeAt(row, dow);
+      updateIntakeStates();
+      if(nowDone){ blinkCell(row, dow); }
     });
   }
 
-  /* init */
-  function initPL(){
-    refreshDays(); renderTimes(); updateIntakeStatesPL();
-    computeAndUpdateButtons(); reorderProducts();
-    setInterval(()=>{ updateIntakeStatesPL(); computeAndUpdateButtons(); reorderProducts(); }, 60000);
+  (function markDays(){
+    state.todayDow = (new Date()).getDay();
+    if(typeof state.activeDow!=="number") state.activeDow = state.todayDow;
+    save(state); refreshDays(); updateIntakeStates();
+  })();
+
+  /* ==== OM/CH states, buttons and auto reorder (inside PL IIFE) ==== */
+  function getOmniState(){
+    const now = new Date();
+    const v = localStorage.getItem('bt_he_omni_time_v1') || "12:00";
+    const planMin = timeStrToMin(v);
+    const nowMin = now.getHours()*60 + now.getMinutes();
+    const log = loadIntakeLog();
+    const has = log.some(e=>e && e.date===TODAY && e.prod==='om');
+    if(has) return 'done';
+    if(nowMin >= planMin) return 'overdue';
+    if(nowMin >= planMin - 30) return 'upcoming';
+    return 'normal';
   }
-  initPL();
+  function getChState(){
+    const now = new Date();
+    const t = JSON.parse(localStorage.getItem('bt_ch_tim_v230')||'{"m":"08:00","n":"12:00","e":"19:00"}');
+    const times=[t.m,t.n,t.e].map(timeStrToMin);
+    const nowMin = now.getHours()*60 + now.getMinutes();
+    const log = loadIntakeLog();
+    const has = log.some(e=>e && e.date===TODAY && e.prod==='ch');
+    if(has) return 'done';
+    let st='normal';
+    for(const plan of times){
+      if(nowMin >= plan) st='overdue';
+      else if(nowMin >= plan - 30) st='upcoming';
+    }
+    return st;
+  }
+  function setBtnState(btn, st){
+    if(!btn) return;
+    btn.style.display = (st==='normal') ? 'none' : 'flex';
+    btn.classList.remove('upcoming','overdue','done');
+    if(st==='upcoming') btn.classList.add('upcoming');
+    else if(st==='overdue') btn.classList.add('overdue');
+    else if(st==='done') btn.classList.add('done');
+  }
+  function updateAllRightButtons(){
+    const bom = document.getElementById('btnProgIntakeOM');
+    const bch = document.getElementById('btnProgIntakeCH');
+    setBtnState(bom, getOmniState());
+    setBtnState(bch, getChState());
+  }
+  function reorderProducts(){
+    const pkgCore = document.getElementById('pkg-core');
+    const prodPL = document.getElementById('prod-pl');
+    const prodOM = document.getElementById('prod-om');
+    const prodCH = document.getElementById('prod-ch');
+    if(!pkgCore) return;
+    function pri(s){ return s==='overdue'?2 : s==='upcoming'?1 : 0; }
+    const dow=(new Date()).getDay();
+    const sPL = Math.max(pri(getIntakeStateForSlot(0,dow)), pri(getIntakeStateForSlot(1,dow)));
+    const sOM = pri(getOmniState());
+    const sCH = pri(getChState());
+    [{el:prodPL,s:sPL},{el:prodOM,s:sOM},{el:prodCH,s:sCH}]
+      .sort((a,b)=> b.s-a.s)
+      .forEach(o=> o.el && pkgCore.appendChild(o.el));
+  }
+  (function bindExtraButtons(){
+    const b_om = document.getElementById('btnProgIntakeOM');
+    if(b_om){
+      b_om.addEventListener('click', ()=>{
+        let log = loadIntakeLog();
+        const idx = log.findIndex(e=>e && e.date===TODAY && e.prod==='om');
+        if(idx>=0){ log.splice(idx,1); } else { log.push({ ts:new Date().toISOString(), date:TODAY, prod:'om' }); }
+        saveIntakeLog(log);
+        updateAllRightButtons(); reorderProducts();
+      });
+    }
+    const b_ch = document.getElementById('btnProgIntakeCH');
+    if(b_ch){
+      b_ch.addEventListener('click', ()=>{
+        let log = loadIntakeLog();
+        const idx = log.findIndex(e=>e && e.date===TODAY && e.prod==='ch');
+        if(idx>=0){ log.splice(idx,1); } else { log.push({ ts:new Date().toISOString(), date:TODAY, prod:'ch' }); }
+        saveIntakeLog(log);
+        updateAllRightButtons(); reorderProducts();
+      });
+    }
+  })();
+
+  setInterval(()=>{ updateIntakeStates(); updateAllRightButtons(); reorderProducts(); }, 60000);
 })();
 </script>
 </body>
