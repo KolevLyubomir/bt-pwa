@@ -216,7 +216,7 @@
       background:transparent;
       color:#f97373;
     }
-    .pl-day.today{
+    .pl-day.today{ border-width:2px;
       border-color:var(--sel-orange);
       border-style:solid;
     }
@@ -790,36 +790,42 @@
             <div class="prog-head-main">
               <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
               <span class="prog-cap">OMNi-Biotic HETOX light</span>
-            </div>
-          </div>
+            
+            <button id="btnProgIntakeOM" class="clk-btn intake prog-intake-btn" type="button" title="Прием OMNi-Biotic HETOX light" style="display:none">
+              <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <g transform="translate(0,3)">
+                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
+                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
+                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
+                  </g>
+                </svg>
+              </span>
+            </button></div>
+          
+            <button id="btnProgIntakeOM" class="clk-btn intake prog-intake-btn" type="button" title="Прием OMNi-Biotic HETOX light" style="display:none">
+              <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <g transform="translate(0,3)">
+                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
+                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
+                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
+                  </g>
+                </svg>
+              </span>
+            </button></div>
 
-          <div class="prog-row" role="group" aria-label="HETOX — 1 от 3">
-            <span class="prog-pill">
-              <label><input type="checkbox" id="he-m"> Сутрин</label>
-              <div id="he-tp-m" class="time-wrap" style="display:none">
-                <div class="time-row">
-                  <select id="he-hh-m"></select><span class="colon">:</span><select id="he-mm-m"></select>
-                </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="he-n" checked> Обед</label>
-              <div id="he-tp-n" class="time-wrap" style="display:block">
-                <div class="time-row">
-                  <select id="he-hh-n"></select><span class="colon">:</span><select id="he-mm-n"></select>
-                </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="he-e"> Вечер</label>
-              <div id="he-tp-e" class="time-wrap" style="display:none">
-                <div class="time-row">
-                  <select id="he-hh-e"></select><span class="colon">:</span><select id="he-mm-e"></select>
-                </div>
-              </div>
-            </span>
-          </div>
-        </div>
+          <div class="prog-row" role="group" aria-label="OMNi-Biotic HETOX light">
+  <span class="prog-pill">
+    <div class="time-wrap">
+      <div class="time-row">
+        <select id="he-hh"></select><span class="colon">:</span><select id="he-mm"></select>
+      </div>
+    </div>
+  </span>
+</div>
 
         <hr class="prog-sep"/>
 
@@ -828,12 +834,35 @@
             <div class="prog-head-main">
               <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
               <span class="prog-cap">Fortex Хитозан Плюс</span>
-            </div>
-          </div>
+            
+            <button id="btnProgIntakeCH" class="clk-btn intake prog-intake-btn" type="button" title="Прием Хитозан Плюс" style="display:none">
+              <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <g transform="translate(0,3)">
+                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
+                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
+                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
+                  </g>
+                </svg>
+              </span>
+            </button></div>
+          
+            <button id="btnProgIntakeCH" class="clk-btn intake prog-intake-btn" type="button" title="Прием Хитозан Плюс" style="display:none">
+              <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <g transform="translate(0,3)">
+                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
+                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
+                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
+                  </g>
+                </svg>
+              </span>
+            </button></div>
 
           <div class="prog-row" role="group" aria-label="Хитозан Плюс">
             <span class="prog-pill">
-              <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
               <div id="ch-tp-m" class="time-wrap">
                 <div class="time-row">
                   <select id="ch-hh-m"></select><span class="colon">:</span><select id="ch-mm-m"></select>
@@ -2489,6 +2518,120 @@
 
       setInterval(updateIntakeStates, 60000);
     })();
-  </script>
+  
+/* === v2.1.13 additions: OMNi & Chitosan buttons, status, reorder, persistent today === */
+(function(){
+  const INTAKE_LOG_KEY='bt_intake_log_v1';
+  function todayISO(){ var d=new Date(); d.setMinutes(d.getMinutes()-d.getTimezoneOffset()); return d.toISOString().slice(0,10); }
+  const TODAY=todayISO();
+  function timeStrToMin(str){ const p=(str||'00:00').split(':'); let h=+p[0]||0, m=+p[1]||0; if(h<0)h=0; if(h>23)h=23; if(m<0)m=0; if(m>59)m=59; return h*60+m; }
+  function loadLog(){ try{ const arr=JSON.parse(localStorage.getItem(INTAKE_LOG_KEY)||'[]'); return Array.isArray(arr)? arr.filter(e=>e&&e.date===TODAY):[]; }catch(_){ return []; } }
+  function saveLog(arr){ localStorage.setItem(INTAKE_LOG_KEY, JSON.stringify(arr)); }
+  function toggleProdDone(prod){
+    let log=loadLog();
+    const i=log.findIndex(e=>e&&e.date===TODAY&&e.prod===prod);
+    if(i>=0) log.splice(i,1); else log.push({ts:new Date().toISOString(), date:TODAY, prod});
+    saveLog(log);
+  }
+  function getOmniState(){
+    const v=localStorage.getItem('bt_he_omni_time_v1')||'12:00';
+    const plan=timeStrToMin(v), nowMin= (new Date()).getHours()*60+(new Date()).getMinutes();
+    const log=loadLog(); if(log.some(e=>e.prod==='om')) return 'done';
+    if(nowMin>=plan) return 'overdue'; if(nowMin>=plan-30) return 'upcoming'; return 'normal';
+  }
+  function getChState(){
+    let t; try{ t=JSON.parse(localStorage.getItem('bt_ch_tim_v230')||'{"m":"08:00","n":"12:00","e":"19:00"}'); }catch(_){ t={"m":"08:00","n":"12:00","e":"19:00"}; }
+    const arr=[t.m,t.n,t.e].map(timeStrToMin);
+    const nowMin=(new Date()).getHours()*60+(new Date()).getMinutes();
+    const log=loadLog(); if(log.some(e=>e.prod==='ch')) return 'done';
+    let st='normal'; for(const plan of arr){ if(nowMin>=plan) st='overdue'; else if(nowMin>=plan-30 && st!=='overdue') st='upcoming'; }
+    return st;
+  }
+  function setBtnState(el, st){
+    if(!el) return;
+    el.style.display = (st==='normal')? 'none':'flex';
+    el.classList.remove('upcoming','overdue','done');
+    if(st==='upcoming') el.classList.add('upcoming');
+    else if(st==='overdue') el.classList.add('overdue');
+    else if(st==='done') el.classList.add('done');
+  }
+  function updateRightButtons(){
+    setBtnState(document.getElementById('btnProgIntakeOM'), getOmniState());
+    setBtnState(document.getElementById('btnProgIntakeCH'), getChState());
+  }
+  function reorderProducts(){
+    const core=document.getElementById('pkg-core'); if(!core) return;
+    const prodPL=document.querySelector('#pkg-core #btnProgIntakePL')?.closest('.prog-prod');
+    const prodOM=document.querySelector('#pkg-core #btnProgIntakeOM')?.closest('.prog-prod');
+    const prodCH=document.querySelector('#pkg-core #btnProgIntakeCH')?.closest('.prog-prod');
+    if(!prodPL||!prodOM||!prodCH) return;
+    function pri(st){ return st==='overdue'?2: st==='upcoming'?1: 0; }
+    const sPL = pri((()=>{ try{ return document.getElementById('btnProgIntakePL').classList.contains('overdue')?'overdue': (document.getElementById('btnProgIntakePL').classList.contains('upcoming')?'upcoming':'normal'); }catch(_){ return 'normal'; } })());
+    const sOM = pri(getOmniState());
+    const sCH = pri(getChState());
+    [ {el:prodPL,p:sPL}, {el:prodOM,p:sOM}, {el:prodCH,p:sCH} ].sort((a,b)=> b.p-a.p).forEach(o=> core.appendChild(o.el));
+  }
+  function persistToday(){
+    document.querySelectorAll('#pl-table thead .pl-day').forEach(th=>{
+      const dow=Number(th.getAttribute('data-dow'));
+      const isToday = dow === (new Date()).getDay();
+      th.classList.toggle('today', isToday);
+    });
+  }
+  // Bind buttons
+  const bOM=document.getElementById('btnProgIntakeOM');
+  if(bOM) bOM.addEventListener('click', ()=>{ toggleProdDone('om'); updateRightButtons(); reorderProducts(); });
+  const bCH=document.getElementById('btnProgIntakeCH');
+  if(bCH) bCH.addEventListener('click', ()=>{ toggleProdDone('ch'); updateRightButtons(); reorderProducts(); });
+
+  // OMNi selects (single time)
+  (function(){
+    const hh=document.getElementById('he-hh'), mm=document.getElementById('he-mm');
+    if(!hh||!mm) return;
+    function two(n){ return String(n).padStart(2,'0'); }
+    function buildHourRange(from,to){ hh.innerHTML=''; for(let h=from; h<=to; h++){ const o=document.createElement('option'); o.value=two(h); o.textContent=o.value; hh.appendChild(o);} }
+    function buildMin5(){ mm.innerHTML=''; for(let m=0;m<60;m+=5){ const o=document.createElement('option'); o.value=two(m); o.textContent=o.value; mm.appendChild(o);} }
+    buildHourRange(6,21); buildMin5();
+    let v=localStorage.getItem('bt_he_omni_time_v1')||'12:00';
+    const [H,M]=v.split(':'); hh.value=H||'12'; mm.value=M||'00';
+    function save(){ localStorage.setItem('bt_he_omni_time_v1', (hh.value||'12')+':'+(mm.value||'00')); updateRightButtons(); reorderProducts(); }
+    hh.addEventListener('change', save); mm.addEventListener('change', save);
+  })();
+
+  // Chitosan selects (3 fixed rows)
+  (function(){
+    function two(n){ return String(n).padStart(2,'0'); }
+    function sel(id){ return document.getElementById(id); }
+    const hhM=sel('ch-hh-m'), mmM=sel('ch-mm-m');
+    const hhN=sel('ch-hh-n'), mmN=sel('ch-mm-n');
+    const hhE=sel('ch-hh-e'), mmE=sel('ch-mm-e');
+    if(!hhM||!mmM||!hhN||!mmN||!hhE||!mmE) return;
+    function buildH(sel, a,b){ sel.innerHTML=''; for(let h=a; h<=b; h++){ const o=document.createElement('option'); o.value=two(h); o.textContent=o.value; sel.appendChild(o);} }
+    function buildM(sel){ sel.innerHTML=''; for(let m=0;m<60;m+=5){ const o=document.createElement('option'); o.value=two(m); o.textContent=o.value; sel.appendChild(o);} }
+    buildH(hhM,0,9); buildM(mmM);
+    buildH(hhN,10,17); buildM(mmN);
+    buildH(hhE,18,23); buildM(mmE);
+    function load(){
+      try{ const t=JSON.parse(localStorage.getItem('bt_ch_tim_v230')||''); if(t && t.m && t.n && t.e) return t; }catch(_){}
+      const t={m:'08:00', n:'12:00', e:'19:00'}; localStorage.setItem('bt_ch_tim_v230', JSON.stringify(t)); return t;
+    }
+    function apply(t){
+      function set(sel,val){ if([...sel.options].some(o=>o.value===val)) sel.value=val; }
+      set(hhM, (t.m||'08:00').split(':')[0]); set(mmM, (t.m||'08:00').split(':')[1]);
+      set(hhN, (t.n||'12:00').split(':')[0]); set(mmN, (t.n||'12:00').split(':')[1]);
+      set(hhE, (t.e||'19:00').split(':')[0]); set(mmE, (t.e||'19:00').split(':')[1]);
+    }
+    function read(){ return { m:(hhM.value+':'+mmM.value), n:(hhN.value+':'+mmN.value), e:(hhE.value+':'+mmE.value) }; }
+    const init = load(); apply(init);
+    [hhM,mmM,hhN,mmN,hhE,mmE].forEach(s=> s.addEventListener('change', ()=>{
+      localStorage.setItem('bt_ch_tim_v230', JSON.stringify(read()));
+      updateRightButtons(); reorderProducts();
+    }));
+  })();
+
+  function tick(){ updateRightButtons(); reorderProducts(); persistToday(); }
+  tick(); setInterval(tick, 60000);
+})();
+</script>
 </body>
 </html>
