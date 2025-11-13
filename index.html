@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v3.1.0</title>
+  <title>БТ App 3 — v3.1.1</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -28,7 +28,7 @@
       <div class="brand">
         <img src="assets/icons/icon-192.png?v=1.39" alt="BT"/>
         <span class="title">BT&nbsp;Безопасно Тегло —</span>
-        <span class="badge">v3.1.0</span> </div>
+        <span class="badge">v3.1.1</span> </div>
     </div>
   </div>
 
@@ -155,7 +155,7 @@
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен пакет</h2>
 
-        <div>
+        <div id="prolact-block">
           <div class="prog-head">
             <div class="prog-head-main">
               <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
@@ -215,77 +215,119 @@
 
         <hr class="prog-sep"/>
 
-        <div>
+        <div id="omni-block">
           <div class="prog-head">
             <div class="prog-head-main">
               <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
               <span class="prog-cap">OMNi-Biotic HETOX light</span>
             </div>
+            <button id="btnProgIntakeHE" class="clk-btn intake prog-intake-btn" type="button"
+                    title="Прием OMNi-Biotic HETOX" style="display:none">
+              <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <g transform="translate(0,3)">
+                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
+                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
+                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
+                  </g>
+                </svg>
+              </span>
+            </button>
           </div>
-
-          <div class="prog-row" role="group" aria-label="HETOX — 1 от 3">
-            <span class="prog-pill">
-              <label><input type="checkbox" id="he-m"> Сутрин</label>
-              <div id="he-tp-m" class="time-wrap" style="display:none">
-                <div class="time-row">
-                  <select id="he-hh-m"></select><span class="colon">:</span><select id="he-mm-m"></select>
-                </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="he-n" checked> Обед</label>
-              <div id="he-tp-n" class="time-wrap" style="display:block">
-                <div class="time-row">
-                  <select id="he-hh-n"></select><span class="colon">:</span><select id="he-mm-n"></select>
-                </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="he-e"> Вечер</label>
-              <div id="he-tp-e" class="time-wrap" style="display:none">
-                <div class="time-row">
-                  <select id="he-hh-e"></select><span class="colon">:</span><select id="he-mm-e"></select>
-                </div>
-              </div>
-            </span>
+          
+          <div class="pl-wrap">
+            <table class="pl-table" id="he-table"> <thead>
+                <tr>
+                  <th class="pl-day" data-dow="1">Пн</th>
+                  <th class="pl-day" data-dow="2">Вт</th>
+                  <th class="pl-day" data-dow="3">Ср</th>
+                  <th class="pl-day" data-dow="4">Чт</th>
+                  <th class="pl-day" data-dow="5">Пт</th>
+                  <th class="pl-day weekend" data-dow="6">Сб</th>
+                  <th class="pl-day weekend" data-dow="0">Нд</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="pl-time-cell" data-row="0" data-dow="1">12:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="2">12:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="3">12:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="4">12:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="5">12:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="6">12:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="0">12:00</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
         <hr class="prog-sep"/>
 
-        <div>
+        <div id="chitosan-block">
           <div class="prog-head">
             <div class="prog-head-main">
               <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
               <span class="prog-cap">Fortex Хитозан Плюс</span>
             </div>
+            <button id="btnProgIntakeCH" class="clk-btn intake prog-intake-btn" type="button"
+                    title="Прием Fortex Хитозан Плюс" style="display:none">
+              <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <g transform="translate(0,3)">
+                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
+                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
+                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
+                  </g>
+                </svg>
+              </span>
+            </button>
           </div>
 
-          <div class="prog-row" role="group" aria-label="Хитозан Плюс">
-            <span class="prog-pill">
-              <label><input type="checkbox" id="ch-m" checked disabled> Сутрин</label>
-              <div id="ch-tp-m" class="time-wrap">
-                <div class="time-row">
-                  <select id="ch-hh-m"></select><span class="colon">:</span><select id="ch-mm-m"></select>
-                </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="ch-n" checked disabled> Обед</label>
-              <div id="ch-tp-n" class="time-wrap">
-                <div class="time-row">
-                  <select id="ch-hh-n"></select><span class="colon">:</span><select id="ch-mm-n"></select>
-                </div>
-              </div>
-            </span>
-            <span class="prog-pill">
-              <label><input type="checkbox" id="ch-e" checked disabled> Вечер</label>
-              <div id="ch-tp-e" class="time-wrap">
-                <div class="time-row">
-                  <select id="ch-hh-e"></select><span class="colon">:</span><select id="ch-mm-e"></select>
-                </div>
-              </div>
-            </span>
+          <div class="pl-wrap">
+            <table class="pl-table" id="ch-table"> <thead>
+                <tr>
+                  <th class="pl-day" data-dow="1">Пн</th>
+                  <th class="pl-day" data-dow="2">Вт</th>
+                  <th class="pl-day" data-dow="3">Ср</th>
+                  <th class="pl-day" data-dow="4">Чт</th>
+                  <th class="pl-day" data-dow="5">Пт</th>
+                  <th class="pl-day weekend" data-dow="6">Сб</th>
+                  <th class="pl-day weekend" data-dow="0">Нд</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="pl-time-cell" data-row="0" data-dow="1">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="2">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="3">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="4">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="5">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="6">08:00</td>
+                  <td class="pl-time-cell" data-row="0" data-dow="0">08:00</td>
+                </tr>
+                <tr>
+                  <td class="pl-time-cell" data-row="1" data-dow="1">12:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="2">12:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="3">12:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="4">12:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="5">12:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="6">12:00</td>
+                  <td class="pl-time-cell" data-row="1" data-dow="0">12:00</td>
+                </tr>
+                <tr>
+                  <td class="pl-time-cell" data-row="2" data-dow="1">19:00</td>
+                  <td class="pl-time-cell" data-row="2" data-dow="2">19:00</td>
+                  <td class="pl-time-cell" data-row="2" data-dow="3">19:00</td>
+                  <td class="pl-time-cell" data-row="2" data-dow="4">19:00</td>
+                  <td class="pl-time-cell" data-row="2" data-dow="5">19:00</td>
+                  <td class="pl-time-cell" data-row="2" data-dow="6">19:00</td>
+                  <td class="pl-time-cell" data-row="2" data-dow="0">19:00</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
