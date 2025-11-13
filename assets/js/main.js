@@ -40,20 +40,19 @@ function toRoman(num){
 })();
 
 //
-// ↓↓↓ ДОБАВИ ТОЗИ КОД В КРАЯ ↓↓↓
+// ↓↓↓ НОВ КОД ЗА ВЕРСИЯТА (замества стария) ↓↓↓
 //
 document.addEventListener('DOMContentLoaded', () => {
-  // Проверяваме дали config.js е зареден и има версия
-  if (typeof APP_VERSION !== 'undefined') {
-    const versionString = `v${APP_VERSION}`;
+  // 1. Намираме етикета (badge) по ID
+  const badge = document.getElementById('app-version-badge');
+  
+  if (badge) {
+    // 2. Взимаме текста от него (напр. "v3.1.3")
+    const versionString = badge.textContent.trim();
     
-    // 1. Сменяме <title> на страницата
-    document.title = `БТ App 3 — ${versionString}`;
-    
-    // 2. Сменяме текста в .badge
-    const badge = document.querySelector('.topbar .badge');
-    if (badge) {
-      badge.textContent = versionString;
+    // 3. Слагаме го в <title> на страницата
+    if (versionString) {
+      document.title = `БТ App 3 — ${versionString}`;
     }
   }
 });
