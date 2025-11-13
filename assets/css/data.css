@@ -1,0 +1,61 @@
+.field.date{ width:120px }
+.field.date input{ width:100% }
+
+.field.weight input{ font-weight:700; font-size:18px; width:9ch }
+.field.weight input:focus{ outline:2px solid #2b6e66 }
+
+.field.weight input[type="number"]{
+  appearance:auto;
+  -webkit-appearance:auto;
+  -moz-appearance:auto;
+}
+.field.weight input[type="number"]::-webkit-inner-spin-button,
+.field.weight input[type="number"]::-webkit-outer-spin-button{
+  -webkit-appearance:auto;
+  margin:0;
+}
+
+.bt-only{ display:flex; align-items:center; justify-content:center; width:var(--ctl-h); height:var(--ctl-h);
+  border:1px solid #334a4f; background:#0d171b; border-radius:10px }
+.bt-only input{ width:16px; height:16px; margin:0 }
+.bt-only[title]{ cursor:pointer }
+
+table{ width:100%; border-collapse:collapse }
+colgroup col.date{ width:70px } colgroup col.w{ width:70px } colgroup col.act{ width:auto }
+th,td{ padding:3px 4px; border-bottom:1px solid #20343a; font-size:13px; line-height:1.15; white-space:nowrap; text-align:left; vertical-align:middle }
+th{ color:var(--muted); font-weight:600 }
+th.date,td.date{ padding-right:1px }
+th.w,td.w{ text-align:right; padding-left:2px }
+th.actions,td.actions{ padding-left:72px }
+
+.wCell{ text-align:right }
+.wSmall{ font-size:.6em; opacity:.95; margin-left:1px }
+
+.actions{ display:inline-flex; gap:6px; align-items:center; justify-content:flex-start }
+.icon{ display:inline-flex; align-items:center; justify-content:center; border:1px solid #2a3e41; background:#0d171b; border-radius:8px; padding:4px 6px; color:#fff; height:var(--ctl-h) }
+.icon svg{ width:16px; height:16px; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round }
+.icon.danger{ border-color:#3a2222; background:#161112; color:#ffd5d5 }
+
+.recbar{ display:flex; align-items:center; gap:8px; justify-content:flex-start; margin:8px 0; flex-wrap:wrap }
+
+.pager{ display:flex; gap:6px; flex-wrap:wrap; align-items:center; justify-content:flex-start; margin-top:8px }
+.pager .info{ color:var(--muted); font-size:12px; margin:0 8px 0 0 }
+.pager button{ background:#0d171b; border:1px solid #2a3e41; color:#fff; padding:4px 8px; border-radius:8px; font-size:13px }
+.pager button.active{ background:var(--accent); color:#06241b; border-color:var(--accent) }
+
+canvas{ width:100%; height:360px; display:block; margin-top:8px; background:#0b1215; border:1px solid #1a2a2f; border-radius:8px }
+
+.date-wrap{ position:relative } #dateText[readonly]{ cursor:pointer }
+.cal{ position:absolute; z-index:10; top:calc(var(--ctl-h) + 6px); left:0; background:#0e1518; border:1px solid #20343a; border-radius:12px;
+  box-shadow:0 8px 30px rgba(0,0,0,.35); padding:10px; width:auto; display:none }
+.cal.show{ display:block }
+.cal .cal-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; gap:8px }
+.cal .cal-title{ font-weight:700; text-transform:capitalize }
+.cal-grid{ display:grid; grid-template-columns:repeat(7,36px); gap:6px; justify-content:center }
+.cal .dow{ color:var(--muted); font-size:11px; text-align:center; line-height:36px; height:36px }
+.cal .day{ width:36px; height:36px; display:flex; align-items:center; justify-content:center; border-radius:8px; border:1px solid transparent }
+.cal .day:hover{ border-color:#27454a }
+.cal .day.disabled{ opacity:.35; pointer-events:none }
+.cal .day.has{ background:var(--has); color:#092218 }
+.cal .day.today{ outline:1px dashed #5b8f98 }
+.cal .day.sel{ background:#84e9c2; color:#041915; font-weight:700 }
