@@ -1,10 +1,8 @@
 /* global two, todayISO, toRoman, TODAY */ // Информираме, че тези идват от main.js
 
-// Премахнати са старите IIFE за 'he-' и 'ch-' селекторите.
-
 /**
  * =================================================================
- * ОБЩА ЛОГИКА ЗА МРЕЖАТА НА ПРОДУКТИТЕ (v3.1.0)
+ * ОБЩА ЛОГИКА ЗА МРЕЖАТА НА ПРОДУКТИТЕ (v3.1.0 logic)
  * Тази "фабрика" създава и управлява една мрежа (ProLact, Omni и т.н.)
  * =================================================================
  */
@@ -372,6 +370,7 @@ function createProductGrid(options) {
   // --- Връщаме публичния API ---
   return {
     updateIntakeStates: updateIntakeStates,
+    refreshDays: refreshDays, // Ще ни трябва за синхронизация
     isOverdue: () => isOverdue, // Функция, която връща флага
     getBlockId: () => BLOCK_ID
   };
@@ -635,6 +634,14 @@ const ModalLogic = (function() {
     document.body.style.overflow = '';
     if (activeCell) { activeCell.classList.remove('sel'); activeCell = null; }
     stopEditing();
+    // Нулираме контекста, след като е затворен
+    currentContext = {
+      row: 0, dow: 0, productName: '', state: null, saveState: () => {},
+      getIntakeStateForSlot: () => ({ status: 'normal', has: false }),
+      toggleIntakeAt: () => {}, normalizeColumnAfterChange: () => {},
+      renderTimes: () => {}, updateIntakeStates: () => {},
+      blinkCell: () => {}, blinkRow: () => {}
+    };
   }
 
   function handleTimeKey(ev) {
@@ -836,20 +843,22 @@ const ModalLogic = (function() {
 
   function handleSaveOne() {
     applyTimeForCurrentCell(false);
-    const { saveState, renderTimes, updateIntakeStates, blinkCell, row, dow } = currentContext;
+    const { state, saveState, renderTimes, updateIntakeStates, blinkCell, row, dow } = currentContext;
     saveState(state);
     renderTimes();
-    updateIntakeStates();
+    // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
+    masterUpdateAllGrids();
     blinkCell(row, dow);
     hideClk();
   }
 
   function handleSaveAllDays() {
     applyTimeForCurrentCell(true);
-    const { saveState, renderTimes, updateIntakeStates, blinkRow, row } = currentContext;
+    const { state, saveState, renderTimes, updateIntakeStates, blinkRow, row } = currentContext;
     saveState(state);
     renderTimes();
-    updateIntakeStates();
+    // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
+    masterUpdateAllGrids();
     blinkRow(row);
     hideClk();
   }
@@ -865,16 +874,18 @@ const ModalLogic = (function() {
 
     saveState(state);
     renderTimes();
-    updateIntakeStates();
+    // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
+    masterUpdateAllGrids();
     updateAudioButtonForCurrent(); // Обновяваме бутона в модала
     blinkCell(row, dow);
     hideClk();
   }
 
   function handleIntake() {
-    const { toggleIntakeAt, updateIntakeStates, blinkCell, row, dow } = currentContext;
+    const { toggleIntakeAt, blinkCell, row, dow } = currentContext;
     const nowDone = toggleIntakeAt(row, dow);
-    updateIntakeStates(); // Това ще обнови и бутона до продукта
+    // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
+    masterUpdateAllGrids();
     updateIntakeButtonForCurrent(); // Това обновява бутона в модала
     if (nowDone) {
       blinkCell(row, dow);
@@ -908,6 +919,7 @@ const ModalLogic = (function() {
 
   // --- Публичен API ---
   return {
+    // Тази функция ще бъде извикана от инстанция на мрежа
     showClk: function(row, dow, initial, cell, gridContext) {
       if (activeCell) activeCell.classList.remove('sel');
       activeCell = cell; 
@@ -922,10 +934,8 @@ const ModalLogic = (function() {
       
       const { state, productName } = currentContext;
 
-      state.activeDow = dow;
-      gridContext.saveState(state);
-      // Трябва да извикаме refreshDays за *всички* мрежи, за да се синхронизират
-      // (Това ще го направим извън модала, при инициализацията)
+      // Когато се отвори модал, синхронизираме `activeDow` за всички мрежи
+      window.syncActiveDow(dow);
 
       if (clkProductEl) {
         clkProductEl.textContent = productName;
@@ -993,7 +1003,7 @@ const ModalLogic = (function() {
     createProductGrid({
       tableId: 'pl-table',
       buttonId: 'btnProgIntakePL',
-      storageKey: 'bt_pl_grid_v310', // v3.1.0
+      storageKey: 'bt_pl_grid_v310',
       defaultTimes: PL_DEFAULTS,
       productName: 'ProLact Slim+',
       blockId: 'prolact-block'
@@ -1001,7 +1011,7 @@ const ModalLogic = (function() {
     createProductGrid({
       tableId: 'he-table',
       buttonId: 'btnProgIntakeHE',
-      storageKey: 'bt_he_grid_v310', // v3.1.0
+      storageKey: 'bt_he_grid_v310',
       defaultTimes: HE_DEFAULTS,
       productName: 'OMNi-Biotic HETOX light',
       blockId: 'omni-block'
@@ -1009,55 +1019,94 @@ const ModalLogic = (function() {
     createProductGrid({
       tableId: 'ch-table',
       buttonId: 'btnProgIntakeCH',
-      storageKey: 'bt_ch_grid_v310', // v3.1.0
+      storageKey: 'bt_ch_grid_v310',
       defaultTimes: CH_DEFAULTS,
       productName: 'Fortex Хитозан Плюс',
       blockId: 'chitosan-block'
     })
   ].filter(g => g !== null); // Филтрираме, ако някоя таблица липсва
 
+  // --- Глобална синхронизация на DOW ---
+  // Тази функция ще бъде извикана от Модала, за да каже на *всички* мрежи
+  // да си сменят активния ден едновременно.
+  window.syncActiveDow = function(dow) {
+    grids.forEach(grid => {
+      if (grid.state && grid.state.activeDow !== dow) {
+        grid.state.activeDow = dow;
+        grid.saveState(grid.state);
+        grid.refreshDays();
+      }
+    });
+  };
+
+  // --- Глобална функция за ъпдейт (извиква се от Модала) ---
+  window.masterUpdateAllGrids = function() {
+    grids.forEach(grid => grid.updateIntakeStates());
+    checkAndScrollForOverdue();
+  };
+
   
-  // --- Логика за Скролиране/Фокус ---
-  let lastScrolledBlock = null; // Да не скролваме постоянно
-  
+  // ===================================
+  // --- КОРИГИРАНА ЛОГИКА ЗА ФОКУС ---
+  // ===================================
+
+  // Взимаме елементите на хедъра веднъж
+  const topbarWrap = document.querySelector('.topbar-wrap');
+  const tabsWrap = document.querySelector('.tabs-wrap');
+  // Добавяме и <main> padding-top (20px)
+  const mainStyle = window.getComputedStyle(document.querySelector('main'));
+  const mainPaddingTop = parseInt(mainStyle.paddingTop, 10) || 20;
+
   function checkAndScrollForOverdue() {
     let blockToScroll = null;
-
-    // Проверяваме мрежите в реда, в който са дефинирани
+    
+    // 1. Намираме ПЪРВИЯ просрочен продукт (ProLact -> OMNI -> Chitosan)
     for (const grid of grids) {
       if (grid.isOverdue()) {
         blockToScroll = grid.getBlockId();
-        break; // Намираме първия просрочен и спираме
+        break; 
       }
     }
-    
-    if (blockToScroll && blockToScroll !== lastScrolledBlock) {
+
+    // 2. Ако има просрочен, скролваме до него
+    if (blockToScroll) {
       const el = document.getElementById(blockToScroll);
       if (el) {
-        // Проверяваме дали елементът е *вече* видим
-        const rect = el.getBoundingClientRect();
-        const isVisible = (rect.top >= 0) && (rect.top <= window.innerHeight);
+        // 3. Изчисляваме колко място заемат лепкавите хедъри
+        const totalHeaderHeight = (topbarWrap ? topbarWrap.offsetHeight : 0) + (tabsWrap ? tabsWrap.offsetHeight : 0);
         
-        // Скролваме само ако *не е* видим
-        if (!isVisible) {
-          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          lastScrolledBlock = blockToScroll;
+        // 4. Това е позицията, на която искаме да е елементът (под хедърите + padding-a на main)
+        const expectedTopPosition = totalHeaderHeight + mainPaddingTop;
+        
+        const rect = el.getBoundingClientRect();
+
+        // 5. Скролваме САМО АКО вече не е на правилната позиция (даваме 5px толеранс)
+        if (rect.top < (expectedTopPosition - 5) || rect.top > (expectedTopPosition + 5)) {
+          
+          // Изчисляваме новата позиция за скрола
+          // window.scrollY = колко сме скролирали досега
+          // rect.top = позицията на елемента спрямо екрана
+          // expectedTopPosition = колко място да оставим отгоре
+          const targetScrollY = window.scrollY + rect.top - expectedTopPosition; 
+          
+          window.scrollTo({
+            top: targetScrollY,
+            behavior: 'smooth'
+          });
         }
       }
-    } else if (!blockToScroll) {
-      lastScrolledBlock = null; // Нулираме, ако няма просрочени
     }
   }
 
   // --- Глобален Интервал ---
-  function masterUpdate() {
+  function masterUpdateOnInterval() {
     grids.forEach(grid => grid.updateIntakeStates());
     checkAndScrollForOverdue();
   }
 
-  setInterval(masterUpdate, 60000); // 1 минута
+  setInterval(masterUpdateOnInterval, 60000); // 1 минута
   
   // Първоначално извикване
-  setTimeout(masterUpdate, 500); // Кратко забавяне, за да се зареди всичко
+  setTimeout(masterUpdateOnInterval, 500); // Кратко забавяне, за да се зареди всичко
 
 })();
