@@ -38,3 +38,22 @@ function toRoman(num){
     if(Number.isInteger(saved) && saved>=0 && saved<tabs.length) select(saved); else select(0);
   }catch(_){ select(0); }
 })();
+
+//
+// ↓↓↓ ДОБАВИ ТОЗИ КОД В КРАЯ ↓↓↓
+//
+document.addEventListener('DOMContentLoaded', () => {
+  // Проверяваме дали config.js е зареден и има версия
+  if (typeof APP_VERSION !== 'undefined') {
+    const versionString = `v${APP_VERSION}`;
+    
+    // 1. Сменяме <title> на страницата
+    document.title = `БТ App 3 — ${versionString}`;
+    
+    // 2. Сменяме текста в .badge
+    const badge = document.querySelector('.topbar .badge');
+    if (badge) {
+      badge.textContent = versionString;
+    }
+  }
+});
