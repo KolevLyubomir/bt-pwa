@@ -2,7 +2,7 @@
 
 /**
  * =================================================================
- * ОБЩА ЛОГИКА ЗА МРЕЖАТА НА ПРОДУКТИТЕ (v3.1.0 logic)
+ * ОБЩА ЛОГИКА ЗА МРЕЖАТА НА ПРОДУКТИТЕ (v3.1.2 logic)
  * Тази "фабрика" създава и управлява една мрежа (ProLact, Omni и т.н.)
  * =================================================================
  */
@@ -341,26 +341,35 @@ function createProductGrid(options) {
         toggleIntakeAt: toggleIntakeAt,
         normalizeColumnAfterChange: normalizeColumnAfterChange,
         renderTimes: renderTimes,
-        updateIntakeStates: updateIntakeStates,
+        updateIntakeStates: updateIntakeStates, // Подаваме референция
         blinkCell: blinkCell,
-        blinkRow: blinkRow
+        blinkRow: blinkRow,
+        refreshDays: refreshDays // Подаваме и тази
       });
     });
   });
 
+  //
+  // ↓↓↓ ФИКС #2 (Бавен скрол) Е ТУК ↓↓↓
+  //
   if (INTAKE_BTN) {
     INTAKE_BTN.addEventListener('click', () => {
       const row = Number(INTAKE_BTN.dataset.row);
       const dow = Number(INTAKE_BTN.dataset.dow);
       if (!Number.isFinite(row) || !Number.isFinite(dow)) return;
+      
       const nowDone = toggleIntakeAt(row, dow);
-      updateIntakeStates();
-      updateProgIntakeButton();
+      
+      // Извикваме ГЛОБАЛНИЯ ъпдейт,
+      // който ще опресни всички мрежи И ще провери за скрол
+      window.masterUpdateAllGrids(); 
+      
       if (nowDone) {
         blinkCell(row, dow);
       }
     });
   }
+  // ↑↑↑ КРАЙ НА ФИКС #2 ↑↑↑
   
   // --- Първоначално зареждане ---
   refreshDays();
@@ -372,7 +381,9 @@ function createProductGrid(options) {
     updateIntakeStates: updateIntakeStates,
     refreshDays: refreshDays, // Ще ни трябва за синхронизация
     isOverdue: () => isOverdue, // Функция, която връща флага
-    getBlockId: () => BLOCK_ID
+    getBlockId: () => BLOCK_ID,
+    state: state, // Експонираме state
+    saveState: saveState // Експонираме saveState
   };
 }
 // --- КРАЙ НА ФАБРИКАТА ---
@@ -423,7 +434,8 @@ const ModalLogic = (function() {
     renderTimes: () => {},
     updateIntakeStates: () => {},
     blinkCell: () => {},
-    blinkRow: () => {}
+    blinkRow: () => {},
+    refreshDays: () => {}
   };
   
   function setHands() {
@@ -624,7 +636,7 @@ const ModalLogic = (function() {
     if (editPos === 1) digits.d1 = 0;
     else if (editPos === 2) digits.d2 = 0;
     else if (editPos === 3) digits.d3 = 0;
-    else digits.d4 = 0;
+    else if (editPos === 4) digits.d4 = 0;
     commitDigitsToTime();
   }
   
@@ -640,7 +652,7 @@ const ModalLogic = (function() {
       getIntakeStateForSlot: () => ({ status: 'normal', has: false }),
       toggleIntakeAt: () => {}, normalizeColumnAfterChange: () => {},
       renderTimes: () => {}, updateIntakeStates: () => {},
-      blinkCell: () => {}, blinkRow: () => {}
+      blinkCell: () => {}, blinkRow: () => {}, refreshDays: () => {}
     };
   }
 
@@ -843,28 +855,28 @@ const ModalLogic = (function() {
 
   function handleSaveOne() {
     applyTimeForCurrentCell(false);
-    const { state, saveState, renderTimes, updateIntakeStates, blinkCell, row, dow } = currentContext;
+    const { state, saveState, renderTimes, blinkCell, row, dow } = currentContext;
     saveState(state);
     renderTimes();
     // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
-    masterUpdateAllGrids();
+    window.masterUpdateAllGrids();
     blinkCell(row, dow);
     hideClk();
   }
 
   function handleSaveAllDays() {
     applyTimeForCurrentCell(true);
-    const { state, saveState, renderTimes, updateIntakeStates, blinkRow, row } = currentContext;
+    const { state, saveState, renderTimes, blinkRow, row } = currentContext;
     saveState(state);
     renderTimes();
     // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
-    masterUpdateAllGrids();
+    window.masterUpdateAllGrids();
     blinkRow(row);
     hideClk();
   }
 
   function handleAudioToggle() {
-    const { state, saveState, row, dow, renderTimes, updateIntakeStates, blinkCell } = currentContext;
+    const { state, saveState, row, dow, renderTimes, blinkCell } = currentContext;
     const idx = (dow === 0 ? 6 : dow - 1);
     applyTimeForCurrentCell(false); // Запазваме часа, преди да сменим флага
 
@@ -875,7 +887,7 @@ const ModalLogic = (function() {
     saveState(state);
     renderTimes();
     // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
-    masterUpdateAllGrids();
+    window.masterUpdateAllGrids();
     updateAudioButtonForCurrent(); // Обновяваме бутона в модала
     blinkCell(row, dow);
     hideClk();
@@ -885,7 +897,7 @@ const ModalLogic = (function() {
     const { toggleIntakeAt, blinkCell, row, dow } = currentContext;
     const nowDone = toggleIntakeAt(row, dow);
     // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
-    masterUpdateAllGrids();
+    window.masterUpdateAllGrids();
     updateIntakeButtonForCurrent(); // Това обновява бутона в модала
     if (nowDone) {
       blinkCell(row, dow);
@@ -1031,7 +1043,8 @@ const ModalLogic = (function() {
   // да си сменят активния ден едновременно.
   window.syncActiveDow = function(dow) {
     grids.forEach(grid => {
-      if (grid.state && grid.state.activeDow !== dow) {
+      // Проверяваме дали grid.state съществува, преди да го достъпим
+      if (grid && grid.state && grid.state.activeDow !== dow) {
         grid.state.activeDow = dow;
         grid.saveState(grid.state);
         grid.refreshDays();
@@ -1047,16 +1060,13 @@ const ModalLogic = (function() {
 
   
   // ===================================
-  // --- КОРИГИРАНА ЛОГИКА ЗА ФОКУС ---
+  // --- КОРИГИРАНА ЛОГИКА ЗА ФОКУС (v3.1.2) ---
   // ===================================
 
   // Взимаме елементите на хедъра веднъж
   const topbarWrap = document.querySelector('.topbar-wrap');
   const tabsWrap = document.querySelector('.tabs-wrap');
-  // Добавяме и <main> padding-top (20px)
-  const mainStyle = window.getComputedStyle(document.querySelector('main'));
-  const mainPaddingTop = parseInt(mainStyle.paddingTop, 10) || 20;
-
+  
   function checkAndScrollForOverdue() {
     let blockToScroll = null;
     
@@ -1075,18 +1085,18 @@ const ModalLogic = (function() {
         // 3. Изчисляваме колко място заемат лепкавите хедъри
         const totalHeaderHeight = (topbarWrap ? topbarWrap.offsetHeight : 0) + (tabsWrap ? tabsWrap.offsetHeight : 0);
         
-        // 4. Това е позицията, на която искаме да е елементът (под хедърите + padding-a на main)
-        const expectedTopPosition = totalHeaderHeight + mainPaddingTop;
+        // 4. Това е позицията, на която искаме да е елементът (ТОЧНО под хедърите)
+        //
+        // ↓↓↓ ФИКС #1 (Отстояние) Е ТУК ↓↓↓
+        //
+        // Махнахме `mainPaddingTop`. Искаме елементът да е точно под `totalHeaderHeight`.
+        const expectedTopPosition = totalHeaderHeight;
         
         const rect = el.getBoundingClientRect();
 
         // 5. Скролваме САМО АКО вече не е на правилната позиция (даваме 5px толеранс)
-        if (rect.top < (expectedTopPosition - 5) || rect.top > (expectedTopPosition + 5)) {
+        if (Math.abs(rect.top - expectedTopPosition) > 5) {
           
-          // Изчисляваме новата позиция за скрола
-          // window.scrollY = колко сме скролирали досега
-          // rect.top = позицията на елемента спрямо екрана
-          // expectedTopPosition = колко място да оставим отгоре
           const targetScrollY = window.scrollY + rect.top - expectedTopPosition; 
           
           window.scrollTo({
@@ -1097,6 +1107,7 @@ const ModalLogic = (function() {
       }
     }
   }
+  // ↑↑↑ КРАЙ НА ФИКС #1 ↑↑↑
 
   // --- Глобален Интервал ---
   function masterUpdateOnInterval() {
