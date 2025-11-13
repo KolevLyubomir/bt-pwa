@@ -350,7 +350,7 @@ function createProductGrid(options) {
   });
 
   //
-  // ↓↓↓ ФИКС #2 (Бавен скрол) Е ТУК ↓↓↓
+  // ↓↓↓ ФИКС #2 (БЪРЗ СКРОЛ) Е ТУК ↓↓↓
   //
   if (INTAKE_BTN) {
     INTAKE_BTN.addEventListener('click', () => {
@@ -1065,7 +1065,6 @@ const ModalLogic = (function() {
 
   // Взимаме елементите на хедъра веднъж
   const topbarWrap = document.querySelector('.topbar-wrap');
-  const tabsWrap = document.querySelector('.tabs-wrap');
   
   function checkAndScrollForOverdue() {
     let blockToScroll = null;
@@ -1080,16 +1079,18 @@ const ModalLogic = (function() {
 
     // 2. Ако има просрочен, скролваме до него
     if (blockToScroll) {
-      const el = document.getElementById(blockToScroll);
+      //
+      // ↓↓↓ ФИКС #1 (Отстояние) Е ТУК ↓↓↓
+      //
+      // Целта вече не е div-a, а .prog-head вътре в него.
+      const block = document.getElementById(blockToScroll);
+      const el = block ? block.querySelector('.prog-head') : null;
+
       if (el) {
-        // 3. Изчисляваме колко място заемат лепкавите хедъри
-        const totalHeaderHeight = (topbarWrap ? topbarWrap.offsetHeight : 0) + (tabsWrap ? tabsWrap.offsetHeight : 0);
+        // 3. Изчисляваме колко място заема САМО горния бар (както поиска)
+        const totalHeaderHeight = (topbarWrap ? topbarWrap.offsetHeight : 0);
         
-        // 4. Това е позицията, на която искаме да е елементът (ТОЧНО под хедърите)
-        //
-        // ↓↓↓ ФИКС #1 (Отстояние) Е ТУК ↓↓↓
-        //
-        // Махнахме `mainPaddingTop`. Искаме елементът да е точно под `totalHeaderHeight`.
+        // 4. Това е позицията, на която искаме да е елементът (ТОЧНО под topbar)
         const expectedTopPosition = totalHeaderHeight;
         
         const rect = el.getBoundingClientRect();
