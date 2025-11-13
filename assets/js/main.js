@@ -39,20 +39,4 @@ function toRoman(num){
   }catch(_){ select(0); }
 })();
 
-//
-// ↓↓↓ НОВ КОД ЗА ВЕРСИЯТА (замества стария) ↓↓↓
-//
-document.addEventListener('DOMContentLoaded', () => {
-  // 1. Намираме етикета (badge) по ID
-  const badge = document.getElementById('app-version-badge');
-  
-  if (badge) {
-    // 2. Взимаме текста от него (напр. "v3.1.3")
-    const versionString = badge.textContent.trim();
-    
-    // 3. Слагаме го в <title> на страницата
-    if (versionString) {
-      document.title = `БТ App 3 — ${versionString}`;
-    }
-  }
-});
+// (Предишният код за версията, който беше тук, е ИЗТРИТ)
