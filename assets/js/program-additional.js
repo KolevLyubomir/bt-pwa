@@ -49,7 +49,6 @@
    */
   function createConfigurableProduct(prefix, brandsMap) {
     // --- Взимане на Елементи ---
-    const enableCheck = document.getElementById(`${prefix}-enable`);
     const configDiv = document.getElementById(`${prefix}-config`);
     const nameInput = document.getElementById(`${prefix}-name`);
     const slider = document.getElementById(`${prefix}-slider`);
@@ -57,14 +56,13 @@
     const saveBtn = document.getElementById(`${prefix}-save`);
     const deleteBtn = document.getElementById(`${prefix}-delete`);
     const gridContainer = document.getElementById(`${prefix}-grid-container`);
-    const block = document.getElementById(`${prefix}-block`);
-    const cap = document.getElementById(`${prefix}-cap`);
+    const capBrand = document.getElementById(`${prefix}-cap-brand`);
     const settingsBtn = document.getElementById(`${prefix}-settings-btn`);
     const brandSelect = document.getElementById(`${prefix}-brand-select`);
     const customNameField = document.getElementById(`${prefix}-custom-name-field`);
     const productImg = document.getElementById(`${prefix}-img`);
     
-    if (!enableCheck || !configDiv || !slider || !saveBtn || !gridContainer) {
+    if ( !configDiv || !slider || !saveBtn || !gridContainer || !settingsBtn || !brandSelect) {
       console.error(`Липсващи елементи за ${prefix}`);
       return;
     }
@@ -75,7 +73,7 @@
 
     // --- Настройки по подразбиране ---
     let settings = {
-      enabled: false,
+      // enabled е премахнато. `rows > 0` е новата "истина".
       brand: Object.keys(brandsMap)[0], // Първата марка от списъка
       customName: '',
       rows: 0
@@ -89,90 +87,80 @@
       }
     } catch (e) {}
 
-    // --- 2. Прилагане на Настройките при Старт ---
-    
-    // Функция за обновяване на UI (ще се ползва няколко пъти)
+    // --- 2. Прилагане на Настройките при Старт (UI функция) ---
     function updateUI() {
-      // 1. Тогъл суич
-      enableCheck.checked = settings.enabled;
-
-      // 2. Падащо меню
-      brandSelect.value = settings.brand;
-
-      // 3. Поле за име
-      const brandData = brandsMap[settings.brand] || brandsMap["custom"];
+      const isConfigured = settings.rows > 0;
+      const brandKey = settings.brand || Object.keys(brandsMap)[0];
+      const brandData = brandsMap[brandKey] || brandsMap["custom"];
       let currentName = brandData.name; // Име от картата (напр. "Thorne Research")
 
-      if (settings.brand === 'custom') {
-        customNameField.style.display = 'block'; // Показваме полето
-        nameInput.value = settings.customName || ''; // Слагаме запазеното име
+      // A. Попълваме панела с настройки (който е скрит)
+      brandSelect.value = brandKey;
+      slider.value = settings.rows;
+      sliderVal.textContent = settings.rows;
+
+      if (brandKey === 'custom') {
+        customNameField.style.display = 'block';
+        nameInput.value = settings.customName || '';
         if(settings.customName) {
-           currentName = settings.customName; // Ако има запазено, то е приоритет
+           currentName = settings.customName;
         } else {
            currentName = nameInput.placeholder; // Ако няма, взимаме плейсхолдъра
         }
       } else {
-        customNameField.style.display = 'none'; // Скриваме полето
+        customNameField.style.display = 'none';
       }
       
-      // 4. Снимка и Заглавие
-      productImg.src = brandData.img;
-      cap.textContent = currentName;
-      
-      // 5. Плъзгач
-      slider.value = settings.rows;
-      sliderVal.textContent = settings.rows;
-
-      // 6. Показване/Скриване на елементи
-      if (settings.enabled) {
-        settingsBtn.style.display = 'inline-flex';
+      // Б. Конфигурираме видимата част (Хедъра)
+      if (isConfigured) {
+        productImg.src = brandData.img;
         productImg.style.display = 'block';
-        // Генерираме таблицата (ако има редове)
+        capBrand.textContent = currentName;
+        settingsBtn.classList.remove('active'); // Зелено
+        settingsBtn.classList.add('inactive'); // Сиво
+        gridContainer.style.display = 'block';
+        
+        // ВАЖНО: Генерираме таблицата
         generateGrid(settings.rows, currentName);
+
       } else {
-        settingsBtn.style.display = 'none';
+        // Продуктът е "Изключен"
         productImg.style.display = 'none';
-        configDiv.style.display = 'none'; // Скриваме настройките, ако е изключен
+        capBrand.textContent = '...'; // Празно
+        settingsBtn.classList.remove('inactive'); // Сиво
+        settingsBtn.classList.add('active'); // Зелено
+        gridContainer.style.display = 'none';
         gridContainer.innerHTML = ""; // Трием таблицата
+        
+        // Унищожаваме старата мрежа, ако е имало
+        if (currentGridInstance) {
+          window.grids = window.grids.filter(g => g !== currentGridInstance);
+          currentGridInstance.destroy();
+          currentGridInstance = null;
+        }
       }
     }
 
     // --- 3. Дефиниране на Event Listeners ---
 
-    // Тогъл Суич (Вкл/Изкл)
-    enableCheck.addEventListener('change', () => {
-      settings.enabled = enableCheck.checked;
-      if (settings.enabled && settings.rows === 0) {
-        // Ако го включваш за пръв път, сложи 1 прием по подразбиране
-        settings.rows = 1;
-      }
-      if (!settings.enabled) {
-        // Ако го изключваш, нулирай редовете
-        settings.rows = 0;
-      }
-      saveAndRerender();
-    });
-
-    // Бутон Настройки (Зъбно колело)
+    // Бутон Настройки (Зъбно колело) - Отваря/Затваря панела
     settingsBtn.addEventListener('click', () => {
-      // Просто показва/скрива панела
       configDiv.style.display = (configDiv.style.display === 'block') ? 'none' : 'block';
     });
 
-    // Падащо меню за Марки
+    // Падащо меню за Марки - сменя снимка и име (само в UI)
     brandSelect.addEventListener('change', () => {
       const selectedBrand = brandSelect.value;
-      settings.brand = selectedBrand;
-      
       const brandData = brandsMap[selectedBrand] || brandsMap["custom"];
-      productImg.src = brandData.img; // Сменяме снимката веднага
-
+      
       if (selectedBrand === 'custom') {
         customNameField.style.display = 'block';
-        cap.textContent = nameInput.value || nameInput.placeholder;
+        // Не сменяме снимката веднага, чакаме "Запази"
       } else {
         customNameField.style.display = 'none';
-        cap.textContent = brandData.name;
+        // Сменяме снимката веднага за преглед
+        productImg.src = brandData.img;
+        productImg.style.display = 'block';
       }
     });
 
@@ -187,22 +175,16 @@
       settings.brand = brandSelect.value;
       settings.customName = (settings.brand === 'custom') ? nameInput.value.trim() : '';
       
-      // Ако са 0 редове, но е включен, изключи го
-      if (settings.rows === 0 && settings.enabled) {
-        settings.enabled = false;
-      }
-      
       saveAndRerender();
       configDiv.style.display = 'none'; // Скриваме панела след запазване
     });
     
     // Бутон "Изтрий"
     deleteBtn.addEventListener('click', () => {
-      if (!confirm(`Сигурен ли си, че искаш да изтриеш графика за ${cap.textContent}?`)) {
-        return;
-      }
-      settings.enabled = false;
+      // (Вече не питаме, просто нулираме и запазваме)
       settings.rows = 0;
+      settings.customName = '';
+      
       saveAndRerender();
       configDiv.style.display = 'none'; // Скриваме панела
     });
@@ -220,34 +202,32 @@
     function generateGrid(rowCount, productName) {
       // 1. Унищожаваме старата мрежа, ако съществува
       if (currentGridInstance) {
-        // Премахваме я от глобалния масив, за да спре да се ъпдейтва
         window.grids = window.grids.filter(g => g !== currentGridInstance);
         currentGridInstance.destroy();
         currentGridInstance = null;
       }
       
-      // 2. Ако няма редове, чистим и излизаме
       if (rowCount === 0) {
         gridContainer.innerHTML = "";
         return;
       }
 
-      // 3. Генерираме default times (7 дни в седмицата)
+      // 3. Генерираме default times
       let defaultTimes = [];
       const timesMap = DEFAULT_TIMES_MAP[rowCount] || DEFAULT_TIMES_MAP[1]; // Резерва
       for(let i = 0; i < rowCount; i++) {
-        const time = (timesMap[i] && timesMap[i][0]) || "12:00"; // Резервен час
+        const time = (timesMap[i] && timesMap[i][0]) || "12:00";
         defaultTimes.push(Array(7).fill(time));
       }
 
       const tableId = `${prefix}-table`;
       const buttonId = `btnProgIntake${prefix.toUpperCase()}`;
       
-      // 4. Генерираме HTML за таблицата
+      // 4. Генерираме HTML
       let tbodyHtml = '';
       for (let r = 0; r < rowCount; r++) {
         tbodyHtml += '<tr>';
-        for (let d = 1; d <= 7; d++) { // 1=Пн ... 7=Нд(0)
+        for (let d = 1; d <= 7; d++) {
           const dow = (d === 7) ? 0 : d;
           tbodyHtml += `<td class="pl-time-cell" data-row="${r}" data-dow="${dow}">${defaultTimes[r][dow === 0 ? 6 : dow - 1]}</td>`;
         }
@@ -273,18 +253,18 @@
         </table>
       `;
 
-      // 5. Инициализираме "умната" мрежа за тази НОВА таблица
+      // 5. Инициализираме "умната" мрежа
       setTimeout(() => {
         currentGridInstance = createProductGrid({
           tableId: tableId,
           buttonId: buttonId,
-          storageKey: `bt_grid_${prefix}_v310`, // Отделен storage за *данните* от мрежата
+          storageKey: `bt_grid_${prefix}_v310`,
           defaultTimes: defaultTimes,
           productName: productName,
           blockId: `${prefix}-block`
         });
         
-        // 6. Добавяме новата инстанция към глобалния списък за ъпдейти
+        // 6. Добавяме новата инстанция към глобалния списък
         if (window.grids && currentGridInstance) {
           window.grids.push(currentGridInstance);
         }
