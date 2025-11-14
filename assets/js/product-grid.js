@@ -370,14 +370,24 @@ function createProductGrid(options) {
   renderTimes();
   updateIntakeStates();
 
+  //
+  // ↓↓↓ ДОБАВИ ТОВА ↓↓↓
+  //
+  function destroy() {
+    // Тази функция ще се вика, за да "убие" инстанцията
+    // Засега само изчистваме event listeners, ако има нужда
+    // (В твоя случай, просто спира да съществува в `window.grids`)
+  }
+
   // --- Връщаме публичния API ---
   return {
     updateIntakeStates: updateIntakeStates,
-    refreshDays: refreshDays, // Ще ни трябва за синхронизация
-    isOverdue: () => isOverdue, // Функция, която връща флага
+    refreshDays: refreshDays,
+    isOverdue: () => isOverdue,
     getBlockId: () => BLOCK_ID,
-    state: state, // Експонираме state
-    saveState: saveState // Експонираме saveState
+    state: state,
+    saveState: saveState,
+    destroy: destroy // <-- И ДОБАВИ ТОВА ТУК
   };
 }
 // --- КРАЙ НА ФАБРИКАТА ---
