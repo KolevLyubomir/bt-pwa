@@ -673,3 +673,132 @@ button.danger {
   cursor: pointer;
   border: 3px solid #06241b;
 }
+
+/* --- Стилове за Конфигуратора (Доп. пакет) --- */
+
+.prog-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2a3e41;
+  background: #0d171b;
+  border-radius: 8px;
+  padding: 4px 6px;
+  color: #fff;
+  height: 34px;
+  width: 34px;
+  cursor: pointer;
+}
+.icon-btn.settings-btn.active { /* Зелено, когато е неактивен (0) */
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.icon-btn.settings-btn.inactive { /* Сиво/неутрално, когато е активен */
+  border-color: #2a3e41;
+  color: #fff;
+}
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Ново заглавие на 2 реда */
+.prog-cap-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.prog-cap-main {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+}
+.prog-cap-brand {
+  font-size: 11px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+
+/* --- Стил за Тогъл Суич (вече не ни трябва) --- */
+/* (Изтрити стилове за .switch) */
+
+
+/* --- Панел за Настройки --- */
+.prog-config {
+  /* display: none; JS се грижи за това */
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.prog-config .field {
+  margin-bottom: 0;
+}
+.prog-config .field .lbl {
+  margin-bottom: 4px;
+}
+
+.config-actions {
+  display: flex;
+  gap: 10px;
+}
+.config-actions button {
+  flex: 0 0 auto;
+  width: 100px;
+}
+button.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+  font-weight: 700;
+}
+
+
+/* --- Стил на плъзгача --- */
+.slider-val {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 1.1em;
+  padding: 0 4px;
+}
+.slider-control {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  background: #0d171b;
+  border-radius: 5px;
+  border: 1px solid #254046;
+  outline: none;
+  padding: 0;
+}
+.slider-control::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
+}
+.slider-control::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
+}
