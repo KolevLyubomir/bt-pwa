@@ -53,16 +53,18 @@
     const nameInput = document.getElementById(`${prefix}-name`);
     const slider = document.getElementById(`${prefix}-slider`);
     const sliderVal = document.getElementById(`${prefix}-slider-val`);
+    const sliderTrackFill = document.getElementById(`${prefix}-slider-track-fill`);
     const saveBtn = document.getElementById(`${prefix}-save`);
     const deleteBtn = document.getElementById(`${prefix}-delete`);
     const gridContainer = document.getElementById(`${prefix}-grid-container`);
-    const capBrand = document.getElementById(`${prefix}-cap-brand`);
-    const settingsBtn = document.getElementById(`${prefix}-settings-btn`);
+    const capMain = document.getElementById(`${prefix}-cap-main`); // Основно заглавие (Берберин)
+    const capBrand = document.getElementById(`${prefix}-cap-brand`); // Под-заглавие (Марка)
+    const head = document.getElementById(`${prefix}-head`);
     const brandSelect = document.getElementById(`${prefix}-brand-select`);
     const customNameField = document.getElementById(`${prefix}-custom-name-field`);
     const productImg = document.getElementById(`${prefix}-img`);
     
-    if ( !configDiv || !slider || !saveBtn || !gridContainer || !settingsBtn || !brandSelect) {
+    if ( !configDiv || !slider || !saveBtn || !gridContainer || !head || !brandSelect) {
       console.error(`Липсващи елементи за ${prefix}`);
       return;
     }
@@ -73,7 +75,6 @@
 
     // --- Настройки по подразбиране ---
     let settings = {
-      // enabled е премахнато. `rows > 0` е новата "истина".
       brand: Object.keys(brandsMap)[0], // Първата марка от списъка
       customName: '',
       rows: 0
@@ -88,16 +89,17 @@
     } catch (e) {}
 
     // --- 2. Прилагане на Настройките при Старт (UI функция) ---
-    function updateUI() {
+    function updateUI(showConfig = false) {
       const isConfigured = settings.rows > 0;
       const brandKey = settings.brand || Object.keys(brandsMap)[0];
       const brandData = brandsMap[brandKey] || brandsMap["custom"];
-      let currentName = brandData.name; // Име от картата (напр. "Thorne Research")
+      let currentName = brandData.name;
 
-      // A. Попълваме панела с настройки (който е скрит)
+      // A. Попълваме панела с настройки
       brandSelect.value = brandKey;
       slider.value = settings.rows;
       sliderVal.textContent = settings.rows;
+      updateSliderFill(); // Обновяваме зелената лента
 
       if (brandKey === 'custom') {
         customNameField.style.display = 'block';
@@ -105,7 +107,7 @@
         if(settings.customName) {
            currentName = settings.customName;
         } else {
-           currentName = nameInput.placeholder; // Ако няма, взимаме плейсхолдъра
+           currentName = nameInput.placeholder;
         }
       } else {
         customNameField.style.display = 'none';
@@ -115,22 +117,22 @@
       if (isConfigured) {
         productImg.src = brandData.img;
         productImg.style.display = 'block';
+        capMain.classList.add('inactive'); // Сиво
         capBrand.textContent = currentName;
-        settingsBtn.classList.remove('active'); // Зелено
-        settingsBtn.classList.add('inactive'); // Сиво
         gridContainer.style.display = 'block';
         
-        // ВАЖНО: Генерираме таблицата
-        generateGrid(settings.rows, currentName);
+        // Генерираме таблицата (ако вече не съществува)
+        if (!currentGridInstance) {
+          generateGrid(settings.rows, currentName);
+        }
 
       } else {
         // Продуктът е "Изключен"
         productImg.style.display = 'none';
-        capBrand.textContent = '...'; // Празно
-        settingsBtn.classList.remove('inactive'); // Сиво
-        settingsBtn.classList.add('active'); // Зелено
+        capMain.classList.remove('inactive'); // Зелено
+        capBrand.textContent = '(не е добавен)'; // По-ясен текст
         gridContainer.style.display = 'none';
-        gridContainer.innerHTML = ""; // Трием таблицата
+        gridContainer.innerHTML = "";
         
         // Унищожаваме старата мрежа, ако е имало
         if (currentGridInstance) {
@@ -139,13 +141,28 @@
           currentGridInstance = null;
         }
       }
+      
+      // Показваме/Скриваме панела с настройки
+      configDiv.style.display = showConfig ? 'block' : 'none';
+    }
+    
+    // Функция за плъзгача
+    function updateSliderFill() {
+      const min = slider.min;
+      const max = slider.max;
+      const val = slider.value;
+      const percentage = (val - min) / (max - min) * 100;
+      if (sliderTrackFill) {
+         sliderTrackFill.style.width = percentage + '%';
+      }
     }
 
     // --- 3. Дефиниране на Event Listeners ---
 
-    // Бутон Настройки (Зъбно колело) - Отваря/Затваря панела
-    settingsBtn.addEventListener('click', () => {
-      configDiv.style.display = (configDiv.style.display === 'block') ? 'none' : 'block';
+    // Клик върху хедъра (Берберин)
+    head.addEventListener('click', () => {
+      const isHidden = configDiv.style.display === 'none';
+      configDiv.style.display = isHidden ? 'block' : 'none';
     });
 
     // Падащо меню за Марки - сменя снимка и име (само в UI)
@@ -155,45 +172,80 @@
       
       if (selectedBrand === 'custom') {
         customNameField.style.display = 'block';
-        // Не сменяме снимката веднага, чакаме "Запази"
       } else {
         customNameField.style.display = 'none';
-        // Сменяме снимката веднага за преглед
-        productImg.src = brandData.img;
-        productImg.style.display = 'block';
       }
+      // Не сменяме снимката веднага, чакаме "Запази"
     });
 
     // Плъзгач
     slider.addEventListener('input', () => {
       sliderVal.textContent = slider.value;
+      updateSliderFill();
     });
 
     // Бутон "Запази"
     saveBtn.addEventListener('click', () => {
-      settings.rows = parseInt(slider.value, 10);
-      settings.brand = brandSelect.value;
-      settings.customName = (settings.brand === 'custom') ? nameInput.value.trim() : '';
+      const newRows = parseInt(slider.value, 10);
+      const newBrand = brandSelect.value;
+      const newCustomName = (newBrand === 'custom') ? nameInput.value.trim() : '';
+
+      // Проверяваме дали нещо се е променило, за да генерираме наново
+      const needsGridUpdate = (newRows !== settings.rows) || 
+                              (newBrand !== settings.brand) || 
+                              (newCustomName !== settings.customName);
+
+      settings.rows = newRows;
+      settings.brand = newBrand;
+      settings.customName = newCustomName;
       
-      saveAndRerender();
-      configDiv.style.display = 'none'; // Скриваме панела след запазване
+      // Ако е 0 редове, изтриваме таблицата
+      if (settings.rows === 0) {
+        needsGridUpdate = true;
+      }
+      
+      saveAndRerender(false, needsGridUpdate); // Запазваме и НЕ показваме config
     });
     
-    // Бутон "Изтрий"
+    // Бутон "Изтрий" (вече е като "Запази с 0 приеми")
     deleteBtn.addEventListener('click', () => {
-      // (Вече не питаме, просто нулираме и запазваме)
+      if (settings.rows === 0) { // Ако вече е 0, просто затвори
+        configDiv.style.display = 'none';
+        return;
+      }
+      
+      if (!confirm(`Сигурен ли си, че искаш да изтриеш графика за този продукт?`)) {
+        return;
+      }
+      
       settings.rows = 0;
       settings.customName = '';
+      slider.value = 0; // Нулираме и плъзгача
       
-      saveAndRerender();
-      configDiv.style.display = 'none'; // Скриваме панела
+      saveAndRerender(false, true); // Запазваме, скриваме config и принуждаваме ъпдейт
     });
 
     // --- 4. Основни Функции ---
 
-    function saveAndRerender() {
+    function saveAndRerender(showConfig, needsGridUpdate) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-      updateUI(); // Прилагаме всичко наново
+      
+      // Взимаме новите имена
+      const brandData = brandsMap[settings.brand] || brandsMap["custom"];
+      let currentName = brandData.name;
+      if(settings.brand === 'custom' && settings.customName) {
+        currentName = settings.customName;
+      } else if (settings.brand === 'custom') {
+        currentName = nameInput.placeholder;
+      }
+
+      // Ако трябва, генерираме мрежата
+      if (needsGridUpdate) {
+        generateGrid(settings.rows, currentName);
+      }
+      
+      // Обновяваме UI-а (и скриваме/показваме config)
+      updateUI(showConfig);
     }
 
     /**
@@ -214,7 +266,7 @@
 
       // 3. Генерираме default times
       let defaultTimes = [];
-      const timesMap = DEFAULT_TIMES_MAP[rowCount] || DEFAULT_TIMES_MAP[1]; // Резерва
+      const timesMap = DEFAULT_TIMES_MAP[rowCount] || DEFAULT_TIMES_MAP[1];
       for(let i = 0; i < rowCount; i++) {
         const time = (timesMap[i] && timesMap[i][0]) || "12:00";
         defaultTimes.push(Array(7).fill(time));
@@ -272,7 +324,7 @@
     }
     
     // --- 5. Първоначално стартиране ---
-    updateUI();
+    updateUI(false); // Зареждаме UI, без да показваме config панела
   }
 
   // ===================================
