@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v4.1.1</title>
+  <title>БТ App 3 — v4.1.2</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -216,19 +216,17 @@
           <div class="prog-head">
             <div class="prog-head-main">
               <img class="prod-img" id="ber-img" src="" alt="Берберин" style="display: none;"/>
-              <span class="prog-cap" id="ber-cap">Берберин</span>
+              <div class="prog-cap-stack">
+                <span class="prog-cap-main">Берберин</span>
+                <span class="prog-cap-brand" id="ber-cap-brand"></span>
+              </div>
             </div>
             
             <div class="prog-head-actions">
-              <button class="icon-btn settings-btn" id="ber-settings-btn" title="Настройки" style="display: none;">
+              <button class="icon-btn settings-btn" id="ber-settings-btn" title="Настройки">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
               </button>
               
-              <label class="switch" title="Активирай/Спри">
-                <input type="checkbox" id="ber-enable">
-                <span class="switch-slider"></span>
-              </label>
-
               <button id="btnProgIntakeBER" class="clk-btn intake prog-intake-btn" type="button" title="Прием Берберин" style="display:none">
                 <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg></span>
               </button>
@@ -264,7 +262,7 @@
             </div>
           </div>
           
-          <div class="pl-wrap" id="ber-grid-container">
+          <div class="pl-wrap" id="ber-grid-container" style="display: none;">
             </div>
         </div>
 
@@ -273,7 +271,10 @@
         <div class="config-block" id="glu-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <span class="prog-cap">Глюкоманан</span>
+              <div class="prog-cap-stack">
+                <span class="prog-cap-main">Глюкоманан</span>
+                <span class="prog-cap-brand"></span>
+              </div>
             </div>
             </div>
         </div>
@@ -283,7 +284,10 @@
         <div class="config-block" id="egc-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <span class="prog-cap">EGCg (Зелен чай)</span>
+              <div class="prog-cap-stack">
+                <span class="prog-cap-main">EGCg (Зелен чай)</span>
+                <span class="prog-cap-brand"></span>
+              </div>
             </div>
             </div>
         </div>
@@ -354,7 +358,6 @@
   <script src="assets/js/product-grid.js"></script>
   <script src="assets/js/modal.js"></script>
   <script src="assets/js/program-init.js"></script>
-  
   <script src="assets/js/program-additional.js"></script>
 
 </body>
