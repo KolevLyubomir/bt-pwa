@@ -1,8 +1,8 @@
-/* global createProductGrid */ // Информираме, че createProductGrid идва от друг файл
+/* global createProductGrid */ // Информираме, че createProductGrid идва от product-grid.js
 
 /**
  * =================================================================
- * ИНИЦИАЛИЗАЦИЯ НА МРЕЖИТЕ И ГЛОБАЛНИЯ ИНТЕРВАЛ
+ * ИНИЦИАЛИЗАЦИЯ НА ОСНОВНИЯ ПАКЕТ И ГЛОБАЛНИЯ ИНТЕРВАЛ
  * =================================================================
  */
 (function() {
@@ -21,8 +21,8 @@
     ["19:00", "19:00", "19:00", "19:00", "19:00", "19:00", "19:00"]
   ];
 
-  // Създаваме 3-те инстанции
-  const grids = [
+  // Създаваме *глобален* масив, който `program-additional.js` ще може да допълва
+  window.grids = [
     createProductGrid({
       tableId: 'pl-table',
       buttonId: 'btnProgIntakePL',
@@ -49,10 +49,10 @@
     })
   ].filter(g => g !== null); // Филтрираме, ако някоя таблица липсва
 
+  
   // --- Глобална синхронизация на DOW ---
   window.syncActiveDow = function(dow) {
-    grids.forEach(grid => {
-      // Проверяваме дали grid.state съществува, преди да го достъпим
+    window.grids.forEach(grid => {
       if (grid && grid.state && grid.state.activeDow !== dow) {
         grid.state.activeDow = dow;
         grid.saveState(grid.state);
@@ -61,25 +61,24 @@
     });
   };
 
-  // --- Глобална функция за ъпдейт (извиква се от Модала) ---
+  // --- Глобална функция за ъпдейт (извиква се от Модала и бутоните) ---
   window.masterUpdateAllGrids = function() {
-    grids.forEach(grid => grid.updateIntakeStates());
+    window.grids.forEach(grid => grid.updateIntakeStates());
     checkAndScrollForOverdue();
   };
 
   
   // ===================================
-  // --- КОРИГИРАНА ЛОГИКА ЗА ФОКУС (v3.1.2) ---
+  // --- ЛОГИКА ЗА ФОКУС (v3.1.2) ---
   // ===================================
 
-  // Взимаме елементите на хедъра веднъж
   const topbarWrap = document.querySelector('.topbar-wrap');
   
   function checkAndScrollForOverdue() {
     let blockToScroll = null;
     
-    // 1. Намираме ПЪРВИЯ просрочен продукт (ProLact -> OMNI -> Chitosan)
-    for (const grid of grids) {
+    // 1. Намираме ПЪРВИЯ просрочен продукт
+    for (const grid of window.grids) {
       if (grid.isOverdue()) {
         blockToScroll = grid.getBlockId();
         break; 
@@ -88,25 +87,21 @@
 
     // 2. Ако има просрочен, скролваме до него
     if (blockToScroll) {
-      
-      // Целта вече не е div-a, а .prog-head вътре в него.
       const block = document.getElementById(blockToScroll);
-      const el = block ? block.querySelector('.prog-head') : null;
+      const el = block ? block.querySelector('.prog-head') : null; // Целим заглавието
 
       if (el) {
-        // 3. Изчисляваме колко място заема САМО горния бар (както поиска)
+        // 3. Изчисляваме височината на topbar
         const totalHeaderHeight = (topbarWrap ? topbarWrap.offsetHeight : 0);
         
-        // 4. Това е позицията, на която искаме да е елементът (ТОЧНО под topbar)
+        // 4. Позиция (ТОЧНО под topbar)
         const expectedTopPosition = totalHeaderHeight;
         
         const rect = el.getBoundingClientRect();
 
-        // 5. Скролваме САМО АКО вече не е на правилната позиция (даваме 5px толеранс)
+        // 5. Скролваме САМО АКО вече не е на правилната позиция
         if (Math.abs(rect.top - expectedTopPosition) > 5) {
-          
           const targetScrollY = window.scrollY + rect.top - expectedTopPosition; 
-          
           window.scrollTo({
             top: targetScrollY,
             behavior: 'smooth'
@@ -115,17 +110,16 @@
       }
     }
   }
-  // ↑↑↑ КРАЙ НА ФИКС #1 ↑↑↑
 
   // --- Глобален Интервал ---
   function masterUpdateOnInterval() {
-    grids.forEach(grid => grid.updateIntakeStates());
+    window.grids.forEach(grid => grid.updateIntakeStates());
     checkAndScrollForOverdue();
   }
 
   setInterval(masterUpdateOnInterval, 60000); // 1 минута
   
   // Първоначално извикване
-  setTimeout(masterUpdateOnInterval, 500); // Кратко забавяне, за да се зареди всичко
+  setTimeout(masterUpdateOnInterval, 500);
 
 })();
