@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v3.1.6</title>
+  <title>БТ App 3 — v4.1.0</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -28,7 +28,7 @@
       <div class="brand">
         <img src="https://bezopasnoteglo.carrd.co/assets/images/image08.png?v=7cf47ba0" alt="Безопасно Тегло" class="main-logo"/>
       </div>
-      </div>
+    </div>
   </div>
 
   <div class="tabs-wrap" role="navigation" aria-label="Навигация">
@@ -42,7 +42,6 @@
     <main>
       <section class="card">
         <h2 style="margin:0 0 10px">Запис</h2>
-
         <div class="inputs-row">
           <div class="inputs-row" style="gap:10px">
             <div class="field date">
@@ -52,27 +51,22 @@
                 <div id="cal" class="cal" role="dialog" aria-label="Календар"></div>
               </div>
             </div>
-
             <div class="field weight">
               <div class="lbl">Тегло (kg)</div>
               <div class="ctl">
                 <input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/>
               </div>
             </div>
-
             <div class="field" style="min-width:var(--ctl-h)">
               <div class="lbl"></div>
               <label class="bt-only" title="Маркиран като БТ"><input id="btFlag" type="checkbox" checked/></label>
             </div>
-
             <div class="field" style="min-width:100px">
               <div class="lbl"></div>
               <button id="addBtn" class="primary" type="button" style="height:var(--ctl-h); min-width:100px">Добави</button>
             </div>
           </div>
-
           <div class="spacer"></div>
-
           <div class="inputs-row" style="gap:8px">
             <div class="field">
               <div class="lbl"></div>
@@ -95,7 +89,6 @@
           </div>
         </div>
       </section>
-
       <section class="card">
         <h2 style="margin:0 0 10px">Графика</h2>
         <div class="inputs-row">
@@ -107,10 +100,8 @@
         </div>
         <canvas id="chart"></canvas>
       </section>
-
       <section class="card">
         <h2 style="margin:0">Записи</h2>
-
         <div class="recbar">
           <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
           <select id="pageSize">
@@ -124,7 +115,6 @@
             <option value="all">Всички</option>
           </select>
         </div>
-
         <div class="pager" id="pagerTop"></div>
         <table id="tbl">
           <colgroup><col class="date"><col class="w"><col class="act"></colgroup>
@@ -160,54 +150,16 @@
               <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
               <span class="prog-cap">ProLact Slim+</span>
             </div>
-            <button id="btnProgIntakePL" class="clk-btn intake prog-intake-btn" type="button"
-                    title="Прием ProLact Slim+" style="display:none">
+            <button id="btnProgIntakePL" class="clk-btn intake prog-intake-btn" type="button" title="Прием ProLact Slim+" style="display:none">
               <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <g transform="translate(0,3)">
-                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                  </g>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg>
               </span>
             </button>
           </div>
-
           <div class="pl-wrap">
             <table class="pl-table" id="pl-table">
-              <thead>
-                <tr>
-                  <th class="pl-day" data-dow="1">Пн</th>
-                  <th class="pl-day" data-dow="2">Вт</th>
-                  <th class="pl-day" data-dow="3">Ср</th>
-                  <th class="pl-day" data-dow="4">Чт</th>
-                  <th class="pl-day" data-dow="5">Пт</th>
-                  <th class="pl-day weekend" data-dow="6">Сб</th>
-                  <th class="pl-day weekend" data-dow="0">Нд</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="pl-time-cell" data-row="0" data-dow="1">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="2">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="3">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="4">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="5">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="6">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="0">08:00</td>
-                </tr>
-                <tr>
-                  <td class="pl-time-cell" data-row="1" data-dow="1">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="2">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="3">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="4">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="5">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="6">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="0">19:00</td>
-                </tr>
-              </tbody>
+              <thead><tr><th class="pl-day" data-dow="1">Пн</th><th class="pl-day" data-dow="2">Вт</th><th class="pl-day" data-dow="3">Ср</th><th class="pl-day" data-dow="4">Чт</th><th class="pl-day" data-dow="5">Пт</th><th class="pl-day weekend" data-dow="6">Сб</th><th class="pl-day weekend" data-dow="0">Нд</th></tr></thead>
+              <tbody><tr><td class="pl-time-cell" data-row="0" data-dow="1">08:00</td><td class="pl-time-cell" data-row="0" data-dow="2">08:00</td><td class="pl-time-cell" data-row="0" data-dow="3">08:00</td><td class="pl-time-cell" data-row="0" data-dow="4">08:00</td><td class="pl-time-cell" data-row="0" data-dow="5">08:00</td><td class="pl-time-cell" data-row="0" data-dow="6">08:00</td><td class="pl-time-cell" data-row="0" data-dow="0">08:00</td></tr><tr><td class="pl-time-cell" data-row="1" data-dow="1">19:00</td><td class="pl-time-cell" data-row="1" data-dow="2">19:00</td><td class="pl-time-cell" data-row="1" data-dow="3">19:00</td><td class="pl-time-cell" data-row="1" data-dow="4">19:00</td><td class="pl-time-cell" data-row="1" data-dow="5">19:00</td><td class="pl-time-cell" data-row="1" data-dow="6">19:00</td><td class="pl-time-cell" data-row="1" data-dow="0">19:00</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -220,45 +172,16 @@
               <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
               <span class="prog-cap">OMNi-Biotic HETOX light</span>
             </div>
-            <button id="btnProgIntakeHE" class="clk-btn intake prog-intake-btn" type="button"
-                    title="Прием OMNi-Biotic HETOX" style="display:none">
+            <button id="btnProgIntakeHE" class="clk-btn intake prog-intake-btn" type="button" title="Прием OMNi-Biotic HETOX" style="display:none">
               <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <g transform="translate(0,3)">
-                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                  </g>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg>
               </span>
             </button>
           </div>
-          
           <div class="pl-wrap">
             <table class="pl-table" id="he-table">
-              <thead>
-                <tr>
-                  <th class="pl-day" data-dow="1">Пн</th>
-                  <th class="pl-day" data-dow="2">Вт</th>
-                  <th class="pl-day" data-dow="3">Ср</th>
-                  <th class="pl-day" data-dow="4">Чт</th>
-                  <th class="pl-day" data-dow="5">Пт</th>
-                  <th class="pl-day weekend" data-dow="6">Сб</th>
-                  <th class="pl-day weekend" data-dow="0">Нд</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="pl-time-cell" data-row="0" data-dow="1">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="2">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="3">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="4">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="5">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="6">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="0">12:00</td>
-                </tr>
-              </tbody>
+              <thead><tr><th class="pl-day" data-dow="1">Пн</th><th class="pl-day" data-dow="2">Вт</th><th class="pl-day" data-dow="3">Ср</th><th class="pl-day" data-dow="4">Чт</th><th class="pl-day" data-dow="5">Пт</th><th class="pl-day weekend" data-dow="6">Сб</th><th class="pl-day weekend" data-dow="0">Нд</th></tr></thead>
+              <tbody><tr><td class="pl-time-cell" data-row="0" data-dow="1">12:00</td><td class="pl-time-cell" data-row="0" data-dow="2">12:00</td><td class="pl-time-cell" data-row="0" data-dow="3">12:00</td><td class="pl-time-cell" data-row="0" data-dow="4">12:00</td><td class="pl-time-cell" data-row="0" data-dow="5">12:00</td><td class="pl-time-cell" data-row="0" data-dow="6">12:00</td><td class="pl-time-cell" data-row="0" data-dow="0">12:00</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -271,63 +194,16 @@
               <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
               <span class="prog-cap">Fortex Хитозан Плюс</span>
             </div>
-            <button id="btnProgIntakeCH" class="clk-btn intake prog-intake-btn" type="button"
-                    title="Прием Fortex Хитозан Плюс" style="display:none">
+            <button id="btnProgIntakeCH" class="clk-btn intake prog-intake-btn" type="button" title="Прием Fortex Хитозан Плюс" style="display:none">
               <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <g transform="translate(0,3)">
-                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                  </g>
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg>
               </span>
             </button>
           </div>
-
           <div class="pl-wrap">
             <table class="pl-table" id="ch-table">
-              <thead>
-                <tr>
-                  <th class="pl-day" data-dow="1">Пн</th>
-                  <th class="pl-day" data-dow="2">Вт</th>
-                  <th class="pl-day" data-dow="3">Ср</th>
-                  <th class="pl-day" data-dow="4">Чт</th>
-                  <th class="pl-day" data-dow="5">Пт</th>
-                  <th class="pl-day weekend" data-dow="6">Сб</th>
-                  <th class="pl-day weekend" data-dow="0">Нд</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="pl-time-cell" data-row="0" data-dow="1">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="2">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="3">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="4">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="5">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="6">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="0">08:00</td>
-                </tr>
-                <tr>
-                  <td class="pl-time-cell" data-row="1" data-dow="1">12:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="2">12:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="3">12:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="4">12:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="5">12:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="6">12:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="0">12:00</td>
-                </tr>
-                <tr>
-                  <td class="pl-time-cell" data-row="2" data-dow="1">19:00</td>
-                  <td class="pl-time-cell" data-row="2" data-dow="2">19:00</td>
-                  <td class="pl-time-cell" data-row="2" data-dow="3">19:00</td>
-                  <td class="pl-time-cell" data-row="2" data-dow="4">19:00</td>
-                  <td class="pl-time-cell" data-row="2" data-dow="5">19:00</td>
-                  <td class="pl-time-cell" data-row="2" data-dow="6">19:00</td>
-                  <td class="pl-time-cell" data-row="2" data-dow="0">19:00</td>
-                </tr>
-              </tbody>
+              <thead><tr><th class="pl-day" data-dow="1">Пн</th><th class="pl-day" data-dow="2">Вт</th><th class="pl-day" data-dow="3">Ср</th><th class="pl-day" data-dow="4">Чт</th><th class="pl-day" data-dow="5">Пт</th><th class="pl-day weekend" data-dow="6">Сб</th><th class="pl-day weekend" data-dow="0">Нд</th></tr></thead>
+              <tbody><tr><td class="pl-time-cell" data-row="0" data-dow="1">08:00</td><td class="pl-time-cell" data-row="0" data-dow="2">08:00</td><td class="pl-time-cell" data-row="0" data-dow="3">08:00</td><td class="pl-time-cell" data-row="0" data-dow="4">08:00</td><td class="pl-time-cell" data-row="0" data-dow="5">08:00</td><td class="pl-time-cell" data-row="0" data-dow="6">08:00</td><td class="pl-time-cell" data-row="0" data-dow="0">08:00</td></tr><tr><td class="pl-time-cell" data-row="1" data-dow="1">12:00</td><td class="pl-time-cell" data-row="1" data-dow="2">12:00</td><td class="pl-time-cell" data-row="1" data-dow="3">12:00</td><td class="pl-time-cell" data-row="1" data-dow="4">12:00</td><td class="pl-time-cell" data-row="1" data-dow="5">12:00</td><td class="pl-time-cell" data-row="1" data-dow="6">12:00</td><td class="pl-time-cell" data-row="1" data-dow="0">12:00</td></tr><tr><td class="pl-time-cell" data-row="2" data-dow="1">19:00</td><td class="pl-time-cell" data-row="2" data-dow="2">19:00</td><td class="pl-time-cell" data-row="2" data-dow="3">19:00</td><td class="pl-time-cell" data-row="2" data-dow="4">19:00</td><td class="pl-time-cell" data-row="2" data-dow="5">19:00</td><td class="pl-time-cell" data-row="2" data-dow="6">19:00</td><td class="pl-time-cell" data-row="2" data-dow="0">19:00</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -335,13 +211,84 @@
 
       <section class="card" id="pkg-extra">
         <h2 style="margin:0 0 10px">Допълнителен пакет</h2>
-        <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
-          <li><strong>Берберин 500–600 mg</strong> — марка по избор</li>
-          <li><strong>Глюкоманан</strong> (<em>NOW Foods</em>)</li>
-          <li><strong>EGCg</strong> — екстракт от зелен чай (<em>NOW Foods</em>)</li>
-        </ul>
-      </section>
 
+        <div class="config-block" id="ber-block">
+          <div class="prog-head">
+            <div class="prog-head-main">
+              <label class="config-toggle"><input type="checkbox" id="ber-enable"> <strong>Берберин</strong></label>
+            </div>
+            <button id="btnProgIntakeBER" class="clk-btn intake prog-intake-btn" type="button" title="Прием Берберин" style="display:none">
+              <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg></span>
+            </button>
+          </div>
+          <div class="prog-config" id="ber-config">
+            <div class="field">
+              <div class="lbl">Марка / Име (по избор)</div>
+              <input type="text" id="ber-name" placeholder="Берберин 500mg">
+            </div>
+            <div class="field">
+              <div class="lbl">Приеми дневно: <strong class="slider-val" id="ber-slider-val">0</strong></div>
+              <input type="range" id="ber-slider" min="0" max="6" value="0" class="slider-control">
+            </div>
+            <button id="ber-save" class="primary" type="button">Запази</button>
+          </div>
+          <div class="pl-wrap" id="ber-grid-container">
+            </div>
+        </div>
+
+        <hr class="prog-sep"/>
+
+        <div class="config-block" id="glu-block">
+          <div class="prog-head">
+            <div class="prog-head-main">
+              <label class="config-toggle"><input type="checkbox" id="glu-enable"> <strong>Глюкоманан</strong></label>
+            </div>
+            <button id="btnProgIntakeGLU" class="clk-btn intake prog-intake-btn" type="button" title="Прием Глюкоманан" style="display:none">
+              <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg></span>
+            </button>
+          </div>
+          <div class="prog-config" id="glu-config">
+            <div class="field">
+              <div class="lbl">Марка / Име (по избор)</div>
+              <input type="text" id="glu-name" placeholder="NOW Foods Глюкоманан">
+            </div>
+            <div class="field">
+              <div class="lbl">Приеми дневно: <strong class="slider-val" id="glu-slider-val">0</strong></div>
+              <input type="range" id="glu-slider" min="0" max="6" value="0" class="slider-control">
+            </div>
+            <button id="glu-save" class="primary" type="button">Запази</button>
+          </div>
+          <div class="pl-wrap" id="glu-grid-container">
+            </div>
+        </div>
+
+        <hr class="prog-sep"/>
+        
+        <div class="config-block" id="egc-block">
+          <div class="prog-head">
+            <div class="prog-head-main">
+              <label class="config-toggle"><input type="checkbox" id="egc-enable"> <strong>EGCg (Зелен чай)</strong></label>
+            </div>
+            <button id="btnProgIntakeEGC" class="clk-btn intake prog-intake-btn" type="button" title="Прием EGCg" style="display:none">
+              <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg></span>
+            </button>
+          </div>
+          <div class="prog-config" id="egc-config">
+            <div class="field">
+              <div class="lbl">Марка / Име (по избор)</div>
+              <input type="text" id="egc-name" placeholder="NOW Foods EGCg">
+            </div>
+            <div class="field">
+              <div class="lbl">Приеми дневно: <strong class="slider-val" id="egc-slider-val">0</strong></div>
+              <input type="range" id="egc-slider" min="0" max="6" value="0" class="slider-control">
+            </div>
+            <button id="egc-save" class="primary" type="button">Запази</button>
+          </div>
+          <div class="pl-wrap" id="egc-grid-container">
+            </div>
+        </div>
+
+      </section>
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен режим</h2>
         <p style="margin:0 0 8px; color:#9fb4ad">
@@ -358,19 +305,16 @@
 
   <div class="clk" id="clk" aria-hidden="true">
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
-
       <div class="clk-header">
         <div id="clk-product" class="clk-product-title"></div>
         <div id="clk-weekday" class="clk-day"></div>
       </div>
-
       <div class="clk-face" id="clkFace">
         <div class="clk-ring mins" id="ringM"></div>
         <div class="clk-ring hours" id="ringH"></div>
         <div class="clk-hand hour" id="handH"></div>
         <div class="clk-hand min" id="handM"></div>
         <div class="clk-center-dot"></div>
-
         <div class="clk-read" id="clkRead">
           <div id="clkH" class="clk-read-part" data-part="H">
             <span class="clk-digit" data-pos="1"></span>
@@ -383,57 +327,22 @@
           </div>
         </div>
       </div>
-
-      <input id="clkKeyInput" type="tel" inputmode="numeric" pattern="[0-9]*"
-             autocomplete="off" aria-hidden="true"
-             style="position:absolute; opacity:0; height:0; width:0; border:0; padding:0; pointer-events:none;"/>
-
+      <input id="clkKeyInput" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-hidden="true" style="position:absolute; opacity:0; height:0; width:0; border:0; padding:0; pointer-events:none;"/>
       <div class="clk-actions">
         <div class="clk-actions-row">
           <button id="btnIntake" class="clk-btn intake big" type="button" title="Прием">
-            <span class="clk-btn-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <g transform="translate(0,3)">
-                  <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                  <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                  <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                  <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                </g>
-              </svg>
-            </span>
+            <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg></span>
           </button>
-
           <div class="clk-actions-group">
             <button id="btnSaveOne" class="clk-btn primary" type="button" title="Запис за този ден">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M5 13l4 4L19 7"></path>
-                </svg>
-              </span>
+              <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"></path></svg></span>
             </button>
             <button id="btnSaveAllDays" class="clk-btn primary" type="button" title="Запис за всички дни от този ред">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M4 13l3 3 5-7"></path>
-                  <path d="M11 13l3 3 6-8"></path>
-                </svg>
-              </span>
+              <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M4 13l3 3 5-7"></path><path d="M11 13l3 3 6-8"></path></svg></span>
             </button>
           </div>
-
           <button id="btnAudio" class="clk-btn audio big" type="button" title="Аудио вкл/изкл за този час">
-            <span class="clk-btn-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <g class="icon-sound">
-                  <path d="M5 9v6h3l4 4V5L8 9H5z"></path>
-                  <path d="M16 9a3 3 0 0 1 0 6"></path>
-                </g>
-                <g class="icon-mute">
-                  <path d="M5 9v6h3l4 4V5L8 9H5z"></path>
-                  <path d="M18 9l-4 4m0-4l4 4"></path>
-                </g>
-              </svg>
-            </span>
+            <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g class="icon-sound"><path d="M5 9v6h3l4 4V5L8 9H5z"></path><path d="M16 9a3 3 0 0 1 0 6"></path></g><g class="icon-mute"><path d="M5 9v6h3l4 4V5L8 9H5z"></path><path d="M18 9l-4 4m0-4l4 4"></path></g></svg></span>
           </button>
         </div>
       </div>
@@ -445,6 +354,8 @@
   <script src="assets/js/product-grid.js"></script>
   <script src="assets/js/modal.js"></script>
   <script src="assets/js/program-init.js"></script>
+  
+  <script src="assets/js/program-additional.js"></script>
 
 </body>
 </html>
