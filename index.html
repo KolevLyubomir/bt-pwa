@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 3 — v4.1.0</title>
+  <title>БТ App 3 — v4.1.1</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -215,23 +215,55 @@
         <div class="config-block" id="ber-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <label class="config-toggle"><input type="checkbox" id="ber-enable"> <strong>Берберин</strong></label>
+              <img class="prod-img" id="ber-img" src="" alt="Берберин" style="display: none;"/>
+              <span class="prog-cap" id="ber-cap">Берберин</span>
             </div>
-            <button id="btnProgIntakeBER" class="clk-btn intake prog-intake-btn" type="button" title="Прием Берберин" style="display:none">
-              <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg></span>
-            </button>
+            
+            <div class="prog-head-actions">
+              <button class="icon-btn settings-btn" id="ber-settings-btn" title="Настройки" style="display: none;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              </button>
+              
+              <label class="switch" title="Активирай/Спри">
+                <input type="checkbox" id="ber-enable">
+                <span class="switch-slider"></span>
+              </label>
+
+              <button id="btnProgIntakeBER" class="clk-btn intake prog-intake-btn" type="button" title="Прием Берберин" style="display:none">
+                <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg></span>
+              </button>
+            </div>
           </div>
-          <div class="prog-config" id="ber-config">
-            <div class="field">
-              <div class="lbl">Марка / Име (по избор)</div>
+          
+          <div class="prog-config" id="ber-config" style="display: none;">
+            <div class="field brand-selector">
+              <div class="lbl">Избери марка</div>
+              <select id="ber-brand-select">
+                <option value="thorne">Thorne Research</option>
+                <option value="toniiq">Toniiq - Ultra High Strength</option>
+                <option value="it">Integrative Therapeutics</option>
+                <option value="nutricost">Nutricost</option>
+                <option value="now">NOW Foods - Berberine Glucose</option>
+                <option value="custom">Друга марка (въведи ръчно)</option>
+              </select>
+            </div>
+            
+            <div class="field custom-brand-field" id="ber-custom-name-field" style="display: none;">
+              <div class="lbl">Име на продукта (ръчно)</div>
               <input type="text" id="ber-name" placeholder="Берберин 500mg">
             </div>
+            
             <div class="field">
               <div class="lbl">Приеми дневно: <strong class="slider-val" id="ber-slider-val">0</strong></div>
               <input type="range" id="ber-slider" min="0" max="6" value="0" class="slider-control">
             </div>
-            <button id="ber-save" class="primary" type="button">Запази</button>
+            
+            <div class="config-actions">
+              <button id="ber-save" class="primary" type="button">Запази</button>
+              <button id="ber-delete" class="danger" type="button">Изтрий</button>
+            </div>
           </div>
+          
           <div class="pl-wrap" id="ber-grid-container">
             </div>
         </div>
@@ -241,24 +273,8 @@
         <div class="config-block" id="glu-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <label class="config-toggle"><input type="checkbox" id="glu-enable"> <strong>Глюкоманан</strong></label>
+              <span class="prog-cap">Глюкоманан</span>
             </div>
-            <button id="btnProgIntakeGLU" class="clk-btn intake prog-intake-btn" type="button" title="Прием Глюкоманан" style="display:none">
-              <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg></span>
-            </button>
-          </div>
-          <div class="prog-config" id="glu-config">
-            <div class="field">
-              <div class="lbl">Марка / Име (по избор)</div>
-              <input type="text" id="glu-name" placeholder="NOW Foods Глюкоманан">
-            </div>
-            <div class="field">
-              <div class="lbl">Приеми дневно: <strong class="slider-val" id="glu-slider-val">0</strong></div>
-              <input type="range" id="glu-slider" min="0" max="6" value="0" class="slider-control">
-            </div>
-            <button id="glu-save" class="primary" type="button">Запази</button>
-          </div>
-          <div class="pl-wrap" id="glu-grid-container">
             </div>
         </div>
 
@@ -267,24 +283,8 @@
         <div class="config-block" id="egc-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <label class="config-toggle"><input type="checkbox" id="egc-enable"> <strong>EGCg (Зелен чай)</strong></label>
+              <span class="prog-cap">EGCg (Зелен чай)</span>
             </div>
-            <button id="btnProgIntakeEGC" class="clk-btn intake prog-intake-btn" type="button" title="Прием EGCg" style="display:none">
-              <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><g transform="translate(0,3)"><circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle><path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path><rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect><path class="pill-clock-pill" d="M13 11.5l5 3"></path></g></svg></span>
-            </button>
-          </div>
-          <div class="prog-config" id="egc-config">
-            <div class="field">
-              <div class="lbl">Марка / Име (по избор)</div>
-              <input type="text" id="egc-name" placeholder="NOW Foods EGCg">
-            </div>
-            <div class="field">
-              <div class="lbl">Приеми дневно: <strong class="slider-val" id="egc-slider-val">0</strong></div>
-              <input type="range" id="egc-slider" min="0" max="6" value="0" class="slider-control">
-            </div>
-            <button id="egc-save" class="primary" type="button">Запази</button>
-          </div>
-          <div class="pl-wrap" id="egc-grid-container">
             </div>
         </div>
 
