@@ -441,6 +441,10 @@ select option.strong { font-weight:700; }
   .clk-hand.hour{ height:64px } .clk-hand.min{ height:90px }
 }
 
+/*
+  ↓↓↓ НОВИ/ОБНОВЕНИ СТИЛОВЕ (v4.1.4) ↓↓↓
+*/
+
 /* --- Стилове за Конфигуратора (Доп. Пакет) --- */
 
 .prog-head-actions {
@@ -449,9 +453,7 @@ select option.strong { font-weight:700; }
   gap: 12px;
 }
 
-/* Махаме стария .icon-btn и .settings-btn */
-
-/* Ново заглавие на 2 реда */
+/* ГЛАВАТА става бутон */
 .prog-head-main.clickable {
   cursor: pointer;
   border-radius: 8px;
@@ -462,24 +464,25 @@ select option.strong { font-weight:700; }
   background: #1a2a2f;
 }
 
+/* Заглавие на 2 реда */
 .prog-cap-stack {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 .prog-cap-main {
-  font-weight: 800; /* По-плътно */
+  font-weight: 800;
   font-size: 13px;
   color: var(--accent); /* Зелено по подразбиране (за "Добави") */
   transition: color .2s ease;
 }
-.prog-cap-main.inactive { /* Когато е конфигуриран */
-  color: var(--muted); /* Става сиво */
+.prog-cap-main.configured { /* Когато е конфигуриран (има >0 приеми) */
+  color: var(--text); /* БЯЛО (като Prolact), НЕ сиво */
   font-weight: 700;
 }
 .prog-cap-brand {
   font-size: 12px;
-  color: var(--text); /* Основен цвят на текста (като OMNI) */
+  color: var(--text); /* БЯЛО (като OMNI), НЕ сиво */
   font-weight: 400;
 }
 
@@ -497,7 +500,7 @@ select option.strong { font-weight:700; }
 .prog-config .field {
   margin-bottom: 0;
 }
-/* Добавяме разстояние между полетата */
+/* Разстояние между полетата */
 .prog-config .field.brand-selector {
   margin-bottom: 8px;
 }
@@ -509,25 +512,33 @@ select option.strong { font-weight:700; }
   margin-bottom: 4px;
 }
 
+/* Махаме оранжевия фокус */
+.prog-config select:focus,
+.prog-config input[type="text"]:focus {
+  outline: none; /* Махаме оранжевото */
+  box-shadow: none; /* Махаме и сянката */
+  border-color: #2b6e66; /* Слагаме лек зелен бордер при фокус */
+}
+
 /* Контейнер за кръглите бутони */
 .config-actions {
   display: flex;
-  justify-content: space-between; /* Бутони в двата края */
+  justify-content: flex-end; /* Бутони само вдясно */
   align-items: center;
-  margin-top: 16px; /* Повече разстояние от плъзгача */
+  margin-top: 16px; /* Разстояние от плъзгача */
 }
 .config-buttons {
   display: flex;
   gap: 8px;
 }
-/* Стил за кръглите бутони (като в модала) */
+/* Стил за кръглите бутони (МАЛКИ) */
 .config-actions .clk-btn {
-  width: 52px;
-  height: 52px;
+  width: 34px; /* <-- ФИКС 1: Размер 34px */
+  height: 34px;
 }
 .config-actions .clk-btn .clk-btn-icon svg {
-  width: 30px;
-  height: 30px;
+  width: 20px; /* По-малка икона */
+  height: 20px;
 }
 button.danger {
   background: var(--danger);
@@ -557,7 +568,7 @@ button.danger {
   height: 10px;
   background: var(--accent);
   border-radius: 5px;
-  pointer-events: none; /* Да може да се клика "през" него */
+  pointer-events: none;
   z-index: 1;
 }
 .slider-control {
@@ -565,14 +576,13 @@ button.danger {
   appearance: none;
   width: 100%;
   height: 10px;
-  background: #0d171b; /* Тъмна основа */
   border-radius: 5px;
   border: 1px solid #254046;
   outline: none;
   padding: 0;
   position: relative;
-  z-index: 2; /* Слайдерът е над зеления пълнеж */
-  background: transparent; /* Правим самия слайдер прозрачен */
+  z-index: 2; 
+  background: transparent;
 }
 
 .slider-control::-webkit-slider-thumb {
