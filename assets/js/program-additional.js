@@ -63,6 +63,7 @@
     const brandSelect = document.getElementById(`${prefix}-brand-select`);
     const customNameField = document.getElementById(`${prefix}-custom-name-field`);
     const productImg = document.getElementById(`${prefix}-img`);
+    const intakeBtn = document.getElementById(`btnProgIntake${prefix.toUpperCase()}`);
     
     if ( !configDiv || !slider || !saveBtn || !gridContainer || !head || !brandSelect) {
       console.error(`Липсващи елементи за ${prefix}`);
@@ -75,16 +76,16 @@
 
     // --- Настройки по подразбиране ---
     let settings = {
-      brand: Object.keys(brandsMap)[0], // Първата марка от списъка
+      brand: Object.keys(brandsMap)[0],
       customName: '',
-      rows: 0
+      rows: 0 // 0 = неактивен
     };
     
     // --- 1. Зареждане от Паметта ---
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       if (saved) {
-        settings = { ...settings, ...saved }; // Смесваме запазените с тези по подразбиране
+        settings = { ...settings, ...saved };
       }
     } catch (e) {}
 
@@ -95,7 +96,7 @@
       const brandData = brandsMap[brandKey] || brandsMap["custom"];
       let currentName = brandData.name;
 
-      // A. Попълваме панела с настройки
+      // A. Попълваме панела с настройки (който може да е скрит)
       brandSelect.value = brandKey;
       slider.value = settings.rows;
       sliderVal.textContent = settings.rows;
@@ -117,8 +118,8 @@
       if (isConfigured) {
         productImg.src = brandData.img;
         productImg.style.display = 'block';
-        capMain.classList.add('inactive'); // Сиво
-        capBrand.textContent = currentName;
+        capMain.classList.add('configured'); // Става БЯЛ (като Prolact)
+        capBrand.textContent = currentName; // Показва марката
         gridContainer.style.display = 'block';
         
         // Генерираме таблицата (ако вече не съществува)
@@ -129,8 +130,8 @@
       } else {
         // Продуктът е "Изключен"
         productImg.style.display = 'none';
-        capMain.classList.remove('inactive'); // Зелено
-        capBrand.textContent = '(не е добавен)'; // По-ясен текст
+        capMain.classList.remove('configured'); // Става ЗЕЛЕН (както поиска за "Добави")
+        capBrand.textContent = ''; // Скриваме (ФИКС 5)
         gridContainer.style.display = 'none';
         gridContainer.innerHTML = "";
         
@@ -165,17 +166,14 @@
       configDiv.style.display = isHidden ? 'block' : 'none';
     });
 
-    // Падащо меню за Марки - сменя снимка и име (само в UI)
+    // Падащо меню за Марки
     brandSelect.addEventListener('change', () => {
       const selectedBrand = brandSelect.value;
-      const brandData = brandsMap[selectedBrand] || brandsMap["custom"];
-      
       if (selectedBrand === 'custom') {
         customNameField.style.display = 'block';
       } else {
         customNameField.style.display = 'none';
       }
-      // Не сменяме снимката веднага, чакаме "Запази"
     });
 
     // Плъзгач
@@ -190,7 +188,6 @@
       const newBrand = brandSelect.value;
       const newCustomName = (newBrand === 'custom') ? nameInput.value.trim() : '';
 
-      // Проверяваме дали нещо се е променило, за да генерираме наново
       const needsGridUpdate = (newRows !== settings.rows) || 
                               (newBrand !== settings.brand) || 
                               (newCustomName !== settings.customName);
@@ -199,28 +196,28 @@
       settings.brand = newBrand;
       settings.customName = newCustomName;
       
-      // Ако е 0 редове, изтриваме таблицата
       if (settings.rows === 0) {
         needsGridUpdate = true;
       }
       
-      saveAndRerender(false, needsGridUpdate); // Запазваме и НЕ показваме config
+      saveAndRerender(false, needsGridUpdate); // Запазваме и скриваме config
     });
     
-    // Бутон "Изтрий" (вече е като "Запази с 0 приеми")
+    // Бутон "Изтрий"
     deleteBtn.addEventListener('click', () => {
-      if (settings.rows === 0) { // Ако вече е 0, просто затвори
+      if (settings.rows === 0) {
         configDiv.style.display = 'none';
         return;
       }
       
-      if (!confirm(`Сигурен ли си, че искаш да изтриеш графика за този продукт?`)) {
+      // ФИКС 2: Прост confirm, както поиска
+      if (!confirm("Ще изтриете ли избора?")) {
         return;
       }
       
       settings.rows = 0;
       settings.customName = '';
-      slider.value = 0; // Нулираме и плъзгача
+      slider.value = 0; 
       
       saveAndRerender(false, true); // Запазваме, скриваме config и принуждаваме ъпдейт
     });
@@ -230,7 +227,6 @@
     function saveAndRerender(showConfig, needsGridUpdate) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
       
-      // Взимаме новите имена
       const brandData = brandsMap[settings.brand] || brandsMap["custom"];
       let currentName = brandData.name;
       if(settings.brand === 'custom' && settings.customName) {
@@ -239,20 +235,20 @@
         currentName = nameInput.placeholder;
       }
 
-      // Ако трябва, генерираме мрежата
       if (needsGridUpdate) {
         generateGrid(settings.rows, currentName);
       }
       
-      // Обновяваме UI-а (и скриваме/показваме config)
       updateUI(showConfig);
+      
+      // ФИКС 8: "Ghost Button" - Викаме глобален ъпдейт ВЕДНАГА
+      window.masterUpdateAllGrids();
     }
 
     /**
      * Генерира HTML-а за таблицата и я инициализира
      */
     function generateGrid(rowCount, productName) {
-      // 1. Унищожаваме старата мрежа, ако съществува
       if (currentGridInstance) {
         window.grids = window.grids.filter(g => g !== currentGridInstance);
         currentGridInstance.destroy();
@@ -261,10 +257,12 @@
       
       if (rowCount === 0) {
         gridContainer.innerHTML = "";
+        if (intakeBtn) {
+          intakeBtn.style.display = 'none'; // ФИКС 8: Скриваме бутона веднага
+        }
         return;
       }
 
-      // 3. Генерираме default times
       let defaultTimes = [];
       const timesMap = DEFAULT_TIMES_MAP[rowCount] || DEFAULT_TIMES_MAP[1];
       for(let i = 0; i < rowCount; i++) {
@@ -275,7 +273,6 @@
       const tableId = `${prefix}-table`;
       const buttonId = `btnProgIntake${prefix.toUpperCase()}`;
       
-      // 4. Генерираме HTML
       let tbodyHtml = '';
       for (let r = 0; r < rowCount; r++) {
         tbodyHtml += '<tr>';
@@ -305,8 +302,12 @@
         </table>
       `;
 
-      // 5. Инициализираме "умната" мрежа
       setTimeout(() => {
+        if (typeof createProductGrid !== 'function') {
+          console.error("createProductGrid не е заредена!");
+          return;
+        }
+        
         currentGridInstance = createProductGrid({
           tableId: tableId,
           buttonId: buttonId,
@@ -316,9 +317,9 @@
           blockId: `${prefix}-block`
         });
         
-        // 6. Добавяме новата инстанция към глобалния списък
         if (window.grids && currentGridInstance) {
           window.grids.push(currentGridInstance);
+          currentGridInstance.updateIntakeStates();
         }
       }, 0);
     }
@@ -331,11 +332,10 @@
   // --- ИНИЦИАЛИЗАЦИЯ ---
   // ===================================
 
-  // Инициализираме само Берберин засега
   createConfigurableProduct('ber', BERBERINE_BRANDS); 
   
-  // TODO: Инициализирай и 'glu' и 'egc', когато имаме техните данни
-  // createConfigurableProduct('glu', GLUCOMANNAN_BRANDS);
-  // createConfigurableProduct('egc', EGC_BRANDS);
+  // TODO: Инициализирай и 'glu' и 'egc' (засега са празни)
+  // createConfigurableProduct('glu', {});
+  // createConfigurableProduct('egc', {});
 
 })();
