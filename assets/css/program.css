@@ -459,6 +459,8 @@ select option.strong { font-weight:700; }
   border-radius: 8px;
   padding: 4px; /* Малко отстояние за клик */
   transition: background .15s ease;
+  /* Уверяваме се, че се разширява (flex-grow: 1) */
+  flex: 1 1 auto; 
 }
 .prog-head-main.clickable:hover {
   background: #1a2a2f;
@@ -471,18 +473,17 @@ select option.strong { font-weight:700; }
   gap: 2px;
 }
 .prog-cap-main {
-  font-weight: 800;
+  font-weight: 700; /* ФИКС 1: Същото като .prog-cap */
   font-size: 13px;
-  color: var(--accent); /* Зелено по подразбиране (за "Добави") */
+  color: var(--text); /* ФИКС 1: ВИНАГИ БЯЛО (като Prolact) */
   transition: color .2s ease;
 }
 .prog-cap-main.configured { /* Когато е конфигуриран (има >0 приеми) */
-  color: var(--text); /* БЯЛО (като Prolact), НЕ сиво */
-  font-weight: 700;
+  color: var(--muted); /* ФИКС 2: Става СИВО */
 }
 .prog-cap-brand {
   font-size: 12px;
-  color: var(--text); /* БЯЛО (като OMNI), НЕ сиво */
+  color: var(--text); /* ФИКС 2: Марката е БЯЛА */
   font-weight: 400;
 }
 
@@ -500,7 +501,7 @@ select option.strong { font-weight:700; }
 .prog-config .field {
   margin-bottom: 0;
 }
-/* Разстояние между полетата */
+/* ФИКС 7: Разстояние между полетата */
 .prog-config .field.brand-selector {
   margin-bottom: 8px;
 }
@@ -512,12 +513,12 @@ select option.strong { font-weight:700; }
   margin-bottom: 4px;
 }
 
-/* Махаме оранжевия фокус */
+/* ФИКС 6: Махаме оранжевия фокус */
 .prog-config select:focus,
 .prog-config input[type="text"]:focus {
-  outline: none; /* Махаме оранжевото */
-  box-shadow: none; /* Махаме и сянката */
-  border-color: #2b6e66; /* Слагаме лек зелен бордер при фокус */
+  outline: none;
+  box-shadow: none;
+  border-color: #2b6e66; /* Лек зелен бордер при фокус */
 }
 
 /* Контейнер за кръглите бутони */
@@ -525,19 +526,19 @@ select option.strong { font-weight:700; }
   display: flex;
   justify-content: flex-end; /* Бутони само вдясно */
   align-items: center;
-  margin-top: 16px; /* Разстояние от плъзгача */
+  margin-top: 16px; /* ФИКС 7: Разстояние от плъзгача */
 }
 .config-buttons {
   display: flex;
   gap: 8px;
 }
-/* Стил за кръглите бутони (МАЛКИ) */
+/* ФИКС 8: Стил за кръглите бутони (МАЛКИ) */
 .config-actions .clk-btn {
-  width: 34px; /* <-- ФИКС 1: Размер 34px */
+  width: 34px;
   height: 34px;
 }
 .config-actions .clk-btn .clk-btn-icon svg {
-  width: 20px; /* По-малка икона */
+  width: 20px;
   height: 20px;
 }
 button.danger {
@@ -556,6 +557,7 @@ button.danger {
   padding: 0 4px;
 }
 
+/* ФИКС 9: Обвивка за плъзгача */
 .slider-track-wrapper {
   position: relative;
   margin-top: 8px;
@@ -582,7 +584,7 @@ button.danger {
   padding: 0;
   position: relative;
   z-index: 2; 
-  background: transparent;
+  background: transparent; /* Важно, за да се вижда долния слой */
 }
 
 .slider-control::-webkit-slider-thumb {
