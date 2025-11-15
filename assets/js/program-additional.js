@@ -32,6 +32,7 @@
   };
 
   // Дефиниции на часовете по подразбиране (0-6)
+  // Индекс 0 вече не се ползва, тъй като плъзгачът е 1-6
   const DEFAULT_TIMES_MAP = [
     [], // 0
     [["12:00"]], // 1
@@ -96,12 +97,19 @@
       const brandData = brandsMap[brandKey] || brandsMap["custom"];
       let currentName = brandData.name;
 
-      // A. Попълваме панела с настройки (който може да е скрит)
+      // A. Попълваме панела с настройки
       brandSelect.value = brandKey;
-      slider.value = settings.rows;
-      sliderVal.textContent = settings.rows;
+      
+      // ФИКС 3: Плъзгачът е 1-6, default 3
+      if (isConfigured) {
+        slider.value = settings.rows; // Ако е запазено, сложи запазената стойност
+      } else {
+        slider.value = 3; // Ако не е, сложи default 3
+      }
+      sliderVal.textContent = slider.value;
       updateSliderFill(); // Обновяваме зелената лента
 
+      // Логика за показване на ръчно име
       if (brandKey === 'custom') {
         customNameField.style.display = 'block';
         nameInput.value = settings.customName || '';
@@ -118,24 +126,21 @@
       if (isConfigured) {
         productImg.src = brandData.img;
         productImg.style.display = 'block';
-        capMain.classList.add('configured'); // Става БЯЛ (като Prolact)
-        capBrand.textContent = currentName; // Показва марката
+        capMain.classList.add('configured'); // ФИКС 2: Става СИВО
+        capBrand.textContent = currentName; // ФИКС 2: Показва марката в БЯЛО
         gridContainer.style.display = 'block';
         
-        // Генерираме таблицата (ако вече не съществува)
         if (!currentGridInstance) {
           generateGrid(settings.rows, currentName);
         }
-
       } else {
         // Продуктът е "Изключен"
         productImg.style.display = 'none';
-        capMain.classList.remove('configured'); // Става ЗЕЛЕН (както поиска за "Добави")
-        capBrand.textContent = ''; // Скриваме (ФИКС 5)
+        capMain.classList.remove('configured'); // ФИКС 1: Остава БЯЛО
+        capBrand.textContent = ''; // ФИКС 5: Празно
         gridContainer.style.display = 'none';
         gridContainer.innerHTML = "";
         
-        // Унищожаваме старата мрежа, ако е имало
         if (currentGridInstance) {
           window.grids = window.grids.filter(g => g !== currentGridInstance);
           currentGridInstance.destroy();
@@ -143,7 +148,6 @@
         }
       }
       
-      // Показваме/Скриваме панела с настройки
       configDiv.style.display = showConfig ? 'block' : 'none';
     }
     
@@ -152,6 +156,7 @@
       const min = slider.min;
       const max = slider.max;
       const val = slider.value;
+      // Изчисляваме процента (1-6)
       const percentage = (val - min) / (max - min) * 100;
       if (sliderTrackFill) {
          sliderTrackFill.style.width = percentage + '%';
@@ -184,6 +189,7 @@
 
     // Бутон "Запази"
     saveBtn.addEventListener('click', () => {
+      // ФИКС 3: Плъзгачът ВИНАГИ е 1-6
       const newRows = parseInt(slider.value, 10);
       const newBrand = brandSelect.value;
       const newCustomName = (newBrand === 'custom') ? nameInput.value.trim() : '';
@@ -196,28 +202,23 @@
       settings.brand = newBrand;
       settings.customName = newCustomName;
       
-      if (settings.rows === 0) {
-        needsGridUpdate = true;
-      }
-      
       saveAndRerender(false, needsGridUpdate); // Запазваме и скриваме config
     });
     
     // Бутон "Изтрий"
     deleteBtn.addEventListener('click', () => {
-      if (settings.rows === 0) {
+      if (settings.rows === 0) { // Ако вече е 0, просто затвори
         configDiv.style.display = 'none';
         return;
       }
       
-      // ФИКС 2: Прост confirm, както поиска
+      // ФИКС 2 (confirm):
       if (!confirm("Ще изтриете ли избора?")) {
         return;
       }
       
-      settings.rows = 0;
+      settings.rows = 0; // ФИКС 3: Това е "изтриването"
       settings.customName = '';
-      slider.value = 0; 
       
       saveAndRerender(false, true); // Запазваме, скриваме config и принуждаваме ъпдейт
     });
@@ -241,7 +242,7 @@
       
       updateUI(showConfig);
       
-      // ФИКС 8: "Ghost Button" - Викаме глобален ъпдейт ВЕДНАГА
+      // ФИКС 4: "Ghost Button" - Викаме глобален ъпдейт ВЕДНАГА
       window.masterUpdateAllGrids();
     }
 
@@ -258,7 +259,7 @@
       if (rowCount === 0) {
         gridContainer.innerHTML = "";
         if (intakeBtn) {
-          intakeBtn.style.display = 'none'; // ФИКС 8: Скриваме бутона веднага
+          intakeBtn.style.display = 'none'; // ФИКС 4: Скриваме бутона веднага
         }
         return;
       }
@@ -332,6 +333,7 @@
   // --- ИНИЦИАЛИЗАЦИЯ ---
   // ===================================
 
+  // Инициализираме само Берберин засега
   createConfigurableProduct('ber', BERBERINE_BRANDS); 
   
   // TODO: Инициализирай и 'glu' и 'egc' (засега са празни)
