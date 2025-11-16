@@ -1,3 +1,14 @@
+/* ↓↓↓ НОВ СТИЛ ЗА ЗАГЛАВИЯТА (Точка 6) ↓↓↓ */
+#panel-program .card h2 {
+  display: inline-block;
+  background: linear-gradient(to bottom right, var(--accent), var(--sel-orange));
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: 800;
+}
+
+
 .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
 .prog-head{
   display:flex;
@@ -11,15 +22,10 @@
   align-items:center;
   gap:12px;
   min-width:0;
+  flex: 1 1 auto; /* Заема наличното място */
 }
 .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
-.prog-pill{
-  display:flex; flex-direction:column; gap:6px;
-  padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
-  width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
-}
-.prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
-.prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
+
 .prog-cap{ font-weight:700; font-size:13px; }
 .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
@@ -45,11 +51,6 @@
   width:28px;
   height:28px;
 }
-
-.time-wrap{ display:flex; align-items:center; gap:6px }
-.time-row{ display:flex; align-items:center; gap:4px }
-.time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
-select option.strong { font-weight:700; }
 
 .pl-wrap{ overflow-x:hidden }
 .pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
@@ -459,7 +460,6 @@ select option.strong { font-weight:700; }
   border-radius: 8px;
   padding: 4px; /* Малко отстояние за клик */
   transition: background .15s ease;
-  /* Уверяваме се, че се разширява (flex-grow: 1) */
   flex: 1 1 auto; 
 }
 .prog-head-main.clickable:hover {
@@ -516,9 +516,9 @@ select option.strong { font-weight:700; }
 /* ФИКС 6: Махаме оранжевия фокус */
 .prog-config select:focus,
 .prog-config input[type="text"]:focus {
-  outline: none;
-  box-shadow: none;
-  border-color: #2b6e66; /* Лек зелен бордер при фокус */
+  outline: none; /* Махаме оранжевото */
+  box-shadow: none; /* Махаме и сянката */
+  border-color: #2b6e66; /* Слагаме лек зелен бордер при фокус */
 }
 
 /* Контейнер за кръглите бутони */
@@ -534,11 +534,11 @@ select option.strong { font-weight:700; }
 }
 /* ФИКС 8: Стил за кръглите бутони (МАЛКИ) */
 .config-actions .clk-btn {
-  width: 34px;
+  width: 34px; /* <-- ФИКС 1: Размер 34px */
   height: 34px;
 }
 .config-actions .clk-btn .clk-btn-icon svg {
-  width: 20px;
+  width: 20px; /* По-малка икона */
   height: 20px;
 }
 button.danger {
@@ -562,6 +562,7 @@ button.danger {
   position: relative;
   margin-top: 8px;
   height: 10px;
+  width: 50%; /* ФИКС 3: 50% ширина */
 }
 .slider-track-fill {
   position: absolute;
@@ -576,7 +577,7 @@ button.danger {
 .slider-control {
   -webkit-appearance: none;
   appearance: none;
-  width: 100%;
+  width: 100%; /* Плъзгачът заема 100% от 50%-овата обвивка */
   height: 10px;
   border-radius: 5px;
   border: 1px solid #254046;
