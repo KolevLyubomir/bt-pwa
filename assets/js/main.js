@@ -39,4 +39,26 @@ function toRoman(num){
   }catch(_){ select(0); }
 })();
 
-// (Предишният код за версията, който беше тук, е ИЗТРИТ)
+//
+// ↓↓↓ НОВ КОД ЗА ВЕРСИЯТА (v4.1.5) ↓↓↓
+//
+document.addEventListener('DOMContentLoaded', () => {
+  // 1. Намираме етикета (badge) по ID
+  const badge = document.getElementById('app-version-badge');
+  
+  if (badge) {
+    // 2. Взимаме текста от <title>
+    const titleText = document.title;
+    
+    // 3. Извличаме версията (всичко след "— ")
+    const versionMatch = titleText.match(/—\s*(v.+)$/);
+    
+    if (versionMatch && versionMatch[1]) {
+      // 4. Слагаме я в badge-а
+      badge.textContent = versionMatch[1];
+    } else {
+      // Ако не намери, скриваме badge-а
+      badge.style.display = 'none';
+    }
+  }
+});

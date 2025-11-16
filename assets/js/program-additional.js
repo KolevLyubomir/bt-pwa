@@ -26,13 +26,12 @@
       img: "https://nowfoods.bg/image/cache/catalog/Berberine/Berberine%20-%202-350x350.webp"
     },
     "custom": {
-      name: "Друга марка",
+      name: "Друга (ръчно)",
       img: "https://izgorimazninite.com/wp-content/uploads/2020/02/berberine-2.jpg" // Генерична
     }
   };
 
-  // Дефиниции на часовете по подразбиране (0-6)
-  // Индекс 0 вече не се ползва, тъй като плъзгачът е 1-6
+  // Дефиниции на часовете по подразбиране (1-6)
   const DEFAULT_TIMES_MAP = [
     [], // 0
     [["12:00"]], // 1
@@ -74,6 +73,7 @@
     const STORAGE_KEY = `bt_add_${prefix}_v310`; // Ключ за localStorage
 
     let currentGridInstance = null; // Тук пазим инстанцията на "умната" мрежа
+    let longPressTimer = null; // За "long press" (Точка 2)
 
     // --- Настройки по подразбиране ---
     let settings = {
@@ -102,14 +102,13 @@
       
       // ФИКС 3: Плъзгачът е 1-6, default 3
       if (isConfigured) {
-        slider.value = settings.rows; // Ако е запазено, сложи запазената стойност
+        slider.value = settings.rows;
       } else {
-        slider.value = 3; // Ако не е, сложи default 3
+        slider.value = 3; // Default 3
       }
       sliderVal.textContent = slider.value;
-      updateSliderFill(); // Обновяваме зелената лента
+      updateSliderFill();
 
-      // Логика за показване на ръчно име
       if (brandKey === 'custom') {
         customNameField.style.display = 'block';
         nameInput.value = settings.customName || '';
@@ -126,8 +125,8 @@
       if (isConfigured) {
         productImg.src = brandData.img;
         productImg.style.display = 'block';
-        capMain.classList.add('configured'); // ФИКС 2: Става СИВО
-        capBrand.textContent = currentName; // ФИКС 2: Показва марката в БЯЛО
+        capMain.classList.add('configured'); // ФИКС 1: Става СИВО
+        capBrand.textContent = currentName; // ФИКС 1: Показва марката в БЯЛО
         gridContainer.style.display = 'block';
         
         if (!currentGridInstance) {
@@ -137,7 +136,7 @@
         // Продуктът е "Изключен"
         productImg.style.display = 'none';
         capMain.classList.remove('configured'); // ФИКС 1: Остава БЯЛО
-        capBrand.textContent = ''; // ФИКС 5: Празно
+        capBrand.textContent = ''; // ФИКС 1: Празно
         gridContainer.style.display = 'none';
         gridContainer.innerHTML = "";
         
@@ -156,7 +155,6 @@
       const min = slider.min;
       const max = slider.max;
       const val = slider.value;
-      // Изчисляваме процента (1-6)
       const percentage = (val - min) / (max - min) * 100;
       if (sliderTrackFill) {
          sliderTrackFill.style.width = percentage + '%';
@@ -165,11 +163,29 @@
 
     // --- 3. Дефиниране на Event Listeners ---
 
-    // Клик върху хедъра (Берберин)
-    head.addEventListener('click', () => {
-      const isHidden = configDiv.style.display === 'none';
-      configDiv.style.display = isHidden ? 'block' : 'none';
+    // ФИКС 2: "Long Press" за редакция
+    head.addEventListener('pointerdown', (e) => {
+      // Стартираме таймер. Ако се задържи 700ms, отваряме настройките.
+      longPressTimer = setTimeout(() => {
+        configDiv.style.display = 'block'; // Показваме настройките
+        longPressTimer = null; // Нулираме таймера
+      }, 700); // 700ms задържане
     });
+
+    head.addEventListener('pointerup', () => {
+      // Ако пуснем бутона *преди* таймерът да е изтекъл, отменяме го
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+      }
+    });
+
+    head.addEventListener('pointerleave', () => {
+      // Ако пръстът/мишката се измъкне, отменяме
+      if (longPressTimer) {
+        clearTimeout(longPressTimer);
+      }
+    });
+
 
     // Падащо меню за Марки
     brandSelect.addEventListener('change', () => {
@@ -207,12 +223,12 @@
     
     // Бутон "Изтрий"
     deleteBtn.addEventListener('click', () => {
-      if (settings.rows === 0) { // Ако вече е 0, просто затвори
+      if (settings.rows === 0) {
         configDiv.style.display = 'none';
         return;
       }
       
-      // ФИКС 2 (confirm):
+      // ФИКС (confirm):
       if (!confirm("Ще изтриете ли избора?")) {
         return;
       }
@@ -333,7 +349,6 @@
   // --- ИНИЦИАЛИЗАЦИЯ ---
   // ===================================
 
-  // Инициализираме само Берберин засега
   createConfigurableProduct('ber', BERBERINE_BRANDS); 
   
   // TODO: Инициализирай и 'glu' и 'egc' (засега са празни)
