@@ -606,3 +606,15 @@ button.danger {
   cursor: pointer;
   border: 3px solid #06241b;
 }
+
+/*
+  ↓↓↓ ПРОМЯНА v4.1.6 ↓↓↓
+*/
+
+/* Градиентни заглавия за секциите в Програма */
+#panel-program section.card > h2 {
+  background: linear-gradient(90deg, var(--line-orange), var(--accent));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
