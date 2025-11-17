@@ -1,13 +1,9 @@
-/* ↓↓↓ НОВ СТИЛ ЗА ЗАГЛАВИЯТА (Точка 6) ↓↓↓ */
 #panel-program .card h2 {
-  display: inline-block;
-  background: linear-gradient(to bottom right, var(--accent), var(--sel-orange));
+  background: linear-gradient(90deg, var(--sel-orange), var(--accent));
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
-  font-weight: 800;
 }
-
 
 .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
 .prog-head{
@@ -22,14 +18,19 @@
   align-items:center;
   gap:12px;
   min-width:0;
-  flex: 1 1 auto; /* Заема наличното място */
 }
 .prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
-
+.prog-pill{
+  display:flex; flex-direction:column; gap:6px;
+  padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
+  width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
+}
+.prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
 .prog-cap{ font-weight:700; font-size:13px; }
 .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
-/* Бутонът за прием до името на продукта (Основен Пакет) */
+/* Десният бутон до ProLact – размер ОК, иконата ~30% по-голяма */
 .prog-intake-btn{
   flex:0 0 auto;
   padding:0;
@@ -51,6 +52,11 @@
   width:28px;
   height:28px;
 }
+
+.time-wrap{ display:flex; align-items:center; gap:6px }
+.time-row{ display:flex; align-items:center; gap:4px }
+.time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
+select option.strong { font-weight:700; }
 
 .pl-wrap{ overflow-x:hidden }
 .pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
@@ -74,7 +80,7 @@
   border-style:solid;
 }
 .pl-day.active:not(.today){
-  border-color:#20343a; 
+  border-color:#20343a; /* <-- ЕТО Я КОРЕКЦИЯТА */
   border-style:solid;
 }
 
@@ -127,6 +133,7 @@
   position:relative;
 }
 
+/* Заглавие в модала: продукт по-голям, ден отдолу */
 .clk-header{
   margin-bottom:6px;
   padding:0 2px 4px;
@@ -317,14 +324,12 @@
   height:34px;
 }
 
+/* В модала – Прием и Аудио: еднакъв бутон, по-големи икони */
 #clk .clk-btn.big{
   width:44px;
   height:44px;
 }
-#clk #btnIntake .clk-btn-icon svg{
-  width:38px;
-  height:38px;
-}
+#clk #btnIntake .clk-btn-icon svg,
 #clk #btnAudio .clk-btn-icon svg{
   width:38px;
   height:38px;
@@ -442,11 +447,97 @@
   .clk-hand.hour{ height:64px } .clk-hand.min{ height:90px }
 }
 
-/*
-  ↓↓↓ НОВИ/ОБНОВЕНИ СТИЛОВЕ (v4.1.4) ↓↓↓
-*/
 
-/* --- Стилове за Конфигуратора (Доп. Пакет) --- */
+/* --- Стилове за Конфигуратора (Доп. пакет) --- */
+
+.config-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  user-select: none;
+}
+.config-toggle input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin: 0;
+}
+.config-toggle strong {
+  font-weight: 700;
+  font-size: 13px; /* Същия размер като .prog-cap */
+}
+
+/* Скриваме конфигурацията по подразбиране */
+.prog-config {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* Показваме конфигурацията, ако чекбоксът е цъкнат */
+.config-block:has(.config-toggle input:checked) .prog-config {
+  display: flex;
+}
+
+/* Скриваме "умната" таблица, ако НЕ е активен */
+.config-block:not(:has(.config-toggle input:checked)) .pl-wrap {
+  display: none;
+}
+/* Скриваме и бутона за прием, ако НЕ е активен */
+.config-block:not(:has(.config-toggle input:checked)) .prog-intake-btn {
+  display: none !important; /* important, за да преборим JS-а */
+}
+
+
+/* Стил на плъзгача */
+.slider-val {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 1.1em;
+  padding: 0 4px;
+}
+
+.slider-control {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  background: #0d171b;
+  border-radius: 5px;
+  border: 1px solid #254046;
+  outline: none;
+  padding: 0;
+}
+
+.slider-control::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
+}
+
+.slider-control::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
+}
+
+.prog-config button.primary {
+  width: 100px; /* Фиксирана ширина за "Запази" */
+}
+
+/* --- Стилове за Конфигуратора (Доп. пакет) --- */
 
 .prog-head-actions {
   display: flex;
@@ -454,38 +545,199 @@
   gap: 12px;
 }
 
-/* ГЛАВАТА става бутон */
-.prog-head-main.clickable {
-  cursor: pointer;
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2a3e41;
+  background: #0d171b;
   border-radius: 8px;
-  padding: 4px; /* Малко отстояние за клик */
-  transition: background .15s ease;
-  flex: 1 1 auto; 
+  padding: 4px 6px;
+  color: #fff;
+  height: 34px;
+  width: 34px;
 }
-.prog-head-main.clickable:hover {
-  background: #1a2a2f;
+.icon-btn.settings-btn {
+  border-color: #2b6e66;
+  color: #87f3c5;
+}
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-/* Заглавие на 2 реда */
+/* --- Стил за Тогъл Суич --- */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.switch-slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #254046;
+  transition: .2s ease;
+  border-radius: 28px;
+}
+.switch-slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .2s ease;
+  border-radius: 50%;
+}
+.switch input:checked + .switch-slider {
+  background-color: var(--accent);
+}
+.switch input:checked + .switch-slider:before {
+  transform: translateX(22px);
+}
+
+
+/* --- Панел за Настройки --- */
+.prog-config {
+  display: none; /* Скрит по подразбиране */
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.prog-config .field {
+  margin-bottom: 0;
+}
+.prog-config .field .lbl {
+  margin-bottom: 4px;
+}
+
+.config-actions {
+  display: flex;
+  gap: 10px;
+}
+.config-actions button {
+  flex: 0 0 auto;
+  width: 100px;
+}
+button.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+  font-weight: 700;
+}
+
+
+/* --- Стил на плъзгача --- */
+.slider-val {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 1.1em;
+  padding: 0 4px;
+}
+.slider-control {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  background: #0d171b;
+  border-radius: 5px;
+  border: 1px solid #254046;
+  outline: none;
+  padding: 0;
+}
+.slider-control::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
+}
+.slider-control::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
+}
+
+/* --- Стилове за Конфигуратора (Доп. пакет) --- */
+
+.prog-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #2a3e41;
+  background: #0d171b;
+  border-radius: 8px;
+  padding: 4px 6px;
+  color: #fff;
+  height: 34px;
+  width: 34px;
+  cursor: pointer;
+}
+.icon-btn.settings-btn.active { /* Зелено, когато е неактивен (0) */
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.icon-btn.settings-btn.inactive { /* Сиво/неутрално, когато е активен */
+  border-color: #2a3e41;
+  color: #fff;
+}
+.icon-btn svg {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Ново заглавие на 2 реда */
 .prog-cap-stack {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 .prog-cap-main {
-  font-weight: 700; /* ФИКС 1: Същото като .prog-cap */
+  font-weight: 700;
   font-size: 13px;
-  color: var(--text); /* ФИКС 1: ВИНАГИ БЯЛО (като Prolact) */
-  transition: color .2s ease;
-}
-.prog-cap-main.configured { /* Когато е конфигуриран (има >0 приеми) */
-  color: var(--muted); /* ФИКС 2: Става СИВО */
+  color: var(--text);
 }
 .prog-cap-brand {
-  font-size: 12px;
-  color: var(--text); /* ФИКС 2: Марката е БЯЛА */
+  font-size: 11px;
+  color: var(--muted);
   font-weight: 400;
 }
+
+
+/* --- Стил за Тогъл Суич (вече не ни трябва) --- */
+/* (Изтрити стилове за .switch) */
 
 
 /* --- Панел за Настройки --- */
@@ -501,45 +753,17 @@
 .prog-config .field {
   margin-bottom: 0;
 }
-/* ФИКС 7: Разстояние между полетата */
-.prog-config .field.brand-selector {
-  margin-bottom: 8px;
-}
-.prog-config .field.custom-brand-field {
-  margin-bottom: 8px;
-}
-
 .prog-config .field .lbl {
   margin-bottom: 4px;
 }
 
-/* ФИКС 6: Махаме оранжевия фокус */
-.prog-config select:focus,
-.prog-config input[type="text"]:focus {
-  outline: none; /* Махаме оранжевото */
-  box-shadow: none; /* Махаме и сянката */
-  border-color: #2b6e66; /* Слагаме лек зелен бордер при фокус */
-}
-
-/* Контейнер за кръглите бутони */
 .config-actions {
   display: flex;
-  justify-content: flex-end; /* Бутони само вдясно */
-  align-items: center;
-  margin-top: 16px; /* ФИКС 7: Разстояние от плъзгача */
+  gap: 10px;
 }
-.config-buttons {
-  display: flex;
-  gap: 8px;
-}
-/* ФИКС 8: Стил за кръглите бутони (МАЛКИ) */
-.config-actions .clk-btn {
-  width: 34px; /* <-- ФИКС 1: Размер 34px */
-  height: 34px;
-}
-.config-actions .clk-btn .clk-btn-icon svg {
-  width: 20px; /* По-малка икона */
-  height: 20px;
+.config-actions button {
+  flex: 0 0 auto;
+  width: 100px;
 }
 button.danger {
   background: var(--danger);
@@ -549,45 +773,24 @@ button.danger {
 }
 
 
-/* --- Стил на "Скалирания" плъзгач --- */
+/* --- Стил на плъзгача --- */
 .slider-val {
   color: var(--accent);
   font-weight: 800;
   font-size: 1.1em;
   padding: 0 4px;
 }
-
-/* ФИКС 9: Обвивка за плъзгача */
-.slider-track-wrapper {
-  position: relative;
-  margin-top: 8px;
-  height: 10px;
-  width: 50%; /* ФИКС 3: 50% ширина */
-}
-.slider-track-fill {
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 10px;
-  background: var(--accent);
-  border-radius: 5px;
-  pointer-events: none;
-  z-index: 1;
-}
 .slider-control {
   -webkit-appearance: none;
   appearance: none;
-  width: 100%; /* Плъзгачът заема 100% от 50%-овата обвивка */
+  width: 100%;
   height: 10px;
+  background: #0d171b;
   border-radius: 5px;
   border: 1px solid #254046;
   outline: none;
   padding: 0;
-  position: relative;
-  z-index: 2; 
-  background: transparent; /* Важно, за да се вижда долния слой */
 }
-
 .slider-control::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -598,7 +801,6 @@ button.danger {
   cursor: pointer;
   border: 3px solid #06241b;
 }
-
 .slider-control::-moz-range-thumb {
   width: 24px;
   height: 24px;
