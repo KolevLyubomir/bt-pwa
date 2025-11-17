@@ -24,33 +24,31 @@ body{
   display:flex; align-items:center; justify-content:center; gap:10px;
 }
 
-/* ↓↓↓ ПРОМЯНА: Връщаме gap за разстояние до версията ↓↓↓ */
-.topbar .brand{ display:flex; align-items:center; gap:10px; font-weight:800 }
+/* ↓↓↓ ПРОМЯНА ТУК (gap: 0) ↓↓↓ */
+.topbar .brand{ display:flex; align-items:center; gap:0; font-weight:800 }
 
 /* Старото правило за иконата */
 .topbar .brand img{ width:24px; height:24px }
 
-/* ↓↓↓ ПРОМЯНА: Логото е малко по-малко, за да има място ↓↓↓ */
+/* ↓↓↓ НОВИ СТИЛОВЕ ЗА ЛОГОТО ↓↓↓ */
 .topbar .brand img.main-logo {
-  width: auto;
-  height: 30px; /* Беше 36px */
+  width: auto; /* Запазва пропорциите */
+  height: 36px; /* Добра височина за топ бар */
   max-width: 100%;
 }
+/* ↑↑↑ КРАЙ НА НОВИТЕ СТИЛОВЕ ↑↑↑ */
 
-/* Скриваме стария .title */
+
+/* ↓↓↓ ПРОМЯНА ТУК (скриваме стария текст) ↓↓↓ */
 .topbar .title{ 
-  display: none; 
+  display: none; /* Вече не ни трябва, логото го замества */
+  font-size:18px; 
+  font-weight:800 
 }
 
-/* ↓↓↓ ПРОМЯНА: Стилизираме badge-а да изглежда като текст ↓↓↓ */
 .topbar .badge{
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--muted); /* Сив цвят */
-  background: none; /* Без фон */
-  padding: 0;
-  position: relative;
-  top: 2px; /* Подравняване с логото */
+  font-size:12px; font-weight:800; color:#06241b;
+  background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
 }
 
 .tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
