@@ -171,28 +171,40 @@
     const LONG_PRESS_DURATION = 500; // 500ms (стандартно)
 
     function startPress(e) {
+      // Предотвратява context menu на мобилни при задържане
+      e.preventDefault(); 
+      
       isLongPress = false;
       pressTimer = setTimeout(() => {
         isLongPress = true;
+        
+        // Вибрация за обратна връзка (ако е възможно)
+        if (navigator.vibrate) {
+            navigator.vibrate(50); 
+        }
+
         // Това е "дългото натискане" - отваряме панела
         const isHidden = configDiv.style.display === 'none';
         configDiv.style.display = isHidden ? 'block' : 'none';
       }, LONG_PRESS_DURATION);
-      e.preventDefault(); // Предотвратява drag на изображението
     }
 
-    function cancelPress() {
+    function cancelPress(e) {
       // Отменяме таймера, ако го има
       if (pressTimer) {
         clearTimeout(pressTimer);
         pressTimer = null;
       }
+      
+      // Ако *не е* било long press, се брои за 'click'
+      // Но ние не искаме 'click' да прави нищо,
+      // затова просто спираме
     }
     
     // Свързваме новите събития
     head.addEventListener('pointerdown', startPress);
     head.addEventListener('pointerup', cancelPress);
-    head.addEventListener('pointerleave', cancelPress);
+    head.addEventListener('pointerleave', cancelPress); // Ако пръстът се плъзне извън бутона
 
     // Спираме 'click', за да не се изпълни, ако е имало long press
     head.addEventListener('click', (e) => {
@@ -200,6 +212,7 @@
         e.preventDefault();
         e.stopPropagation();
       }
+      // Ако не е long press, 'click' просто не прави нищо
     });
     // --- Край на промяна v4.1.8 ---
 
@@ -222,7 +235,7 @@
 
     // Бутон "Запази"
     saveBtn.addEventListener('click', () => {
-      // ФИКС 3: Плъзгачът ВИНАГИ е 1-6
+      // ФИКС 3: Плъзгачът ВИНАGI е 1-6
       const newRows = parseInt(slider.value, 10);
       const newBrand = brandSelect.value;
       const newCustomName = (newBrand === 'custom') ? nameInput.value.trim() : '';
