@@ -1,0 +1,115 @@
+:root{
+  --bg:#0b1215; --card:#111a1f; --text:#e6f2ef; --muted:#9fb4ad;
+  --accent:#10b981; --border:#1e2b30; --has:#c7f5df; --danger:#ef4444;
+  --chart-label:15px; --chart-values:15px;
+  --line-green:#87f3c5; --line-orange:#f59e0b; --line-neutral:#2dd4bf;
+  --ctl-h:42px; --lbl-h:16px; --maxw:980px;
+  --pill-w:168px;
+
+  --wk-green-d:#9fdcc7;
+  --sel-orange:#f59e0b;
+  --pl-font:12px;
+  --pl-pad:3px;
+  --pl-minw:46px;
+}
+*{ box-sizing:border-box } html,body{ height:100% }
+body{
+  margin:0; background:var(--bg); color:var(--text);
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif
+}
+
+.topbar-wrap{ position:sticky; top:0; z-index:10; background:#0b1215; border-bottom:1px solid var(--border); }
+
+/* ↓↓↓ ПРОМЯНА v4.1.8 (3-колонно оформление) ↓↓↓ */
+.topbar{
+  max-width:var(--maxw); margin:0 auto; padding:12px 16px;
+  display: grid; /* ПРОМЯНА: от flex на grid */
+  grid-template-columns: 1fr auto 1fr; /* Ляво (празно), Център (лого), Дясно (версия) */
+  align-items:center; 
+  gap:10px;
+}
+
+/* ↓↓↓ ПРОМЯНА v4.1.8 (gap: 0 + позиция в grid) ↓↓↓ */
+.topbar .brand{ 
+  grid-column: 2; /* Поставяме логото в централната колона */
+  display:flex; 
+  align-items:center; 
+  justify-content: center; /* Центрираме го */
+  gap:0; 
+  font-weight:800 
+}
+
+/* Старото правило за иконата */
+.topbar .brand img{ width:24px; height:24px }
+
+/* ↓↓↓ НОВИ СТИЛОВЕ ЗА ЛОГОТО ↓↓↓ */
+.topbar .brand img.main-logo {
+  width: auto; /* Запазва пропорциите */
+  height: 36px; /* Добра височина за топ бар */
+  max-width: 100%;
+}
+/* ↑↑↑ КРАЙ НА НОВИТЕ СТИЛОВЕ ↑↑↑ */
+
+
+/* ↓↓↓ ПРОМЯНА ТУК (скриваме стария текст) ↓↓↓ */
+.topbar .title{ 
+  display: none; /* Вече не ни трябва, логото го замества */
+  font-size:18px; 
+  font-weight:800 
+}
+
+/* ↓↓↓ ПРОМЯНА v4.1.8 (Стил на версията) ↓↓↓ */
+.topbar .badge{
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--muted); /* ПРОМЯНА: По-четлив цвят, без фон */
+  background: none; /* ПРОМЯНА: Премахнат фон */
+  padding: 2px 8px;
+  border-radius: 0;
+}
+
+/* ↓↓↓ НОВ СЕЛЕКТОР v4.1.8 (Контейнер за версията) ↓↓↓ */
+.version-container {
+  grid-column: 3; /* Дясна колона */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Центриране в дясната "половина" */
+}
+
+
+.tabs-wrap{ background:#0b1215; border-bottom:1px solid var(--border); }
+.tabs{ max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; gap:8px; }
+.tab-btn{
+  -webkit-tap-highlight-color: transparent;
+  appearance:none; border:1px solid var(--border); background:#0d171b; color:#e6f2ef;
+  padding:12px 18px; border-radius:10px; cursor:pointer; font-weight:800; font-size:16px; transition:.15s ease;
+}
+.tab-btn[aria-selected="true"]{
+  color:#06241b; border-color:transparent; background:linear-gradient(90deg,#22c55e,#14b8a6);
+}
+
+main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
+.card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
+
+.inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
+.spacer{ flex:1 1 auto }
+.field{ display:flex; flex-direction:column; justify-content:flex-end }
+.lbl{ height:var(--lbl-h); line-height:var(--lbl-h); font-size:12px; color:var(--muted); margin:0 0 6px 0 }
+.ctl{ display:flex; align-items:center }
+
+input,select,button{
+  background:#0d171b; border:1px solid #254046; color:var(--text);
+  border-radius:10px; padding:8px 10px; font-size:14px; height:var(--ctl-h)
+}
+input[type="number"]{ appearance:textfield; -webkit-appearance:none; -moz-appearance:textfield }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button{ -webkit-appearance:none; margin:0 }
+
+button{ cursor:pointer } button.primary{ background:var(--accent); border-color:var(--accent); color:#06241b; font-weight:700 }
+
+.tabpanel{ display:none }
+.tabpanel[aria-hidden="false"]{ display:block }
+
+@media (max-width: 380px){
+  :root{ --pill-w:156px; --pl-font:11px; --pl-pad:2px; --pl-minw:44px }
+}
