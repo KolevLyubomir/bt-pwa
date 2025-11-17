@@ -165,11 +165,44 @@
 
     // --- 3. Дефиниране на Event Listeners ---
 
-    // Клик върху хедъра (Берберин)
-    head.addEventListener('click', () => {
-      const isHidden = configDiv.style.display === 'none';
-      configDiv.style.display = isHidden ? 'block' : 'none';
+    // (v4.1.8) ПРОМЯНА: Клик е заменен със "Задържане" (Long Press)
+    let pressTimer = null;
+    let isLongPress = false;
+    const LONG_PRESS_DURATION = 500; // 500ms (стандартно)
+
+    function startPress(e) {
+      isLongPress = false;
+      pressTimer = setTimeout(() => {
+        isLongPress = true;
+        // Това е "дългото натискане" - отваряме панела
+        const isHidden = configDiv.style.display === 'none';
+        configDiv.style.display = isHidden ? 'block' : 'none';
+      }, LONG_PRESS_DURATION);
+      e.preventDefault(); // Предотвратява drag на изображението
+    }
+
+    function cancelPress() {
+      // Отменяме таймера, ако го има
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+    }
+    
+    // Свързваме новите събития
+    head.addEventListener('pointerdown', startPress);
+    head.addEventListener('pointerup', cancelPress);
+    head.addEventListener('pointerleave', cancelPress);
+
+    // Спираме 'click', за да не се изпълни, ако е имало long press
+    head.addEventListener('click', (e) => {
+      if (isLongPress) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
     });
+    // --- Край на промяна v4.1.8 ---
+
 
     // Падащо меню за Марки
     brandSelect.addEventListener('change', () => {
