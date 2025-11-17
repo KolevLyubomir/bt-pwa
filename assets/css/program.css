@@ -1,5 +1,5 @@
 #panel-program .card h2 {
-  background: linear-gradient(90deg, var(--accent), var(--sel-orange));
+  background: linear-gradient(90deg, var(--sel-orange), var(--accent));
   background-clip: text;
   -webkit-background-clip: text;
   color: transparent;
