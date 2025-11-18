@@ -26,10 +26,7 @@ body{
   border-bottom:1px solid var(--border);
 }
 
-/* 3-колонен grid:
-   [1fr]   [auto]   [1fr]
-   лява    лого     дясна половина
-*/
+/* 3-колонен grid: 1fr | auto | 1fr */
 .topbar{
   max-width:var(--maxw);
   margin:0 auto;
@@ -40,7 +37,7 @@ body{
   gap:10px;
 }
 
-/* Лого – седи в средната (auto) колона, логически по средата */
+/* Лого в средната колона */
 .topbar .brand{
   display:flex;
   align-items:center;
@@ -52,27 +49,25 @@ body{
 .topbar .brand img{ width:24px; height:24px }
 
 .topbar .brand img.main-logo {
-  width: auto;
-  height: 36px;
-  max-width: 100%;
+  width:auto;
+  height:36px;
+  max-width:100%;
 }
 
-/* Старият текстов title не се ползва */
 .topbar .title{ 
-  display: none;
+  display:none;
   font-size:18px; 
   font-weight:800; 
 }
 
-/* Версията – в дясната колона (дясната половина) и центрирана в нея */
+/* Версия – в дясната половина, центрирана там */
 .version-slot{
   grid-column:3;
   display:flex;
   align-items:center;
-  justify-content:center; /* център в дясната половина */
+  justify-content:center;
 }
 
-/* Надписът за версията – „сребристи“ букви, без хапче */
 .topbar .badge{
   display:inline-block;
   min-width:auto;
@@ -99,6 +94,13 @@ body{
 
 main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
 .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
+
+/* Оцветяване на трите заглавия в оранжево (цвета на селекцията) */
+#pkg-core > h2,
+#pkg-extra > h2,
+#pkg-personal > h2{
+  color:var(--sel-orange);
+}
 
 .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
 .spacer{ flex:1 1 auto }
