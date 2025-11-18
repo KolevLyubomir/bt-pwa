@@ -25,7 +25,7 @@ body{
 }
 
 /* ↓↓↓ ПРОМЯНА ТУК (gap: 0) ↓↓↓ */
-.topbar .brand{ display:flex; align-items:center; gap:0; font-weight:800 }
+.topbar .brand{ display:flex; align-items:center; gap:8px; font-weight:800 }
 
 /* Старото правило за иконата */
 .topbar .brand img{ width:24px; height:24px }
@@ -47,6 +47,11 @@ body{
 }
 
 .topbar .badge{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  min-width:72px;
+  height:24px;
   font-size:12px; font-weight:800; color:#06241b;
   background:linear-gradient(90deg,#22c55e,#14b8a6); padding:2px 8px; border-radius:10px;
 }
