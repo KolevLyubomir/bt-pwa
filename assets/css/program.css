@@ -1,18 +1,3 @@
-/* Заглавията “Основен Пакет / Допълнителен Пакет / Личен Режим” */
-#panel-program .card h2{
-  margin:0 0 10px;
-  font-size:17px;
-  text-transform:uppercase;
-  letter-spacing:.04em;
-  /* Градиент от оранжево (селектиран ден) към зелено (таб Програма) */
-  background:linear-gradient(90deg,var(--sel-orange),var(--accent));
-  -webkit-background-clip:text;
-  background-clip:text;
-  color:transparent;
-}
-
-/* Основно оформление на програмните блокове */
-
 .prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
 .prog-head{
   display:flex;
@@ -26,21 +11,19 @@
   align-items:center;
   gap:12px;
   min-width:0;
-  flex:1 1 auto;
 }
-.prod-img{
-  width:76px;
-  height:76px;
-  object-fit:contain;
-  border-radius:12px;
-  background:#0d171b;
-  border:1px solid #254046;
+.prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
+.prog-pill{
+  display:flex; flex-direction:column; gap:6px;
+  padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
+  width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
 }
-
+.prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
 .prog-cap{ font-weight:700; font-size:13px; }
 .prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
 
-/* Бутонът за прием до името на продукта */
+/* Бутонът за прием до името на продукта (Основен Пакет) */
 .prog-intake-btn{
   flex:0 0 auto;
   padding:0;
@@ -63,25 +46,16 @@
   height:28px;
 }
 
-/* Таблица за разписанията */
+.time-wrap{ display:flex; align-items:center; gap:6px }
+.time-row{ display:flex; align-items:center; gap:4px }
+.time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
+select option.strong { font-weight:700; }
+
 .pl-wrap{ overflow-x:hidden }
-.pl-table{
-  width:100%;
-  border-collapse:separate;
-  border-spacing:3px;
-  table-layout:fixed;
-}
-.pl-table th,
-.pl-table td{
-  border:1px solid #20343a;
-  border-radius:10px;
-  text-align:center;
-  padding:var(--pl-pad);
-  font-size:var(--pl-font);
-  line-height:1.05;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
+.pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
+.pl-table th, .pl-table td{
+  border:1px solid #20343a; border-radius:10px; text-align:center;
+  padding:var(--pl-pad); font-size:var(--pl-font); line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   min-width:var(--pl-minw);
   transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }
@@ -99,28 +73,17 @@
   border-style:solid;
 }
 .pl-day.active:not(.today){
-  border-color:#20343a;
+  border-color:#20343a; 
   border-style:solid;
 }
 
 .pl-time-cell{
-  cursor:pointer;
-  user-select:none;
-  font-weight:800;
-  position:relative;
+  cursor:pointer; user-select:none; font-weight:800; position:relative;
   background:transparent;
 }
-.pl-time-cell.sel{
-  box-shadow:0 0 0 2px var(--sel-orange) inset;
-}
-.pl-time-cell.red{
-  background:#3d1010;
-  border-color:#6b1414;
-}
-.pl-time-cell.int-upcoming{
-  background:#3d3310;
-  border-color:#6b5314;
-}
+.pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
+.pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
+.pl-time-cell.int-upcoming{ background:#3d3310; border-color:#6b5314 }
 .pl-time-cell.int-done{
   background:#15803d;
   border-color:#22c55e;
@@ -154,29 +117,12 @@
   }
 }
 
-/* Модал – часовник */
-
-.clk{
-  display:none;
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.45);
-  z-index:100;
-}
-.clk.show{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
+.clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100 }
+.clk.show{ display:flex; align-items:center; justify-content:center }
 .clk-card{
-  background:#0e1519;
-  border:1px solid #20343a;
-  border-radius:16px;
-  padding:12px 12px 14px;
-  width:330px;
-  max-width:92vw;
-  box-shadow:0 10px 40px rgba(0,0,0,.5);
-  outline:none;
+  background:#0e1519; border:1px solid #20343a; border-radius:16px;
+  padding:12px 12px 14px; width:330px; max-width:92vw;
+  box-shadow:0 10px 40px rgba(0,0,0,.5); outline:none;
   position:relative;
 }
 
@@ -198,43 +144,19 @@
   color:var(--muted);
 }
 
-.clk-face{
-  position:relative;
-  width:290px;
-  height:290px;
-  margin:0 auto;
-  border-radius:50%;
-  border:1px solid #294047;
-  background:#0b1317;
-  touch-action:none;
-}
-.clk-ring{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  border-radius:50%;
-}
+.clk-face{ position:relative; width:290px; height:290px; margin:0 auto; border-radius:50%; border:1px solid #294047; background:#0b1317; touch-action:none }
+.clk-ring{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50% }
 .clk-ring.hours{ width:190px; height:190px }
 .clk-ring.mins{ width:260px; height:260px }
 
 .clk-tick{
-  position:absolute;
-  width:24px;
-  height:24px;
-  border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  position:absolute; width:24px; height:24px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
   font-size:13px;
   color:#d6ece6;
-  border:1px solid transparent;
-  background:#0f1a1d;
-  user-select:none;
+  border:1px solid transparent; background:#0f1a1d; user-select:none;
   transition:background .15s ease, border-color .15s ease, color .15s ease, transform .12s ease;
 }
-
-/* Часовете – римски стил */
 
 .clk-tick.hour{
   font-size:14px;
@@ -246,19 +168,18 @@
   font-size:17px;
   text-shadow:0 0 3px rgba(0,0,0,.7);
 }
+
 .clk-tick.hour.sel{
-  background:#22c55e;
-  color:#06241b;
+  background:#22c55e; color:#06241b;
   font-weight:900;
   text-shadow:0 0 4px rgba(0,0,0,.9);
   transform:scale(1.04);
 }
 
-/* Минутните маркери */
-
 .clk-tick:not(.hour){
   font-family:'Montserrat',system-ui,-apple-system,sans-serif;
 }
+
 .clk-tick.minor{
   background:#0b1317;
   border-color:transparent;
@@ -271,11 +192,13 @@
   color:#06241b;
   transform:scale(1.2);
 }
+
 .clk-tick.quarter{
   font-size:14px;
   font-weight:800;
   text-shadow:0 0 3px rgba(0,0,0,.6);
 }
+
 .clk-tick.strong.sel,
 .clk-tick.quarter.sel{
   background:#22c55e;
@@ -286,56 +209,17 @@
   text-shadow:0 0 3px rgba(0,0,0,.7);
 }
 
-/* Стрелки */
+.clk-hand{ position:absolute; left:50%; top:50%; transform-origin:50% 100%; pointer-events:none }
+.clk-hand.hour{ width:6px; height:68px; background:#e7faf4; border-radius:3px; transform:translate(-50%,-100%) rotate(0deg); box-shadow:0 0 0 1px #0b1215 inset }
+.clk-hand.min{ width:3px; height:96px; background:#cde7df; border-radius:2px; transform:translate(-50%,-100%) rotate(0deg); box-shadow:0 0 0 1px #0b1215 inset }
 
-.clk-hand{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform-origin:50% 100%;
-  pointer-events:none;
-}
-.clk-hand.hour{
-  width:6px;
-  height:68px;
-  background:#e7faf4;
-  border-radius:3px;
-  transform:translate(-50%,-100%) rotate(0deg);
-  box-shadow:0 0 0 1px #0b1215 inset;
-}
-.clk-hand.min{
-  width:3px;
-  height:96px;
-  background:#cde7df;
-  border-radius:2px;
-  transform:translate(-50%,-100%) rotate(0deg);
-  box-shadow:0 0 0 1px #0b1215 inset;
-}
-.clk-center-dot{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  width:10px;
-  height:10px;
-  background:#fff;
-  border-radius:50%;
-  box-shadow:0 0 0 2px #0b1217;
-}
-
-/* Четене на часа */
+.clk-center-dot{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 0 2px #0b1217 }
 
 .clk-read{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-50%);
-  background:#10191c;
-  border:1px solid #294047;
-  border-radius:6px;
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  background:#10191c; border:1px solid #294047; border-radius:6px;
   padding:3px 6px;
-  font-weight:800;
-  text-align:center;
+  font-weight:800; text-align:center;
   cursor:pointer;
   display:flex;
   align-items:center;
@@ -351,6 +235,7 @@
   cursor:text;
   user-select:text;
 }
+
 .clk-read-part{
   display:flex;
   align-items:center;
@@ -392,8 +277,6 @@
   position:relative;
   top:-1px;
 }
-
-/* Долни бутони в модала */
 
 .clk-actions{
   margin-top:8px;
@@ -481,8 +364,6 @@
   stroke-linejoin:round;
 }
 
-/* Иконка – прием */
-
 .clk-btn.intake svg .pill-clock-circle,
 .clk-btn.intake svg .pill-clock-pill{
   fill:none;
@@ -530,8 +411,6 @@
   }
 }
 
-/* Иконка – аудио */
-
 .clk-btn.audio{
   background:#0d171b;
   border-color:#24343a;
@@ -553,7 +432,6 @@
 .clk-btn.audio.off svg .icon-mute{ display:none; }
 
 @media (max-width: 380px){
-  :root{ --pill-w:156px; --pl-font:11px; --pl-pad:2px; --pl-minw:44px }
   .time-row select{ min-width:48px; }
   .prod-img{ width:64px; height:64px; border-radius:10px; }
   .clk-card{ width:306px }
@@ -561,4 +439,170 @@
   .clk-ring.hours{ width:180px; height:180px }
   .clk-ring.mins{ width:248px; height:248px }
   .clk-hand.hour{ height:64px } .clk-hand.min{ height:90px }
+}
+
+/*
+  ↓↓↓ НОВИ/ОБНОВЕНИ СТИЛОВЕ (v4.1.4) ↓↓↓
+*/
+
+/* --- Стилове за Конфигуратора (Доп. Пакет) --- */
+
+.prog-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ГЛАВАТА става бутон */
+.prog-head-main.clickable {
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 4px; /* Малко отстояние за клик */
+  transition: background .15s ease;
+  /* Уверяваме се, че се разширява (flex-grow: 1) */
+  flex: 1 1 auto; 
+}
+.prog-head-main.clickable:hover {
+  background: #1a2a2f;
+}
+
+/* Заглавие на 2 реда */
+.prog-cap-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.prog-cap-main {
+  font-weight: 700; /* ФИКС 1: Същото като .prog-cap */
+  font-size: 13px;
+  color: var(--text); /* ФИКС 1: ВИНАГИ БЯЛО (като Prolact) */
+  transition: color .2s ease;
+}
+.prog-cap-main.configured { /* Когато е конфигуриран (има >0 приеми) */
+  color: var(--muted); /* ФИКС 2: Става СИВО */
+}
+.prog-cap-brand {
+  font-size: 12px;
+  color: var(--text); /* ФИКС 2: Марката е БЯЛА */
+  font-weight: 400;
+}
+
+
+/* --- Панел за Настройки --- */
+.prog-config {
+  /* display: none; JS се грижи за това */
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.prog-config .field {
+  margin-bottom: 0;
+}
+/* ФИКС 7: Разстояние между полетата */
+.prog-config .field.brand-selector {
+  margin-bottom: 8px;
+}
+.prog-config .field.custom-brand-field {
+  margin-bottom: 8px;
+}
+
+.prog-config .field .lbl {
+  margin-bottom: 4px;
+}
+
+/* ФИКС 6: Махаме оранжевия фокус */
+.prog-config select:focus,
+.prog-config input[type="text"]:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #2b6e66; /* Лек зелен бордер при фокус */
+}
+
+/* Контейнер за кръглите бутони */
+.config-actions {
+  display: flex;
+  justify-content: flex-end; /* Бутони само вдясно */
+  align-items: center;
+  margin-top: 16px; /* ФИКС 7: Разстояние от плъзгача */
+}
+.config-buttons {
+  display: flex;
+  gap: 8px;
+}
+/* ФИКС 8: Стил за кръглите бутони (МАЛКИ) */
+.config-actions .clk-btn {
+  width: 34px;
+  height: 34px;
+}
+.config-actions .clk-btn .clk-btn-icon svg {
+  width: 20px;
+  height: 20px;
+}
+button.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+  font-weight: 700;
+}
+
+
+/* --- Стил на "Скалирания" плъзгач --- */
+.slider-val {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 1.1em;
+  padding: 0 4px;
+}
+
+/* ФИКС 9: Обвивка за плъзгача */
+.slider-track-wrapper {
+  position: relative;
+  margin-top: 8px;
+  height: 10px;
+}
+.slider-track-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 5px;
+  pointer-events: none;
+  z-index: 1;
+}
+.slider-control {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  border: 1px solid #254046;
+  outline: none;
+  padding: 0;
+  position: relative;
+  z-index: 2; 
+  background: transparent; /* Важно, за да се вижда долния слой */
+}
+
+.slider-control::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
+}
+
+.slider-control::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
 }
