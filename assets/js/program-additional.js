@@ -66,7 +66,7 @@
     const productImg = document.getElementById(`${prefix}-img`);
     const intakeBtn = document.getElementById(`btnProgIntake${prefix.toUpperCase()}`);
     
-    if ( !configDiv || !slider || !saveBtn || !gridContainer || !head || !brandSelect) {
+    if (!configDiv || !slider || !saveBtn || !gridContainer || !head || !brandSelect) {
       console.error(`Липсващи елементи за ${prefix}`);
       return;
     }
@@ -89,6 +89,59 @@
         settings = { ...settings, ...saved };
       }
     } catch (e) {}
+
+    // Малък helper за long press върху хедъра
+    function attachLongPress(el, onLongPress, delayMs) {
+      if (!el) return;
+      const delay = typeof delayMs === 'number' ? delayMs : 650;
+      let timer = null;
+      let startX = 0;
+      let startY = 0;
+      const MAX_MOVE = 10; // максимум "мърдане" на пръста в px
+
+      function clearTimer() {
+        if (timer !== null) {
+          clearTimeout(timer);
+          timer = null;
+        }
+      }
+
+      function start(e) {
+        clearTimer();
+        const pt = e.touches ? e.touches[0] : e;
+        startX = pt.clientX;
+        startY = pt.clientY;
+        timer = setTimeout(() => {
+          timer = null;
+          onLongPress();
+        }, delay);
+      }
+
+      function move(e) {
+        if (timer === null) return;
+        const pt = e.touches ? e.touches[0] : e;
+        const dx = Math.abs(pt.clientX - startX);
+        const dy = Math.abs(pt.clientY - startY);
+        if (dx > MAX_MOVE || dy > MAX_MOVE) {
+          clearTimer();
+        }
+      }
+
+      function cancel() {
+        clearTimer();
+      }
+
+      el.addEventListener('mousedown', start);
+      el.addEventListener('touchstart', start, { passive: true });
+
+      el.addEventListener('mousemove', move);
+      el.addEventListener('touchmove', move, { passive: true });
+
+      el.addEventListener('mouseup', cancel);
+      el.addEventListener('mouseleave', cancel);
+      el.addEventListener('touchend', cancel);
+      el.addEventListener('touchcancel', cancel);
+    }
 
     // --- 2. Прилагане на Настройките при Старт (UI функция) ---
     function updateUI(showConfig = false) {
@@ -113,10 +166,10 @@
       if (brandKey === 'custom') {
         customNameField.style.display = 'block';
         nameInput.value = settings.customName || '';
-        if(settings.customName) {
-           currentName = settings.customName;
+        if (settings.customName) {
+          currentName = settings.customName;
         } else {
-           currentName = nameInput.placeholder;
+          currentName = nameInput.placeholder;
         }
       } else {
         customNameField.style.display = 'none';
@@ -159,17 +212,18 @@
       // Изчисляваме процента (1-6)
       const percentage = (val - min) / (max - min) * 100;
       if (sliderTrackFill) {
-         sliderTrackFill.style.width = percentage + '%';
+        sliderTrackFill.style.width = percentage + '%';
       }
     }
 
     // --- 3. Дефиниране на Event Listeners ---
 
-    // Клик върху хедъра (Берберин)
-    head.addEventListener('click', () => {
-      const isHidden = configDiv.style.display === 'none';
-      configDiv.style.display = isHidden ? 'block' : 'none';
-    });
+    // Вместо клик → long press върху хедъра (Берберин + марка + снимка)
+    head.classList.add('clickable'); // за да хване CSS .prog-head-main.clickable, ако е там
+    attachLongPress(head, () => {
+      // При задържане: отваряме панела за настройки (Добавяне / Редакция)
+      updateUI(true);
+    }, 650);
 
     // Падащо меню за Марки
     brandSelect.addEventListener('change', () => {
@@ -230,7 +284,7 @@
       
       const brandData = brandsMap[settings.brand] || brandsMap["custom"];
       let currentName = brandData.name;
-      if(settings.brand === 'custom' && settings.customName) {
+      if (settings.brand === 'custom' && settings.customName) {
         currentName = settings.customName;
       } else if (settings.brand === 'custom') {
         currentName = nameInput.placeholder;
@@ -266,7 +320,7 @@
 
       let defaultTimes = [];
       const timesMap = DEFAULT_TIMES_MAP[rowCount] || DEFAULT_TIMES_MAP[1];
-      for(let i = 0; i < rowCount; i++) {
+      for (let i = 0; i < rowCount; i++) {
         const time = (timesMap[i] && timesMap[i][0]) || "12:00";
         defaultTimes.push(Array(7).fill(time));
       }
@@ -340,4 +394,5 @@
   // createConfigurableProduct('glu', {});
   // createConfigurableProduct('egc', {});
 
-})();
+})();```
+::contentReference[oaicite:0]{index=0}
