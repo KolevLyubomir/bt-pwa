@@ -350,6 +350,7 @@ select option.strong { font-weight:700; }
   visibility:hidden;
   pointer-events:none;
 }
+.clk-btn.icon-only{ padding:0 }
 .clk-btn-icon{
   display:inline-flex;
   align-items:center;
@@ -442,7 +443,7 @@ select option.strong { font-weight:700; }
 }
 
 /*
-  ↓↓↓ НОВИ/ОБНОВЕНИ СТИЛОВЕ (v4.1.4) ↓↓↓
+  ↓↓↓ НОВИ/ОБНОВЕНИ СТИЛОВЕ (v4.1.x) ↓↓↓
 */
 
 /* --- Стилове за Конфигуратора (Доп. Пакет) --- */
@@ -457,9 +458,8 @@ select option.strong { font-weight:700; }
 .prog-head-main.clickable {
   cursor: pointer;
   border-radius: 8px;
-  padding: 4px; /* Малко отстояние за клик */
+  padding: 4px;
   transition: background .15s ease;
-  /* Уверяваме се, че се разширява (flex-grow: 1) */
   flex: 1 1 auto; 
 }
 .prog-head-main.clickable:hover {
@@ -472,25 +472,29 @@ select option.strong { font-weight:700; }
   flex-direction: column;
   gap: 2px;
 }
+
+/* Берберин – основен надпис */
 .prog-cap-main {
-  font-weight: 700; /* ФИКС 1: Същото като .prog-cap */
+  font-weight: 700;
   font-size: 13px;
-  color: var(--text); /* ФИКС 1: ВИНАГИ БЯЛО (като Prolact) */
+  color: var(--text);
+  font-family: inherit;        /* една фамилия */
   transition: color .2s ease;
 }
-.prog-cap-main.configured { /* Когато е конфигуриран (има >0 приеми) */
-  color: var(--muted); /* ФИКС 2: Става СИВО */
-}
-.prog-cap-brand {
-  font-size: 12px;
-  color: var(--text); /* ФИКС 2: Марката е БЯЛА */
-  font-weight: 400;
+.prog-cap-main.configured {
+  color: var(--muted);
 }
 
+/* Марка – същият размер и дебелина като ProLact / Omni / Хитозан */
+.prog-cap-brand {
+  font-size: 13px;             /* същият размер */
+  font-weight: 700;            /* същото удебеляване */
+  color: var(--text);
+  font-family: inherit;        /* същата фамилия */
+}
 
 /* --- Панел за Настройки --- */
 .prog-config {
-  /* display: none; JS се грижи за това */
   flex-direction: column;
   gap: 14px;
   margin-top: 10px;
@@ -501,7 +505,6 @@ select option.strong { font-weight:700; }
 .prog-config .field {
   margin-bottom: 0;
 }
-/* ФИКС 7: Разстояние между полетата */
 .prog-config .field.brand-selector {
   margin-bottom: 8px;
 }
@@ -513,26 +516,24 @@ select option.strong { font-weight:700; }
   margin-bottom: 4px;
 }
 
-/* ФИКС 6: Махаме оранжевия фокус */
 .prog-config select:focus,
 .prog-config input[type="text"]:focus {
   outline: none;
   box-shadow: none;
-  border-color: #2b6e66; /* Лек зелен бордер при фокус */
+  border-color: #2b6e66;
 }
 
 /* Контейнер за кръглите бутони */
 .config-actions {
   display: flex;
-  justify-content: flex-end; /* Бутони само вдясно */
+  justify-content: flex-end;
   align-items: center;
-  margin-top: 16px; /* ФИКС 7: Разстояние от плъзгача */
+  margin-top: 22px; /* малко повече място под реда с дните/плъзгача */
 }
 .config-buttons {
   display: flex;
   gap: 8px;
 }
-/* ФИКС 8: Стил за кръглите бутони (МАЛКИ) */
 .config-actions .clk-btn {
   width: 34px;
   height: 34px;
@@ -548,8 +549,7 @@ button.danger {
   font-weight: 700;
 }
 
-
-/* --- Стил на "Скалирания" плъзгач --- */
+/* Стойност до плъзгача */
 .slider-val {
   color: var(--accent);
   font-weight: 800;
@@ -557,15 +557,16 @@ button.danger {
   padding: 0 4px;
 }
 
-/* ФИКС 9: Обвивка за плъзгача */
+/* Обвивка за плъзгача – 50% ширина, подравнен вляво */
 .slider-track-wrapper {
   position: relative;
   margin-top: 8px;
   height: 10px;
   width: 50%;
-  margin-left: auto;
-  margin-right: auto;
+  margin-left: 0;     /* вляво */
+  margin-right: 0;
 }
+
 .slider-track-fill {
   position: absolute;
   left: 0;
@@ -576,6 +577,7 @@ button.danger {
   pointer-events: none;
   z-index: 1;
 }
+
 .slider-control {
   -webkit-appearance: none;
   appearance: none;
@@ -586,8 +588,8 @@ button.danger {
   outline: none;
   padding: 0;
   position: relative;
-  z-index: 2; 
-  background: transparent; /* Важно, за да се вижда долния слой */
+  z-index: 2;
+  background: transparent;
 }
 
 .slider-control::-webkit-slider-thumb {
