@@ -1,9 +1,9 @@
-/* global createProductGrid, ModalLogic */ // Информираме, че тези идват от други файлове
+/* global createProductGrid, ModalLogic */
 
 (function() {
   "use strict";
 
-  // Карта с данни за продуктите (снимки и имена)
+  // Данни за марките Берберин
   const BERBERINE_BRANDS = {
     "thorne": {
       name: "Thorne Research",
@@ -27,7 +27,7 @@
     },
     "custom": {
       name: "Друга марка",
-      img: "https://izgorimazninite.com/wp-content/uploads/2020/02/berberine-2.jpg" // Генерична снимка
+      img: "https://izgorimazninite.com/wp-content/uploads/2020/02/berberine-2.jpg"
     }
   };
 
@@ -36,19 +36,13 @@
     [], // 0
     [["12:00"]],                                      // 1
     [["08:00"], ["19:00"]],                           // 2
-    [["08:00"], ["13:00"], ["19:00"]],               // 3
-    [["08:00"], ["12:00"], ["16:00"], ["20:00"]],    // 4
+    [["08:00"], ["13:00"], ["19:00"]],                // 3
+    [["08:00"], ["12:00"], ["16:00"], ["20:00"]],     // 4
     [["07:00"], ["10:00"], ["13:00"], ["16:00"], ["19:00"]], // 5
     [["07:00"], ["10:00"], ["13:00"], ["16:00"], ["19:00"], ["22:00"]] // 6
   ];
 
-  /**
-   * Създава логиката за един "Допълнителен" продукт
-   * @param {string} prefix - Уникален префикс (напр. 'ber' за Берберин)
-   * @param {object} brandsMap - Обект с данните за марките
-   */
   function createConfigurableProduct(prefix, brandsMap) {
-    // --- Взимане на Елементи ---
     const configDiv       = document.getElementById(`${prefix}-config`);
     const nameInput       = document.getElementById(`${prefix}-name`);
     const slider          = document.getElementById(`${prefix}-slider`);
@@ -57,57 +51,56 @@
     const saveBtn         = document.getElementById(`${prefix}-save`);
     const deleteBtn       = document.getElementById(`${prefix}-delete`);
     const gridContainer   = document.getElementById(`${prefix}-grid-container`);
-    const capMain         = document.getElementById(`${prefix}-cap-main`);   // Основно заглавие (Берберин)
-    const capBrand        = document.getElementById(`${prefix}-cap-brand`);  // Подзаглавие (Марка)
-    const head            = document.getElementById(`${prefix}-head`);       // Целият "header" (снимка+текст)
+    const capMain         = document.getElementById(`${prefix}-cap-main`);
+    const capBrand        = document.getElementById(`${prefix}-cap-brand`);
+    const head            = document.getElementById(`${prefix}-head`);
     const brandSelect     = document.getElementById(`${prefix}-brand-select`);
     const customNameField = document.getElementById(`${prefix}-custom-name-field`);
     const productImg      = document.getElementById(`${prefix}-img`);
     const intakeBtn       = document.getElementById(`btnProgIntake${prefix.toUpperCase()}`);
-    
+
     if (!configDiv || !slider || !saveBtn || !gridContainer || !head || !brandSelect) {
       console.error(`Липсващи елементи за ${prefix}`);
       return;
     }
-    
-    const STORAGE_KEY = `bt_add_${prefix}_v310`; // Ключ за localStorage
 
-    let currentGridInstance = null; // Тук пазим инстанцията на "умната" мрежа
+    const STORAGE_KEY = `bt_add_${prefix}_v310`;
 
-    // --- Настройки по подразбиране ---
+    let currentGridInstance = null;
+
     let settings = {
       brand: Object.keys(brandsMap)[0],
-      customName: '',
-      rows: 0 // 0 = неактивен
+      customName: "",
+      rows: 0
     };
 
-    // --- Long press helper за отваряне на панела с настройки ---
+    // Long press helper – ЗАМЕСТВА нормалния click
     function attachLongPress(el, onLongPress, delayMs) {
       if (!el) return;
-      const delay = typeof delayMs === 'number' ? delayMs : 650;
+      const delay = typeof delayMs === "number" ? delayMs : 650;
       let timer = null;
       let startX = 0;
       let startY = 0;
       const MAX_MOVE = 10;
-      
+
       function clearTimer() {
         if (timer !== null) {
           clearTimeout(timer);
           timer = null;
         }
       }
-      
+
       function start(e) {
         clearTimer();
         const pt = e.touches ? e.touches[0] : e;
         startX = pt.clientX;
         startY = pt.clientY;
-        timer = setTimeout(() => {
+        timer = setTimeout(function() {
           timer = null;
           onLongPress();
         }, delay);
       }
-      
+
       function move(e) {
         if (timer === null) return;
         const pt = e.touches ? e.touches[0] : e;
@@ -117,211 +110,207 @@
           clearTimer();
         }
       }
-      
+
       function cancel() {
         clearTimer();
       }
-      
-      el.addEventListener('mousedown', start);
-      el.addEventListener('touchstart', start, { passive: true });
-      
-      el.addEventListener('mousemove', move);
-      el.addEventListener('touchmove', move, { passive: true });
-      
-      el.addEventListener('mouseup', cancel);
-      el.addEventListener('mouseleave', cancel);
-      el.addEventListener('touchend', cancel);
-      el.addEventListener('touchcancel', cancel);
+
+      el.addEventListener("mousedown", start);
+      el.addEventListener("touchstart", start, { passive: true });
+
+      el.addEventListener("mousemove", move);
+      el.addEventListener("touchmove", move, { passive: true });
+
+      el.addEventListener("mouseup", cancel);
+      el.addEventListener("mouseleave", cancel);
+      el.addEventListener("touchend", cancel);
+      el.addEventListener("touchcancel", cancel);
     }
-    
-    // --- 1. Зареждане от Паметта ---
+
+    // Зареждане от localStorage
     try {
       const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
       if (saved) {
-        settings = { ...settings, ...saved };
+        settings = Object.assign({}, settings, saved);
       }
     } catch (e) {}
 
-    // --- 2. Прилагане на Настройките при Старт (UI функция) ---
-    function updateUI(showConfig = false) {
+    function updateSliderFill() {
+      if (!sliderTrackFill) return;
+      const min = Number(slider.min || 1);
+      const max = Number(slider.max || 6);
+      const val = Number(slider.value || 3);
+      const percentage = (val - min) / (max - min) * 100;
+      sliderTrackFill.style.width = percentage + "%";
+    }
+
+    function updateUI(showConfig) {
+      if (showConfig === void 0) showConfig = false;
+
       const isConfigured = settings.rows > 0;
       const brandKey = settings.brand || Object.keys(brandsMap)[0];
       const brandData = brandsMap[brandKey] || brandsMap["custom"];
       let currentName = brandData.name;
 
-      // A. Попълваме панела с настройки
+      // Панел настройки
       brandSelect.value = brandKey;
-      
-      // ФИКС 3: Плъзгачът е 1-6, default 3
+
       if (isConfigured) {
-        slider.value = settings.rows; // Ако е запазено, сложи запазената стойност
+        slider.value = String(settings.rows);
       } else {
-        slider.value = 3; // Ако не е, сложи default 3
+        slider.value = "3";
       }
       sliderVal.textContent = slider.value;
-      updateSliderFill(); // Обновяваме зелената лента
+      updateSliderFill();
 
-      // Логика за показване на ръчно име
-      if (brandKey === 'custom') {
-        customNameField.style.display = 'block';
-        nameInput.value = settings.customName || '';
+      if (brandKey === "custom") {
+        customNameField.style.display = "block";
+        nameInput.value = settings.customName || "";
         if (settings.customName) {
           currentName = settings.customName;
         } else {
           currentName = nameInput.placeholder;
         }
       } else {
-        customNameField.style.display = 'none';
+        customNameField.style.display = "none";
       }
-      
-      // Б. Конфигурираме видимата част (Хедъра)
+
+      // Видимата част
       if (isConfigured) {
         productImg.src = brandData.img;
-        productImg.style.display = 'block';
-        capMain.classList.add('configured'); // ФИКС 2: Става СИВО
-        capBrand.textContent = currentName; // ФИКС 2: Показва марката в БЯЛО
-        gridContainer.style.display = 'block';
-        
+        productImg.style.display = "block";
+        if (capMain) capMain.classList.add("configured");
+        if (capBrand) capBrand.textContent = currentName;
+        gridContainer.style.display = "block";
+
         if (!currentGridInstance) {
           generateGrid(settings.rows, currentName);
         }
       } else {
-        // Продуктът е "Изключен"
-        productImg.style.display = 'none';
-        capMain.classList.remove('configured'); // ФИКС 1: Остава БЯЛО
-        capBrand.textContent = ''; // ФИКС 5: Празно
-        gridContainer.style.display = 'none';
+        productImg.style.display = "none";
+        if (capMain) capMain.classList.remove("configured");
+        if (capBrand) capBrand.textContent = "";
+        gridContainer.style.display = "none";
         gridContainer.innerHTML = "";
-        
+
         if (currentGridInstance) {
-          window.grids = window.grids.filter(g => g !== currentGridInstance);
-          currentGridInstance.destroy();
+          if (Array.isArray(window.grids)) {
+            window.grids = window.grids.filter(function(g) { return g !== currentGridInstance; });
+          }
+          if (typeof currentGridInstance.destroy === "function") {
+            currentGridInstance.destroy();
+          }
           currentGridInstance = null;
         }
       }
-      
-      configDiv.style.display = showConfig ? 'block' : 'none';
+
+      configDiv.style.display = showConfig ? "block" : "none";
     }
 
-    // Функция за плъзгача
-    function updateSliderFill() {
-      const min = slider.min;
-      const max = slider.max;
-      const val = slider.value;
-      const percentage = (val - min) / (max - min) * 100;
-      if (sliderTrackFill) {
-        sliderTrackFill.style.width = percentage + '%';
-      }
-    }
+    // --- Събития ---
 
-    // --- 3. Дефиниране на Event Listeners ---
+    // НЯМА нормален click – само long press върху целия header
+    head.classList.add("clickable");
+    attachLongPress(head, function() {
+      // toggle поведение при задържане
+      const isHidden =
+        configDiv.style.display === "none" ||
+        configDiv.style.display === "";
+      configDiv.style.display = isHidden ? "block" : "none";
+    }, 650);
 
-    // Клик върху хедъра (Берберин) – отваря/затваря панела
-    head.addEventListener('click', () => {
-      const isHidden = configDiv.style.display === 'none';
-      configDiv.style.display = isHidden ? 'block' : 'none';
-    });
-
-    // Long press: отваря панела за добавяне/редакция
-    attachLongPress(head, () => {
-      configDiv.style.display = 'block';
-    });
-
-    // Падащо меню за Марки
-    brandSelect.addEventListener('change', () => {
+    brandSelect.addEventListener("change", function() {
       const selectedBrand = brandSelect.value;
-      if (selectedBrand === 'custom') {
-        customNameField.style.display = 'block';
+      if (selectedBrand === "custom") {
+        customNameField.style.display = "block";
       } else {
-        customNameField.style.display = 'none';
+        customNameField.style.display = "none";
       }
     });
 
-    // Плъзгач
-    slider.addEventListener('input', () => {
+    slider.addEventListener("input", function() {
       sliderVal.textContent = slider.value;
       updateSliderFill();
     });
 
-    // Бутон "Запази"
-    saveBtn.addEventListener('click', () => {
+    saveBtn.addEventListener("click", function() {
       const newRows = parseInt(slider.value, 10);
       const newBrand = brandSelect.value;
-      const newCustomName = (newBrand === 'custom') ? nameInput.value.trim() : '';
+      const newCustomName =
+        newBrand === "custom" ? (nameInput.value || "").trim() : "";
 
       const needsGridUpdate =
-        (newRows !== settings.rows) ||
-        (newBrand !== settings.brand) ||
-        (newCustomName !== settings.customName);
+        newRows !== settings.rows ||
+        newBrand !== settings.brand ||
+        newCustomName !== settings.customName;
 
       settings.rows = newRows;
       settings.brand = newBrand;
       settings.customName = newCustomName;
-      
-      saveAndRerender(false, needsGridUpdate); // Запазваме и скриваме config
+
+      saveAndRerender(false, needsGridUpdate);
     });
-    
-    // Бутон "Изтрий"
-    deleteBtn.addEventListener('click', () => {
-      if (settings.rows === 0) { // Ако вече е 0, просто затвори
-        configDiv.style.display = 'none';
+
+    deleteBtn.addEventListener("click", function() {
+      if (settings.rows === 0) {
+        configDiv.style.display = "none";
         return;
       }
-      
       if (!confirm("Ще изтриете ли избора?")) {
         return;
       }
-      
-      settings.rows = 0; // Това е "изтриването"
-      settings.customName = '';
-      
-      saveAndRerender(false, true); // Запазваме, скриваме config и принуждаваме ъпдейт
+      settings.rows = 0;
+      settings.customName = "";
+      saveAndRerender(false, true);
     });
-
-    // --- 4. Основни Функции ---
 
     function saveAndRerender(showConfig, needsGridUpdate) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-      
+
       const brandData = brandsMap[settings.brand] || brandsMap["custom"];
       let currentName = brandData.name;
-      if (settings.brand === 'custom' && settings.customName) {
-        currentName = settings.customName;
-      } else if (settings.brand === 'custom') {
-        currentName = nameInput.placeholder;
+
+      if (settings.brand === "custom") {
+        if (settings.customName) {
+          currentName = settings.customName;
+        } else {
+          currentName = nameInput.placeholder;
+        }
       }
 
       if (needsGridUpdate) {
         generateGrid(settings.rows, currentName);
       }
-      
+
       updateUI(showConfig);
-      
-      if (typeof window.masterUpdateAllGrids === 'function') {
+
+      if (typeof window.masterUpdateAllGrids === "function") {
         window.masterUpdateAllGrids();
       }
     }
 
-    /**
-     * Генерира HTML-а за таблицата и я инициализира
-     */
     function generateGrid(rowCount, productName) {
       if (currentGridInstance) {
-        window.grids = window.grids.filter(g => g !== currentGridInstance);
-        currentGridInstance.destroy();
+        if (Array.isArray(window.grids)) {
+          window.grids = window.grids.filter(function(g) { return g !== currentGridInstance; });
+        }
+        if (typeof currentGridInstance.destroy === "function") {
+          currentGridInstance.destroy();
+        }
         currentGridInstance = null;
       }
-      
+
       if (rowCount === 0) {
         gridContainer.innerHTML = "";
         if (intakeBtn) {
-          intakeBtn.style.display = 'none'; // Скриваме бутона веднага
+          intakeBtn.style.display = "none";
         }
         return;
       }
 
-      let defaultTimes = [];
+      const defaultTimes = [];
       const timesMap = DEFAULT_TIMES_MAP[rowCount] || DEFAULT_TIMES_MAP[1];
+
       for (let i = 0; i < rowCount; i++) {
         const time = (timesMap[i] && timesMap[i][0]) || "12:00";
         defaultTimes.push(Array(7).fill(time));
@@ -329,44 +318,50 @@
 
       const tableId  = `${prefix}-table`;
       const buttonId = `btnProgIntake${prefix.toUpperCase()}`;
-      
-      let tbodyHtml = '';
+
+      let tbodyHtml = "";
       for (let r = 0; r < rowCount; r++) {
-        tbodyHtml += '<tr>';
+        tbodyHtml += "<tr>";
         for (let d = 1; d <= 7; d++) {
-          const dow = (d === 7) ? 0 : d;
-          const timeIndex = (dow === 0 ? 6 : dow - 1);
+          const dow = d === 7 ? 0 : d;
+          const timeIndex = dow === 0 ? 6 : dow - 1;
           const cellTime = defaultTimes[r][timeIndex];
-          tbodyHtml += `<td class="pl-time-cell" data-row="${r}" data-dow="${dow}">${cellTime}</td>`;
+          tbodyHtml +=
+            '<td class="pl-time-cell" data-row="' +
+            r +
+            '" data-dow="' +
+            dow +
+            '">' +
+            cellTime +
+            "</td>";
         }
-        tbodyHtml += '</tr>';
+        tbodyHtml += "</tr>";
       }
 
-      gridContainer.innerHTML = `
-        <table class="pl-table" id="${tableId}">
-          <thead>
-            <tr>
-              <th class="pl-day" data-dow="1">Пн</th>
-              <th class="pl-day" data-dow="2">Вт</th>
-              <th class="pl-day" data-dow="3">Ср</th>
-              <th class="pl-day" data-dow="4">Чт</th>
-              <th class="pl-day" data-dow="5">Пт</th>
-              <th class="pl-day weekend" data-dow="6">Сб</th>
-              <th class="pl-day weekend" data-dow="0">Нд</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${tbodyHtml}
-          </tbody>
-        </table>
-      `;
+      gridContainer.innerHTML =
+        '<table class="pl-table" id="' + tableId + '">' +
+          "<thead>" +
+            "<tr>" +
+              '<th class="pl-day" data-dow="1">Пн</th>' +
+              '<th class="pl-day" data-dow="2">Вт</th>' +
+              '<th class="pl-day" data-dow="3">Ср</th>' +
+              '<th class="pl-day" data-dow="4">Чт</th>' +
+              '<th class="pl-day" data-dow="5">Пт</th>' +
+              '<th class="pl-day weekend" data-dow="6">Сб</th>' +
+              '<th class="pl-day weekend" data-dow="0">Нд</th>' +
+            "</tr>" +
+          "</thead>" +
+          "<tbody>" +
+            tbodyHtml +
+          "</tbody>" +
+        "</table>";
 
-      setTimeout(() => {
-        if (typeof createProductGrid !== 'function') {
+      setTimeout(function() {
+        if (typeof createProductGrid !== "function") {
           console.error("createProductGrid не е заредена!");
           return;
         }
-        
+
         currentGridInstance = createProductGrid({
           tableId: tableId,
           buttonId: buttonId,
@@ -375,32 +370,23 @@
           productName: productName,
           blockId: `${prefix}-block`
         });
-        
+
         if (!window.grids) {
           window.grids = [];
         }
         if (currentGridInstance) {
           window.grids.push(currentGridInstance);
-          if (typeof currentGridInstance.updateIntakeStates === 'function') {
+          if (typeof currentGridInstance.updateIntakeStates === "function") {
             currentGridInstance.updateIntakeStates();
           }
         }
       }, 0);
     }
-    
-    // --- 5. Първоначално стартиране ---
-    updateUI(false); // Зареждаме UI, без да показваме config панела
+
+    // Старт
+    updateUI(false);
   }
 
-  // ===================================
-  // --- ИНИЦИАЛИЗАЦИЯ ---
-  // ===================================
-
-  // Инициализираме само Берберин засега
-  createConfigurableProduct('ber', BERBERINE_BRANDS); 
-  
-  // TODO: Инициализирай и 'glu' и 'egc' (засега са празни)
-  // createConfigurableProduct('glu', {});
-  // createConfigurableProduct('egc', {});
-
+  // Инициализация – засега само Берберин
+  createConfigurableProduct("ber", BERBERINE_BRANDS);
 })();
