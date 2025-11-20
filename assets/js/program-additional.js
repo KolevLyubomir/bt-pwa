@@ -43,28 +43,28 @@
   ];
 
   function createConfigurableProduct(prefix, brandsMap) {
-    const configDiv       = document.getElementById(`${prefix}-config`);
-    const nameInput       = document.getElementById(`${prefix}-name`);
-    const slider          = document.getElementById(`${prefix}-slider`);
-    const sliderVal       = document.getElementById(`${prefix}-slider-val`);
-    const sliderTrackFill = document.getElementById(`${prefix}-slider-track-fill`);
-    const saveBtn         = document.getElementById(`${prefix}-save`);
-    const deleteBtn       = document.getElementById(`${prefix}-delete`);
-    const gridContainer   = document.getElementById(`${prefix}-grid-container`);
-    const capMain         = document.getElementById(`${prefix}-cap-main`);
-    const capBrand        = document.getElementById(`${prefix}-cap-brand`);
-    const head            = document.getElementById(`${prefix}-head`);
-    const brandSelect     = document.getElementById(`${prefix}-brand-select`);
-    const customNameField = document.getElementById(`${prefix}-custom-name-field`);
-    const productImg      = document.getElementById(`${prefix}-img`);
-    const intakeBtn       = document.getElementById(`btnProgIntake${prefix.toUpperCase()}`);
+    const configDiv       = document.getElementById(prefix + "-config");
+    const nameInput       = document.getElementById(prefix + "-name");
+    const slider          = document.getElementById(prefix + "-slider");
+    const sliderVal       = document.getElementById(prefix + "-slider-val");
+    const sliderTrackFill = document.getElementById(prefix + "-slider-track-fill");
+    const saveBtn         = document.getElementById(prefix + "-save");
+    const deleteBtn       = document.getElementById(prefix + "-delete");
+    const gridContainer   = document.getElementById(prefix + "-grid-container");
+    const capMain         = document.getElementById(prefix + "-cap-main");
+    const capBrand        = document.getElementById(prefix + "-cap-brand");
+    const head            = document.getElementById(prefix + "-head");
+    const brandSelect     = document.getElementById(prefix + "-brand-select");
+    const customNameField = document.getElementById(prefix + "-custom-name-field");
+    const productImg      = document.getElementById(prefix + "-img");
+    const intakeBtn       = document.getElementById("btnProgIntake" + prefix.toUpperCase());
 
     if (!configDiv || !slider || !saveBtn || !gridContainer || !head || !brandSelect) {
-      console.error(`Липсващи елементи за ${prefix}`);
+      console.error("Липсващи елементи за " + prefix);
       return;
     }
 
-    const STORAGE_KEY = `bt_add_${prefix}_v310`;
+    const STORAGE_KEY = "bt_add_" + prefix + "_v310";
 
     let currentGridInstance = null;
 
@@ -74,14 +74,18 @@
       rows: 0
     };
 
-    // Long press helper – ЗАМЕСТВА нормалния click
+    // Детектор: touch устройство или не
+    const isTouchDevice =
+      ("ontouchstart" in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
+
+    // Long press helper – за touch устройства
     function attachLongPress(el, onLongPress, delayMs) {
       if (!el) return;
-      const delay = typeof delayMs === "number" ? delayMs : 650;
+      const delay = typeof delayMs === "number" ? delayMs : 450; // малко по-кратко
       let timer = null;
       let startX = 0;
       let startY = 0;
-      const MAX_MOVE = 10;
+      const MAX_MOVE = 40; // позволяваме повече мърдане
 
       function clearTimer() {
         if (timer !== null) {
@@ -115,16 +119,13 @@
         clearTimer();
       }
 
-      el.addEventListener("mousedown", start);
       el.addEventListener("touchstart", start, { passive: true });
-
-      el.addEventListener("mousemove", move);
       el.addEventListener("touchmove", move, { passive: true });
-
-      el.addEventListener("mouseup", cancel);
-      el.addEventListener("mouseleave", cancel);
       el.addEventListener("touchend", cancel);
       el.addEventListener("touchcancel", cancel);
+
+      // По желание: за мишка също може да работи като "задържане",
+      // но на десктоп ние ще ползваме click, така че оставяме само за touch.
     }
 
     // Зареждане от localStorage
@@ -207,17 +208,27 @@
       configDiv.style.display = showConfig ? "block" : "none";
     }
 
-    // --- Събития ---
+    // --- Събития за хедъра (Берберин) ---
 
-    // НЯМА нормален click – само long press върху целия header
     head.classList.add("clickable");
-    attachLongPress(head, function() {
-      // toggle поведение при задържане
-      const isHidden =
-        configDiv.style.display === "none" ||
-        configDiv.style.display === "";
-      configDiv.style.display = isHidden ? "block" : "none";
-    }, 650);
+
+    // На touch → long press (задържане)
+    if (isTouchDevice) {
+      attachLongPress(head, function() {
+        const isHidden =
+          configDiv.style.display === "none" ||
+          configDiv.style.display === "";
+        configDiv.style.display = isHidden ? "block" : "none";
+      }, 450);
+    } else {
+      // На десктоп → обикновен click
+      head.addEventListener("click", function() {
+        const isHidden =
+          configDiv.style.display === "none" ||
+          configDiv.style.display === "";
+        configDiv.style.display = isHidden ? "block" : "none";
+      });
+    }
 
     brandSelect.addEventListener("change", function() {
       const selectedBrand = brandSelect.value;
@@ -316,8 +327,8 @@
         defaultTimes.push(Array(7).fill(time));
       }
 
-      const tableId  = `${prefix}-table`;
-      const buttonId = `btnProgIntake${prefix.toUpperCase()}`;
+      const tableId  = prefix + "-table";
+      const buttonId = "btnProgIntake" + prefix.toUpperCase();
 
       let tbodyHtml = "";
       for (let r = 0; r < rowCount; r++) {
@@ -342,7 +353,7 @@
         '<table class="pl-table" id="' + tableId + '">' +
           "<thead>" +
             "<tr>" +
-              '<th class="pl-day" data-dow="1">Пн</th>' +
+              '<th class="pl-day" data-dow="1">Пn</th>' +
               '<th class="pl-day" data-dow="2">Вт</th>' +
               '<th class="pl-day" data-dow="3">Ср</th>' +
               '<th class="pl-day" data-dow="4">Чт</th>' +
@@ -365,10 +376,10 @@
         currentGridInstance = createProductGrid({
           tableId: tableId,
           buttonId: buttonId,
-          storageKey: `bt_grid_${prefix}_v310`,
+          storageKey: "bt_grid_" + prefix + "_v310",
           defaultTimes: defaultTimes,
           productName: productName,
-          blockId: `${prefix}-block`
+          blockId: prefix + "-block"
         });
 
         if (!window.grids) {
