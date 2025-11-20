@@ -562,6 +562,9 @@ button.danger {
   position: relative;
   margin-top: 8px;
   height: 10px;
+  width: 50%;
+  margin-left: auto;
+  margin-right: auto;
 }
 .slider-track-fill {
   position: absolute;
