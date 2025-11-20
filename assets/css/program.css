@@ -112,7 +112,7 @@ select option.strong { font-weight:700; }
   0%,100%{
     box-shadow:0 0 0 0 rgba(250,204,21,0);
   }
-  50%{
+  50%,100%{
     box-shadow:0 0 0 2px rgba(250,204,21,.9);
   }
 }
@@ -526,14 +526,16 @@ select option.strong { font-weight:700; }
 /* Контейнер за кръглите бутони */
 .config-actions {
   display: flex;
-  justify-content: flex-start;  /* ← вляво подравнени бутони */
+  justify-content: flex-start;  /* Бутони вляво */
   align-items: center;
-  margin-top: 26px;             /* ← повече разстояние под таблицата/слидъра */
+  margin-top: 26px;             /* Повече въздух под таблицата/плъзгача */
 }
 .config-buttons {
   display: flex;
   gap: 8px;
 }
+
+/* ФИКС 8: Стил за кръглите бутони (МАЛКИ) */
 .config-actions .clk-btn {
   width: 34px;
   height: 34px;
