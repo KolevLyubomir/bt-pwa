@@ -51,7 +51,12 @@
 .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
 select option.strong { font-weight:700; }
 
-.pl-wrap{ overflow-x:hidden }
+/* ТУК Е ПРОМЯНАТА – добавен margin-bottom */
+.pl-wrap{
+  overflow-x:hidden;
+  margin-bottom:14px; /* въздух под таблицата */
+}
+
 .pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
 .pl-table th, .pl-table td{
   border:1px solid #20343a; border-radius:10px; text-align:center;
@@ -112,7 +117,7 @@ select option.strong { font-weight:700; }
   0%,100%{
     box-shadow:0 0 0 0 rgba(250,204,21,0);
   }
-  50%,100%{
+  50%{
     box-shadow:0 0 0 2px rgba(250,204,21,.9);
   }
 }
@@ -526,16 +531,14 @@ select option.strong { font-weight:700; }
 /* Контейнер за кръглите бутони */
 .config-actions {
   display: flex;
-  justify-content: flex-start;  /* Бутони вляво */
+  justify-content: flex-start;
   align-items: center;
-  margin-top: 26px;             /* Повече въздух под таблицата/плъзгача */
+  margin-top: 26px;
 }
 .config-buttons {
   display: flex;
   gap: 8px;
 }
-
-/* ФИКС 8: Стил за кръглите бутони (МАЛКИ) */
 .config-actions .clk-btn {
   width: 34px;
   height: 34px;
