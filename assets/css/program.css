@@ -617,3 +617,68 @@ button.danger {
   cursor: pointer;
   border: 3px solid #06241b;
 }
+
+/* =========
+   Confirm модал за изтриване на марка (Берберин)
+   ========= */
+
+.bt-confirm-backdrop{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.55);
+  z-index:200;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.bt-confirm-dialog{
+  background:#0e1519;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:14px 16px 12px;
+  max-width:320px;
+  width:90%;
+  box-shadow:0 12px 40px rgba(0,0,0,.6);
+}
+
+.bt-confirm-text{
+  margin:0 0 12px;
+  font-size:14px;
+  line-height:1.4;
+  color:var(--text);
+}
+
+.bt-confirm-actions{
+  display:flex;
+  justify-content:flex-end;
+  gap:8px;
+}
+
+.bt-confirm-btn{
+  border-radius:999px;
+  padding:6px 14px;
+  font-size:13px;
+  font-weight:700;
+  border:1px solid #24343a;
+  background:#0d171b;
+  color:#e6f2ef;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .12s ease,border-color .12s ease,transform .04s ease;
+}
+.bt-confirm-btn:active{
+  transform:scale(.97);
+}
+
+.bt-confirm-btn-secondary{
+  background:#0d171b;
+  border-color:#24343a;
+  color:#e6f2ef;
+}
+
+.bt-confirm-btn-danger{
+  background:var(--danger);
+  border-color:var(--danger);
+  color:#fff;
+}

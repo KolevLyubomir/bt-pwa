@@ -78,6 +78,63 @@
     const isTouchDevice =
       ("ontouchstart" in window) || (navigator.maxTouchPoints && navigator.maxTouchPoints > 0);
 
+    // ----- КРАСИВО ПОТВЪРЖДЕНИЕ ЗА ИЗТРИВАНЕ -----
+    function showDeleteConfirm(message, onConfirm) {
+      const backdrop = document.createElement("div");
+      backdrop.className = "bt-confirm-backdrop";
+
+      const dialog = document.createElement("div");
+      dialog.className = "bt-confirm-dialog";
+
+      const text = document.createElement("p");
+      text.className = "bt-confirm-text";
+      text.textContent = message;
+
+      const actions = document.createElement("div");
+      actions.className = "bt-confirm-actions";
+
+      const btnCancel = document.createElement("button");
+      btnCancel.type = "button";
+      btnCancel.className = "bt-confirm-btn bt-confirm-btn-secondary";
+      btnCancel.textContent = "Откажи";
+
+      const btnOk = document.createElement("button");
+      btnOk.type = "button";
+      btnOk.className = "bt-confirm-btn bt-confirm-btn-danger";
+      btnOk.textContent = "Изтрий";
+
+      actions.appendChild(btnCancel);
+      actions.appendChild(btnOk);
+      dialog.appendChild(text);
+      dialog.appendChild(actions);
+      backdrop.appendChild(dialog);
+      document.body.appendChild(backdrop);
+
+      function close() {
+        if (backdrop && backdrop.parentNode) {
+          backdrop.parentNode.removeChild(backdrop);
+        }
+      }
+
+      btnCancel.addEventListener("click", function() {
+        close();
+      });
+
+      btnOk.addEventListener("click", function() {
+        close();
+        if (typeof onConfirm === "function") {
+          onConfirm();
+        }
+      });
+
+      backdrop.addEventListener("click", function(e) {
+        if (e.target === backdrop) {
+          close();
+        }
+      });
+    }
+    // ---------------------------------------------
+
     // Long press helper – за touch устройства
     function attachLongPress(el, onLongPress, delayMs) {
       if (!el) return;
@@ -124,8 +181,7 @@
       el.addEventListener("touchend", cancel);
       el.addEventListener("touchcancel", cancel);
 
-      // По желание: за мишка също може да работи като "задържане",
-      // но на десктоп ние ще ползваме click, така че оставяме само за touch.
+      // За мишка ползваме click по-долу
     }
 
     // Зареждане от localStorage
@@ -193,6 +249,13 @@
         if (capBrand) capBrand.textContent = "";
         gridContainer.style.display = "none";
         gridContainer.innerHTML = "";
+
+        // Скриваме и бутона "Прием" за този продукт, ако още светка
+        if (intakeBtn) {
+          intakeBtn.style.display = "none";
+          intakeBtn.removeAttribute("data-row");
+          intakeBtn.removeAttribute("data-dow");
+        }
 
         if (currentGridInstance) {
           if (Array.isArray(window.grids)) {
@@ -264,15 +327,24 @@
 
     deleteBtn.addEventListener("click", function() {
       if (settings.rows === 0) {
+        // Нищо не е конфигурирано – просто скриваме панела
         configDiv.style.display = "none";
         return;
       }
-      if (!confirm("Ще изтриете ли избора?")) {
-        return;
-      }
-      settings.rows = 0;
-      settings.customName = "";
-      saveAndRerender(false, true);
+
+      showDeleteConfirm("Наистина ли искаш да изтриеш избраната марка и часовете за Берберин?", function() {
+        settings.rows = 0;
+        settings.customName = "";
+
+        // Зануляваме визуално и бутона "Прием"
+        if (intakeBtn) {
+          intakeBtn.style.display = "none";
+          intakeBtn.removeAttribute("data-row");
+          intakeBtn.removeAttribute("data-dow");
+        }
+
+        saveAndRerender(false, true);
+      });
     });
 
     function saveAndRerender(showConfig, needsGridUpdate) {
@@ -315,6 +387,8 @@
         gridContainer.innerHTML = "";
         if (intakeBtn) {
           intakeBtn.style.display = "none";
+          intakeBtn.removeAttribute("data-row");
+          intakeBtn.removeAttribute("data-dow");
         }
         return;
       }
