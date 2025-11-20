@@ -478,7 +478,7 @@ select option.strong { font-weight:700; }
   font-weight: 700;
   font-size: 13px;
   color: var(--text);
-  font-family: inherit;        /* една фамилия */
+  font-family: inherit;
   transition: color .2s ease;
 }
 .prog-cap-main.configured {
@@ -487,10 +487,10 @@ select option.strong { font-weight:700; }
 
 /* Марка – същият размер и дебелина като ProLact / Omni / Хитозан */
 .prog-cap-brand {
-  font-size: 13px;             /* същият размер */
-  font-weight: 700;            /* същото удебеляване */
+  font-size: 13px;
+  font-weight: 700;
   color: var(--text);
-  font-family: inherit;        /* същата фамилия */
+  font-family: inherit;
 }
 
 /* --- Панел за Настройки --- */
@@ -526,9 +526,9 @@ select option.strong { font-weight:700; }
 /* Контейнер за кръглите бутони */
 .config-actions {
   display: flex;
-  justify-content: flex-end;
+  justify-content: flex-start;  /* ← вляво подравнени бутони */
   align-items: center;
-  margin-top: 22px; /* малко повече място под реда с дните/плъзгача */
+  margin-top: 26px;             /* ← повече разстояние под таблицата/слидъра */
 }
 .config-buttons {
   display: flex;
@@ -563,7 +563,7 @@ button.danger {
   margin-top: 8px;
   height: 10px;
   width: 50%;
-  margin-left: 0;     /* вляво */
+  margin-left: 0;
   margin-right: 0;
 }
 
