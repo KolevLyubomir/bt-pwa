@@ -25,13 +25,11 @@
       img: "https://nowfoods.bg/image/cache/catalog/Berberine/Berberine%20-%202-350x350.webp"
     },
     "custom": {
-      // беше "Друга марка"
       name: "Друго (въведи):",
       img: "https://izgorimazninite.com/wp-content/uploads/2020/02/berberine-2.jpg"
     }
   };
 
-  // НОВА схема на часовете по подразбиране
   const DEFAULT_TIMES_MAP = [
     [],
     [["12:00"]],
@@ -127,7 +125,6 @@
       rows: 0
     };
 
-    // --- четем конфигурацията ---
     try {
       var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (saved) {
@@ -234,7 +231,6 @@
       });
     }
 
-    // --- МОДАЛ ЗА ИЗБОР НА МАРКА ---
     var brandModal = null;
     var brandModalList = null;
     var brandModalTitle = null;
@@ -276,7 +272,7 @@
       brandModal.style.zIndex = "9999";
 
       var dialog = document.createElement("div");
-      dialog.style.background = "#020617"; // тъмен фон
+      dialog.style.background = "#020617";
       dialog.style.borderRadius = "20px";
       dialog.style.padding = "18px 20px";
       dialog.style.width = "92%";
@@ -295,7 +291,6 @@
       headerRow.style.marginBottom = "12px";
 
       brandModalTitle = document.createElement("div");
-      // беше "Избор на марка Берберин"
       brandModalTitle.textContent = "Избор на Берберин";
       brandModalTitle.style.fontSize = "15px";
       brandModalTitle.style.fontWeight = "600";
@@ -370,15 +365,14 @@
           var evt;
           if (typeof Event === "function") {
             evt = new Event("change", { bubbles: true });
-            } else {
+          } else {
             evt = document.createEvent("Event");
             evt.initEvent("change", true, true);
           }
           brandSelect.dispatchEvent(evt);
 
           if (brandPickerBtn) {
-            brandPickerBtn.textContent =
-              "Марка: " + (brandsMap[brandKey] ? brandsMap[brandKey].name : "неизбрана");
+            brandPickerBtn.textContent = (brandsMap[brandKey] ? brandsMap[brandKey].name : "неизбрана");
           }
 
           closeBrandModal();
@@ -393,12 +387,9 @@
       document.body.appendChild(brandModal);
     }
 
-    // --- бутон вместо select ---
     brandPickerBtn = document.createElement("button");
     brandPickerBtn.type = "button";
-    brandPickerBtn.textContent =
-      "Марка: " +
-      (brandsMap[settings.brand] ? brandsMap[settings.brand].name : "Изберете");
+    brandPickerBtn.textContent = (brandsMap[settings.brand] ? brandsMap[settings.brand].name : "Изберете");
     brandPickerBtn.style.display = "inline-flex";
     brandPickerBtn.style.alignItems = "center";
     brandPickerBtn.style.gap = "6px";
@@ -504,9 +495,7 @@
 
       brandSelect.value = brandKey;
       if (brandPickerBtn) {
-        brandPickerBtn.textContent =
-          "Марка: " +
-          (brandsMap[brandKey] ? brandsMap[brandKey].name : "Изберете");
+        brandPickerBtn.textContent = (brandsMap[brandKey] ? brandsMap[brandKey].name : "Изберете");
       }
 
       if (isConfigured) {
@@ -718,7 +707,6 @@
 
     head.classList.add("clickable");
 
-    // Клик – само ако НЯМА марка (rows === 0)
     head.addEventListener("click", function() {
       if (settings.rows > 0) {
         return;
@@ -729,7 +717,6 @@
       configDiv.style.display = isHidden ? "block" : "none";
     });
 
-    // Задържане – за редакция (ако има марка) или отваряне (ако е празно)
     attachLongPress(head, function() {
       if (settings.rows === 0) {
         configDiv.style.display = "block";
