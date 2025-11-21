@@ -25,7 +25,8 @@
       img: "https://nowfoods.bg/image/cache/catalog/Berberine/Berberine%20-%202-350x350.webp"
     },
     "custom": {
-      name: "Друга марка",
+      // беше "Друга марка"
+      name: "Друго (въведи):",
       img: "https://izgorimazninite.com/wp-content/uploads/2020/02/berberine-2.jpg"
     }
   };
@@ -248,10 +249,10 @@
         var bKey = btn.getAttribute("data-brand-key");
         if (bKey === current) {
           btn.style.borderColor = "#16a34a";
-          btn.style.background = "rgba(22,163,74,0.08)";
+          btn.style.background = "rgba(22,163,74,0.25)";
         } else {
-          btn.style.borderColor = "#e5e7eb";
-          btn.style.background = "#fff";
+          btn.style.borderColor = "#334155";
+          btn.style.background = "#020617";
         }
       }
       brandModal.style.display = "flex";
@@ -275,7 +276,7 @@
       brandModal.style.zIndex = "9999";
 
       var dialog = document.createElement("div");
-      dialog.style.background = "#ffffff";
+      dialog.style.background = "#020617"; // тъмен фон
       dialog.style.borderRadius = "20px";
       dialog.style.padding = "18px 20px";
       dialog.style.width = "92%";
@@ -283,7 +284,8 @@
       dialog.style.maxHeight = "80vh";
       dialog.style.display = "flex";
       dialog.style.flexDirection = "column";
-      dialog.style.boxShadow = "0 18px 45px rgba(0,0,0,0.28)";
+      dialog.style.boxShadow = "0 18px 45px rgba(0,0,0,0.65)";
+      dialog.style.border = "1px solid #1f2937";
       dialog.style.fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
       var headerRow = document.createElement("div");
@@ -293,10 +295,11 @@
       headerRow.style.marginBottom = "12px";
 
       brandModalTitle = document.createElement("div");
-      brandModalTitle.textContent = "Избор на марка Берберин";
+      // беше "Избор на марка Берберин"
+      brandModalTitle.textContent = "Избор на Берберин";
       brandModalTitle.style.fontSize = "15px";
       brandModalTitle.style.fontWeight = "600";
-      brandModalTitle.style.color = "#111827";
+      brandModalTitle.style.color = "#f9fafb";
 
       var closeX = document.createElement("button");
       closeX.type = "button";
@@ -306,7 +309,7 @@
       closeX.style.fontSize = "20px";
       closeX.style.lineHeight = "1";
       closeX.style.cursor = "pointer";
-      closeX.style.color = "#6b7280";
+      closeX.style.color = "#9ca3af";
 
       closeX.addEventListener("click", closeBrandModal);
 
@@ -330,12 +333,13 @@
         itemBtn.style.alignItems = "center";
         itemBtn.style.width = "100%";
         itemBtn.style.borderRadius = "999px";
-        itemBtn.style.border = "1px solid #e5e7eb";
+        itemBtn.style.border = "1px solid #334155";
         itemBtn.style.padding = "8px 10px";
-        itemBtn.style.background = "#ffffff";
+        itemBtn.style.background = "#020617";
         itemBtn.style.cursor = "pointer";
         itemBtn.style.fontSize = "13px";
-        itemBtn.style.justifyContent = "space-between";
+        itemBtn.style.justifyContent = "flex-start";
+        itemBtn.style.color = "#e5e7eb";
 
         var left = document.createElement("div");
         left.style.display = "flex";
@@ -357,14 +361,7 @@
         left.appendChild(dot);
         left.appendChild(lbl);
 
-        var right = document.createElement("span");
-        right.textContent = (key === "custom") ? "свободен избор" : "готов продукт";
-        right.style.fontSize = "11px";
-        right.style.color = "#6b7280";
-        right.style.marginLeft = "6px";
-
         itemBtn.appendChild(left);
-        itemBtn.appendChild(right);
 
         itemBtn.addEventListener("click", function() {
           var brandKey = itemBtn.getAttribute("data-brand-key");
@@ -373,14 +370,15 @@
           var evt;
           if (typeof Event === "function") {
             evt = new Event("change", { bubbles: true });
-          } else {
+            } else {
             evt = document.createEvent("Event");
             evt.initEvent("change", true, true);
           }
           brandSelect.dispatchEvent(evt);
 
           if (brandPickerBtn) {
-            brandPickerBtn.textContent = "Марка: " + (brandsMap[brandKey] ? brandsMap[brandKey].name : "неизбрана");
+            brandPickerBtn.textContent =
+              "Марка: " + (brandsMap[brandKey] ? brandsMap[brandKey].name : "неизбрана");
           }
 
           closeBrandModal();
@@ -398,17 +396,20 @@
     // --- бутон вместо select ---
     brandPickerBtn = document.createElement("button");
     brandPickerBtn.type = "button";
-    brandPickerBtn.textContent = "Марка: " + (brandsMap[settings.brand] ? brandsMap[settings.brand].name : "Изберете");
+    brandPickerBtn.textContent =
+      "Марка: " +
+      (brandsMap[settings.brand] ? brandsMap[settings.brand].name : "Изберете");
     brandPickerBtn.style.display = "inline-flex";
     brandPickerBtn.style.alignItems = "center";
     brandPickerBtn.style.gap = "6px";
     brandPickerBtn.style.padding = "6px 10px";
     brandPickerBtn.style.borderRadius = "999px";
-    brandPickerBtn.style.border = "1px solid #9ca3af";
-    brandPickerBtn.style.background = "#f9fafb";
+    brandPickerBtn.style.border = "1px solid #4b5563";
+    brandPickerBtn.style.background = "#020617";
     brandPickerBtn.style.fontSize = "13px";
     brandPickerBtn.style.cursor = "pointer";
     brandPickerBtn.style.marginBottom = "6px";
+    brandPickerBtn.style.color = "#e5e7eb";
 
     brandPickerBtn.addEventListener("click", function() {
       openBrandModal();
@@ -503,7 +504,9 @@
 
       brandSelect.value = brandKey;
       if (brandPickerBtn) {
-        brandPickerBtn.textContent = "Марка: " + (brandsMap[brandKey] ? brandsMap[brandKey].name : "Изберете");
+        brandPickerBtn.textContent =
+          "Марка: " +
+          (brandsMap[brandKey] ? brandsMap[brandKey].name : "Изберете");
       }
 
       if (isConfigured) {
