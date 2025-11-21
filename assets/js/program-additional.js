@@ -3,33 +3,41 @@
 (function() {
   "use strict";
 
+  // Локални изображения за Берберин
   const BERBERINE_BRANDS = {
     "thorne": {
       name: "Thorne Research",
-      img: "https://d1vo8zfysxy97v.cloudfront.net/media/product/sf800__vd424273289116ed602cb97bcef5ca314e2b9ff03.png"
+      img: "assets/products/additional/ber-thorne.webp",
+      icon: "assets/products/additional/icons/ber-thorne-icon.webp"
     },
     "toniiq": {
       name: "Toniiq - Ultra High Strength",
-      img: "https://www.toniiq.com/cdn/shop/products/Group1.jpg?v=1676931815&width=1920"
+      img: "assets/products/additional/ber-toniiq.webp",
+      icon: "assets/products/additional/icons/ber-toniiq-icon.webp"
     },
     "it": {
       name: "Integrative Therapeutics",
-      img: "https://integrativepro.com/cdn/shop/files/20251111_5c2ea8c7-0d0a-4f69-95a8-3fe9a5022893.png?v=1762870800"
+      img: "assets/products/additional/ber-it.webp",
+      icon: "assets/products/additional/icons/ber-it-icon.webp"
     },
     "nutricost": {
       name: "Nutricost",
-      img: "https://nutricost.com/cdn/shop/files/NTC_BerberineHCL_1200MG_60CAP_175CC_Front_Square_1800x1800.jpg?v=1738091804"
+      img: "assets/products/additional/ber-nutricost.webp",
+      icon: "assets/products/additional/icons/ber-nutricost-icon.webp"
     },
     "now": {
       name: "NOW Foods - Berberine Glucose",
-      img: "https://nowfoods.bg/image/cache/catalog/Berberine/Berberine%20-%202-350x350.webp"
+      img: "assets/products/additional/ber-now.webp",
+      icon: "assets/products/additional/icons/ber-now-icon.webp"
     },
     "custom": {
       name: "Друго (въведи):",
-      img: "https://izgorimazninite.com/wp-content/uploads/2020/02/berberine-2.jpg"
+      img: "assets/products/additional/ber-custom.webp",
+      icon: "assets/products/additional/icons/ber-custom-icon.webp"
     }
   };
 
+  // НОВА схема на часовете по подразбиране
   const DEFAULT_TIMES_MAP = [
     [],
     [["12:00"]],
@@ -125,6 +133,7 @@
       rows: 0
     };
 
+    // Четем конфигурация от localStorage
     try {
       var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (saved) {
@@ -231,6 +240,7 @@
       });
     }
 
+    // --- Модал за избор на марка ---
     var brandModal = null;
     var brandModalList = null;
     var brandModalTitle = null;
@@ -272,7 +282,7 @@
       brandModal.style.zIndex = "9999";
 
       var dialog = document.createElement("div");
-      dialog.style.background = "#020617";
+      dialog.style.background = "#020617"; // тъмен фон
       dialog.style.borderRadius = "20px";
       dialog.style.padding = "18px 20px";
       dialog.style.width = "92%";
@@ -341,11 +351,15 @@
         left.style.alignItems = "center";
         left.style.gap = "8px";
 
-        var dot = document.createElement("div");
-        dot.style.width = "8px";
-        dot.style.height = "8px";
-        dot.style.borderRadius = "999px";
-        dot.style.background = "#10b981";
+        // малка иконка вместо цветна точка
+        var icon = document.createElement("img");
+        icon.src = bData.icon || bData.img;
+        icon.alt = bData.name;
+        icon.style.width = "24px";
+        icon.style.height = "24px";
+        icon.style.borderRadius = "999px";
+        icon.style.objectFit = "cover";
+        icon.style.backgroundColor = "#0f172a";
 
         var lbl = document.createElement("span");
         lbl.textContent = bData.name;
@@ -353,7 +367,7 @@
         lbl.style.overflow = "hidden";
         lbl.style.textOverflow = "ellipsis";
 
-        left.appendChild(dot);
+        left.appendChild(icon);
         left.appendChild(lbl);
 
         itemBtn.appendChild(left);
@@ -372,7 +386,8 @@
           brandSelect.dispatchEvent(evt);
 
           if (brandPickerBtn) {
-            brandPickerBtn.textContent = (brandsMap[brandKey] ? brandsMap[brandKey].name : "неизбрана");
+            brandPickerBtn.textContent =
+              (brandsMap[brandKey] ? brandsMap[brandKey].name : "неизбрана");
           }
 
           closeBrandModal();
@@ -387,9 +402,11 @@
       document.body.appendChild(brandModal);
     }
 
+    // --- бутон–чип над селекта ---
     brandPickerBtn = document.createElement("button");
     brandPickerBtn.type = "button";
-    brandPickerBtn.textContent = (brandsMap[settings.brand] ? brandsMap[settings.brand].name : "Изберете");
+    brandPickerBtn.textContent =
+      (brandsMap[settings.brand] ? brandsMap[settings.brand].name : "Изберете");
     brandPickerBtn.style.display = "inline-flex";
     brandPickerBtn.style.alignItems = "center";
     brandPickerBtn.style.gap = "6px";
@@ -495,7 +512,8 @@
 
       brandSelect.value = brandKey;
       if (brandPickerBtn) {
-        brandPickerBtn.textContent = (brandsMap[brandKey] ? brandsMap[brandKey].name : "Изберете");
+        brandPickerBtn.textContent =
+          (brandsMap[brandKey] ? brandsMap[brandKey].name : "Изберете");
       }
 
       if (isConfigured) {
@@ -707,6 +725,7 @@
 
     head.classList.add("clickable");
 
+    // Клик: отваря конфигурацията само ако НЯМА избрана марка (rows === 0)
     head.addEventListener("click", function() {
       if (settings.rows > 0) {
         return;
@@ -717,6 +736,7 @@
       configDiv.style.display = isHidden ? "block" : "none";
     });
 
+    // Дълго натискане: редакция на вече избрана марка
     attachLongPress(head, function() {
       if (settings.rows === 0) {
         configDiv.style.display = "block";
@@ -787,6 +807,7 @@
     updateUI(false);
   }
 
+  // Инициализация за Берберин
   createConfigurableProduct("ber", BERBERINE_BRANDS);
 
 })();
