@@ -30,14 +30,15 @@
     }
   };
 
+  // НОВА схема на часовете по подразбиране
   const DEFAULT_TIMES_MAP = [
     [],
     [["12:00"]],
     [["08:00"], ["12:00"]],
-    [["08:00"], ["12:00"], ["19:00"]],
-    [["08:00"], ["12:00"], ["16:00"], ["19:00"]],
-    [["08:00"], ["10:00"], ["12:00"], ["16:00"], ["19:00"]],
-    [["08:00"], ["10:00"], ["12:00"], ["16:00"], ["19:00"], ["22:00"]]
+    [["08:00"], ["12:00"], ["18:00"]],
+    [["08:00"], ["12:00"], ["15:00"], ["18:00"]],
+    [["08:00"], ["10:00"], ["12:00"], ["15:00"], ["18:00"]],
+    [["08:00"], ["10:00"], ["12:00"], ["15:00"], ["18:00"], ["21:00"]]
   ];
 
   function timeStrToMin(str) {
@@ -114,7 +115,7 @@
       return;
     }
 
-    var STORAGE_KEY = "bt_add_" + prefix + "_v310";
+    var STORAGE_KEY      = "bt_add_" + prefix + "_v310";
     var GRID_STORAGE_KEY = "bt_grid_" + prefix + "_v310";
 
     var currentGridInstance = null;
@@ -125,6 +126,7 @@
       rows: 0
     };
 
+    // --- четем конфигурацията ---
     try {
       var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (saved) {
@@ -148,26 +150,61 @@
     function showDeleteConfirm(message, onConfirm) {
       var backdrop = document.createElement("div");
       backdrop.className = "bt-confirm-backdrop";
+      backdrop.style.position = "fixed";
+      backdrop.style.inset = "0";
+      backdrop.style.background = "rgba(0,0,0,0.45)";
+      backdrop.style.display = "flex";
+      backdrop.style.alignItems = "center";
+      backdrop.style.justifyContent = "center";
+      backdrop.style.zIndex = "9999";
 
       var dialog = document.createElement("div");
       dialog.className = "bt-confirm-dialog";
+      dialog.style.background = "#fff";
+      dialog.style.borderRadius = "16px";
+      dialog.style.padding = "20px 24px";
+      dialog.style.maxWidth = "320px";
+      dialog.style.width = "90%";
+      dialog.style.boxShadow = "0 12px 30px rgba(0,0,0,0.2)";
+      dialog.style.fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
       var text = document.createElement("p");
       text.className = "bt-confirm-text";
       text.textContent = message;
+      text.style.margin = "0 0 16px 0";
+      text.style.fontSize = "14px";
+      text.style.lineHeight = "1.5";
+      text.style.color = "#333";
 
       var actions = document.createElement("div");
       actions.className = "bt-confirm-actions";
+      actions.style.display = "flex";
+      actions.style.justifyContent = "flex-end";
+      actions.style.gap = "8px";
 
       var btnCancel = document.createElement("button");
       btnCancel.type = "button";
       btnCancel.className = "bt-confirm-btn bt-confirm-btn-secondary";
       btnCancel.textContent = "Откажи";
+      btnCancel.style.border = "none";
+      btnCancel.style.padding = "8px 14px";
+      btnCancel.style.borderRadius = "999px";
+      btnCancel.style.fontSize = "13px";
+      btnCancel.style.cursor = "pointer";
+      btnCancel.style.background = "#e5e7eb";
+      btnCancel.style.color = "#111827";
 
       var btnOk = document.createElement("button");
       btnOk.type = "button";
       btnOk.className = "bt-confirm-btn bt-confirm-btn-danger";
       btnOk.textContent = "Изтрий";
+      btnOk.style.border = "none";
+      btnOk.style.padding = "8px 16px";
+      btnOk.style.borderRadius = "999px";
+      btnOk.style.fontSize = "13px";
+      btnOk.style.cursor = "pointer";
+      btnOk.style.background = "#dc2626";
+      btnOk.style.color = "#fff";
 
       actions.appendChild(btnCancel);
       actions.appendChild(btnOk);
@@ -194,6 +231,192 @@
       backdrop.addEventListener("click", function(e) {
         if (e.target === backdrop) close();
       });
+    }
+
+    // --- МОДАЛ ЗА ИЗБОР НА МАРКА ---
+    var brandModal = null;
+    var brandModalList = null;
+    var brandModalTitle = null;
+    var brandPickerBtn = null;
+
+    function openBrandModal() {
+      if (!brandModal) buildBrandModal();
+      var current = brandSelect.value || settings.brand;
+      var children = brandModalList ? brandModalList.children : [];
+      for (var i = 0; i < children.length; i++) {
+        var btn = children[i];
+        var bKey = btn.getAttribute("data-brand-key");
+        if (bKey === current) {
+          btn.style.borderColor = "#16a34a";
+          btn.style.background = "rgba(22,163,74,0.08)";
+        } else {
+          btn.style.borderColor = "#e5e7eb";
+          btn.style.background = "#fff";
+        }
+      }
+      brandModal.style.display = "flex";
+    }
+
+    function closeBrandModal() {
+      if (brandModal) {
+        brandModal.style.display = "none";
+      }
+    }
+
+    function buildBrandModal() {
+      brandModal = document.createElement("div");
+      brandModal.id = prefix + "-brand-modal";
+      brandModal.style.position = "fixed";
+      brandModal.style.inset = "0";
+      brandModal.style.background = "rgba(0,0,0,0.45)";
+      brandModal.style.display = "none";
+      brandModal.style.alignItems = "center";
+      brandModal.style.justifyContent = "center";
+      brandModal.style.zIndex = "9999";
+
+      var dialog = document.createElement("div");
+      dialog.style.background = "#ffffff";
+      dialog.style.borderRadius = "20px";
+      dialog.style.padding = "18px 20px";
+      dialog.style.width = "92%";
+      dialog.style.maxWidth = "360px";
+      dialog.style.maxHeight = "80vh";
+      dialog.style.display = "flex";
+      dialog.style.flexDirection = "column";
+      dialog.style.boxShadow = "0 18px 45px rgba(0,0,0,0.28)";
+      dialog.style.fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+
+      var headerRow = document.createElement("div");
+      headerRow.style.display = "flex";
+      headerRow.style.justifyContent = "space-between";
+      headerRow.style.alignItems = "center";
+      headerRow.style.marginBottom = "12px";
+
+      brandModalTitle = document.createElement("div");
+      brandModalTitle.textContent = "Избор на марка Берберин";
+      brandModalTitle.style.fontSize = "15px";
+      brandModalTitle.style.fontWeight = "600";
+      brandModalTitle.style.color = "#111827";
+
+      var closeX = document.createElement("button");
+      closeX.type = "button";
+      closeX.textContent = "×";
+      closeX.style.border = "none";
+      closeX.style.background = "transparent";
+      closeX.style.fontSize = "20px";
+      closeX.style.lineHeight = "1";
+      closeX.style.cursor = "pointer";
+      closeX.style.color = "#6b7280";
+
+      closeX.addEventListener("click", closeBrandModal);
+
+      headerRow.appendChild(brandModalTitle);
+      headerRow.appendChild(closeX);
+
+      brandModalList = document.createElement("div");
+      brandModalList.style.display = "flex";
+      brandModalList.style.flexDirection = "column";
+      brandModalList.style.gap = "8px";
+      brandModalList.style.overflowY = "auto";
+      brandModalList.style.paddingRight = "4px";
+      brandModalList.style.marginTop = "4px";
+
+      Object.keys(brandsMap).forEach(function(key) {
+        var bData = brandsMap[key];
+        var itemBtn = document.createElement("button");
+        itemBtn.type = "button";
+        itemBtn.setAttribute("data-brand-key", key);
+        itemBtn.style.display = "flex";
+        itemBtn.style.alignItems = "center";
+        itemBtn.style.width = "100%";
+        itemBtn.style.borderRadius = "999px";
+        itemBtn.style.border = "1px solid #e5e7eb";
+        itemBtn.style.padding = "8px 10px";
+        itemBtn.style.background = "#ffffff";
+        itemBtn.style.cursor = "pointer";
+        itemBtn.style.fontSize = "13px";
+        itemBtn.style.justifyContent = "space-between";
+
+        var left = document.createElement("div");
+        left.style.display = "flex";
+        left.style.alignItems = "center";
+        left.style.gap = "8px";
+
+        var dot = document.createElement("div");
+        dot.style.width = "8px";
+        dot.style.height = "8px";
+        dot.style.borderRadius = "999px";
+        dot.style.background = "#10b981";
+
+        var lbl = document.createElement("span");
+        lbl.textContent = bData.name;
+        lbl.style.whiteSpace = "nowrap";
+        lbl.style.overflow = "hidden";
+        lbl.style.textOverflow = "ellipsis";
+
+        left.appendChild(dot);
+        left.appendChild(lbl);
+
+        var right = document.createElement("span");
+        right.textContent = (key === "custom") ? "свободен избор" : "готов продукт";
+        right.style.fontSize = "11px";
+        right.style.color = "#6b7280";
+        right.style.marginLeft = "6px";
+
+        itemBtn.appendChild(left);
+        itemBtn.appendChild(right);
+
+        itemBtn.addEventListener("click", function() {
+          var brandKey = itemBtn.getAttribute("data-brand-key");
+          brandSelect.value = brandKey;
+
+          var evt;
+          if (typeof Event === "function") {
+            evt = new Event("change", { bubbles: true });
+          } else {
+            evt = document.createEvent("Event");
+            evt.initEvent("change", true, true);
+          }
+          brandSelect.dispatchEvent(evt);
+
+          if (brandPickerBtn) {
+            brandPickerBtn.textContent = "Марка: " + (brandsMap[brandKey] ? brandsMap[brandKey].name : "неизбрана");
+          }
+
+          closeBrandModal();
+        });
+
+        brandModalList.appendChild(itemBtn);
+      });
+
+      dialog.appendChild(headerRow);
+      dialog.appendChild(brandModalList);
+      brandModal.appendChild(dialog);
+      document.body.appendChild(brandModal);
+    }
+
+    // --- бутон вместо select ---
+    brandPickerBtn = document.createElement("button");
+    brandPickerBtn.type = "button";
+    brandPickerBtn.textContent = "Марка: " + (brandsMap[settings.brand] ? brandsMap[settings.brand].name : "Изберете");
+    brandPickerBtn.style.display = "inline-flex";
+    brandPickerBtn.style.alignItems = "center";
+    brandPickerBtn.style.gap = "6px";
+    brandPickerBtn.style.padding = "6px 10px";
+    brandPickerBtn.style.borderRadius = "999px";
+    brandPickerBtn.style.border = "1px solid #9ca3af";
+    brandPickerBtn.style.background = "#f9fafb";
+    brandPickerBtn.style.fontSize = "13px";
+    brandPickerBtn.style.cursor = "pointer";
+    brandPickerBtn.style.marginBottom = "6px";
+
+    brandPickerBtn.addEventListener("click", function() {
+      openBrandModal();
+    });
+
+    if (brandSelect.parentNode) {
+      brandSelect.parentNode.insertBefore(brandPickerBtn, brandSelect);
+      brandSelect.style.display = "none";
     }
 
     function adjustGridStateForRowChange(newRows) {
@@ -279,6 +502,9 @@
       var currentName = brandData.name;
 
       brandSelect.value = brandKey;
+      if (brandPickerBtn) {
+        brandPickerBtn.textContent = "Марка: " + (brandsMap[brandKey] ? brandsMap[brandKey].name : "Изберете");
+      }
 
       if (isConfigured) {
         slider.value = String(settings.rows);
@@ -489,6 +715,7 @@
 
     head.classList.add("clickable");
 
+    // Клик – само ако НЯМА марка (rows === 0)
     head.addEventListener("click", function() {
       if (settings.rows > 0) {
         return;
@@ -499,6 +726,7 @@
       configDiv.style.display = isHidden ? "block" : "none";
     });
 
+    // Задържане – за редакция (ако има марка) или отваряне (ако е празно)
     attachLongPress(head, function() {
       if (settings.rows === 0) {
         configDiv.style.display = "block";
@@ -529,16 +757,16 @@
       var newBrand = brandSelect.value;
       var newCustomName = newBrand === "custom" ? (nameInput.value || "").trim() : "";
 
-      var rowsChanged = newRows !== settings.rows;
+      var rowsChanged  = newRows !== settings.rows;
       var brandChanged = newBrand !== settings.brand;
-      var nameChanged = newCustomName !== settings.customName;
+      var nameChanged  = newCustomName !== settings.customName;
 
       settings.rows = newRows;
       settings.brand = newBrand;
       settings.customName = newCustomName;
 
       var needsGridUpdate = rowsChanged || brandChanged || nameChanged;
-      var newRowsForGrid = rowsChanged && newRows > 0 ? newRows : null;
+      var newRowsForGrid  = rowsChanged && newRows > 0 ? newRows : null;
 
       saveAndRerender(false, needsGridUpdate, newRowsForGrid);
     });
