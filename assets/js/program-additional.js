@@ -353,7 +353,6 @@
         left.style.alignItems = "center";
         left.style.gap = "8px";
 
-        // малка иконка
         var icon = document.createElement("img");
         icon.src = bData.icon || bData.img;
         icon.alt = bData.name;
@@ -577,9 +576,14 @@
           productImg.src = brandData.img;
           productImg.alt = currentName;
           productImg.style.display = "block";
-          // Овално изображение вътре в правоъгълната карта
-          productImg.style.borderRadius = "999px";
-          productImg.style.objectFit = "cover";
+
+          // ВАЖНО: не пипаме бордъра/формата на контейнера (.prod-img от CSS)
+          // Само клипваме съдържанието в по-овална форма
+          productImg.style.width = "";
+          productImg.style.height = "";
+          productImg.style.borderRadius = ""; // ползва се това от program.css
+          productImg.style.objectFit = "contain";
+          productImg.style.clipPath = "ellipse(60% 50% at 50% 50%)";
         }
         if (capMain) {
           capMain.classList.add("configured");
@@ -595,8 +599,11 @@
       } else {
         if (productImg) {
           productImg.style.display = "none";
+          productImg.style.width = "";
+          productImg.style.height = "";
           productImg.style.borderRadius = "";
           productImg.style.objectFit = "";
+          productImg.style.clipPath = "";
         }
         if (capMain) {
           capMain.classList.remove("configured");
