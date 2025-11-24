@@ -353,7 +353,6 @@
         left.style.alignItems = "center";
         left.style.gap = "8px";
 
-        // малка иконка вместо цветна точка
         var icon = document.createElement("img");
         icon.src = bData.icon || bData.img;
         icon.alt = bData.name;
@@ -417,7 +416,7 @@
     brandPickerBtn.style.gap = "6px";
     brandPickerBtn.style.padding = "6px 10px";
     brandPickerBtn.style.borderRadius = "999px";
-    brandPickerBtn.style.border = "1px solid "#4b5563";
+    brandPickerBtn.style.border = "1px solid #4b5563";
     brandPickerBtn.style.background = "#020617";
     brandPickerBtn.style.fontSize = "13px";
     brandPickerBtn.style.cursor = "pointer";
@@ -425,7 +424,6 @@
     brandPickerBtn.style.color = "#e5e7eb";
 
     brandPickerIcon = document.createElement("img");
-    // Иконката тук остава кръгла
     brandPickerIcon.style.width = "20px";
     brandPickerIcon.style.height = "20px";
     brandPickerIcon.style.borderRadius = "999px";
@@ -578,7 +576,7 @@
           productImg.src = brandData.img;
           productImg.alt = currentName;
           productImg.style.display = "block";
-          // Тук правим овал/капсула за избрания Допълнителен продукт
+          // Овал / капсула за избрания продукт
           productImg.style.borderRadius = "999px";
           productImg.style.height = "48px";
           productImg.style.width = "auto";
@@ -770,7 +768,7 @@
 
     head.classList.add("clickable");
 
-    // Клик: отваря конфигурацията само ако НЯМА избрана марка (rows === 0)
+    // Клик по заглавието – отваря конфигурацията само ако НЯМА избрана марка
     head.addEventListener("click", function() {
       if (settings.rows > 0) {
         return;
@@ -781,7 +779,7 @@
       configDiv.style.display = isHidden ? "block" : "none";
     });
 
-    // Дълго натискане: редакция на вече избрана марка
+    // Дълго натискане – редакция на вече избрана марка
     attachLongPress(head, function() {
       if (settings.rows === 0) {
         configDiv.style.display = "block";
