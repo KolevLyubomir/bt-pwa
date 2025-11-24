@@ -154,64 +154,33 @@
       sliderTrackFill.style.width = percentage + "%";
     }
 
+    /**
+     * Тъмен confirm диалог за изтриване на Марката.
+     * Използва стиловете от program.css (.bt-confirm-*)
+     */
     function showDeleteConfirm(message, onConfirm) {
       var backdrop = document.createElement("div");
       backdrop.className = "bt-confirm-backdrop";
-      backdrop.style.position = "fixed";
-      backdrop.style.inset = "0";
-      backdrop.style.background = "rgba(0,0,0,0.45)";
-      backdrop.style.display = "flex";
-      backdrop.style.alignItems = "center";
-      backdrop.style.justifyContent = "center";
-      backdrop.style.zIndex = "9999";
 
       var dialog = document.createElement("div");
       dialog.className = "bt-confirm-dialog";
-      dialog.style.background = "#fff";
-      dialog.style.borderRadius = "16px";
-      dialog.style.padding = "20px 24px";
-      dialog.style.maxWidth = "320px";
-      dialog.style.width = "90%";
-      dialog.style.boxShadow = "0 12px 30px rgba(0,0,0,0.2)";
-      dialog.style.fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
 
       var text = document.createElement("p");
       text.className = "bt-confirm-text";
       text.textContent = message;
-      text.style.margin = "0 0 16px 0";
-      text.style.fontSize = "14px";
-      text.style.lineHeight = "1.5";
-      text.style.color = "#333";
 
       var actions = document.createElement("div");
       actions.className = "bt-confirm-actions";
-      actions.style.display = "flex";
-      actions.style.justifyContent = "flex-end";
-      actions.style.gap = "8px";
 
       var btnCancel = document.createElement("button");
       btnCancel.type = "button";
       btnCancel.className = "bt-confirm-btn bt-confirm-btn-secondary";
       btnCancel.textContent = "Откажи";
-      btnCancel.style.border = "none";
-      btnCancel.style.padding = "8px 14px";
-      btnCancel.style.borderRadius = "999px";
-      btnCancel.style.fontSize = "13px";
-      btnCancel.style.cursor = "pointer";
-      btnCancel.style.background = "#e5e7eb";
-      btnCancel.style.color = "#111827";
 
       var btnOk = document.createElement("button");
       btnOk.type = "button";
       btnOk.className = "bt-confirm-btn bt-confirm-btn-danger";
       btnOk.textContent = "Изтрий";
-      btnOk.style.border = "none";
-      btnOk.style.padding = "8px 16px";
-      btnOk.style.borderRadius = "999px";
-      btnOk.style.fontSize = "13px";
-      btnOk.style.cursor = "pointer";
-      btnOk.style.background = "#dc2626";
-      btnOk.style.color = "#fff";
 
       actions.appendChild(btnCancel);
       actions.appendChild(btnOk);
@@ -577,13 +546,12 @@
           productImg.alt = currentName;
           productImg.style.display = "block";
 
-          // ВАЖНО: не пипаме бордъра/формата на контейнера (.prod-img от CSS)
-          // Само клипваме съдържанието в по-овална форма
+          // ВАЖНО: не пипаме бордъра / формата – тя идва от .prod-img в program.css
           productImg.style.width = "";
           productImg.style.height = "";
-          productImg.style.borderRadius = ""; // ползва се това от program.css
-          productImg.style.objectFit = "contain";
-          productImg.style.clipPath = "ellipse(60% 50% at 50% 50%)";
+          productImg.style.borderRadius = "";
+          productImg.style.objectFit = "";
+          productImg.style.clipPath = "";
         }
         if (capMain) {
           capMain.classList.add("configured");
@@ -835,7 +803,7 @@
       }
 
       showDeleteConfirm(
-        "Наистина ли искаш да изтриеш избраната марка? Подбраните часове ще се запазят за следваща марка.",
+        "Ще изтриеш ли Марката?",
         function() {
           settings.rows = 0;
           settings.customName = "";
