@@ -3,37 +3,30 @@
 (function() {
   "use strict";
 
-  // Локални изображения за Берберин
   const BERBERINE_BRANDS = {
     "thorne": {
       name: "Thorne Research",
-      img: "assets/products/additional/ber-thorne.webp",
-      icon: "assets/products/additional/icons/ber-thorne-icon.webp"
+      img: "https://d1vo8zfysxy97v.cloudfront.net/media/product/sf800__vd424273289116ed602cb97bcef5ca314e2b9ff03.png"
     },
     "toniiq": {
       name: "Toniiq - Ultra High Strength",
-      img: "assets/products/additional/ber-toniiq.webp",
-      icon: "assets/products/additional/icons/ber-toniiq-icon.webp"
+      img: "https://www.toniiq.com/cdn/shop/products/Group1.jpg?v=1676931815&width=1920"
     },
     "it": {
       name: "Integrative Therapeutics",
-      img: "assets/products/additional/ber-it.webp",
-      icon: "assets/products/additional/icons/ber-it-icon.webp"
+      img: "https://integrativepro.com/cdn/shop/files/20251111_5c2ea8c7-0d0a-4f69-95a8-3fe9a5022893.png?v=1762870800"
     },
     "nutricost": {
       name: "Nutricost",
-      img: "assets/products/additional/ber-nutricost.webp",
-      icon: "assets/products/additional/icons/ber-nutricost-icon.webp"
+      img: "https://nutricost.com/cdn/shop/files/NTC_BerberineHCL_1200MG_60CAP_175CC_Front_Square_1800x1800.jpg?v=1738091804"
     },
     "now": {
       name: "NOW Foods - Berberine Glucose",
-      img: "assets/products/additional/ber-now.webp",
-      icon: "assets/products/additional/icons/ber-now-icon.webp"
+      img: "https://nowfoods.bg/image/cache/catalog/Berberine/Berberine%20-%202-350x350.webp"
     },
     "custom": {
       name: "Друго (въведи):",
-      img: "assets/products/additional/ber-custom.webp",
-      icon: "assets/products/additional/icons/ber-custom-icon.webp"
+      img: "https://izgorimazninite.com/wp-content/uploads/2020/02/berberine-2.jpg"
     }
   };
 
@@ -133,7 +126,6 @@
       rows: 0
     };
 
-    // Четем конфигурация от localStorage
     try {
       var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (saved) {
@@ -240,11 +232,12 @@
       });
     }
 
-    // --- Модал за избор на марка ---
     var brandModal = null;
     var brandModalList = null;
     var brandModalTitle = null;
     var brandPickerBtn = null;
+    var brandPickerIcon = null;
+    var brandPickerLabel = null;
 
     function openBrandModal() {
       if (!brandModal) buildBrandModal();
@@ -282,7 +275,7 @@
       brandModal.style.zIndex = "9999";
 
       var dialog = document.createElement("div");
-      dialog.style.background = "#020617"; // тъмен фон
+      dialog.style.background = "#020617";
       dialog.style.borderRadius = "20px";
       dialog.style.padding = "18px 20px";
       dialog.style.width = "92%";
@@ -343,17 +336,15 @@
         itemBtn.style.background = "#020617";
         itemBtn.style.cursor = "pointer";
         itemBtn.style.fontSize = "13px";
-        itemBtn.style.justifyContent = "flex-start";
-        itemBtn.style.color = "#e5e7eb";
+        itemBtn.style.justifyContent = "space-between";
 
         var left = document.createElement("div");
         left.style.display = "flex";
         left.style.alignItems = "center";
         left.style.gap = "8px";
 
-        // малка иконка вместо цветна точка
         var icon = document.createElement("img");
-        icon.src = bData.icon || bData.img;
+        icon.src = bData.img;
         icon.alt = bData.name;
         icon.style.width = "24px";
         icon.style.height = "24px";
@@ -385,9 +376,15 @@
           }
           brandSelect.dispatchEvent(evt);
 
-          if (brandPickerBtn) {
-            brandPickerBtn.textContent =
-              (brandsMap[brandKey] ? brandsMap[brandKey].name : "неизбрана");
+          if (brandPickerBtn && brandPickerLabel && brandPickerIcon) {
+            var chosenBrand = brandsMap[brandKey] || brandsMap[Object.keys(brandsMap)[0]];
+            if (chosenBrand) {
+              brandPickerIcon.src = chosenBrand.img;
+              brandPickerIcon.alt = chosenBrand.name;
+              brandPickerLabel.textContent = chosenBrand.name;
+            } else {
+              brandPickerLabel.textContent = "неизбрана";
+            }
           }
 
           closeBrandModal();
@@ -402,11 +399,9 @@
       document.body.appendChild(brandModal);
     }
 
-    // --- бутон–чип над селекта ---
+    // бутон–чип за избраната марка над селекта
     brandPickerBtn = document.createElement("button");
     brandPickerBtn.type = "button";
-    brandPickerBtn.textContent =
-      (brandsMap[settings.brand] ? brandsMap[settings.brand].name : "Изберете");
     brandPickerBtn.style.display = "inline-flex";
     brandPickerBtn.style.alignItems = "center";
     brandPickerBtn.style.gap = "6px";
@@ -418,6 +413,30 @@
     brandPickerBtn.style.cursor = "pointer";
     brandPickerBtn.style.marginBottom = "6px";
     brandPickerBtn.style.color = "#e5e7eb";
+
+    brandPickerIcon = document.createElement("img");
+    brandPickerIcon.style.width = "20px";
+    brandPickerIcon.style.height = "20px";
+    brandPickerIcon.style.borderRadius = "999px";
+    brandPickerIcon.style.objectFit = "cover";
+    brandPickerIcon.style.backgroundColor = "#0f172a";
+
+    brandPickerLabel = document.createElement("span");
+    brandPickerLabel.style.whiteSpace = "nowrap";
+    brandPickerLabel.style.overflow = "hidden";
+    brandPickerLabel.style.textOverflow = "ellipsis";
+
+    var initialBrand = brandsMap[settings.brand] || brandsMap[Object.keys(brandsMap)[0]];
+    if (initialBrand) {
+      brandPickerIcon.src = initialBrand.img;
+      brandPickerIcon.alt = initialBrand.name;
+      brandPickerLabel.textContent = initialBrand.name;
+    } else {
+      brandPickerLabel.textContent = "Изберете";
+    }
+
+    brandPickerBtn.appendChild(brandPickerIcon);
+    brandPickerBtn.appendChild(brandPickerLabel);
 
     brandPickerBtn.addEventListener("click", function() {
       openBrandModal();
@@ -511,9 +530,15 @@
       var currentName = brandData.name;
 
       brandSelect.value = brandKey;
-      if (brandPickerBtn) {
-        brandPickerBtn.textContent =
-          (brandsMap[brandKey] ? brandsMap[brandKey].name : "Изберете");
+      if (brandPickerBtn && brandPickerLabel && brandPickerIcon) {
+        var uiBrand = brandsMap[brandKey] || brandsMap[Object.keys(brandsMap)[0]];
+        if (uiBrand) {
+          brandPickerIcon.src = uiBrand.img;
+          brandPickerIcon.alt = uiBrand.name;
+          brandPickerLabel.textContent = uiBrand.name;
+        } else {
+          brandPickerLabel.textContent = "Изберете";
+        }
       }
 
       if (isConfigured) {
@@ -725,7 +750,6 @@
 
     head.classList.add("clickable");
 
-    // Клик: отваря конфигурацията само ако НЯМА избрана марка (rows === 0)
     head.addEventListener("click", function() {
       if (settings.rows > 0) {
         return;
@@ -736,7 +760,6 @@
       configDiv.style.display = isHidden ? "block" : "none";
     });
 
-    // Дълго натискане: редакция на вече избрана марка
     attachLongPress(head, function() {
       if (settings.rows === 0) {
         configDiv.style.display = "block";
@@ -807,7 +830,6 @@
     updateUI(false);
   }
 
-  // Инициализация за Берберин
   createConfigurableProduct("ber", BERBERINE_BRANDS);
 
 })();
