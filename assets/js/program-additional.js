@@ -371,7 +371,6 @@
 
         left.appendChild(icon);
         left.appendChild(lbl);
-
         itemBtn.appendChild(left);
 
         itemBtn.addEventListener("click", function() {
@@ -418,7 +417,7 @@
     brandPickerBtn.style.gap = "6px";
     brandPickerBtn.style.padding = "6px 10px";
     brandPickerBtn.style.borderRadius = "999px";
-    brandPickerBtn.style.border = "1px solid #4b5563";
+    brandPickerBtn.style.border = "1px solid "#4b5563";
     brandPickerBtn.style.background = "#020617";
     brandPickerBtn.style.fontSize = "13px";
     brandPickerBtn.style.cursor = "pointer";
@@ -426,6 +425,7 @@
     brandPickerBtn.style.color = "#e5e7eb";
 
     brandPickerIcon = document.createElement("img");
+    // Иконката тук остава кръгла
     brandPickerIcon.style.width = "20px";
     brandPickerIcon.style.height = "20px";
     brandPickerIcon.style.borderRadius = "999px";
@@ -578,6 +578,11 @@
           productImg.src = brandData.img;
           productImg.alt = currentName;
           productImg.style.display = "block";
+          // Тук правим овал/капсула за избрания Допълнителен продукт
+          productImg.style.borderRadius = "999px";
+          productImg.style.height = "48px";
+          productImg.style.width = "auto";
+          productImg.style.objectFit = "cover";
         }
         if (capMain) {
           capMain.classList.add("configured");
@@ -593,6 +598,10 @@
       } else {
         if (productImg) {
           productImg.style.display = "none";
+          productImg.style.borderRadius = "";
+          productImg.style.height = "";
+          productImg.style.width = "";
+          productImg.style.objectFit = "";
         }
         if (capMain) {
           capMain.classList.remove("configured");
