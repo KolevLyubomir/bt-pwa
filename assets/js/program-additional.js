@@ -353,6 +353,7 @@
         left.style.alignItems = "center";
         left.style.gap = "8px";
 
+        // малка иконка
         var icon = document.createElement("img");
         icon.src = bData.icon || bData.img;
         icon.alt = bData.name;
@@ -576,10 +577,8 @@
           productImg.src = brandData.img;
           productImg.alt = currentName;
           productImg.style.display = "block";
-          // Овал / капсула за избрания продукт
+          // Овално изображение вътре в правоъгълната карта
           productImg.style.borderRadius = "999px";
-          productImg.style.height = "48px";
-          productImg.style.width = "auto";
           productImg.style.objectFit = "cover";
         }
         if (capMain) {
@@ -597,8 +596,6 @@
         if (productImg) {
           productImg.style.display = "none";
           productImg.style.borderRadius = "";
-          productImg.style.height = "";
-          productImg.style.width = "";
           productImg.style.objectFit = "";
         }
         if (capMain) {
