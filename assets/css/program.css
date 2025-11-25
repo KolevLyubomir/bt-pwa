@@ -73,9 +73,12 @@ select option.strong { font-weight:700; }
   background:transparent;
   color:#f97373;
 }
+/* ПО-ГОЛЯМ И ПО-ЯРЪК ДНЕШЕН ДЕН */
 .pl-day.today{
   border-color:var(--sel-orange);
   border-style:solid;
+  font-size:13px;
+  color:#facc15;
 }
 .pl-day.active:not(.today){
   border-color:#20343a; 
@@ -85,6 +88,11 @@ select option.strong { font-weight:700; }
 .pl-time-cell{
   cursor:pointer; user-select:none; font-weight:800; position:relative;
   background:transparent;
+}
+/* ПО-ГОЛЕМИ ЧАСОВЕ В КОЛОНАТА НА ДНЕШНИЯ ДЕН */
+.pl-time-cell.today{
+  font-size:13px;
+  color:#facc15;
 }
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
 .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
