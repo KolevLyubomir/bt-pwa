@@ -95,7 +95,7 @@ body{
 main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
 .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-/* Градиентен текст за трите заглавия + Great Vibes */
+/* Градиентен текст за трите заглавия – по-приглушен, „клинично златист“ */
 #pkg-core > h2,
 #pkg-extra > h2,
 #pkg-personal > h2{
@@ -103,9 +103,7 @@ main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid
   -webkit-background-clip:text;
   background-clip:text;
   color:transparent;
-  font-family:"Great Vibes","Marcellus","Georgia",serif;
-  font-size:28px;
-  font-weight:400;
+  font-weight:700;
 }
 
 .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }

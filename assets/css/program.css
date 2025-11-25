@@ -46,16 +46,15 @@
   height:28px;
 }
 
-/* Втора линия за Omni / Глюкоманан / Хитозан */
 .time-wrap{ display:flex; align-items:center; gap:6px }
 .time-row{ display:flex; align-items:center; gap:4px }
 .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
 select option.strong { font-weight:700; }
 
-/* Контейнер за таблиците с дни/часове */
+/* ТУК Е ПРОМЯНАТА – добавен margin-bottom */
 .pl-wrap{
   overflow-x:hidden;
-  margin-bottom:14px;
+  margin-bottom:14px; /* въздух под таблицата */
 }
 
 .pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
@@ -65,7 +64,6 @@ select option.strong { font-weight:700; }
   min-width:var(--pl-minw);
   transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }
-
 .pl-day{
   cursor:pointer;
   user-select:none;
@@ -87,11 +85,6 @@ select option.strong { font-weight:700; }
 .pl-time-cell{
   cursor:pointer; user-select:none; font-weight:800; position:relative;
   background:transparent;
-}
-.pl-time-cell.today{
-  font-size:var(--pl-font);
-  font-weight:900;
-  color:inherit;
 }
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
 .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }

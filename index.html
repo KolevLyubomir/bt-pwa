@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 4 — v4.1.11</title>
+  <title>БТ App 4 — v4.1.10</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -29,7 +29,7 @@
         <img src="https://bezopasnoteglo.carrd.co/assets/images/image08.png?v=7cf47ba0" alt="Безопасно Тегло" class="main-logo"/>
       </div>
       <div class="version-slot">
-        <span class="badge" id="app-version-badge">v4.1.11</span>
+        <span class="badge" id="app-version-badge">v4.1.10</span>
       </div>
     </div>
   </div>
@@ -150,7 +150,7 @@
         <div id="prolact-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
+              <img class="prod-img" src="assets/products/basic/prolact.webp" alt="ProLact Slim+"/>
               <span class="prog-cap">ProLact Slim+</span>
             </div>
             <button id="btnProgIntakePL" class="clk-btn intake prog-intake-btn" type="button" title="Прием ProLact Slim+" style="display:none">
@@ -172,7 +172,7 @@
         <div id="omni-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
+              <img class="prod-img" src="assets/products/basic/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
               <span class="prog-cap">OMNi-Biotic HETOX light</span>
             </div>
             <button id="btnProgIntakeHE" class="clk-btn intake prog-intake-btn" type="button" title="Прием OMNi-Biotic HETOX" style="display:none">
@@ -189,10 +189,12 @@
           </div>
         </div>
 
+        <hr class="prog-sep"/>
+
         <div id="chitosan-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
+              <img class="prod-img" src="assets/products/basic/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
               <span class="prog-cap">Fortex Хитозан Плюс</span>
             </div>
             <button id="btnProgIntakeCH" class="clk-btn intake prog-intake-btn" type="button" title="Прием Fortex Хитозан Плюс" style="display:none">
@@ -287,7 +289,7 @@
           </div>
         </div>
 
-        <hr class="prog-seп"/>
+        <hr class="prog-sep"/>
         
         <div class="config-block" id="egc-block">
           <div class="prog-head">
@@ -361,26 +363,6 @@
       </div>
     </div>
   </div>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      try {
-        var dow = (new Date()).getDay(); // 0 = Нд, 1 = Пн ... 6 = Сб
-
-        var dayHeaders = document.querySelectorAll('.pl-day[data-dow="' + dow + '"]');
-        dayHeaders.forEach(function (th) {
-          th.classList.add('today');
-        });
-
-        var cells = document.querySelectorAll('.pl-time-cell[data-dow="' + dow + '"]');
-        cells.forEach(function (td) {
-          td.classList.add('today');
-        });
-      } catch (e) {
-        console.error(e);
-      }
-    });
-  </script>
 
   <script src="assets/js/main.js"></script>
   <script src="assets/js/data.js"></script>
