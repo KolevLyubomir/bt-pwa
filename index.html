@@ -16,10 +16,6 @@
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Marcellus&family=Montserrat:wght@400;600;700&display=swap"/>
 
-  <!-- Great Vibes за заглавията в Програмата -->
-  <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap"/>
-
   <link rel="stylesheet" href="assets/css/main.css"/>
   <link rel="stylesheet" href="assets/css/data.css"/>
   <link rel="stylesheet" href="assets/css/program.css"/>
@@ -154,7 +150,7 @@
         <div id="prolact-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <img class="prod-img" src="assets/products/basic/prolact.webp" alt="ProLact Slim+"/>
+              <img class="prod-img" src="assets/products/prolact.webp" alt="ProLact Slim+"/>
               <span class="prog-cap">ProLact Slim+</span>
             </div>
             <button id="btnProgIntakePL" class="clk-btn intake prog-intake-btn" type="button" title="Прием ProLact Slim+" style="display:none">
@@ -176,7 +172,7 @@
         <div id="omni-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <img class="prod-img" src="assets/products/basic/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
+              <img class="prod-img" src="assets/products/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
               <span class="prog-cap">OMNi-Biotic HETOX light</span>
             </div>
             <button id="btnProgIntakeHE" class="clk-btn intake prog-intake-btn" type="button" title="Прием OMNi-Biotic HETOX" style="display:none">
@@ -193,12 +189,10 @@
           </div>
         </div>
 
-        <hr class="prog-seп"/>
-
         <div id="chitosan-block">
           <div class="prog-head">
             <div class="prog-head-main">
-              <img class="prod-img" src="assets/products/basic/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
+              <img class="prod-img" src="assets/products/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
               <span class="prog-cap">Fortex Хитозан Плюс</span>
             </div>
             <button id="btnProgIntakeCH" class="clk-btn intake prog-intake-btn" type="button" title="Прием Fortex Хитозан Плюс" style="display:none">
@@ -293,7 +287,7 @@
           </div>
         </div>
 
-        <hr class="prog-sep"/>
+        <hr class="prog-seп"/>
         
         <div class="config-block" id="egc-block">
           <div class="prog-head">
@@ -368,19 +362,16 @@
     </div>
   </div>
 
-  <!-- Логика за акцент на днешния ден и часовете в същата колона -->
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       try {
         var dow = (new Date()).getDay(); // 0 = Нд, 1 = Пн ... 6 = Сб
 
-        // Заглавия на дните
         var dayHeaders = document.querySelectorAll('.pl-day[data-dow="' + dow + '"]');
         dayHeaders.forEach(function (th) {
           th.classList.add('today');
         });
 
-        // Всички клетки/часове за този ден
         var cells = document.querySelectorAll('.pl-time-cell[data-dow="' + dow + '"]');
         cells.forEach(function (td) {
           td.classList.add('today');

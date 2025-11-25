@@ -46,15 +46,16 @@
   height:28px;
 }
 
+/* Втора линия за Omni / Глюкоманан / Хитозан */
 .time-wrap{ display:flex; align-items:center; gap:6px }
 .time-row{ display:flex; align-items:center; gap:4px }
 .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
 select option.strong { font-weight:700; }
 
-/* ТУК Е ПРОМЯНАТА – добавен margin-bottom */
+/* Контейнер за таблиците с дни/часове */
 .pl-wrap{
   overflow-x:hidden;
-  margin-bottom:14px; /* въздух под таблицата */
+  margin-bottom:14px;
 }
 
 .pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
@@ -64,6 +65,7 @@ select option.strong { font-weight:700; }
   min-width:var(--pl-minw);
   transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }
+
 .pl-day{
   cursor:pointer;
   user-select:none;
@@ -73,12 +75,9 @@ select option.strong { font-weight:700; }
   background:transparent;
   color:#f97373;
 }
-/* ПО-ГОЛЯМ И ПО-ЯРЪК ДНЕШЕН ДЕН */
 .pl-day.today{
   border-color:var(--sel-orange);
   border-style:solid;
-  font-size:13px;
-  color:#facc15;
 }
 .pl-day.active:not(.today){
   border-color:#20343a; 
@@ -89,10 +88,10 @@ select option.strong { font-weight:700; }
   cursor:pointer; user-select:none; font-weight:800; position:relative;
   background:transparent;
 }
-/* ПО-ГОЛЕМИ ЧАСОВЕ В КОЛОНАТА НА ДНЕШНИЯ ДЕН */
 .pl-time-cell.today{
-  font-size:13px;
-  color:#facc15;
+  font-size:var(--pl-font);
+  font-weight:900;
+  color:inherit;
 }
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
 .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
