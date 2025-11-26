@@ -51,7 +51,7 @@
 .time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
 select option.strong { font-weight:700; }
 
-/* ТУК Е ПРОМЯНАТА – добавен margin-bottom */
+/* Контейнер за таблиците с часове */
 .pl-wrap{
   overflow-x:hidden;
   margin-bottom:14px; /* въздух под таблицата */
@@ -62,10 +62,10 @@ select option.strong { font-weight:700; }
   border:1px solid #20343a; border-radius:10px; text-align:center;
   padding:var(--pl-pad); font-size:var(--pl-font); line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
   min-width:var(--pl-minw);
-  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease, font-size .15s ease;
 }
 
-/* Дни – слаб weight по подразбиране */
+/* Дни – по-слаб weight по подразбиране */
 .pl-day{
   cursor:pointer;
   user-select:none;
@@ -75,18 +75,19 @@ select option.strong { font-weight:700; }
   background:transparent;
   color:#f97373;
 }
-/* Текущият ден – ясно BOLD */
+/* Текущият ден – по-дебел и по-голям */
 .pl-day.today{
   border-color:var(--sel-orange);
   border-style:solid;
   font-weight:900;
+  font-size:calc(var(--pl-font) + 2px);
 }
 .pl-day.active:not(.today){
   border-color:#20343a; 
   border-style:solid;
 }
 
-/* Часове – слаб weight по подразбиране */
+/* Часовете – по-слаби по подразбиране */
 .pl-time-cell{
   cursor:pointer;
   user-select:none;
@@ -95,7 +96,7 @@ select option.strong { font-weight:700; }
   background:transparent;
 }
 
-/* Часовете на текущия ден – BOLD, според колоната на .pl-day.today */
+/* Часовете в текущия ден – дебели и по-големи, според колоната на .pl-day.today */
 /* Пн – първа колона */
 .pl-table:has(thead th.pl-day.today:nth-child(1)) tbody tr td:nth-child(1),
 /* Вт – втора колона */
@@ -111,6 +112,7 @@ select option.strong { font-weight:700; }
 /* Нд – седма колона */
 .pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7){
   font-weight:900;
+  font-size:calc(var(--pl-font) + 2px);
 }
 
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
@@ -145,7 +147,7 @@ select option.strong { font-weight:700; }
     box-shadow:0 0 0 0 rgba(250,204,21,0);
   }
   50%{
-    box-shadow:0 0 0 2px rgba(250,204,21,.9);
+    box-shadow:0 0 0 3px rgba(250,204,21,.9);
   }
 }
 
