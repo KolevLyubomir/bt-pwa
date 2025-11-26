@@ -94,8 +94,22 @@ select option.strong { font-weight:700; }
   position:relative;
   background:transparent;
 }
-/* Часовете на текущия ден – максимално BOLD */
-.pl-time-cell.today{
+
+/* Часовете на текущия ден – BOLD, според колоната на .pl-day.today */
+/* Пн – първа колона */
+.pl-table:has(thead th.pl-day.today:nth-child(1)) tbody tr td:nth-child(1),
+/* Вт – втора колона */
+.pl-table:has(thead th.pl-day.today:nth-child(2)) tbody tr td:nth-child(2),
+/* Ср – трета колона */
+.pl-table:has(thead th.pl-day.today:nth-child(3)) tbody tr td:nth-child(3),
+/* Чт – четвърта колона */
+.pl-table:has(thead th.pl-day.today:nth-child(4)) tbody tr td:nth-child(4),
+/* Пт – пета колона */
+.pl-table:has(thead th.pl-day.today:nth-child(5)) tbody tr td:nth-child(5),
+/* Сб – шеста колона */
+.pl-table:has(thead th.pl-day.today:nth-child(6)) tbody tr td:nth-child(6),
+/* Нд – седма колона */
+.pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7){
   font-weight:900;
 }
 
