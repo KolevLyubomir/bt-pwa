@@ -64,28 +64,41 @@ select option.strong { font-weight:700; }
   min-width:var(--pl-minw);
   transition:border-color .15s ease, box-shadow .15s ease, background .15s ease;
 }
+
+/* Дни – нормален weight по подразбиране */
 .pl-day{
   cursor:pointer;
   user-select:none;
-  font-weight:800;
+  font-weight:500;
 }
 .pl-day.weekend{
   background:transparent;
   color:#f97373;
 }
+/* Текущият ден – bold + рамка */
 .pl-day.today{
   border-color:var(--sel-orange);
   border-style:solid;
+  font-weight:800;
 }
 .pl-day.active:not(.today){
   border-color:#20343a; 
   border-style:solid;
 }
 
+/* Часове – нормален weight по подразбиране */
 .pl-time-cell{
-  cursor:pointer; user-select:none; font-weight:800; position:relative;
+  cursor:pointer;
+  user-select:none;
+  font-weight:500;
+  position:relative;
   background:transparent;
 }
+/* Часовете на текущия ден – bold */
+.pl-time-cell.today{
+  font-weight:800;
+}
+
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
 .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
 .pl-time-cell.int-upcoming{ background:#3d3310; border-color:#6b5314 }
@@ -212,6 +225,13 @@ select option.strong { font-weight:700; }
   transform:scale(1.2);
   font-weight:900;
   text-shadow:0 0 3px rgba(0,0,0,.7);
+}
+
+.clk-tick.hour.sel,
+.clk-tick.minor.sel,
+.clk-tick.strong.sel,
+.clk-tick.quarter.sel{
+  outline:none;
 }
 
 .clk-hand{ position:absolute; left:50%; top:50%; transform-origin:50% 100%; pointer-events:none }
