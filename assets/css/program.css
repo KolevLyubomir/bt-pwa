@@ -75,7 +75,7 @@ select option.strong { font-weight:700; }
   background:transparent;
   color:#f97373;
 }
-/* Текущият ден – по-дебел и по-голям */
+/* Текущият ден – по-дебел и по-голям (само хедъра) */
 .pl-day.today{
   border-color:var(--sel-orange);
   border-style:solid;
@@ -96,7 +96,7 @@ select option.strong { font-weight:700; }
   background:transparent;
 }
 
-/* Часовете в текущия ден – ДЕБЕЛИ, с ПО-ДЕБЕЛА РАМКА, но без увеличение на шрифта */
+/* Часовете в текущия ден – дебел бордер (същия цвят), без жълто и без по-голям шрифт */
 /* Пн – първа колона */
 .pl-table:has(thead th.pl-day.today:nth-child(1)) tbody tr td:nth-child(1),
 /* Вт – втора колона */
@@ -112,9 +112,8 @@ select option.strong { font-weight:700; }
 /* Нд – седма колона */
 .pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7){
   font-weight:900;
-  font-size:var(--pl-font); /* без +1px, за да побира 08:00, 19:00 без „…“ */
+  font-size:var(--pl-font); /* нормален размер → няма „…“ */
   border-width:2px;          /* по-дебела рамка за текущия ден */
-  border-color:var(--sel-orange);
 }
 
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
