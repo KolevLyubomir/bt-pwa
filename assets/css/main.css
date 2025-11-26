@@ -95,7 +95,7 @@ body{
 main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid; gap:16px; align-content:start }
 .card{ background:var(--card); border:1px solid var(--border); border-radius:14px; padding:16px }
 
-/* Градиентен текст + Great Vibes за трите заглавия */
+/* Градиентен текст + Great Vibes за трите заглавия – по-„въздушни“ */
 #pkg-core > h2,
 #pkg-extra > h2,
 #pkg-personal > h2{
@@ -105,6 +105,9 @@ main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid
   color:transparent;
   font-weight:700;
   font-family:'Great Vibes', cursive;
+  font-size:32px;
+  letter-spacing:0.06em;
+  line-height:1.3;
 }
 
 .inputs-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap }
@@ -140,4 +143,14 @@ button.primary{ background:var(--accent); border-color:var(--accent); color:#062
 
 @media (max-width: 380px){
   :root{ --pill-w:156px; --pl-font:11px; --pl-pad:2px; --pl-minw:44px }
+}
+
+/* По-малки, но пак разширени заглавия на малки екрани */
+@media (max-width: 480px){
+  #pkg-core > h2,
+  #pkg-extra > h2,
+  #pkg-personal > h2{
+    font-size:26px;
+    letter-spacing:0.04em;
+  }
 }
