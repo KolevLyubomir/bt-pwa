@@ -80,7 +80,7 @@ select option.strong { font-weight:700; }
   border-color:var(--sel-orange);
   border-style:solid;
   font-weight:900;
-  font-size:calc(var(--pl-font) + 2px);
+  font-size:calc(var(--pl-font) + 1px);
 }
 .pl-day.active:not(.today){
   border-color:#20343a; 
@@ -112,7 +112,7 @@ select option.strong { font-weight:700; }
 /* Нд – седма колона */
 .pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7){
   font-weight:900;
-  font-size:calc(var(--pl-font) + 2px);
+  font-size:calc(var(--pl-font) + 1px);
 }
 
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
