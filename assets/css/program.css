@@ -114,7 +114,7 @@ select option.strong { font-weight:700; }
   font-weight:900;
   font-size:var(--pl-font);
   border-width:1.5px;
-  border-color:#9fb0c0;
+  border-color:#20343a;
 }
 
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
