@@ -119,13 +119,13 @@ select option.strong { font-weight:700; }
 
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
 .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
-.pl-time-cell.int-upcoming{ background:#FF5F1F; border-color:#facc15 }
+.pl-time-cell.int-upcoming{ background:#CC7722; border-color:#facc15 }
 .pl-time-cell.int-done{
   background:#227442;
   border-color:#166534;
 }
 .pl-time-cell.int-overdue{
-  background:#FF5F1F;
+  background:#CC7722;
   border-color:#facc15;
   animation:plOverdueBlink 1s ease-in-out infinite;
 }
