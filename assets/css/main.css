@@ -105,8 +105,8 @@ main{ max-width:var(--maxw); margin:20px auto; padding:0 16px 40px; display:grid
   color:transparent;
   font-weight:700;
   font-family:'Great Vibes', cursive;
-  font-size:34px;
-  letter-spacing:0.09em;
+  font-size:40px;
+  letter-spacing:0.01em;
   line-height:1.3;
 }
 
