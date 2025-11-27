@@ -96,44 +96,36 @@ select option.strong { font-weight:700; }
   background:transparent;
 }
 
-/* Часовете в текущия ден – дебели и по-големи, според колоната на .pl-day.today */
+/* Часовете в текущия ден – подсилен бордер, според колоната на .pl-day.today */
 /* Пн – първа колона */
-.pl-table:has(thead th.pl-day.today:nth-child(1)) tbody tr td:nth-child(1):not(.int-upcoming):not(.int-done):not(.int-overdue),
+.pl-table:has(thead th.pl-day.today:nth-child(1)) tbody tr td:nth-child(1),
 /* Вт – втора колона */
-.pl-table:has(thead th.pl-day.today:nth-child(2)) tbody tr td:nth-child(2):not(.int-upcoming):not(.int-done):not(.int-overdue),
+.pl-table:has(thead th.pl-day.today:nth-child(2)) tbody tr td:nth-child(2),
 /* Ср – трета колона */
-.pl-table:has(thead th.pl-day.today:nth-child(3)) tbody tr td:nth-child(3):not(.int-upcoming):not(.int-done):not(.int-overdue),
+.pl-table:has(thead th.pl-day.today:nth-child(3)) tbody tr td:nth-child(3),
 /* Чт – четвърта колона */
-.pl-table:has(thead th.pl-day.today:nth-child(4)) tbody tr td:nth-child(4):not(.int-upcoming):not(.int-done):not(.int-overdue),
+.pl-table:has(thead th.pl-day.today:nth-child(4)) tbody tr td:nth-child(4),
 /* Пт – пета колона */
-.pl-table:has(thead th.pl-day.today:nth-child(5)) tbody tr td:nth-child(5):not(.int-upcoming):not(.int-done):not(.int-overdue),
+.pl-table:has(thead th.pl-day.today:nth-child(5)) tbody tr td:nth-child(5),
 /* Сб – шеста колона */
-.pl-table:has(thead th.pl-day.today:nth-child(6)) tbody tr td:nth-child(6):not(.int-upcoming):not(.int-done):not(.int-overdue),
+.pl-table:has(thead th.pl-day.today:nth-child(6)) tbody tr td:nth-child(6),
 /* Нд – седма колона */
-.pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7):not(.int-upcoming):not(.int-done):not(.int-overdue){
+.pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7){
   font-weight:900;
-  font-size:calc(var(--pl-font) + 1px);
-  border-color:#8ea0b5;
+  font-size:var(--pl-font);
+  border-width:1.5px;
+  border-color:#9fb0c0;
 }
 
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
 .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
-
-/* Жълто – предстоящ / сигнал за прием */
-.pl-time-cell.int-upcoming{
-  background:#4a3b05;
-  border-color:#facc15;
-}
-
-/* Зелено – прието хапче */
+.pl-time-cell.int-upcoming{ background:#4a3a12; border-color:#facc15 }
 .pl-time-cell.int-done{
   background:#15803d;
   border-color:#166534;
 }
-
-/* Просрочено – жълт мигащ */
 .pl-time-cell.int-overdue{
-  background:#4a3b05;
+  background:#4a3a12;
   border-color:#facc15;
   animation:plOverdueBlink 1s ease-in-out infinite;
 }
@@ -212,7 +204,7 @@ select option.strong { font-weight:700; }
   justify-content:center;
   font-size:13px;
   color:#d6ece6;
-  border:1px солид transparent;
+  border:1px solid transparent;
   background:#0f1a1d;
   user-select:none;
   transition:background .15s ease,
