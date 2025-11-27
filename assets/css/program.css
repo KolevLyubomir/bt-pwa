@@ -113,7 +113,7 @@ select option.strong { font-weight:700; }
 .pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7){
   font-weight:900;
   font-size:var(--pl-font);
-  border-width:2px;
+  border-width:1.2px;
   border-color:#9B9A96;
 }
 
