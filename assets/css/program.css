@@ -113,8 +113,8 @@ select option.strong { font-weight:700; }
 .pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7){
   font-weight:900;
   font-size:var(--pl-font);
-  border-width:1.5px;
-  border-color:#DCDCDC;
+  border-width:2px;
+  border-color:#9B9A96;
 }
 
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
