@@ -96,7 +96,7 @@ select option.strong { font-weight:700; }
   background:transparent;
 }
 
-/* Часовете в текущия ден – бял бордер и по-bold, според колоната на .pl-day.today */
+/* Часовете в текущия ден – по-светъл бордер и по-bold, според колоната на .pl-day.today */
 /* Пн – първа колона */
 .pl-table:has(thead th.pl-day.today:nth-child(1)) tbody tr td:nth-child(1),
 /* Вт – втора колона */
@@ -111,15 +111,15 @@ select option.strong { font-weight:700; }
 .pl-table:has(thead th.pl-day.today:nth-child(6)) tbody tr td:nth-child(6),
 /* Нд – седма колона */
 .pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7){
-  font-weight:700;
+  font-weight:900;
   font-size:var(--pl-font);
-  border-width:2px;
-  border-color:#ffffff;
+  border-width:1.5px;
+  border-color:#cfd8e3;
 }
 
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
 .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
-.pl-time-cell.int-upcoming{ background:#3d3310; border-color:#6b5314 }
+.pl-time-cell.int-upcoming{ background:#3d3310; border-color:#facc15 }
 .pl-time-cell.int-done{
   background:#15803d;
   border-color:#22c55e;
