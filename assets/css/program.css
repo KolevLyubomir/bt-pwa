@@ -96,7 +96,7 @@ select option.strong { font-weight:700; }
   background:transparent;
 }
 
-/* Часовете в текущия ден – по-светъл бордер и по-bold, според колоната на .pl-day.today */
+/* Часовете в текущия ден – подсилен бордер, според колоната на .pl-day.today */
 /* Пн – първа колона */
 .pl-table:has(thead th.pl-day.today:nth-child(1)) tbody tr td:nth-child(1),
 /* Вт – втора колона */
@@ -114,18 +114,18 @@ select option.strong { font-weight:700; }
   font-weight:900;
   font-size:var(--pl-font);
   border-width:1.5px;
-  border-color:#cfd8e3;
+  border-color:#9fb0c0;
 }
 
 .pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
 .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
-.pl-time-cell.int-upcoming{ background:#3d3310; border-color:#facc15 }
+.pl-time-cell.int-upcoming{ background:#4a3a12; border-color:#facc15 }
 .pl-time-cell.int-done{
   background:#15803d;
-  border-color:#22c55e;
+  border-color:#166534;
 }
 .pl-time-cell.int-overdue{
-  background:#3d3310;
+  background:#4a3a12;
   border-color:#facc15;
   animation:plOverdueBlink 1s ease-in-out infinite;
 }
@@ -180,18 +180,37 @@ select option.strong { font-weight:700; }
   color:var(--muted);
 }
 
-.clk-face{ position:relative; width:290px; height:290px; margin:0 auto; border-radius:50%; border:1px solid #294047; background:#0b1317; touch-action:none }
+.clk-face{
+  position:relative;
+  width:290px;
+  height:290px;
+  margin:0 auto;
+  border-radius:50%;
+  border:1px solid #294047;
+  background:#0b1317;
+  touch-action:none;
+}
 .clk-ring{ position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50% }
 .clk-ring.hours{ width:190px; height:190px }
 .clk-ring.mins{ width:260px; height:260px }
 
 .clk-tick{
-  position:absolute; width:24px; height:24px; border-radius:50%;
-  display:flex; align-items:center; justify-content:center;
+  position:absolute;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
   font-size:13px;
   color:#d6ece6;
-  border:1px solid transparent; background:#0f1a1d; user-select:none;
-  transition:background .15s ease, border-color .15s ease, color .15s ease, transform .12s ease;
+  border:1px solid transparent;
+  background:#0f1a1d;
+  user-select:none;
+  transition:background .15s ease,
+             border-color .15s ease,
+             color .15s ease,
+             transform .12s ease;
 }
 
 .clk-tick.hour{
