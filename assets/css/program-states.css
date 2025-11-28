@@ -1,0 +1,76 @@
+.pl-wrap{
+  overflow-x:hidden;
+  margin-bottom:14px; /* въздух под таблицата */
+}
+.pl-table{ width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed }
+.pl-table th, .pl-table td{
+  border:1px solid #20343a; border-radius:10px; text-align:center;
+  padding:var(--pl-pad); font-size:var(--pl-font); line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  min-width:var(--pl-minw);
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease, font-size .15s ease;
+}
+.pl-day{
+  cursor:pointer;
+  user-select:none;
+  font-weight:400;
+}
+.pl-day.weekend{
+  background:transparent;
+  color:#f97373;
+}
+.pl-day.today{
+  border-color:var(--sel-orange);
+  border-style:solid;
+  font-weight:900;
+  font-size:calc(var(--pl-font) + 1px);
+}
+.pl-day.active:not(.today){
+  border-color:#20343a; 
+  border-style:solid;
+}
+/* Часовете в текущия ден – подсилен бордер, според колоната на .pl-day.today */
+.pl-table:has(thead th.pl-day.today:nth-child(1)) tbody tr td:nth-child(1),
+.pl-table:has(thead th.pl-day.today:nth-child(2)) tbody tr td:nth-child(2),
+.pl-table:has(thead th.pl-day.today:nth-child(3)) tbody tr td:nth-child(3),
+.pl-table:has(thead th.pl-day.today:nth-child(4)) tbody tr td:nth-child(4),
+.pl-table:has(thead th.pl-day.today:nth-child(5)) tbody tr td:nth-child(5),
+.pl-table:has(thead th.pl-day.today:nth-child(6)) tbody tr td:nth-child(6),
+.pl-table:has(thead th.pl-day.today:nth-child(7)) tbody tr td:nth-child(7){
+  font-weight:900;
+  font-size:var(--pl-font);
+  border-width:1.5px;
+  border-color:#9fb0c0;
+}
+.pl-time-cell.sel{ box-shadow:0 0 0 2px var(--sel-orange) inset; }
+.pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
+.pl-time-cell.int-upcoming{ background:#4a3a12; border-color:#facc15 }
+.pl-time-cell.int-done{
+  background:#15803d;
+  border-color:#166534;
+}
+.pl-time-cell.int-overdue{
+  background:#4a3a12;
+  border-color:#facc15;
+  animation:plOverdueBlink 1s ease-in-out infinite;
+}
+@keyframes plBlink{
+  0%,100%{
+    box-shadow:0 0 0 0 rgba(34,197,94,0);
+    background-color:inherit;
+  }
+  20%,50%,80%{
+    box-shadow:0 0 0 2px rgba(34,197,94,.75);
+    background-color:#102318;
+  }
+}
+.pl-blink{
+  animation:plBlink .9s ease-in-out 3;
+}
+@keyframes plOverdueBlink{
+  0%,100%{
+    box-shadow:0 0 0 0 rgba(250,204,21,0);
+  }
+  50%{
+    box-shadow:0 0 0 3px rgba(250,204,21,.9);
+  }
+}

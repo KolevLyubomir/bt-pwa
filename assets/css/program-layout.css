@@ -1,0 +1,264 @@
+.prog-row{ display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0 }
+.prog-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:6px;
+}
+.prog-head-main{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+.prod-img{ width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046 }
+.prog-pill{
+  display:flex; flex-direction:column; gap:6px;
+  padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
+  width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
+}
+.prog-pill label{ display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis }
+.prog-pill input[type="checkbox"]{ width:16px; height:16px; margin:0 }
+.prog-cap{ font-weight:700; font-size:13px; }
+.prog-sep{ border:0; border-top:1px solid var(--border); margin:14px 0 }
+
+/* Бутонът за прием до името на продукта (Основен Пакет) */
+.prog-intake-btn{
+  flex:0 0 auto;
+  padding:0;
+}
+.prog-intake-btn.upcoming,
+.prog-intake-btn.overdue{
+  width:28px;
+  height:28px;
+}
+
+.time-wrap{ display:flex; align-items:center; gap:6px }
+.time-row{ display:flex; align-items:center; gap:4px }
+.time-row select{ min-width:54px; padding:6px 8px; height:36px; font-size:14px }
+select option.strong { font-weight:700; }
+
+/* Контейнер за таблиците с часове */
+
+
+/* Дни – по-слаб weight по подразбиране */
+/* Текущият ден – по-дебел и по-голям */
+
+/* Часовете – по-слаби по подразбиране */
+.pl-time-cell{
+  cursor:pointer;
+  user-select:none;
+  font-weight:400;
+  position:relative;
+  background:transparent;
+}
+
+/* Пн – първа колона */
+/* Вт – втора колона */
+/* Ср – трета колона */
+/* Чт – четвърта колона */
+/* Пт – пета колона */
+/* Сб – шеста колона */
+/* Нд – седма колона */
+
+
+
+
+.clk{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100 }
+.clk.show{ display:flex; align-items:center; justify-content:center }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@keyframes clkBlink{
+  0%,49%{ opacity:1; }
+  50%,100%{ opacity:0; }
+}
+
+
+
+
+
+
+
+
+
+
+/*
+  ↓↓↓ НОВИ/ОБНОВЕНИ СТИЛОВЕ (v4.1.x) ↓↓↓
+*/
+
+/* --- Стилове за Конфигуратора (Доп. Пакет) --- */
+
+.prog-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* ГЛАВАТА става бутон */
+.prog-head-main.clickable {
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 4px;
+  transition: background .15s ease;
+  flex: 1 1 auto; 
+}
+.prog-head-main.clickable:hover {
+  background: #1a2a2f;
+}
+
+/* Заглавие на 2 реда */
+.prog-cap-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Берберин – основен надпис */
+.prog-cap-main {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  font-family: inherit;
+  transition: color .2s ease;
+}
+.prog-cap-main.configured {
+  color: var(--muted);
+}
+
+/* Марка – същият размер и дебелина като ProLact / Omni / Хитозан */
+.prog-cap-brand {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: inherit;
+}
+
+/* --- Панел за Настройки --- */
+.prog-config {
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.prog-config .field {
+  margin-bottom: 0;
+}
+.prog-config .field.brand-selector {
+  margin-bottom: 8px;
+}
+.prog-config .field.custom-brand-field {
+  margin-bottom: 8px;
+}
+
+.prog-config .field .lbl {
+  margin-bottom: 4px;
+}
+
+.prog-config select:focus,
+.prog-config input[type="text"]:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #2b6e66;
+}
+
+/* Контейнер за кръглите бутони */
+.config-actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 26px;
+  margin-bottom: 26px;
+}
+.config-buttons {
+  display: flex;
+  gap: 8px;
+}
+button.danger {
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+  font-weight: 700;
+}
+
+/* Стойност до плъзгача */
+.slider-val {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 1.1em;
+  padding: 0 4px;
+}
+
+/* Обвивка за плъзгача – 50% ширина, подравнен вляво */
+.slider-track-wrapper {
+  position: relative;
+  margin-top: 8px;
+  height: 10px;
+  width: 50%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+.slider-track-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 5px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.slider-control {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  border: 1px solid #254046;
+  outline: none;
+  padding: 0;
+  position: relative;
+  z-index: 2;
+  background: transparent;
+}
+
+.slider-control::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
+}
+
+.slider-control::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
+}
+
+/* =========
+   Confirm модал за изтриване на марка (Берберин)
+   ========= */
