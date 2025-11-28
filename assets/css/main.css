@@ -152,5 +152,6 @@ button.primary{ background:var(--accent); border-color:var(--accent); color:#062
   #pkg-personal > h2{
     font-size:30px;
     letter-spacing:0.06em;
+    text-align: center;
   }
 }
