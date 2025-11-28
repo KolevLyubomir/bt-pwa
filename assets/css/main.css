@@ -150,7 +150,7 @@ button.primary{ background:var(--accent); border-color:var(--accent); color:#062
   #pkg-core > h2,
   #pkg-extra > h2,
   #pkg-personal > h2{
-    font-size:28px;
+    font-size:30px;
     letter-spacing:0.06em;
   }
 }
