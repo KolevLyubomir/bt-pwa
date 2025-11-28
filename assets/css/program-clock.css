@@ -1,0 +1,198 @@
+/* PROGRAM CLOCK
+   Стилове за модалния прозорец за избор на час (Часовник)
+*/
+
+.clk { display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:100; }
+.clk.show { display:flex; align-items:center; justify-content:center; }
+.clk-card {
+  background:#0e1519; border:1px solid #20343a; border-radius:16px;
+  padding:12px 12px 14px; width:330px; max-width:92vw;
+  box-shadow:0 10px 40px rgba(0,0,0,.5); outline:none;
+  position:relative;
+}
+
+.clk-header {
+  margin-bottom:6px;
+  padding:0 2px 4px;
+  text-align:center;
+}
+.clk-product-title {
+  font-size:13px;
+  font-weight:700;
+  text-transform:none;
+  margin-bottom:2px;
+}
+.clk-day {
+  font-size:11px;
+  opacity:0.8;
+  text-transform:lowercase;
+  color:var(--muted);
+}
+
+.clk-face {
+  position:relative;
+  width:290px;
+  height:290px;
+  margin:0 auto;
+  border-radius:50%;
+  border:1px solid #294047;
+  background:#0b1317;
+  touch-action:none;
+}
+.clk-ring { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); border-radius:50%; }
+.clk-ring.hours { width:190px; height:190px; }
+.clk-ring.mins { width:260px; height:260px; }
+
+.clk-tick {
+  position:absolute;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:13px;
+  color:#d6ece6;
+  border:1px solid transparent;
+  background:#0f1a1d;
+  user-select:none;
+  transition:background .15s ease,
+             border-color .15s ease,
+             color .15s ease,
+             transform .12s ease;
+}
+
+.clk-tick.hour {
+  font-size:14px;
+  font-family:"Marcellus","Times New Roman",serif;
+  letter-spacing:0.5px;
+}
+.clk-tick.hour.strong {
+  font-weight:900;
+  font-size:17px;
+  text-shadow:0 0 3px rgba(0,0,0,.7);
+}
+
+.clk-tick.hour.sel {
+  background:#22c55e; color:#06241b;
+  font-weight:900;
+  text-shadow:0 0 4px rgba(0,0,0,.9);
+  transform:scale(1.04);
+}
+
+.clk-tick:not(.hour) {
+  font-family:'Montserrat',system-ui,-apple-system,sans-serif;
+}
+
+.clk-tick.minor {
+  background:#0b1317;
+  border-color:transparent;
+  font-size:9px;
+  color:#6b8b92;
+}
+.clk-tick.minor.sel {
+  background:#22c55e;
+  border-color:#22c55e;
+  color:#06241b;
+  transform:scale(1.2);
+}
+
+.clk-tick.quarter {
+  font-size:14px;
+  font-weight:800;
+  text-shadow:0 0 3px rgba(0,0,0,.6);
+}
+
+.clk-tick.strong.sel,
+.clk-tick.quarter.sel {
+  background:#22c55e;
+  border-color:#22c55e;
+  color:#06241b;
+  transform:scale(1.2);
+  font-weight:900;
+  text-shadow:0 0 3px rgba(0,0,0,.7);
+}
+
+.clk-tick.hour.sel,
+.clk-tick.minor.sel,
+.clk-tick.strong.sel,
+.clk-tick.quarter.sel {
+  outline:none;
+}
+
+.clk-hand { position:absolute; left:50%; top:50%; transform-origin:50% 100%; pointer-events:none; }
+.clk-hand.hour { width:6px; height:68px; background:#e7faf4; border-radius:3px; transform:translate(-50%,-100%) rotate(0deg); box-shadow:0 0 0 1px #0b1215 inset; }
+.clk-hand.min { width:3px; height:96px; background:#cde7df; border-radius:2px; transform:translate(-50%,-100%) rotate(0deg); box-shadow:0 0 0 1px #0b1215 inset; }
+
+.clk-center-dot { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:10px; height:10px; background:#fff; border-radius:50%; box-shadow:0 0 0 2px #0b1217; }
+
+.clk-read {
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  background:#10191c; border:1px solid #294047; border-radius:6px;
+  padding:3px 6px;
+  font-weight:800; text-align:center;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:3px;
+  font-size:18px;
+  min-width:auto;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,"Noto Sans",sans-serif;
+  user-select:none;
+}
+.clk-read.editing {
+  border-color:#ffffff;
+  cursor:text;
+  user-select:text;
+}
+
+.clk-read-part {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:1px;
+  min-width:0;
+}
+.clk-digit {
+  display:inline-block;
+  min-width:0.9ch;
+  text-align:center;
+  color:#e6f2ef;
+  position:relative;
+  line-height:1.1;
+}
+
+@keyframes clkBlink {
+  0%,49% { opacity:1; }
+  50%,100% { opacity:0; }
+}
+.clk-read.editing .clk-digit.active::after {
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-1px;
+  height:2px;
+  background:#e6f2ef;
+  border-radius:2px;
+  animation:clkBlink 1s steps(2,start) infinite;
+}
+
+.clk-read-colon {
+  user-select:none;
+  padding:0 3px;
+  margin:0;
+  opacity:.9;
+  line-height:1;
+  position:relative;
+  top:-1px;
+}
+
+@media (max-width: 380px){
+  .clk-card { width:306px; }
+  .clk-face { width:272px; height:272px; }
+  .clk-ring.hours { width:180px; height:180px; }
+  .clk-ring.mins { width:248px; height:248px; }
+  .clk-hand.hour { height:64px; } .clk-hand.min { height:90px; }
+}

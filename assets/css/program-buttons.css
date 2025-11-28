@@ -1,0 +1,167 @@
+/* PROGRAM BUTTONS
+   Общи стилове за бутони (Action Buttons, Intake Buttons)
+*/
+
+.clk-actions {
+  margin-top:8px;
+}
+.clk-actions-row {
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-end;
+  gap:8px;
+}
+.clk-actions-group {
+  display:flex;
+  gap:8px;
+}
+
+.clk-btn {
+  border-radius:999px;
+  border:1px solid #24343a;
+  background:#0d171b;
+  color:#e6f2ef;
+  width:34px;
+  height:34px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .12s ease,border-color .12s ease,transform .04s ease;
+  flex:0 0 auto;
+}
+.clk-btn.big {
+  width:52px;
+  height:52px;
+}
+.clk-btn.big .clk-btn-icon svg {
+  width:34px;
+  height:34px;
+}
+
+/* Специфични override-и, когато бутонът е вътре в модала */
+#clk .clk-btn.big {
+  width:44px;
+  height:44px;
+}
+#clk #btnIntake .clk-btn-icon svg {
+  width:38px;
+  height:38px;
+}
+#clk #btnAudio .clk-btn-icon svg {
+  width:38px;
+  height:38px;
+}
+
+.clk-btn:active {
+  transform:scale(.96);
+}
+.clk-btn.primary {
+  background:#22c55e;
+  border-color:#22c55e;
+  color:#06241b;
+}
+.clk-btn.ghost {
+  background:#0d171b;
+  border-style:dashed;
+}
+.clk-btn.danger {
+  background:#3b1113;
+  border-color:#6b1414;
+  color:#ffe0e0;
+}
+button.danger { /* Generic override often used in config */
+  background: var(--danger);
+  border-color: var(--danger);
+  color: #fff;
+  font-weight: 700;
+}
+.clk-btn.empty {
+  visibility:hidden;
+  pointer-events:none;
+}
+.clk-btn.icon-only { padding:0; }
+
+.clk-btn-icon {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.clk-btn-icon svg {
+  width:24px;
+  height:24px;
+  stroke:currentColor;
+  stroke-width:2;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+/* Icon specific styles */
+.clk-btn.intake svg .pill-clock-circle,
+.clk-btn.intake svg .pill-clock-pill {
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.8;
+}
+.clk-btn.intake svg .pill-clock-hands {
+  stroke:currentColor;
+  stroke-width:1.8;
+  stroke-linecap:round;
+}
+.clk-btn.intake.solid svg .pill-clock-circle,
+.clk-btn.intake.solid svg .pill-clock-pill {
+  fill:none;
+}
+
+/* Button Variants */
+.clk-btn.intake {
+  background:#0d171b;
+  border-color:#24343a;
+  color:#e6f2ef;
+}
+.clk-btn.intake.upcoming {
+  background:#f59e0b;
+  border-color:#f59e0b;
+  color:#041306;
+}
+.clk-btn.intake.overdue {
+  background:#facc15;
+  border-color:#facc15;
+  color:#3b1f00;
+  animation:intakeBtnBlink 1s ease-in-out infinite;
+}
+.clk-btn.intake.done {
+  background:#22c55e;
+  border-color:#22c55e;
+  color:#06241b;
+  animation:none;
+}
+@keyframes intakeBtnBlink {
+  0%,100% {
+    box-shadow:0 0 0 0 rgba(250,204,21,0);
+  }
+  50% {
+    box-shadow:0 0 0 3px rgba(250,204,21,.9);
+  }
+}
+
+.clk-btn.audio {
+  background:#0d171b;
+  border-color:#24343a;
+  color:#e6f2ef;
+}
+.clk-btn.audio.on {
+  background:#3b1113;
+  border-color:#6b1414;
+  color:#ffe0e0;
+}
+.clk-btn.audio.off {
+  background:#22c55e;
+  border-color:#22c55e;
+  color:#06241b;
+}
+.clk-btn.audio svg .icon-sound { display:none; }
+.clk-btn.audio svg .icon-mute { display:block; }
+.clk-btn.audio.off svg .icon-sound { display:block; }
+.clk-btn.audio.off svg .icon-mute { display:none; }
