@@ -73,7 +73,7 @@ select option.strong { font-weight:700; }
 }
 .pl-day.weekend{
   background:transparent;
-  color:#f97373;
+  color:#E96982;
 }
 /* Текущият ден – по-дебел и по-голям */
 .pl-day.today{
