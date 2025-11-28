@@ -121,7 +121,7 @@ select option.strong { font-weight:700; }
 .pl-time-cell.red{ background:#3d1010; border-color:#6b1414 }
 .pl-time-cell.int-upcoming{ background:#cc5500; border-color:#facc15 }
 .pl-time-cell.int-done{
-  background:#227442;
+  background:#007500;
   border-color:#166534;
 }
 .pl-time-cell.int-overdue{
