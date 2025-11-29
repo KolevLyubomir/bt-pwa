@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 5 — v5.0.2</title>
+  <title>БТ App 5 — v5.0.1</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -16,18 +16,17 @@
   <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Marcellus&family=Montserrat:wght@400;600;700&display=swap"/>
 
-  <!-- Основни стилове -->
-  <link rel="stylesheet" href="assets/css/main.css?v=5.0.2"/>
-  <link rel="stylesheet" href="assets/css/data.css?v=5.0.2"/>
+  <link rel="stylesheet" href="assets/css/main.css"/>
+  <link rel="stylesheet" href="assets/css/data.css"/>
   
-  <!-- Разделени Program CSS файлове (v5.0.2) -->
-  <link rel="stylesheet" href="assets/css/program-layout.css?v=5.0.2"/>
-  <link rel="stylesheet" href="assets/css/program-states.css?v=5.0.2"/>
+  <!-- Разделени Program CSS файлове v5.0.1 -->
+  <link rel="stylesheet" href="assets/css/program-layout.css?v=5.0.1"/>
+  <link rel="stylesheet" href="assets/css/program-states.css?v=5.0.1"/>
   
-  <!-- Модални компоненти и бутони (v5.0.2) -->
-  <link rel="stylesheet" href="assets/css/program-clock.css?v=5.0.2"/>
-  <link rel="stylesheet" href="assets/css/program-buttons.css?v=5.0.2"/>
-  <link rel="stylesheet" href="assets/css/program-dialogs.css?v=5.0.2"/>
+  <!-- Модални компоненти -->
+  <link rel="stylesheet" href="assets/css/program-clock.css?v=5.0.1"/>
+  <link rel="stylesheet" href="assets/css/program-buttons.css?v=5.0.1"/>
+  <link rel="stylesheet" href="assets/css/program-dialogs.css?v=5.0.1"/>
 
 </head>
 <body>
@@ -38,7 +37,7 @@
         <img src="https://bezopasnoteglo.carrd.co/assets/images/image08.png?v=7cf47ba0" alt="Безопасно Тегло" class="main-logo"/>
       </div>
       <div class="version-slot">
-        <span class="badge" id="app-version-badge">v5.0.2</span>
+        <span class="badge" id="app-version-badge">v5.0.1</span>
       </div>
     </div>
   </div>
@@ -50,7 +49,6 @@
     </div>
   </div>
 
-  <!-- ПАНЕЛ ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
       <section class="card">
@@ -152,13 +150,11 @@
     </main>
   </div>
 
-  <!-- ПАНЕЛ ПРОГРАМА -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен Пакет</h2>
 
-        <!-- ProLact -->
         <div id="prolact-block">
           <div class="prog-head">
             <div class="prog-head-main">
@@ -210,7 +206,6 @@
 
         <hr class="prog-sep"/>
 
-        <!-- OMNi-Biotic -->
         <div id="omni-block">
           <div class="prog-head">
             <div class="prog-head-main">
@@ -253,7 +248,6 @@
 
         <hr class="prog-sep"/>
 
-        <!-- Chitosan -->
         <div id="chitosan-block">
           <div class="prog-head">
             <div class="prog-head-main">
@@ -316,7 +310,6 @@
       <section class="card" id="pkg-extra">
         <h2 style="margin:0 0 10px">Допълнителен Пакет</h2>
 
-        <!-- Berberine -->
         <div class="config-block" id="ber-block">
           <div class="prog-head">
             <div class="prog-head-main clickable" id="ber-head" title="Редактирай Берберин">
@@ -374,7 +367,6 @@
           </div>
           
           <div class="pl-wrap" id="ber-grid-container" style="display: none;">
-            <!-- Динамично генерирана таблица за Берберин -->
           </div>
         </div>
 
@@ -421,7 +413,6 @@
     </main>
   </div>
 
-  <!-- МОДАЛ ЧАСОВНИК -->
   <div class="clk" id="clk" aria-hidden="true">
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
       <div class="clk-header">
@@ -468,13 +459,12 @@
     </div>
   </div>
 
-  <!-- НОВИ МОДУЛНИ СКРИПТОВЕ (v5.0.2) -->
-  <script src="assets/js/app-core.js?v=5.0.2"></script>
-  <script src="assets/js/tab-data.js?v=5.0.2"></script>
-  <script src="assets/js/ui-clock.js?v=5.0.2"></script>
-  <script src="assets/js/program-grid.js?v=5.0.2"></script>
-  <script src="assets/js/program-basic.js?v=5.0.2"></script>
-  <script src="assets/js/program-extra.js?v=5.0.2"></script>
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/product-grid.js"></script>
+  <script src="assets/js/modal.js"></script>
+  <script src="assets/js/program-init.js"></script>
+  <script src="assets/js/program-additional.js"></script>
 
 </body>
 </html>
