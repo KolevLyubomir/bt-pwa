@@ -401,10 +401,18 @@
               <span class="lbl"></span> 
               <div class="config-buttons">
                 <button id="ber-save" class="clk-btn primary" type="button" title="Запази">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"></path></svg></span>
+                  <span class="clk-btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </span>
                 </button>
                 <button id="ber-delete" class="clk-btn danger" type="button" title="Изтрий (0 приеми)">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"></path></svg></span>
+                  <span class="clk-btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                  </span>
                 </button>
               </div>
             </div>
@@ -475,10 +483,18 @@
               <span class="lbl"></span>
               <div class="config-buttons">
                 <button id="glu-save" class="clk-btn primary" type="button" title="Запази">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"></path></svg></span>
+                  <span class="clk-btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </span>
                 </button>
                 <button id="glu-delete" class="clk-btn danger" type="button" title="Изтрий (0 приеми)">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"></path></svg></span>
+                  <span class="clk-btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                  </span>
                 </button>
               </div>
             </div>
@@ -549,10 +565,18 @@
               <span class="lbl"></span>
               <div class="config-buttons">
                 <button id="egc-save" class="clk-btn primary" type="button" title="Запази">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"></path></svg></span>
+                  <span class="clk-btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  </span>
                 </button>
                 <button id="egc-delete" class="clk-btn danger" type="button" title="Изтрий (0 приеми)">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"></path></svg></span>
+                  <span class="clk-btn-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M18 6L6 18M6 6l12 12"></path>
+                    </svg>
+                  </span>
                 </button>
               </div>
             </div>
@@ -579,7 +603,7 @@
     </main>
   </div>
 
-  <!-- Модален часовник -->
+  <!-- Модален часовник (оригиналният, работещ) -->
   <div class="clk" id="clk" aria-hidden="true">
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
       <div class="clk-header">
@@ -607,77 +631,49 @@
       <input id="clkKeyInput" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-hidden="true" style="position:absolute; opacity:0; height:0; width:0; border:0; padding:0; pointer-events:none;"/>
       <div class="clk-actions">
         <div class="clk-actions-row">
+          <button id="btnIntake" class="clk-btn intake big" type="button" title="Прием">
+            <span class="clk-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <g transform="translate(0,3)">
+                  <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
+                  <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
+                  <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
+                  <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
+                </g>
+              </svg>
+            </span>
+          </button>
           <div class="clk-actions-group">
-            <button id="btnMinusH" class="clk-btn ghost" type="button" title="-1 час">
+            <button id="btnSaveOne" class="clk-btn primary" type="button" title="Запис за този ден">
               <span class="clk-btn-icon">
                 <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M15 12H9"></path>
-                  <path d="M12 5v14"></path>
+                  <path d="M5 13l4 4L19 7"></path>
                 </svg>
               </span>
             </button>
-            <button id="btnPlusH" class="clk-btn ghost" type="button" title="+1 час">
+            <button id="btnSaveAllDays" class="clk-btn primary" type="button" title="Запис за всички дни от този ред">
               <span class="clk-btn-icon">
                 <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M9 12h6"></path>
-                  <path d="M12 5v14"></path>
-                </svg>
-              </span>
-            </button>
-            <button id="btnMinusM" class="clk-btn ghost" type="button" title="-5 мин.">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M15 12H9"></path>
-                  <path d="M12 5v14"></path>
-                </svg>
-              </span>
-            </button>
-            <button id="btnPlusM" class="clk-btn ghost" type="button" title="+5 мин.">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M9 12h6"></path>
-                  <path d="M12 5v14"></path>
+                  <path d="M4 13l3 3 5-7"></path>
+                  <path d="M11 13l3 3 6-8"></path>
                 </svg>
               </span>
             </button>
           </div>
-          <div class="clk-actions-group">
-            <button id="btnAudio" class="clk-btn audio big" type="button" title="Аудио">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <g class="icon-sound">
-                    <path d="M11 5L6 9H3v6h3l5 4V5z"></path>
-                    <path d="M15.5 8.5a4.5 4.5 0 0 1 0 7"></path>
-                    <path d="M18 6a8 8 0 0 1 0 12"></path>
-                  </g>
-                  <g class="icon-mute">
-                    <path d="M11 5L6 9H3v6h3l5 4V5z"></path>
-                    <path d="M17 9l4 4"></path>
-                    <path d="M21 9l-4 4"></path>
-                  </g>
-                </svg>
-              </span>
-            </button>
-            <button id="btnIntake" class="clk-btn intake big" type="button" title="Прием">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <g transform="translate(0,3)">
-                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                  </g>
-                </svg>
-              </span>
-            </button>
-            <button id="btnCloseClk" class="clk-btn" type="button" title="Затвори">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M18 6L6 18M6 6l12 12"></path>
-                </svg>
-              </span>
-            </button>
-          </div>
+          <button id="btnAudio" class="clk-btn audio big" type="button" title="Аудио вкл/изкл за този час">
+            <span class="clk-btn-icon">
+              <svg viewBox="0 0 24 24" fill="none">
+                <g class="icon-sound">
+                  <path d="M5 9v6h3l4 4V5L8 9H5z"></path>
+                  <path d="M16 9a3 3 0 0 1 0 6"></path>
+                </g>
+                <g class="icon-mute">
+                  <path d="M5 9v6h3l4 4V5L8 9H5z"></path>
+                  <path d="M18 9l-4 4m0-4l4 4"></path>
+                </g>
+              </svg>
+            </span>
+          </button>
         </div>
       </div>
     </div>
