@@ -9,11 +9,6 @@
 
   // Берберин
   const BERBERINE_BRANDS = {
-    "now": {
-      name: "NOW Foods - Berberine Glucose",
-      img: "assets/products/additional/ber-now.webp",
-      icon: "assets/products/additional/icons/ber-now-icon.webp"
-    },
     "thorne": {
       name: "Thorne Research",
       img: "assets/products/additional/ber-thorne.webp",
@@ -33,7 +28,12 @@
       name: "Nutricost",
       img: "assets/products/additional/ber-nutricost.webp",
       icon: "assets/products/additional/icons/ber-nutricost-icon.webp"
-    },    
+    },
+    "now": {
+      name: "NOW Foods - Berberine Glucose",
+      img: "assets/products/additional/ber-now.webp",
+      icon: "assets/products/additional/icons/ber-now-icon.webp"
+    },
     "custom": {
       name: "Друго (въведи):",
       img: "assets/products/additional/ber-custom.webp",
@@ -138,7 +138,7 @@
     return hs + ":" + ms;
   }
 
-  // Дълго натискане (за редакция)
+  // Дълго натискане (вече не го ползваме за заглавието, но оставяме функцията за всеки случай)
   function attachLongPress(el, handler, delayMs) {
     if (!el || typeof handler !== "function") return;
     var delay = typeof delayMs === "number" ? delayMs : 550;
@@ -188,6 +188,7 @@
     var customNameField = document.getElementById(prefix + "-custom-name-field");
     var productImg = document.getElementById(prefix + "-img");
     var intakeBtn = document.getElementById("btnProgIntake" + prefix.toUpperCase());
+    var settingsBtn = document.getElementById(prefix + "-settings-btn");
 
     if (!configDiv || !slider || !saveBtn || !gridContainer || !head || !brandSelect) {
       console.error("Липсващи елементи за " + prefix);
@@ -851,28 +852,27 @@
 
     head.classList.add("clickable");
 
-    // Клик по заглавието – конфигурация само ако НЯМА избрана марка
+    // Клик по заглавието – показва конфигуратора (ако искаш, може да го оставим)
     head.addEventListener("click", function () {
-      if (settings.rows > 0) {
-        return;
-      }
       var isHidden =
         configDiv.style.display === "none" ||
         configDiv.style.display === "";
       configDiv.style.display = isHidden ? "block" : "none";
     });
 
-    // Дълго натискане – редакция на вече избрана марка
-    attachLongPress(head, function () {
-      if (settings.rows === 0) {
-        configDiv.style.display = "block";
-        return;
-      }
-      var isHidden =
-        configDiv.style.display === "none" ||
-        configDiv.style.display === "";
-      configDiv.style.display = isHidden ? "block" : "none";
-    }, 550);
+    // Бутон „Settings“ до заглавието – също отваря/затваря конфигуратора
+    if (settingsBtn) {
+      settingsBtn.addEventListener("click", function (e) {
+        e.stopPropagation();
+        var isHidden =
+          configDiv.style.display === "none" ||
+          configDiv.style.display === "";
+        configDiv.style.display = isHidden ? "block" : "none";
+      });
+    }
+
+    // ⚠️ Вече НЕ ползваме дълго задържане на правоъгълника за редакция
+    // attachLongPress(head, ... ) е премахнато
 
     brandSelect.addEventListener("change", function () {
       var selectedBrand = brandSelect.value;
