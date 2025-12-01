@@ -138,7 +138,7 @@
     return hs + ":" + ms;
   }
 
-  // Дълго натискане (вече не го ползваме за заглавието, но оставяме функцията за всеки случай)
+  // Оставяме помощната функция, макар вече да не я ползваме за заглавието
   function attachLongPress(el, handler, delayMs) {
     if (!el || typeof handler !== "function") return;
     var delay = typeof delayMs === "number" ? delayMs : 550;
@@ -206,7 +206,6 @@
       rows: 0
     };
 
-    // Четене на конфигурация от localStorage
     try {
       var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       if (saved) {
@@ -327,7 +326,7 @@
       brandModal.style.zIndex = "9999";
 
       var dialog = document.createElement("div");
-      dialog.style.background = "#020617"; // тъмен фон
+      dialog.style.background = "#020617";
       dialog.style.borderRadius = "20px";
       dialog.style.padding = "18px 20px";
       dialog.style.width = "92%";
@@ -346,7 +345,6 @@
       headerRow.style.marginBottom = "12px";
 
       brandModalTitle = document.createElement("div");
-      // 🔸 Динамично заглавие според основния надпис
       var headerName = (capMain && capMain.textContent) ? capMain.textContent : "марка";
       brandModalTitle.textContent = "Избор на " + headerName;
       brandModalTitle.style.fontSize = "15px";
@@ -521,7 +519,6 @@
       var newFlags = [];
 
       if (!raw || !raw.times || !Array.isArray(raw.times)) {
-        // Няма предишни – инициализираме от DEFAULT_TIMES_MAP
         for (var r = 0; r < MAX_ROWS; r++) {
           newTimes[r] = [];
           for (var d = 0; d < NUM_DAYS; d++) {
@@ -551,7 +548,6 @@
         }
       }
 
-      // Лека нормализация – гарантираме, че времето е в 00:00–23:59 и е сортирано по редове
       var MAX_MIN = 23 * 60 + 59;
       for (var day = 0; day < NUM_DAYS; day++) {
         var mins = [];
@@ -603,7 +599,6 @@
         }
       }
 
-      // Обновяване на капката–чип
       if (brandPickerIcon && brandPickerLabel) {
         var uiBrand = brandsMap[brandKey] || brandsMap[Object.keys(brandsMap)[0]];
         if (uiBrand) {
@@ -615,7 +610,6 @@
         }
       }
 
-      // Слайдер
       if (isConfigured) {
         slider.value = String(settings.rows);
       } else {
@@ -624,7 +618,6 @@
       sliderVal.textContent = slider.value;
       updateSliderFill();
 
-      // Custom име
       if (brandKey === "custom") {
         customNameField.style.display = "block";
         nameInput.value = settings.customName || "";
@@ -643,8 +636,6 @@
           productImg.src = brandData.img;
           productImg.alt = currentName;
           productImg.style.display = "block";
-
-          // НЕ пипаме стиловете – идват от .prod-img в CSS
           productImg.style.width = "";
           productImg.style.height = "";
           productImg.style.borderRadius = "";
@@ -846,21 +837,12 @@
       }, 0);
     }
 
-    // ------------------------------------------
+    // ============================================
     // СЪБИТИЯ
-    // ------------------------------------------
+    // ============================================
 
-    head.classList.add("clickable");
-
-    // Клик по заглавието – показва конфигуратора (ако искаш, може да го оставим)
-    head.addEventListener("click", function () {
-      var isHidden =
-        configDiv.style.display === "none" ||
-        configDiv.style.display === "";
-      configDiv.style.display = isHidden ? "block" : "none";
-    });
-
-    // Бутон „Settings“ до заглавието – също отваря/затваря конфигуратора
+    // Вече НЕ отваряме конфигуратора при клик върху целия head,
+    // само колелцето управлява отваряне/затваряне.
     if (settingsBtn) {
       settingsBtn.addEventListener("click", function (e) {
         e.stopPropagation();
@@ -870,9 +852,6 @@
         configDiv.style.display = isHidden ? "block" : "none";
       });
     }
-
-    // ⚠️ Вече НЕ ползваме дълго задържане на правоъгълника за редакция
-    // attachLongPress(head, ... ) е премахнато
 
     brandSelect.addEventListener("change", function () {
       var selectedBrand = brandSelect.value;
@@ -938,13 +917,8 @@
   // ИНИЦИАЛИЗАЦИЯ ЗА 3-те ДОПЪЛНИТЕЛНИ ПРОДУКТА
   // ============================================
 
-  // Берберин
   createConfigurableProduct("ber", BERBERINE_BRANDS);
-
-  // Глюкоманан
   createConfigurableProduct("glu", GLUCOMANNAN_BRANDS);
-
-  // EGCg (Зелен чай)
   createConfigurableProduct("egc", EGCG_BRANDS);
 
 })();
