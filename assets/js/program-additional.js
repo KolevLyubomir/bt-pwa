@@ -9,6 +9,11 @@
 
   // Берберин
   const BERBERINE_BRANDS = {
+    "now": {
+      name: "NOW Foods - Berberine Glucose",
+      img: "assets/products/additional/ber-now.webp",
+      icon: "assets/products/additional/icons/ber-now-icon.webp"
+    },
     "thorne": {
       name: "Thorne Research",
       img: "assets/products/additional/ber-thorne.webp",
@@ -28,12 +33,7 @@
       name: "Nutricost",
       img: "assets/products/additional/ber-nutricost.webp",
       icon: "assets/products/additional/icons/ber-nutricost-icon.webp"
-    },
-    "now": {
-      name: "NOW Foods - Berberine Glucose",
-      img: "assets/products/additional/ber-now.webp",
-      icon: "assets/products/additional/icons/ber-now-icon.webp"
-    },
+    },    
     "custom": {
       name: "Друго (въведи):",
       img: "assets/products/additional/ber-custom.webp",
