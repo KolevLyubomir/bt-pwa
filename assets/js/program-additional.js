@@ -4,95 +4,92 @@
   "use strict";
 
   // ============================================
-  // БРАНДОВЕ – ЛОКАЛНИ КАРТИ С КАРТИНКИ
+  // БРАНДОВЕ – КАРТИ С КАРТИНКИ
   // ============================================
 
-  // Берберин
   const BERBERINE_BRANDS = {
-    "thorne": {
+    thorne: {
       name: "Thorne Research",
       img: "assets/products/additional/ber-thorne.webp",
       icon: "assets/products/additional/icons/ber-thorne-icon.webp"
     },
-    "toniiq": {
+    toniiq: {
       name: "Toniiq - Ultra High Strength",
       img: "assets/products/additional/ber-toniiq.webp",
       icon: "assets/products/additional/icons/ber-toniiq-icon.webp"
     },
-    "it": {
+    it: {
       name: "Integrative Therapeutics",
       img: "assets/products/additional/ber-it.webp",
       icon: "assets/products/additional/icons/ber-it-icon.webp"
     },
-    "nutricost": {
+    nutricost: {
       name: "Nutricost",
       img: "assets/products/additional/ber-nutricost.webp",
       icon: "assets/products/additional/icons/ber-nutricost-icon.webp"
     },
-    "now": {
+    now: {
       name: "NOW Foods - Berberine Glucose",
       img: "assets/products/additional/ber-now.webp",
       icon: "assets/products/additional/icons/ber-now-icon.webp"
     },
-    "custom": {
+    custom: {
       name: "Друго (въведи):",
       img: "assets/products/additional/ber-custom.webp",
       icon: "assets/products/additional/icons/ber-custom-icon.webp"
     }
   };
 
-  // Глюкоманан
   const GLUCOMANNAN_BRANDS = {
-    "now": {
+    now: {
       name: "NOW Foods - Glucomannan",
       img: "assets/products/additional/glu-now.webp",
       icon: "assets/products/additional/icons/glu-now-icon.webp"
     },
-    "swanson": {
+    swanson: {
       name: "Swanson Glucomannan",
       img: "assets/products/additional/glu-swanson.webp",
       icon: "assets/products/additional/icons/glu-swanson-icon.webp"
     },
-    "jarrow": {
+    jarrow: {
       name: "Jarrow Formulas Glucomannan",
       img: "assets/products/additional/glu-jarrow.webp",
       icon: "assets/products/additional/icons/glu-jarrow-icon.webp"
     },
-    "lifeext": {
+    lifeext: {
       name: "Life Extension Glucomannan",
       img: "assets/products/additional/glu-lifeext.webp",
       icon: "assets/products/additional/icons/glu-lifeext-icon.webp"
     },
-    "custom": {
+    custom: {
       name: "Друго (въведи):",
       img: "assets/products/additional/glu-custom.webp",
       icon: "assets/products/additional/icons/glu-custom-icon.webp"
     }
   };
 
-  // EGCg – Зелен чай
   const EGCG_BRANDS = {
-    "now": {
+    now: {
       name: "NOW Foods - EGCg Green Tea",
       img: "assets/products/additional/egc-now.webp",
       icon: "assets/products/additional/icons/egc-now-icon.webp"
     },
-    "lifeext": {
+    lifeext: {
       name: "Life Extension Mega Green Tea Extract",
       img: "assets/products/additional/egc-lifeext.webp",
       icon: "assets/products/additional/icons/egc-lifeext-icon.webp"
     },
-    "jarrow": {
+    jarrow: {
       name: "Jarrow Green Tea 500mg",
       img: "assets/products/additional/egc-jarrow.webp",
       icon: "assets/products/additional/icons/egc-jarrow-icon.webp"
     },
-    "swanson": {
+    swanson: {
       name: "Swanson Green Tea Extract",
       img: "assets/products/additional/egc-swanson.webp",
       icon: "assets/products/additional/icons/egc-swanson-icon.webp"
     },
-    "custom": {
+    custom: {
       name: "Друго (въведи):",
       img: "assets/products/additional/egc-custom.webp",
       icon: "assets/products/additional/icons/egc-custom-icon.webp"
@@ -100,7 +97,7 @@
   };
 
   // ============================================
-  // НОВА СХЕМА НА ЧАСОВЕТЕ ПО ПОДРАЗБИРАНЕ
+  // СХЕМА НА ЧАСОВЕТЕ
   // ============================================
 
   const DEFAULT_TIMES_MAP = [
@@ -138,38 +135,8 @@
     return hs + ":" + ms;
   }
 
-  // Оставяме помощната функция, макар вече да не я ползваме за заглавието
-  function attachLongPress(el, handler, delayMs) {
-    if (!el || typeof handler !== "function") return;
-    var delay = typeof delayMs === "number" ? delayMs : 550;
-    var timer = null;
-
-    function clear() {
-      if (timer !== null) {
-        clearTimeout(timer);
-        timer = null;
-      }
-    }
-
-    function start(e) {
-      if (e && e.button === 2) return;
-      clear();
-      timer = setTimeout(function () {
-        timer = null;
-        handler(e);
-      }, delay);
-    }
-
-    el.addEventListener("mousedown", start);
-    el.addEventListener("touchstart", start, { passive: true });
-
-    ["mouseup", "mouseleave", "touchend", "touchcancel"].forEach(function (evt) {
-      el.addEventListener(evt, clear);
-    });
-  }
-
   // ============================================
-  // ГЛАВНА ФУНКЦИЯ ЗА КОНФИГУРИРУЕМ ПРОДУКТ
+  // КОНФИГУРИРУЕМ ПРОДУКТ
   // ============================================
 
   function createConfigurableProduct(prefix, brandsMap) {
@@ -226,9 +193,6 @@
       sliderTrackFill.style.width = percentage + "%";
     }
 
-    // ------------------------------------------
-    // Тъмен confirm диалог за изтриване на Марката
-    // ------------------------------------------
     function showDeleteConfirm(message, onConfirm) {
       var backdrop = document.createElement("div");
       backdrop.className = "bt-confirm-backdrop";
@@ -266,10 +230,7 @@
         }
       }
 
-      btnCancel.addEventListener("click", function () {
-        close();
-      });
-
+      btnCancel.addEventListener("click", close);
       btnOk.addEventListener("click", function () {
         close();
         if (typeof onConfirm === "function") onConfirm();
@@ -280,9 +241,8 @@
       });
     }
 
-    // ------------------------------------------
-    // Модал за избор на марка
-    // ------------------------------------------
+    // -------- Модал за избор на марка --------
+
     var brandModal = null;
     var brandModalList = null;
     var brandModalTitle = null;
@@ -309,9 +269,7 @@
     }
 
     function closeBrandModal() {
-      if (brandModal) {
-        brandModal.style.display = "none";
-      }
+      if (brandModal) brandModal.style.display = "none";
     }
 
     function buildBrandModal() {
@@ -450,9 +408,8 @@
       document.body.appendChild(brandModal);
     }
 
-    // ------------------------------------------
-    // Бутон–чип над селекта
-    // ------------------------------------------
+    // -------- Чип за избор на марка над селекта --------
+
     brandPickerBtn = document.createElement("button");
     brandPickerBtn.type = "button";
     brandPickerBtn.style.display = "inline-flex";
@@ -490,19 +447,15 @@
 
     brandPickerBtn.appendChild(brandPickerIcon);
     brandPickerBtn.appendChild(brandPickerLabel);
-
-    brandPickerBtn.addEventListener("click", function () {
-      openBrandModal();
-    });
+    brandPickerBtn.addEventListener("click", openBrandModal);
 
     if (brandSelect.parentNode) {
       brandSelect.parentNode.insertBefore(brandPickerBtn, brandSelect);
       brandSelect.style.display = "none";
     }
 
-    // ------------------------------------------
-    // Корекция на състоянието при промяна на броя редове
-    // ------------------------------------------
+    // -------- Адаптиране на състояние при смяна броя редове --------
+
     function adjustGridStateForRowChange(newRows) {
       if (newRows <= 0) return;
 
@@ -575,9 +528,8 @@
       } catch (e2) { }
     }
 
-    // ------------------------------------------
-    // UI – обновяване според settings
-    // ------------------------------------------
+    // -------- UI обновяване --------
+
     function updateUI(showConfig) {
       var brandKey = settings.brand;
       if (!brandsMap[brandKey]) {
@@ -588,7 +540,6 @@
       brandSelect.value = brandKey;
       var brandData = brandsMap[brandKey] || brandsMap[Object.keys(brandsMap)[0]];
       var currentName = brandData.name;
-
       var isConfigured = settings.rows > 0;
 
       if (settings.brand === "custom") {
@@ -599,6 +550,7 @@
         }
       }
 
+      // чип
       if (brandPickerIcon && brandPickerLabel) {
         var uiBrand = brandsMap[brandKey] || brandsMap[Object.keys(brandsMap)[0]];
         if (uiBrand) {
@@ -636,42 +588,21 @@
           productImg.src = brandData.img;
           productImg.alt = currentName;
           productImg.style.display = "block";
-          productImg.style.width = "";
-          productImg.style.height = "";
-          productImg.style.borderRadius = "";
-          productImg.style.objectFit = "";
-          productImg.style.clipPath = "";
         }
-        if (capMain) {
-          capMain.classList.add("configured");
-        }
-        if (capBrand) {
-          capBrand.textContent = currentName;
-        }
+        if (capMain) capMain.classList.add("configured");
+        if (capBrand) capBrand.textContent = currentName;
         gridContainer.style.display = "block";
 
         if (!currentGridInstance && gridContainer.innerHTML.replace(/\s+/g, "") === "") {
           generateGrid(settings.rows, currentName);
         }
 
-        if (intakeBtn) {
-          intakeBtn.style.display = "inline-flex";
-        }
+        if (intakeBtn) intakeBtn.style.display = "inline-flex";
+        if (settingsBtn) settingsBtn.style.display = "inline-flex";
       } else {
-        if (productImg) {
-          productImg.style.display = "none";
-          productImg.style.width = "";
-          productImg.style.height = "";
-          productImg.style.borderRadius = "";
-          productImg.style.objectFit = "";
-          productImg.style.clipPath = "";
-        }
-        if (capMain) {
-          capMain.classList.remove("configured");
-        }
-        if (capBrand) {
-          capBrand.textContent = "";
-        }
+        if (productImg) productImg.style.display = "none";
+        if (capMain) capMain.classList.remove("configured");
+        if (capBrand) capBrand.textContent = "";
         gridContainer.style.display = "none";
         gridContainer.innerHTML = "";
 
@@ -680,12 +611,11 @@
           intakeBtn.removeAttribute("data-row");
           intakeBtn.removeAttribute("data-dow");
         }
+        if (settingsBtn) settingsBtn.style.display = "none";
 
         if (currentGridInstance) {
           if (Array.isArray(window.grids)) {
-            window.grids = window.grids.filter(function (g) {
-              return g !== currentGridInstance;
-            });
+            window.grids = window.grids.filter(function (g) { return g !== currentGridInstance; });
           }
           if (typeof currentGridInstance.destroy === "function") {
             currentGridInstance.destroy();
@@ -697,9 +627,6 @@
       configDiv.style.display = showConfig ? "block" : "none";
     }
 
-    // ------------------------------------------
-    // Запис + евентуално регенериране на мрежата
-    // ------------------------------------------
     function saveAndRerender(showConfig, needsGridUpdate, newRowsForGrid) {
       if (showConfig === void 0) showConfig = false;
       if (needsGridUpdate === void 0) needsGridUpdate = false;
@@ -708,13 +635,13 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
       } catch (e) { }
 
-      var brandData = brandsMap[settings.brand] || brandsMap["custom"];
-      var currentName = brandData.name;
+      var brandData = brandsMap[settings.brand] || brandsMap.custom;
+      var currentName = brandData ? brandData.name : "";
 
       if (settings.brand === "custom") {
         if (settings.customName) {
           currentName = settings.customName;
-        } else if (nameInput.placeholder) {
+        } else if (nameInput && nameInput.placeholder) {
           currentName = nameInput.placeholder;
         }
       }
@@ -734,19 +661,12 @@
       }
     }
 
-    // ------------------------------------------
-    // Създаване на таблица и ProductGrid
-    // ------------------------------------------
     function generateGrid(rowCount, productName) {
       if (currentGridInstance) {
         if (Array.isArray(window.grids)) {
-          window.grids = window.grids.filter(function (g) {
-            return g !== currentGridInstance;
-          });
+          window.grids = window.grids.filter(function (g) { return g !== currentGridInstance; });
         }
-        if (typeof currentGridInstance.destroy === "function") {
-          currentGridInstance.destroy();
-        }
+        if (typeof currentGridInstance.destroy === "function") currentGridInstance.destroy();
         currentGridInstance = null;
       }
 
@@ -789,23 +709,23 @@
         rowsHtml += "</tr>";
       }
 
-      var tableHtml = ""
-        + '<table class="pl-table" id="' + tableId + '">'
-        + "<thead>"
-        + "<tr>"
-        + '<th class="pl-day" data-dow="1">Пн</th>'
-        + '<th class="pl-day" data-dow="2">Вт</th>'
-        + '<th class="pl-day" data-dow="3">Ср</th>'
-        + '<th class="pl-day" data-dow="4">Чт</th>'
-        + '<th class="pl-day" data-dow="5">Пт</th>'
-        + '<th class="pl-day weekend" data-dow="6">Сб</th>'
-        + '<th class="pl-day weekend" data-dow="0">Нд</th>'
-        + "</tr>"
-        + "</thead>"
-        + "<tbody>"
-        + rowsHtml
-        + "</tbody>"
-        + "</table>";
+      var tableHtml =
+        '<table class="pl-table" id="' + tableId + '">' +
+        "<thead>" +
+        "<tr>" +
+        '<th class="pl-day" data-dow="1">Пн</th>' +
+        '<th class="pl-day" data-dow="2">Вт</th>' +
+        '<th class="pl-day" data-dow="3">Ср</th>' +
+        '<th class="pl-day" data-dow="4">Чт</th>' +
+        '<th class="pl-day" data-dow="5">Пт</th>' +
+        '<th class="pl-day weekend" data-dow="6">Сб</th>' +
+        '<th class="pl-day weekend" data-dow="0">Нд</th>' +
+        "</tr>" +
+        "</thead>" +
+        "<tbody>" +
+        rowsHtml +
+        "</tbody>" +
+        "</table>";
 
       gridContainer.innerHTML = tableHtml;
       gridContainer.style.display = "block";
@@ -825,9 +745,7 @@
           blockId: prefix + "-block"
         });
 
-        if (!window.grids) {
-          window.grids = [];
-        }
+        if (!window.grids) window.grids = [];
         if (currentGridInstance) {
           window.grids.push(currentGridInstance);
           if (typeof currentGridInstance.updateIntakeStates === "function") {
@@ -838,11 +756,26 @@
     }
 
     // ============================================
-    // СЪБИТИЯ
+    // СЪБИТИЯ ЗА HEAD & SETTINGS
     // ============================================
 
-    // Вече НЕ отваряме конфигуратора при клик върху целия head,
-    // само колелцето управлява отваряне/затваряне.
+    // Когато е празно (rows=0) – клик върху заглавието отваря/затваря.
+    if (head) {
+      head.addEventListener("click", function (e) {
+        // ако кликът идва от бутона за настройки, не правим нищо тук
+        if (settingsBtn && (e.target === settingsBtn || settingsBtn.contains(e.target))) {
+          return;
+        }
+        if (settings.rows === 0) {
+          var isHidden =
+            configDiv.style.display === "none" ||
+            configDiv.style.display === "";
+          configDiv.style.display = isHidden ? "block" : "none";
+        }
+      });
+    }
+
+    // Когато е конфигуриран (rows>0) – само колелцето управлява редакцията
     if (settingsBtn) {
       settingsBtn.addEventListener("click", function (e) {
         e.stopPropagation();
@@ -883,6 +816,7 @@
       var needsGridUpdate = rowsChanged || brandChanged || nameChanged;
       var newRowsForGrid = rowsChanged && newRows > 0 ? newRows : null;
 
+      // след запис – скриваме редакцията (showConfig=false)
       saveAndRerender(false, needsGridUpdate, newRowsForGrid);
     });
 
@@ -892,21 +826,18 @@
         return;
       }
 
-      showDeleteConfirm(
-        "Ще изтриеш ли Марката?",
-        function () {
-          settings.rows = 0;
-          settings.customName = "";
+      showDeleteConfirm("Ще изтриеш ли Марката?", function () {
+        settings.rows = 0;
+        settings.customName = "";
 
-          if (intakeBtn) {
-            intakeBtn.style.display = "none";
-            intakeBtn.removeAttribute("data-row");
-            intakeBtn.removeAttribute("data-dow");
-          }
-
-          saveAndRerender(false, true, null);
+        if (intakeBtn) {
+          intakeBtn.style.display = "none";
+          intakeBtn.removeAttribute("data-row");
+          intakeBtn.removeAttribute("data-dow");
         }
-      );
+
+        saveAndRerender(false, true, null);
+      });
     });
 
     // Първоначално обновяване
@@ -914,7 +845,7 @@
   }
 
   // ============================================
-  // ИНИЦИАЛИЗАЦИЯ ЗА 3-те ДОПЪЛНИТЕЛНИ ПРОДУКТА
+  // ИНИЦИАЛИЗАЦИЯ
   // ============================================
 
   createConfigurableProduct("ber", BERBERINE_BRANDS);
