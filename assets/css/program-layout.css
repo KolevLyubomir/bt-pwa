@@ -2,105 +2,69 @@
    Структура на редове, хедъри, таблици и конфигурационен панел
 */
 
-:root {
-  --ctl-h: 40px;
-  --pl-pad: 6px;
-  --pl-font: 13px;
-  --pl-minw: 46px;
-}
-
-/* Полета – запазваме височината */
-input,
-select {
-  background: #0d171b;
-  border: 1px solid #254046;
-  color: var(--text);
-  border-radius: 10px;
-  padding: 8px 10px;
-  font-size: 14px;
-  height: var(--ctl-h);
-}
-
-/* Всички бутони – без височина, за да не раздуват layout-а */
-button {
-  background: #0d171b;
-  border: 1px solid #254046;
-  color: var(--text);
-  border-radius: 10px;
-  padding: 8px 10px;
-  font-size: 14px;
-}
-
-/* ------------------------------- */
-/*         ПРОГРАМЕН LAYOUT        */
-/* ------------------------------- */
-
-.prog-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 12px;
-  flex-wrap: wrap;
-  margin: 8px 0 0;
-}
+.prog-row { display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0; }
 
 .prog-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 6px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:6px;
 }
 
 .prog-head-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
 }
 
-/* Картинка на продукта */
-.prod-img {
-  width: 76px;
-  height: 76px;
-  object-fit: contain;
-  border-radius: 12px;
-  background: #0d171b;
-  border: 1px solid #254046;
+.prod-img { width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046; }
+
+.prog-pill {
+  display:flex; flex-direction:column; gap:6px;
+  padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
+  width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
+}
+.prog-pill label { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.prog-pill input[type="checkbox"] { width:16px; height:16px; margin:0; }
+
+.prog-cap { font-weight:700; font-size:13px; }
+.prog-sep { border:0; border-top:1px solid var(--border); margin:14px 0; }
+
+/* Бутонът за прием до името на продукта (Основен Пакет) - структура */
+.prog-intake-btn {
+  flex:0 0 auto;
+  padding:0;
+}
+.prog-intake-btn .clk-btn-icon {
+  padding:0;
+}
+.prog-intake-btn .clk-btn-icon svg {
+  width:32px;
+  height:32px;
 }
 
-/* Двуредово заглавие – Берберин + марка */
-.prog-cap-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  line-height: 1;
+.time-wrap { display:flex; align-items:center; gap:6px; }
+.time-row { display:flex; align-items:center; gap:4px; }
+.time-row select { min-width:54px; padding:6px 8px; height:36px; font-size:14px; }
+select option.strong { font-weight:700; }
+
+/* Контейнер за таблиците с часове */
+.pl-wrap {
+  overflow-x:hidden;
+  margin-bottom:14px; /* въздух под таблицата */
 }
 
-.prog-cap-main {
-  font-weight: 700;
-  font-size: 13px;
-  line-height: 1;
-  margin: 0;
+.pl-table { width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed; }
+.pl-table th, .pl-table td {
+  border:1px solid #20343a; border-radius:10px; text-align:center;
+  padding:var(--pl-pad); font-size:var(--pl-font); line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  min-width:var(--pl-minw);
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease, font-size .15s ease;
 }
 
-.prog-cap-brand {
-  font-size: 13px;
-  font-weight: 700;
-  margin-top: -4px;  /* най-важното – стяга марката към Берберин */
-  line-height: 1;
-  padding: 0;
-}
-
-/* clickable хедър */
-.prog-head-main.clickable {
-  cursor: pointer;
-  border-radius: 8px;
-  padding: 4px;
-  transition: background 0.15s ease;
-}
-.prog-head-main.clickable:hover {
-  background: #1a2a2f;
-}
+/* --- Стилове за Конфигуратора (Доп. Пакет) --- */
 
 .prog-head-actions {
   display: flex;
@@ -108,47 +72,46 @@ button {
   gap: 12px;
 }
 
-/* кръгъл бутон за приема */
-.prog-intake-btn {
-  padding: 0;
-  border-radius: 50%;
+/* ГЛАВАТА става бутон */
+.prog-head-main.clickable {
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 4px;
+  transition: background .15s ease;
+  flex: 1 1 auto; 
+}
+.prog-head-main.clickable:hover {
+  background: #1a2a2f;
 }
 
-/* ------------------------------- */
-/*             ТАБЛИЦИ             */
-/* ------------------------------- */
-
-.pl-wrap {
-  overflow-x: hidden;
-  margin-bottom: 14px;
+/* Заглавие на 2 реда */
+.prog-cap-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0; /* никаква допълнителна празнина между име и марка */
 }
 
-.pl-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 3px;
-  table-layout: fixed;
+/* Берберин – основен надпис */
+.prog-cap-main {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--text);
+  font-family: inherit;
+  line-height: 1;         /* максимално сбит ред */
+  transition: color .2s ease;
 }
 
-.pl-table th,
-.pl-table td {
-  border: 1px solid #20343a;
-  border-radius: 10px;
-  text-align: center;
-  padding: var(--pl-pad);
-  font-size: var(--pl-font);
-  line-height: 1.05;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  min-width: var(--pl-minw);
-  transition: background .15s ease, border-color .15s ease, box-shadow .15s ease;
+/* Марка – същият размер и дебелина като ProLact / Omni / Хитозан */
+.prog-cap-brand {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: inherit;
+  line-height: 1;         /* също сбит */
+  margin-top: -4px;       /* дърпаме марката нагоре към „Берберин“ */
 }
 
-/* ------------------------------- */
-/*         КОНФИГУРАТОР            */
-/* ------------------------------- */
-
+/* --- Панел за Настройки --- */
 .prog-config {
   flex-direction: column;
   gap: 14px;
@@ -158,34 +121,63 @@ button {
 }
 
 .prog-config .field {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
+  margin-bottom: 0;
+}
+.prog-config .field.brand-selector {
+  margin-bottom: 8px;
+}
+.prog-config .field.custom-brand-field {
+  margin-bottom: 8px;
 }
 
+.prog-config .field .lbl {
+  margin-bottom: 4px;
+}
+
+.prog-config select:focus,
+.prog-config input[type="text"]:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #2b6e66;
+}
+
+/* Контейнер за кръглите бутони в конфигуратора */
 .config-actions {
   display: flex;
-  gap: 8px;
+  justify-content: flex-start;
+  align-items: center;
   margin-top: 26px;
   margin-bottom: 26px;
 }
-
 .config-buttons {
   display: flex;
   gap: 8px;
 }
-
 .config-actions .clk-btn {
   width: 34px;
   height: 34px;
-  border-radius: 50%;
+}
+.config-actions .clk-btn .clk-btn-icon svg {
+  width: 20px;
+  height: 20px;
 }
 
-/* плъзгач */
+/* Стойност до плъзгача */
+.slider-val {
+  color: var(--accent);
+  font-weight: 800;
+  font-size: 1.1em;
+  padding: 0 4px;
+}
+
+/* Обвивка за плъзгача – 50% ширина, подравнен вляво */
 .slider-track-wrapper {
   position: relative;
-  width: 50%;
+  margin-top: 8px;
   height: 10px;
+  width: 50%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .slider-track-fill {
@@ -193,42 +185,47 @@ button {
   left: 0;
   top: 0;
   height: 10px;
-  width: 50%;
   background: var(--accent);
   border-radius: 5px;
+  pointer-events: none;
+  z-index: 1;
 }
 
 .slider-control {
+  -webkit-appearance: none;
+  appearance: none;
   width: 100%;
   height: 10px;
   border-radius: 5px;
-  background: transparent;
   border: 1px solid #254046;
+  outline: none;
+  padding: 0;
+  position: relative;
+  z-index: 2;
+  background: transparent;
 }
 
 .slider-control::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
   width: 24px;
   height: 24px;
-  border-radius: 50%;
   background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
 }
 
-.slider-val {
-  font-weight: 800;
-  color: var(--accent);
-  font-size: 1.1em;
+.slider-control::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
 }
 
-/* разделител */
-.prog-sep {
-  border: 0;
-  border-top: 1px solid var(--border);
-  margin: 14px 0;
-}
-
-@media (max-width: 380px) {
-  .prod-img {
-    width: 64px;
-    height: 64px;
-  }
+@media (max-width: 380px){
+  .time-row select { min-width:48px; }
+  .prod-img { width:64px; height:64px; border-radius:10px; }
 }
