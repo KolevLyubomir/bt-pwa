@@ -1,56 +1,94 @@
 /* PROGRAM LAYOUT
-   Структура на редове, хедъри, таблици и конфигурации
+   Структура на редове, хедъри, таблици и конфигурационен панел
 */
 
-.program-page main {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
+.prog-row { display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; margin:8px 0 0; }
 
-/* Ред в програмата (основен/доп. пакет) */
-.prog-row {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-/* Хедър над таблиците – име на продукт + бутон(и) */
 .prog-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 6px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:6px;
 }
 
-/* Лява част в хедъра – иконка + текст */
 .prog-head-main {
+  display:flex;
+  align-items:center;
+  gap:12px;
+  min-width:0;
+}
+
+.prod-img { width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046; }
+
+.prog-pill {
+  display:flex; flex-direction:column; gap:6px;
+  padding:8px 10px; background:#0d171b; border:1px solid #254046; border-radius:10px;
+  width:var(--pill-w); min-width:var(--pill-w); max-width:var(--pill-w);
+}
+.prog-pill label { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.prog-pill input[type="checkbox"] { width:16px; height:16px; margin:0; }
+
+.prog-cap { font-weight:700; font-size:13px; }
+.prog-sep { border:0; border-top:1px solid var(--border); margin:14px 0; }
+
+/* Бутонът за прием до името на продукта (Основен Пакет) - структура */
+.prog-intake-btn {
+  flex:0 0 auto;
+  padding:0;
+}
+.prog-intake-btn .clk-btn-icon {
+  padding:0;
+}
+.prog-intake-btn .clk-btn-icon svg {
+  width:32px;
+  height:32px;
+}
+
+.time-wrap { display:flex; align-items:center; gap:6px; }
+.time-row { display:flex; align-items:center; gap:4px; }
+.time-row select { min-width:54px; padding:6px 8px; height:36px; font-size:14px; }
+select option.strong { font-weight:700; }
+
+/* Контейнер за таблиците с часове */
+.pl-wrap {
+  overflow-x:hidden;
+  margin-bottom:14px; /* въздух под таблицата */
+}
+
+.pl-table { width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed; }
+.pl-table th, .pl-table td {
+  border:1px solid #20343a; border-radius:10px; text-align:center;
+  padding:var(--pl-pad); font-size:var(--pl-font); line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  min-width:var(--pl-minw);
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease, font-size .15s ease;
+}
+
+/* --- Стилове за Конфигуратора (Доп. Пакет) --- */
+
+.prog-head-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
-/* Малка картинка на продукта (квадрат) */
-.prod-img {
-  width: 52px;
-  height: 52px;
-  border-radius: 12px;
-  object-fit: cover;
-  background: #020617;
+/* ГЛАВАТА става бутон */
+.prog-head-main.clickable {
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 4px;
+  transition: background .15s ease;
+  flex: 1 1 auto; 
+}
+.prog-head-main.clickable:hover {
+  background: #1a2a2f;
 }
 
-/* Оригиналните надписи ProLact / Omni / Хитозан (едноредови) */
-.prog-cap {
-  font-weight: 700;
-  font-size: 13px;
-}
-
-/* Стек за Берберин / Глюкоманан / EGCg */
+/* Заглавие на 2 реда */
 .prog-cap-stack {
   display: flex;
   flex-direction: column;
-  gap: 0; /* без допълнителна празнина между редовете */
+  gap: 2px;
 }
 
 /* Берберин – основен надпис */
@@ -59,7 +97,6 @@
   font-size: 13px;
   color: var(--text);
   font-family: inherit;
-  line-height: 1.05; /* по-сбит ред */
   transition: color .2s ease;
 }
 
@@ -69,9 +106,6 @@
   font-weight: 700;
   color: var(--text);
   font-family: inherit;
-  line-height: 1.05;    /* същата височина като горния ред */
-  display: block;
-  margin-top: -2px;     /* дръпваме марката леко нагоре към „Берберин“ */
 }
 
 /* --- Панел за Настройки --- */
@@ -84,91 +118,48 @@
 }
 
 .prog-config .field {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  margin-bottom: 0;
+}
+.prog-config .field.brand-selector {
+  margin-bottom: 8px;
+}
+.prog-config .field.custom-brand-field {
+  margin-bottom: 8px;
 }
 
 .prog-config .field .lbl {
-  min-width: 90px;
-  font-size: 12px;
-  color: var(--muted);
+  margin-bottom: 4px;
 }
 
-.prog-config .field input[type="text"],
-.prog-config .field input[type="number"],
-.prog-config .field select {
-  flex: 1;
-  height: 32px;
-  border-radius: 999px;
-  border: 1px solid #334155;
-  background: #020617;
-  color: var(--text);
-  padding: 0 10px;
-  font-size: 13px;
+.prog-config select:focus,
+.prog-config input[type="text"]:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #2b6e66;
 }
 
-/* Допълнително поле за custom име (Берберин / Глюкоманан / EGCg) */
-.custom-brand-field {
-  margin-top: 2px;
-}
-
-/* Общо подравняване на бутони за Запази / Изтрий */
+/* Контейнер за кръглите бутони в конфигуратора */
 .config-actions {
   display: flex;
+  justify-content: flex-start;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 4px;
+  margin-top: 26px;
+  margin-bottom: 26px;
 }
-
 .config-buttons {
   display: flex;
-  align-items: center;
-  gap: 6px;
+  gap: 8px;
+}
+.config-actions .clk-btn {
+  width: 34px;
+  height: 34px;
+}
+.config-actions .clk-btn .clk-btn-icon svg {
+  width: 20px;
+  height: 20px;
 }
 
-/* Чип за марка над селекта (бутон с кръгла иконка и име) */
-.brand-selector {
-  flex-wrap: wrap;
-}
-
-.brand-selector .lbl {
-  margin-bottom: 2px;
-}
-
-.brand-selector button {
-  font-size: 13px;
-}
-
-/* Плъзгачите за брой приеми */
-.slider-track-wrapper {
-  position: relative;
-  flex: 1;
-  height: 18px;
-  display: flex;
-  align-items: center;
-}
-
-.slider-track-fill {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  height: 4px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #22c55e, #22c55e);
-  pointer-events: none;
-  max-width: 100%;
-  width: 50%;
-}
-
-.slider-control {
-  width: 100%;
-  background: transparent;
-}
-
-/* Стойност отдясно на плъзгача (x3 / x4...) */
+/* Стойност до плъзгача */
 .slider-val {
   color: var(--accent);
   font-weight: 800;
@@ -176,239 +167,62 @@
   padding: 0 4px;
 }
 
-/* Ограничаваме примерно до 260px самата писта на плъзгача */
-.prog-config .field .slider-track-wrapper {
-  max-width: 260px;
-}
-
-/* Разделителни хоризонтални линии между блоковете */
-.prog-sep {
-  border: 0;
-  border-top: 1px solid rgba(148, 163, 184, 0.25);
-  margin: 10px 0;
-}
-
-/* Че да има малко въздух над хедъра в Допълнителен пакет */
-#pkg-extra .prog-head {
-  margin-top: 4px;
-}
-
-/* Опаковка на таблиците с програмните часове */
-.pl-wrap {
-  margin-top: 4px;
-}
-
-/* Таблица с дни/часове */
-.pl-table {
-  width: 100%;
-  border-collapse: collapse;
-  border-spacing: 0;
-  font-size: 13px;
-}
-
-/* Заглавия с дните (Пн...Нд) */
-.pl-table thead th.pl-day {
-  text-align: center;
-  padding: 3px 0 5px;
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--muted);
-}
-
-/* Събота и неделя визуално се отличават (цветово) */
-.pl-table thead th.weekend {
-  color: #f97373;
-}
-
-/* Клетка с час */
-.pl-time-cell {
-  text-align: center;
-  padding: 5px 0;
-  border-radius: 10px;
-  cursor: pointer;
-  user-select: none;
+/* Обвивка за плъзгача – 50% ширина, подравнен вляво */
+.slider-track-wrapper {
   position: relative;
-  transition: background-color .15s ease, color .15s ease, box-shadow .15s ease;
+  margin-top: 8px;
+  height: 10px;
+  width: 50%;
+  margin-left: 0;
+  margin-right: 0;
 }
 
-/* Нормално състояние на клетката */
-.pl-time-cell {
-  color: #e5e7eb;
+.slider-track-fill {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 10px;
+  background: var(--accent);
+  border-radius: 5px;
+  pointer-events: none;
+  z-index: 1;
 }
 
-/* Ховър за клетка */
-.pl-time-cell:hover {
-  background: rgba(148, 163, 184, 0.18);
-}
-
-/* Активен ден (днес) в таблицата – outline/фон при нужда */
-.pl-time-cell.is-today {
-  box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.85);
-}
-
-/* Състояния за алармен статус – класове идват от JS */
-.pl-time-cell.state-intake {
-  background: rgba(34, 197, 94, 0.18);
-  color: #bbf7d0;
-}
-
-.pl-time-cell.state-snoozed {
-  background: rgba(234, 179, 8, 0.18);
-  color: #fef9c3;
-}
-
-.pl-time-cell.state-muted {
-  background: rgba(148, 163, 184, 0.12);
-  color: #cbd5f5;
-  text-decoration: line-through;
-}
-
-/* Ако клетката е избрана в момента във времевия модал */
-.pl-time-cell.is-selected {
-  box-shadow: 0 0 0 1px #38bdf8;
-}
-
-/* Бутоните за часовник в хедъра */
-.prog-head-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* Основен бутон-часовник (кръгъл) */
-.clk-btn.intake {
-  border-radius: 999px;
+.slider-control {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 10px;
+  border-radius: 5px;
+  border: 1px solid #254046;
+  outline: none;
   padding: 0;
-  width: 38px;
-  height: 38px;
-  border: 1px solid rgba(148, 163, 184, 0.45);
-  background: radial-gradient(circle at 30% 20%, rgba(52, 211, 153, 0.28), transparent 60%),
-              #020617;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Когато бутонът е скрит, просто не се показва – JS управлява display:none */
-.prog-intake-btn {
-  margin-left: 4px;
-}
-
-/* Картинка на часовник + хапче */
-.clk-btn-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-/* Оцветяване на елементите в иконата */
-.pill-clock-circle {
-  stroke: #22c55e;
-  stroke-width: 1.6;
-}
-
-.pill-clock-hands {
-  stroke: #22c55e;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-}
-
-.pill-clock-pill {
-  stroke: #22c55e;
-  stroke-width: 1.2;
-  fill: rgba(34, 197, 94, 0.08);
-}
-
-/* МАЛКО ПОДРАВНЯВАНЕ НА ТЕКСТОВЕТЕ В КОНФИГУРАЦИОННИЯ БЛОК */
-
-.prog-config .field .lbl + .slider-track-wrapper {
-  margin-left: 4px;
-}
-
-/* Диалог за потвърждение (Изтрий Марката) */
-.bt-confirm-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.76);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
-}
-
-.bt-confirm-dialog {
-  background: #020617;
-  border-radius: 18px;
-  padding: 16px 18px 14px;
-  width: 88%;
-  max-width: 320px;
-  box-shadow: 0 18px 45px rgba(0, 0, 0, 0.65);
-  border: 1px solid #1f2937;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-.bt-confirm-text {
-  margin: 0 0 14px;
-  font-size: 14px;
-  color: #f9fafb;
-}
-
-.bt-confirm-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.bt-confirm-btn {
-  border-radius: 999px;
-  border: 1px solid transparent;
-  padding: 6px 14px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-.bt-confirm-btn-secondary {
+  position: relative;
+  z-index: 2;
   background: transparent;
-  color: #e5e7eb;
-  border-color: #4b5563;
 }
 
-.bt-confirm-btn-danger {
-  background: #b91c1c;
-  color: #fef2f2;
-  border-color: #fecaca;
+.slider-control::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
 }
 
-/* Леко да не се разпъва прекалено прог-реда на малки екрани */
-@media (max-width: 480px) {
-  .prog-head {
-    align-items: flex-start;
-  }
-
-  .prog-head-actions {
-    align-self: center;
-  }
-
-  .prog-config .field {
-    align-items: flex-start;
-  }
+.slider-control::-moz-range-thumb {
+  width: 24px;
+  height: 24px;
+  background: var(--accent);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 3px solid #06241b;
 }
 
-/* Визуално отделяне на блоковете в Допълнителен пакет */
-#pkg-extra .config-block {
-  padding-top: 4px;
-}
-
-/* Когато заглавието е конфигурирано – евентуално лека промяна в цвета (ако решим с време)
-.prog-cap-main.configured {
-  color: #e5f9f0;
-}
-*/
-
-/* За да няма разместване при дълги имена на марките – нека текстът да не чупи много */
-.prog-cap-main,
-.prog-cap-brand {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+@media (max-width: 380px){
+  .time-row select { min-width:48px; }
+  .prod-img { width:64px; height:64px; border-radius:10px; }
 }
