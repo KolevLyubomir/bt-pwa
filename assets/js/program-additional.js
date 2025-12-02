@@ -1,4 +1,4 @@
-/* global createProductGrid, ModalLogic */
+/* global createProductGrid */
 
 (function () {
   "use strict";
@@ -140,29 +140,29 @@
   // ============================================
 
   function createConfigurableProduct(prefix, brandsMap) {
-    var configDiv = document.getElementById(prefix + "-config");
-    var nameInput = document.getElementById(prefix + "-name");
-    var slider = document.getElementById(prefix + "-slider");
-    var sliderVal = document.getElementById(prefix + "-slider-val");
+    var configDiv       = document.getElementById(prefix + "-config");
+    var nameInput       = document.getElementById(prefix + "-name");
+    var slider          = document.getElementById(prefix + "-slider");
+    var sliderVal       = document.getElementById(prefix + "-slider-val");
     var sliderTrackFill = document.getElementById(prefix + "-slider-track-fill");
-    var saveBtn = document.getElementById(prefix + "-save");
-    var deleteBtn = document.getElementById(prefix + "-delete");
-    var gridContainer = document.getElementById(prefix + "-grid-container");
-    var capMain = document.getElementById(prefix + "-cap-main");
-    var capBrand = document.getElementById(prefix + "-cap-brand");
-    var head = document.getElementById(prefix + "-head");
-    var brandSelect = document.getElementById(prefix + "-brand-select");
+    var saveBtn         = document.getElementById(prefix + "-save");
+    var deleteBtn       = document.getElementById(prefix + "-delete");
+    var gridContainer   = document.getElementById(prefix + "-grid-container");
+    var capMain         = document.getElementById(prefix + "-cap-main");
+    var capBrand        = document.getElementById(prefix + "-cap-brand");
+    var head            = document.getElementById(prefix + "-head");
+    var brandSelect     = document.getElementById(prefix + "-brand-select");
     var customNameField = document.getElementById(prefix + "-custom-name-field");
-    var productImg = document.getElementById(prefix + "-img");
-    var intakeBtn = document.getElementById("btnProgIntake" + prefix.toUpperCase());
-    var settingsBtn = document.getElementById(prefix + "-settings-btn");
+    var productImg      = document.getElementById(prefix + "-img");
+    var intakeBtn       = document.getElementById("btnProgIntake" + prefix.toUpperCase());
+    var settingsBtn     = document.getElementById(prefix + "-settings-btn");
 
     if (!configDiv || !slider || !saveBtn || !gridContainer || !head || !brandSelect) {
       console.error("Липсващи елементи за " + prefix);
       return;
     }
 
-    var STORAGE_KEY = "bt_add_" + prefix + "_v310";
+    var STORAGE_KEY      = "bt_add_" + prefix + "_v310";
     var GRID_STORAGE_KEY = "bt_grid_" + prefix + "_v310";
 
     var currentGridInstance = null;
@@ -180,7 +180,29 @@
         if (typeof saved.customName === "string") settings.customName = saved.customName;
         if (typeof saved.rows === "number") settings.rows = saved.rows;
       }
-    } catch (e) { }
+    } catch (e) {}
+
+    // запазваме оригиналната SVG и подготвяме Х
+    var gearSvg = settingsBtn ? settingsBtn.innerHTML : "";
+    var closeSvg = (
+      '<svg viewBox="0 0 24 24" width="18" height="18" fill="none"' +
+      ' stroke="#f97373" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M6 6l12 12M18 6L6 18"></path>' +
+      "</svg>"
+    );
+
+    function refreshSettingsIcon() {
+      if (!settingsBtn) return;
+
+      // ако няма редове – изобщо не показваме Х, а стандартното колело (дори и да не се вижда)
+      if (settings.rows === 0 || settingsBtn.style.display === "none") {
+        settingsBtn.innerHTML = gearSvg;
+        return;
+      }
+
+      var isVisible = configDiv.style.display !== "none" && configDiv.style.display !== "";
+      settingsBtn.innerHTML = isVisible ? closeSvg : gearSvg;
+    }
 
     function updateSliderFill() {
       if (!sliderTrackFill) return;
@@ -454,7 +476,7 @@
       brandSelect.style.display = "none";
     }
 
-    // -------- Адаптиране на състояние при смяна броя редове --------
+    // -------- Адаптиране на състояние при смяна на броя редове --------
 
     function adjustGridStateForRowChange(newRows) {
       if (newRows <= 0) return;
@@ -550,7 +572,6 @@
         }
       }
 
-      // чип
       if (brandPickerIcon && brandPickerLabel) {
         var uiBrand = brandsMap[brandKey] || brandsMap[Object.keys(brandsMap)[0]];
         if (uiBrand) {
@@ -600,7 +621,9 @@
         if (intakeBtn) intakeBtn.style.display = "inline-flex";
         if (settingsBtn) settingsBtn.style.display = "inline-flex";
       } else {
-        if (productImg) productImg.style.display = "none";
+        if (productImg) {
+          productImg.style.display = "none";
+        }
         if (capMain) capMain.classList.remove("configured");
         if (capBrand) capBrand.textContent = "";
         gridContainer.style.display = "none";
@@ -625,6 +648,7 @@
       }
 
       configDiv.style.display = showConfig ? "block" : "none";
+      refreshSettingsIcon();
     }
 
     function saveAndRerender(showConfig, needsGridUpdate, newRowsForGrid) {
@@ -633,7 +657,7 @@
 
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-      } catch (e) { }
+      } catch (e) {}
 
       var brandData = brandsMap[settings.brand] || brandsMap.custom;
       var currentName = brandData ? brandData.name : "";
@@ -759,11 +783,10 @@
     // СЪБИТИЯ ЗА HEAD & SETTINGS
     // ============================================
 
-    // Когато е празно (rows=0) – клик върху заглавието отваря/затваря.
+    // Когато е празно (rows=0) – клик върху заглавието отваря/затваря редакцията.
     if (head) {
       head.addEventListener("click", function (e) {
-        // ако кликът идва от бутона за настройки, не правим нищо тук
-        if (settingsBtn && (e.target === settingsBtn || settingsBtn.contains(e.target))) {
+        if (settingsBtn && (e.target === settingsBtn || (settingsBtn.contains && settingsBtn.contains(e.target)))) {
           return;
         }
         if (settings.rows === 0) {
@@ -771,6 +794,7 @@
             configDiv.style.display === "none" ||
             configDiv.style.display === "";
           configDiv.style.display = isHidden ? "block" : "none";
+          refreshSettingsIcon();
         }
       });
     }
@@ -779,10 +803,12 @@
     if (settingsBtn) {
       settingsBtn.addEventListener("click", function (e) {
         e.stopPropagation();
+        if (settings.rows === 0) return;
         var isHidden =
           configDiv.style.display === "none" ||
           configDiv.style.display === "";
         configDiv.style.display = isHidden ? "block" : "none";
+        refreshSettingsIcon();
       });
     }
 
@@ -823,6 +849,7 @@
     deleteBtn.addEventListener("click", function () {
       if (settings.rows === 0) {
         configDiv.style.display = "none";
+        refreshSettingsIcon();
         return;
       }
 
