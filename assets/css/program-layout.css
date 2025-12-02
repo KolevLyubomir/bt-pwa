@@ -88,7 +88,7 @@ select option.strong { font-weight:700; }
 .prog-cap-stack {
   display: flex;
   flex-direction: column;
-  gap: 0; /* без допълнителна празнина между име и марка */
+  gap: 0; /* никаква допълнителна празнина между име и марка */
 }
 
 /* Берберин – основен надпис */
@@ -97,7 +97,7 @@ select option.strong { font-weight:700; }
   font-size: 13px;
   color: var(--text);
   font-family: inherit;
-  line-height: 1.05; /* по-сбит ред */
+  line-height: 1;         /* максимално сбит ред */
   transition: color .2s ease;
 }
 
@@ -107,9 +107,8 @@ select option.strong { font-weight:700; }
   font-weight: 700;
   color: var(--text);
   font-family: inherit;
-  line-height: 1.05;   /* същата височина като горния ред */
-  display: block;
-  margin-top: -2px;    /* дръпваме марката нагоре към „Берберин“ */
+  line-height: 1;         /* също сбит */
+  margin-top: -4px;       /* дърпаме марката нагоре към „Берберин“ */
 }
 
 /* --- Панел за Настройки --- */
