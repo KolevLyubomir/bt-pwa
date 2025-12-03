@@ -86,42 +86,45 @@ select option.strong { font-weight:700; }
 
 /* Заглавие на 1 или 2 реда (Берберин + марка) */
 .prog-cap-stack {
+  position: relative;
   display: flex;
-  flex-direction: column;
-  justify-content: center;  /* центрира целия блок спрямо картинката */
-  gap: 0;
+  align-items: center;      /* подравняваме по вертикала, както при Основен пакет */
+  min-height: 2.2em;        /* място за марка + малък label отгоре */
 }
 
-/* Берберин / Глюкоманан / EGCg – когато НЯМА марка */
+/* Берберин / Глюкоманан / EGCg – когато НЯМА марка (нормален един ред, центриран) */
 .prog-cap-main {
+  position: static;
   font-weight: 700;
-  font-size: 13px;          /* нормален размер, като Основен пакет */
+  font-size: 13px;          /* същият размер като името в Основен пакет */
   color: var(--text);
   font-family: inherit;
-  line-height: 1.15;
-  transition: color .2s ease, font-size .2s ease, transform .2s ease, opacity .2s ease;
+  line-height: 1.1;
+  white-space: nowrap;
+  transition: color .2s ease, font-size .2s ease, opacity .2s ease, top .2s ease;
 }
 
-/* Когато ИМА марка:
-   – Берберин става по-дребен label над марката
-*/
+/* Когато ИМА марка – Берберин става по-дребен label над марката */
 .prog-cap-main.configured {
+  position: absolute;
+  top: 0.1em;               /* при нужда можеш да пипнеш между -0.1em и 0.3em */
+  left: 0;
   font-size: 11px;          /* по-малък шрифт */
   opacity: 0.9;
-  transform: translateY(-2px); /* леко го вдигаме нагоре над марката */
 }
 
-/* Марката – основният ред, като името в Основен пакет */
+/* Марката – основният ред, подравнен като при Основен Пакет */
 .prog-cap-brand {
+  display: inline-block;
   font-size: 13px;
   font-weight: 700;
   color: var(--text);
   font-family: inherit;
   line-height: 1.1;
+  white-space: nowrap;
 }
 
-/* Когато НЯМА марка – не показваме втория ред,
-   за да си стои само Берберин центриран */
+/* Когато НЯМА марка – няма втори ред, стои само Берберин центриран */
 .prog-cap-brand:empty {
   display: none;
 }
