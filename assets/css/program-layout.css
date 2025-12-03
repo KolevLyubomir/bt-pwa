@@ -84,31 +84,46 @@ select option.strong { font-weight:700; }
   background: #1a2a2f;
 }
 
-/* Заглавие на 2 реда */
+/* Заглавие на 1 или 2 реда (Берберин + марка) */
 .prog-cap-stack {
   display: flex;
   flex-direction: column;
-  gap: 0; /* никаква допълнителна празнина между име и марка */  
+  justify-content: center;  /* центрира целия блок спрямо картинката */
+  gap: 0;
 }
 
-/* Берберин – основен надпис */
+/* Берберин / Глюкоманан / EGCg – когато НЯМА марка */
 .prog-cap-main {
   font-weight: 700;
-  font-size: 13px;
+  font-size: 13px;          /* нормален размер, като Основен пакет */
   color: var(--text);
   font-family: inherit;
-  line-height: 1;         /* максимално сбит ред */
-  transition: color .2s ease;
+  line-height: 1.15;
+  transition: color .2s ease, font-size .2s ease, transform .2s ease, opacity .2s ease;
 }
 
-/* Марка – същият размер и дебелина като ProLact / Omni / Хитозан */
+/* Когато ИМА марка:
+   – Берберин става по-дребен label над марката
+*/
+.prog-cap-main.configured {
+  font-size: 11px;          /* по-малък шрифт */
+  opacity: 0.9;
+  transform: translateY(-2px); /* леко го вдигаме нагоре над марката */
+}
+
+/* Марката – основният ред, като името в Основен пакет */
 .prog-cap-brand {
   font-size: 13px;
   font-weight: 700;
   color: var(--text);
   font-family: inherit;
-  line-height: 1;         /* също сбит */
-  margin-top: -4px;       /* дърпаме марката нагоре към „Берберин“ */
+  line-height: 1.1;
+}
+
+/* Когато НЯМА марка – не показваме втория ред,
+   за да си стои само Берберин центриран */
+.prog-cap-brand:empty {
+  display: none;
 }
 
 /* --- Панел за Настройки --- */
