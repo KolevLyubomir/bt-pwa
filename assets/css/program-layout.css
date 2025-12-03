@@ -72,6 +72,16 @@ select option.strong { font-weight:700; }
   gap: 12px;
 }
 
+/* при Допълнителен пакет позволяваме прегъване, за да няма хоризонтален скрол */
+#pkg-extra .prog-head {
+  flex-wrap: wrap;
+}
+
+#pkg-extra .prog-head-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
 /* ГЛАВАТА става бутон */
 .prog-head-main.clickable {
   cursor: pointer;
@@ -90,6 +100,14 @@ select option.strong { font-weight:700; }
   display: flex;
   align-items: center;      /* подравняваме по вертикала, както при Основен пакет */
   min-height: 2.2em;        /* място за марка + малък label отгоре */
+}
+
+/* ред "Берберин + зъбно колело" */
+.prog-cap-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: relative;
 }
 
 /* Берберин / Глюкоманан / EGCg – когато НЯМА марка (нормален един ред, центриран) */
@@ -127,6 +145,27 @@ select option.strong { font-weight:700; }
 /* Когато НЯМА марка – няма втори ред, стои само Берберин центриран */
 .prog-cap-brand:empty {
   display: none;
+}
+
+/* малко зъбно колело до Берберин/Глюкоманан/EGCg */
+.prog-cap-settings {
+  margin-left: 2px;
+  padding: 0;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1px solid #334155;
+  background: #020617;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.prog-cap-settings svg {
+  width: 11px;
+  height: 11px;
 }
 
 /* --- Панел за Настройки --- */
