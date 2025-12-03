@@ -89,7 +89,7 @@ select option.strong { font-weight:700; }
   display: flex;
   flex-direction: column;
   gap: 0; /* никаква допълнителна празнина между име и марка */
-  padding-bottom: 10px;
+  padding-bottom: 20px;
 }
 
 /* Берберин – основен надпис */
