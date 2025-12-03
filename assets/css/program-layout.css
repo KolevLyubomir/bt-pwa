@@ -94,60 +94,60 @@ select option.strong { font-weight:700; }
   background: #1a2a2f;
 }
 
-/* Заглавие на 1 или 2 реда (Берберин + марка) */
+/* НОВА ЛОГИКА ЗА СТЕКА (Заглавие + Марка) 
+   Използваме flex-column за чисто подреждане
+*/
 .prog-cap-stack {
-  position: relative;
   display: flex;
-  align-items: center;      /* подравняваме по вертикала, както при Основен пакет */
-  min-height: 2.2em;        /* място за марка + малък label отгоре */
+  flex-direction: column;       /* Елементите един под друг */
+  justify-content: center;      /* Центриране вертикално спрямо картинката */
+  align-items: flex-start;      /* Подравняване вляво */
+  min-height: 40px;             /* Гарантираме височина за по-добро центриране */
+  gap: 1px;                     /* Минимално разстояние между "Берберин" и Марката */
 }
 
-/* ред "Берберин + зъбно колело" */
+/* Редът, съдържащ "Берберин" и зъбното колело */
 .prog-cap-row {
   display: flex;
   align-items: center;
   gap: 4px;
-  position: relative;
+  line-height: 1;
 }
 
-/* Берберин / Глюкоманан / EGCg – когато НЯМА марка (нормален един ред, центриран) */
+/* Основно име (напр. Берберин) - стандартно състояние */
 .prog-cap-main {
-  position: static;
   font-weight: 700;
-  font-size: 13px;          /* същият размер като името в Основен пакет */
+  font-size: 13px;          
   color: var(--text);
   font-family: inherit;
-  line-height: 1.1;
-  white-space: nowrap;
-  transition: color .2s ease, font-size .2s ease, opacity .2s ease, top .2s ease;
+  transition: all .2s ease;
 }
 
-/* Когато ИМА марка – Берберин става по-дребен label над марката */
+/* Основно име - КОГАТО ИМА ИЗБРАНА МАРКА (Configured) */
+/* Става малък етикет над марката */
 .prog-cap-main.configured {
-  position: absolute;
-  top: 0.1em;               /* при нужда можеш да пипнеш между -0.1em и 0.3em */
-  left: 0;
-  font-size: 11px;          /* по-малък шрифт */
-  opacity: 0.9;
+  font-size: 11px;          /* По-малък шрифт */
+  color: var(--muted);      /* По-блед цвят */
+  font-weight: 600;
+  text-transform: uppercase; /* Опционално: прави го да изглежда повече като етикет */
+  letter-spacing: 0.5px;
 }
 
-/* Марката – основният ред, подравнен като при Основен Пакет */
+/* Име на Марката (появява се отдолу) */
 .prog-cap-brand {
-  display: inline-block;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text);
-  font-family: inherit;
-  line-height: 1.1;
-  white-space: nowrap;
+  display: block;
+  font-size: 13px;          /* Същият размер като в Основен Пакет */
+  font-weight: 700;         /* Същата дебелина */
+  color: var(--text);       /* Основен цвят на текста */
+  line-height: 1.2;
 }
 
-/* Когато НЯМА марка – няма втори ред, стои само Берберин центриран */
+/* Скриваме празната марка, за да работи центрирането правилно */
 .prog-cap-brand:empty {
   display: none;
 }
 
-/* малко зъбно колело до Берберин/Глюкоманан/EGCg */
+/* Малко зъбно колело */
 .prog-cap-settings {
   margin-left: 2px;
   padding: 0;
