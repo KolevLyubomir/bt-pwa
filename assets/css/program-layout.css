@@ -10,6 +10,8 @@
   justify-content:space-between;
   gap:12px;
   margin-bottom:6px;
+  /* Важно: Забраняваме пренасянето, за да не пада бутонът под картинката */
+  flex-wrap: nowrap; 
 }
 
 .prog-head-main {
@@ -17,9 +19,18 @@
   align-items:center;
   gap:12px;
   min-width:0;
+  /* Позволяваме на текста да се свива, но не и на картинката */
+  flex: 1 1 auto;
 }
 
-.prod-img { width:76px; height:76px; object-fit:contain; border-radius:12px; background:#0d171b; border:1px solid #254046; }
+.prod-img { 
+  width:76px; height:76px; 
+  object-fit:contain; 
+  border-radius:12px; 
+  background:#0d171b; 
+  border:1px solid #254046;
+  flex-shrink: 0; /* Картинката никога не се мачка */
+}
 
 .prog-pill {
   display:flex; flex-direction:column; gap:6px;
@@ -70,16 +81,7 @@ select option.strong { font-weight:700; }
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-/* при Допълнителен пакет позволяваме прегъване, за да няма хоризонтален скрол */
-#pkg-extra .prog-head {
-  flex-wrap: wrap;
-}
-
-#pkg-extra .prog-head-main {
-  flex: 1 1 auto;
-  min-width: 0;
+  flex-shrink: 0; /* Бутоните не се мачкат */
 }
 
 /* ГЛАВАТА става бутон */
@@ -88,7 +90,6 @@ select option.strong { font-weight:700; }
   border-radius: 8px;
   padding: 4px;
   transition: background .15s ease;
-  flex: 1 1 auto; 
 }
 .prog-head-main.clickable:hover {
   background: #1a2a2f;
@@ -97,11 +98,11 @@ select option.strong { font-weight:700; }
 /* СТЕК (Заглавие + Марка) */
 .prog-cap-stack {
   display: flex;
-  flex-direction: column;       /* Елементите един под друг */
-  justify-content: center;      /* Центриране вертикално спрямо картинката */
-  align-items: flex-start;      /* Подравняване вляво */
-  min-height: 40px;             /* Гарантираме височина за по-добро центриране */
-  gap: 0;                       /* Плътно един до друг */
+  flex-direction: column;       
+  justify-content: center;      /* Вертикално центриране */
+  align-items: flex-start;      
+  height: 76px;                 /* Фиксираме височината колкото на картинката */
+  gap: 2px;                     /* Малко разстояние между редовете */
 }
 
 /* Редът, съдържащ "Берберин" и зъбното колело */
@@ -122,25 +123,34 @@ select option.strong { font-weight:700; }
 }
 
 /* Основно име - КОГАТО ИМА ИЗБРАНА МАРКА (Configured) */
-/* Става малък етикет над марката - БЕЗ главни букви */
+/* Става малък етикет над марката - БЕЗ главни букви, по-тънък шрифт */
 .prog-cap-main.configured {
-  font-size: 11px;           /* По-малък шрифт */
-  color: var(--muted);       /* По-блед цвят */
-  font-weight: 600;
-  margin-bottom: 2px;        /* Малко въздух преди марката */
-  /* text-transform: uppercase; <--- ПРЕМАХНАТО */
+  font-size: 11px;           
+  color: var(--muted);       
+  font-weight: 400;          /* Нормален шрифт, не удебелен */
+  text-transform: none;      /* Изрично без главни букви */
+  margin-bottom: 0;
 }
 
 /* Име на Марката (появява се отдолу) */
 .prog-cap-brand {
   display: block;
-  font-size: 13px;          /* Същият размер като в Основен Пакет */
-  font-weight: 700;         /* Същата дебелина */
-  color: var(--text);       /* Основен цвят на текста */
+  font-size: 13px;          /* Като в Основен Пакет */
+  font-weight: 700;         /* Удебелено */
+  color: var(--text);       
   line-height: 1.2;
+  text-transform: none;     /* Без автоматични главни букви */
+  
+  /* Защита при много дълги имена на марки */
+  white-space: normal;      
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;            /* Compatibility fix */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-/* Скриваме празната марка, за да работи центрирането правилно */
+/* Скриваме празната марка */
 .prog-cap-brand:empty {
   display: none;
 }
@@ -159,6 +169,10 @@ select option.strong { font-weight:700; }
   justify-content: center;
   cursor: pointer;
   flex-shrink: 0;
+  opacity: 0.7;
+}
+.prog-cap-settings:hover {
+  opacity: 1;
 }
 
 .prog-cap-settings svg {
@@ -283,4 +297,6 @@ select option.strong { font-weight:700; }
 @media (max-width: 380px){
   .time-row select { min-width:48px; }
   .prod-img { width:64px; height:64px; border-radius:10px; }
+  /* При много малки екрани, намаляваме височината на стека, за да съвпадне с по-малката картинка */
+  .prog-cap-stack { height: 64px; }
 }
