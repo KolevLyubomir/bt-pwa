@@ -94,16 +94,14 @@ select option.strong { font-weight:700; }
   background: #1a2a2f;
 }
 
-/* НОВА ЛОГИКА ЗА СТЕКА (Заглавие + Марка) 
-   Използваме flex-column за чисто подреждане
-*/
+/* СТЕК (Заглавие + Марка) */
 .prog-cap-stack {
   display: flex;
   flex-direction: column;       /* Елементите един под друг */
   justify-content: center;      /* Центриране вертикално спрямо картинката */
   align-items: flex-start;      /* Подравняване вляво */
   min-height: 40px;             /* Гарантираме височина за по-добро центриране */
-  gap: 1px;                     /* Минимално разстояние между "Берберин" и Марката */
+  gap: 0;                       /* Плътно един до друг */
 }
 
 /* Редът, съдържащ "Берберин" и зъбното колело */
@@ -124,13 +122,13 @@ select option.strong { font-weight:700; }
 }
 
 /* Основно име - КОГАТО ИМА ИЗБРАНА МАРКА (Configured) */
-/* Става малък етикет над марката */
+/* Става малък етикет над марката - БЕЗ главни букви */
 .prog-cap-main.configured {
-  font-size: 11px;          /* По-малък шрифт */
-  color: var(--muted);      /* По-блед цвят */
+  font-size: 11px;           /* По-малък шрифт */
+  color: var(--muted);       /* По-блед цвят */
   font-weight: 600;
-  text-transform: uppercase; /* Опционално: прави го да изглежда повече като етикет */
-  letter-spacing: 0.5px;
+  margin-bottom: 2px;        /* Малко въздух преди марката */
+  /* text-transform: uppercase; <--- ПРЕМАХНАТО */
 }
 
 /* Име на Марката (появява се отдолу) */
