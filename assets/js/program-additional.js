@@ -182,7 +182,6 @@
       }
     } catch (e) {}
 
-    // запазваме оригиналната SVG и подготвяме Х
     var gearSvg = settingsBtn ? settingsBtn.innerHTML : "";
     var closeSvg = (
       '<svg viewBox="0 0 24 24" width="18" height="18" fill="none"' +
@@ -193,13 +192,10 @@
 
     function refreshSettingsIcon() {
       if (!settingsBtn) return;
-
-      // ако няма редове – изобщо не показваме Х, а стандартното колело (дори и да не се вижда)
       if (settings.rows === 0 || settingsBtn.style.display === "none") {
         settingsBtn.innerHTML = gearSvg;
         return;
       }
-
       var isVisible = configDiv.style.display !== "none" && configDiv.style.display !== "";
       settingsBtn.innerHTML = isVisible ? closeSvg : gearSvg;
     }
@@ -218,22 +214,17 @@
     function showDeleteConfirm(message, onConfirm) {
       var backdrop = document.createElement("div");
       backdrop.className = "bt-confirm-backdrop";
-
       var dialog = document.createElement("div");
       dialog.className = "bt-confirm-dialog";
-
       var text = document.createElement("p");
       text.className = "bt-confirm-text";
       text.textContent = message;
-
       var actions = document.createElement("div");
       actions.className = "bt-confirm-actions";
-
       var btnCancel = document.createElement("button");
       btnCancel.type = "button";
       btnCancel.className = "bt-confirm-btn bt-confirm-btn-secondary";
       btnCancel.textContent = "Откажи";
-
       var btnOk = document.createElement("button");
       btnOk.type = "button";
       btnOk.className = "bt-confirm-btn bt-confirm-btn-danger";
@@ -247,20 +238,11 @@
       document.body.appendChild(backdrop);
 
       function close() {
-        if (backdrop && backdrop.parentNode) {
-          backdrop.parentNode.removeChild(backdrop);
-        }
+        if (backdrop && backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
       }
-
       btnCancel.addEventListener("click", close);
-      btnOk.addEventListener("click", function () {
-        close();
-        if (typeof onConfirm === "function") onConfirm();
-      });
-
-      backdrop.addEventListener("click", function (e) {
-        if (e.target === backdrop) close();
-      });
+      btnOk.addEventListener("click", function () { close(); if (typeof onConfirm === "function") onConfirm(); });
+      backdrop.addEventListener("click", function (e) { if (e.target === backdrop) close(); });
     }
 
     // -------- Модал за избор на марка --------
@@ -297,98 +279,49 @@
     function buildBrandModal() {
       brandModal = document.createElement("div");
       brandModal.id = prefix + "-brand-modal";
-      brandModal.style.position = "fixed";
-      brandModal.style.inset = "0";
-      brandModal.style.background = "rgba(0,0,0,0.45)";
-      brandModal.style.display = "none";
-      brandModal.style.alignItems = "center";
-      brandModal.style.justifyContent = "center";
-      brandModal.style.zIndex = "9999";
+      Object.assign(brandModal.style, { position: "fixed", inset: "0", background: "rgba(0,0,0,0.45)", display: "none", alignItems: "center", justifyContent: "center", zIndex: "9999" });
 
       var dialog = document.createElement("div");
-      dialog.style.background = "#020617";
-      dialog.style.borderRadius = "20px";
-      dialog.style.padding = "18px 20px";
-      dialog.style.width = "92%";
-      dialog.style.maxWidth = "360px";
-      dialog.style.maxHeight = "80vh";
-      dialog.style.display = "flex";
-      dialog.style.flexDirection = "column";
-      dialog.style.boxShadow = "0 18px 45px rgba(0,0,0,0.65)";
-      dialog.style.border = "1px solid #1f2937";
-      dialog.style.fontFamily = "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+      Object.assign(dialog.style, { background: "#020617", borderRadius: "20px", padding: "18px 20px", width: "92%", maxWidth: "360px", maxHeight: "80vh", display: "flex", flexDirection: "column", boxShadow: "0 18px 45px rgba(0,0,0,0.65)", border: "1px solid #1f2937", fontFamily: "system-ui" });
 
       var headerRow = document.createElement("div");
-      headerRow.style.display = "flex";
-      headerRow.style.justifyContent = "space-between";
-      headerRow.style.alignItems = "center";
-      headerRow.style.marginBottom = "12px";
+      Object.assign(headerRow.style, { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px" });
 
       brandModalTitle = document.createElement("div");
       var headerName = (capMain && capMain.textContent) ? capMain.textContent : "марка";
       brandModalTitle.textContent = "Избор на " + headerName;
-      brandModalTitle.style.fontSize = "15px";
-      brandModalTitle.style.fontWeight = "600";
-      brandModalTitle.style.color = "#f9fafb";
+      Object.assign(brandModalTitle.style, { fontSize: "15px", fontWeight: "600", color: "#f9fafb" });
 
       var closeX = document.createElement("button");
       closeX.type = "button";
       closeX.textContent = "×";
-      closeX.style.border = "none";
-      closeX.style.background = "transparent";
-      closeX.style.fontSize = "20px";
-      closeX.style.lineHeight = "1";
-      closeX.style.cursor = "pointer";
-      closeX.style.color = "#9ca3af";
+      Object.assign(closeX.style, { border: "none", background: "transparent", fontSize: "20px", lineHeight: "1", cursor: "pointer", color: "#9ca3af" });
       closeX.addEventListener("click", closeBrandModal);
 
       headerRow.appendChild(brandModalTitle);
       headerRow.appendChild(closeX);
 
       brandModalList = document.createElement("div");
-      brandModalList.style.display = "flex";
-      brandModalList.style.flexDirection = "column";
-      brandModalList.style.gap = "8px";
-      brandModalList.style.overflowY = "auto";
-      brandModalList.style.paddingRight = "4px";
-      brandModalList.style.marginTop = "4px";
+      Object.assign(brandModalList.style, { display: "flex", flexDirection: "column", gap: "8px", overflowY: "auto", paddingRight: "4px", marginTop: "4px" });
 
       Object.keys(brandsMap).forEach(function (key) {
         var bData = brandsMap[key];
         var itemBtn = document.createElement("button");
         itemBtn.type = "button";
         itemBtn.setAttribute("data-brand-key", key);
-        itemBtn.style.display = "flex";
-        itemBtn.style.alignItems = "center";
-        itemBtn.style.width = "100%";
-        itemBtn.style.borderRadius = "999px";
-        itemBtn.style.border = "1px solid #334155";
-        itemBtn.style.padding = "8px 10px";
-        itemBtn.style.background = "#020617";
-        itemBtn.style.cursor = "pointer";
-        itemBtn.style.fontSize = "13px";
-        itemBtn.style.justifyContent = "flex-start";
-        itemBtn.style.color = "#e5e7eb";
+        Object.assign(itemBtn.style, { display: "flex", alignItems: "center", width: "100%", borderRadius: "999px", border: "1px solid #334155", padding: "8px 10px", background: "#020617", cursor: "pointer", fontSize: "13px", justifyContent: "flex-start", color: "#e5e7eb" });
 
         var left = document.createElement("div");
-        left.style.display = "flex";
-        left.style.alignItems = "center";
-        left.style.gap = "8px";
+        Object.assign(left.style, { display: "flex", alignItems: "center", gap: "8px" });
 
         var icon = document.createElement("img");
         icon.src = bData.icon || bData.img;
         icon.alt = bData.name;
-        icon.style.width = "24px";
-        icon.style.height = "24px";
-        icon.style.borderRadius = "999px";
-        icon.style.objectFit = "cover";
-        icon.style.backgroundColor = "#0f172a";
+        Object.assign(icon.style, { width: "24px", height: "24px", borderRadius: "999px", objectFit: "cover", backgroundColor: "#0f172a" });
 
         var lbl = document.createElement("span");
         lbl.textContent = bData.name;
-        lbl.style.whiteSpace = "nowrap";
-        lbl.style.overflow = "hidden";
-        lbl.style.textOverflow = "ellipsis";
+        Object.assign(lbl.style, { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" });
 
         left.appendChild(icon);
         left.appendChild(lbl);
@@ -397,15 +330,7 @@
         itemBtn.addEventListener("click", function () {
           var brandKey = itemBtn.getAttribute("data-brand-key");
           brandSelect.value = brandKey;
-
-          var evt;
-          if (typeof Event === "function") {
-            evt = new Event("change", { bubbles: true });
-          } else {
-            evt = document.createEvent("Event");
-            evt.initEvent("change", true, true);
-          }
-          brandSelect.dispatchEvent(evt);
+          var evt = document.createEvent("Event"); evt.initEvent("change", true, true); brandSelect.dispatchEvent(evt);
 
           if (brandPickerBtn && brandPickerIcon && brandPickerLabel) {
             var chosenBrand = brandsMap[brandKey] || brandsMap[Object.keys(brandsMap)[0]];
@@ -417,10 +342,8 @@
               brandPickerLabel.textContent = "неизбрана";
             }
           }
-
           closeBrandModal();
         });
-
         brandModalList.appendChild(itemBtn);
       });
 
@@ -430,33 +353,16 @@
       document.body.appendChild(brandModal);
     }
 
-    // -------- Чип за избор на марка над селекта --------
-
+    // -------- Чип за избор на марка --------
     brandPickerBtn = document.createElement("button");
     brandPickerBtn.type = "button";
-    brandPickerBtn.style.display = "inline-flex";
-    brandPickerBtn.style.alignItems = "center";
-    brandPickerBtn.style.gap = "6px";
-    brandPickerBtn.style.padding = "6px 10px";
-    brandPickerBtn.style.borderRadius = "999px";
-    brandPickerBtn.style.border = "1px solid #4b5563";
-    brandPickerBtn.style.background = "#020617";
-    brandPickerBtn.style.fontSize = "13px";
-    brandPickerBtn.style.cursor = "pointer";
-    brandPickerBtn.style.marginBottom = "6px";
-    brandPickerBtn.style.color = "#e5e7eb";
+    Object.assign(brandPickerBtn.style, { display: "inline-flex", alignItems: "center", gap: "6px", padding: "6px 10px", borderRadius: "999px", border: "1px solid #4b5563", background: "#020617", fontSize: "13px", cursor: "pointer", marginBottom: "6px", color: "#e5e7eb" });
 
     brandPickerIcon = document.createElement("img");
-    brandPickerIcon.style.width = "20px";
-    brandPickerIcon.style.height = "20px";
-    brandPickerIcon.style.borderRadius = "999px";
-    brandPickerIcon.style.objectFit = "cover";
-    brandPickerIcon.style.backgroundColor = "#0f172a";
+    Object.assign(brandPickerIcon.style, { width: "20px", height: "20px", borderRadius: "999px", objectFit: "cover", backgroundColor: "#0f172a" });
 
     brandPickerLabel = document.createElement("span");
-    brandPickerLabel.style.whiteSpace = "nowrap";
-    brandPickerLabel.style.overflow = "hidden";
-    brandPickerLabel.style.textOverflow = "ellipsis";
+    Object.assign(brandPickerLabel.style, { whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" });
 
     var initialBrand = brandsMap[settings.brand] || brandsMap[Object.keys(brandsMap)[0]];
     if (initialBrand) {
@@ -476,49 +382,24 @@
       brandSelect.style.display = "none";
     }
 
-    // -------- Адаптиране на състояние при смяна на броя редове --------
-
     function adjustGridStateForRowChange(newRows) {
       if (newRows <= 0) return;
-
-      var raw = null;
-      try {
-        raw = JSON.parse(localStorage.getItem(GRID_STORAGE_KEY) || "null");
-      } catch (e) {
-        raw = null;
-      }
-
-      var MAX_ROWS = newRows;
-      var NUM_DAYS = 7;
-      var newTimes = [];
-      var newFlags = [];
+      var raw = null; try { raw = JSON.parse(localStorage.getItem(GRID_STORAGE_KEY) || "null"); } catch (e) { raw = null; }
+      var MAX_ROWS = newRows, NUM_DAYS = 7, newTimes = [], newFlags = [];
 
       if (!raw || !raw.times || !Array.isArray(raw.times)) {
         for (var r = 0; r < MAX_ROWS; r++) {
           newTimes[r] = [];
-          for (var d = 0; d < NUM_DAYS; d++) {
-            var base = DEFAULT_TIMES_MAP[MAX_ROWS] && DEFAULT_TIMES_MAP[MAX_ROWS][r]
-              ? DEFAULT_TIMES_MAP[MAX_ROWS][r][0]
-              : "12:00";
-            newTimes[r][d] = base;
-          }
+          for (var d = 0; d < NUM_DAYS; d++) newTimes[r][d] = (DEFAULT_TIMES_MAP[MAX_ROWS] && DEFAULT_TIMES_MAP[MAX_ROWS][r]) ? DEFAULT_TIMES_MAP[MAX_ROWS][r][0] : "12:00";
           newFlags[r] = [0, 0, 0, 0, 0, 0, 0];
         }
       } else {
-        var oldTimes = raw.times;
-        var oldRows = oldTimes.length;
+        var oldTimes = raw.times, oldRows = oldTimes.length;
         for (var r2 = 0; r2 < MAX_ROWS; r2++) {
-          newTimes[r2] = [];
-          newFlags[r2] = [0, 0, 0, 0, 0, 0, 0];
+          newTimes[r2] = []; newFlags[r2] = [0, 0, 0, 0, 0, 0, 0];
           for (var d2 = 0; d2 < NUM_DAYS; d2++) {
-            if (r2 < oldRows && Array.isArray(oldTimes[r2]) && typeof oldTimes[r2][d2] === "string") {
-              newTimes[r2][d2] = oldTimes[r2][d2];
-            } else {
-              var base2 = DEFAULT_TIMES_MAP[MAX_ROWS] && DEFAULT_TIMES_MAP[MAX_ROWS][r2]
-                ? DEFAULT_TIMES_MAP[MAX_ROWS][r2][0]
-                : "12:00";
-              newTimes[r2][d2] = base2;
-            }
+            if (r2 < oldRows && Array.isArray(oldTimes[r2]) && typeof oldTimes[r2][d2] === "string") newTimes[r2][d2] = oldTimes[r2][d2];
+            else newTimes[r2][d2] = (DEFAULT_TIMES_MAP[MAX_ROWS] && DEFAULT_TIMES_MAP[MAX_ROWS][r2]) ? DEFAULT_TIMES_MAP[MAX_ROWS][r2][0] : "12:00";
           }
         }
       }
@@ -526,50 +407,35 @@
       var MAX_MIN = 23 * 60 + 59;
       for (var day = 0; day < NUM_DAYS; day++) {
         var mins = [];
-        for (var rr = 0; rr < MAX_ROWS; rr++) {
-          mins[rr] = timeStrToMin(newTimes[rr][day]);
-        }
-        mins.sort(function (a, b) { return a - b; });
+        for (var rr = 0; rr < MAX_ROWS; rr++) mins[rr] = timeStrToMin(newTimes[rr][day]);
+        mins.sort((a, b) => a - b);
         for (var rr2 = 0; rr2 < MAX_ROWS; rr2++) {
-          var clamped = mins[rr2];
-          if (clamped < 0) clamped = 0;
-          if (clamped > MAX_MIN) clamped = MAX_MIN;
+          var clamped = mins[rr2]; if (clamped < 0) clamped = 0; if (clamped > MAX_MIN) clamped = MAX_MIN;
           newTimes[rr2][day] = minToTimeStr(clamped);
         }
       }
 
       var newState = {
-        times: newTimes,
-        flag: newFlags,
+        times: newTimes, flag: newFlags,
         todayDow: raw && typeof raw.todayDow === "number" ? raw.todayDow : (new Date()).getDay(),
         activeDow: raw && typeof raw.activeDow === "number" ? raw.activeDow : (new Date()).getDay()
       };
-
-      try {
-        localStorage.setItem(GRID_STORAGE_KEY, JSON.stringify(newState));
-      } catch (e2) { }
+      try { localStorage.setItem(GRID_STORAGE_KEY, JSON.stringify(newState)); } catch (e2) { }
     }
 
     // -------- UI обновяване --------
 
     function updateUI(showConfig) {
       var brandKey = settings.brand;
-      if (!brandsMap[brandKey]) {
-        brandKey = Object.keys(brandsMap)[0];
-        settings.brand = brandKey;
-      }
-
+      if (!brandsMap[brandKey]) { brandKey = Object.keys(brandsMap)[0]; settings.brand = brandKey; }
       brandSelect.value = brandKey;
       var brandData = brandsMap[brandKey] || brandsMap[Object.keys(brandsMap)[0]];
       var currentName = brandData.name;
       var isConfigured = settings.rows > 0;
 
       if (settings.brand === "custom") {
-        if (settings.customName) {
-          currentName = settings.customName;
-        } else if (nameInput && nameInput.placeholder) {
-          currentName = nameInput.placeholder;
-        }
+        if (settings.customName) currentName = settings.customName;
+        else if (nameInput && nameInput.placeholder) currentName = nameInput.placeholder;
       }
 
       if (brandPickerIcon && brandPickerLabel) {
@@ -583,22 +449,13 @@
         }
       }
 
-      if (isConfigured) {
-        slider.value = String(settings.rows);
-      } else {
-        slider.value = "3";
-      }
+      slider.value = isConfigured ? String(settings.rows) : "3";
       sliderVal.textContent = slider.value;
       updateSliderFill();
 
       if (brandKey === "custom") {
         customNameField.style.display = "block";
         nameInput.value = settings.customName || "";
-        if (settings.customName) {
-          currentName = settings.customName;
-        } else if (nameInput.placeholder) {
-          currentName = nameInput.placeholder;
-        }
       } else {
         customNameField.style.display = "none";
         nameInput.value = "";
@@ -621,32 +478,30 @@
         if (intakeBtn) intakeBtn.style.display = "inline-flex";
         if (settingsBtn) settingsBtn.style.display = "inline-flex";
       } else {
-        if (productImg) {
+        // --- ПРОМЯНА: Ако не е конфигуриран, показваме картинката на "custom" ---
+        var defBrand = brandsMap["custom"];
+        if (productImg && defBrand && defBrand.img) {
+          productImg.src = defBrand.img;
+          productImg.style.display = "block";
+          productImg.alt = "Неконфигуриран";
+        } else if (productImg) {
           productImg.style.display = "none";
         }
+
         if (capMain) capMain.classList.remove("configured");
         if (capBrand) capBrand.textContent = "";
         gridContainer.style.display = "none";
         gridContainer.innerHTML = "";
 
-        if (intakeBtn) {
-          intakeBtn.style.display = "none";
-          intakeBtn.removeAttribute("data-row");
-          intakeBtn.removeAttribute("data-dow");
-        }
+        if (intakeBtn) { intakeBtn.style.display = "none"; intakeBtn.removeAttribute("data-row"); intakeBtn.removeAttribute("data-dow"); }
         if (settingsBtn) settingsBtn.style.display = "none";
 
         if (currentGridInstance) {
-          if (Array.isArray(window.grids)) {
-            window.grids = window.grids.filter(function (g) { return g !== currentGridInstance; });
-          }
-          if (typeof currentGridInstance.destroy === "function") {
-            currentGridInstance.destroy();
-          }
+          if (Array.isArray(window.grids)) window.grids = window.grids.filter(g => g !== currentGridInstance);
+          if (typeof currentGridInstance.destroy === "function") currentGridInstance.destroy();
           currentGridInstance = null;
         }
       }
-
       configDiv.style.display = showConfig ? "block" : "none";
       refreshSettingsIcon();
     }
@@ -654,226 +509,118 @@
     function saveAndRerender(showConfig, needsGridUpdate, newRowsForGrid) {
       if (showConfig === void 0) showConfig = false;
       if (needsGridUpdate === void 0) needsGridUpdate = false;
-
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-      } catch (e) {}
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(settings)); } catch (e) {}
 
       var brandData = brandsMap[settings.brand] || brandsMap.custom;
       var currentName = brandData ? brandData.name : "";
-
       if (settings.brand === "custom") {
-        if (settings.customName) {
-          currentName = settings.customName;
-        } else if (nameInput && nameInput.placeholder) {
-          currentName = nameInput.placeholder;
-        }
+        if (settings.customName) currentName = settings.customName;
+        else if (nameInput && nameInput.placeholder) currentName = nameInput.placeholder;
       }
 
-      if (typeof newRowsForGrid === "number" && newRowsForGrid > 0) {
-        adjustGridStateForRowChange(newRowsForGrid);
-      }
-
-      if (needsGridUpdate) {
-        generateGrid(settings.rows, currentName);
-      }
+      if (typeof newRowsForGrid === "number" && newRowsForGrid > 0) adjustGridStateForRowChange(newRowsForGrid);
+      if (needsGridUpdate) generateGrid(settings.rows, currentName);
 
       updateUI(showConfig);
-
-      if (typeof window.masterUpdateAllGrids === "function") {
-        window.masterUpdateAllGrids();
-      }
+      if (typeof window.masterUpdateAllGrids === "function") window.masterUpdateAllGrids();
     }
 
     function generateGrid(rowCount, productName) {
       if (currentGridInstance) {
-        if (Array.isArray(window.grids)) {
-          window.grids = window.grids.filter(function (g) { return g !== currentGridInstance; });
-        }
+        if (Array.isArray(window.grids)) window.grids = window.grids.filter(g => g !== currentGridInstance);
         if (typeof currentGridInstance.destroy === "function") currentGridInstance.destroy();
         currentGridInstance = null;
       }
-
       if (rowCount === 0) {
-        gridContainer.innerHTML = "";
-        gridContainer.style.display = "none";
-        if (intakeBtn) {
-          intakeBtn.style.display = "none";
-          intakeBtn.removeAttribute("data-row");
-          intakeBtn.removeAttribute("data-dow");
-        }
+        gridContainer.innerHTML = ""; gridContainer.style.display = "none";
+        if (intakeBtn) { intakeBtn.style.display = "none"; intakeBtn.removeAttribute("data-row"); intakeBtn.removeAttribute("data-dow"); }
         return;
       }
 
       var defaultTimes = [];
       var timesMap = DEFAULT_TIMES_MAP[rowCount] || DEFAULT_TIMES_MAP[1];
-
       for (var i = 0; i < rowCount; i++) {
         var base = timesMap[i] && timesMap[i][0] ? timesMap[i][0] : "12:00";
         defaultTimes[i] = [];
-        for (var d = 0; d < 7; d++) {
-          defaultTimes[i][d] = base;
-        }
+        for (var d = 0; d < 7; d++) defaultTimes[i][d] = base;
       }
 
       var tableId = prefix + "-table";
       var buttonId = "btnProgIntake" + prefix.toUpperCase();
-
       var rowsHtml = "";
       for (var r = 0; r < rowCount; r++) {
         rowsHtml += "<tr>";
         for (var day = 1; day <= 7; day++) {
           var dow = (day === 7) ? 0 : day;
-          var timeIndex = (dow === 0) ? 6 : (dow - 1);
-          var cellTime = defaultTimes[r][timeIndex];
-          rowsHtml += '<td class="pl-time-cell" data-row="' + r + '" data-dow="' + dow + '">' +
-            cellTime +
-            "</td>";
+          var cellTime = defaultTimes[r][(dow === 0 ? 6 : (dow - 1))];
+          rowsHtml += '<td class="pl-time-cell" data-row="' + r + '" data-dow="' + dow + '">' + cellTime + "</td>";
         }
         rowsHtml += "</tr>";
       }
 
-      var tableHtml =
-        '<table class="pl-table" id="' + tableId + '">' +
-        "<thead>" +
-        "<tr>" +
-        '<th class="pl-day" data-dow="1">Пн</th>' +
-        '<th class="pl-day" data-dow="2">Вт</th>' +
-        '<th class="pl-day" data-dow="3">Ср</th>' +
-        '<th class="pl-day" data-dow="4">Чт</th>' +
-        '<th class="pl-day" data-dow="5">Пт</th>' +
-        '<th class="pl-day weekend" data-dow="6">Сб</th>' +
-        '<th class="pl-day weekend" data-dow="0">Нд</th>' +
-        "</tr>" +
-        "</thead>" +
-        "<tbody>" +
-        rowsHtml +
-        "</tbody>" +
-        "</table>";
-
-      gridContainer.innerHTML = tableHtml;
+      gridContainer.innerHTML = '<table class="pl-table" id="' + tableId + '"><thead><tr><th class="pl-day" data-dow="1">Пн</th><th class="pl-day" data-dow="2">Вт</th><th class="pl-day" data-dow="3">Ср</th><th class="pl-day" data-dow="4">Чт</th><th class="pl-day" data-dow="5">Пт</th><th class="pl-day weekend" data-dow="6">Сб</th><th class="pl-day weekend" data-dow="0">Нд</th></tr></thead><tbody>' + rowsHtml + "</tbody></table>";
       gridContainer.style.display = "block";
 
       setTimeout(function () {
-        if (typeof createProductGrid !== "function") {
-          console.error("createProductGrid не е заредена!");
-          return;
-        }
-
-        currentGridInstance = createProductGrid({
-          tableId: tableId,
-          buttonId: buttonId,
-          storageKey: GRID_STORAGE_KEY,
-          defaultTimes: defaultTimes,
-          productName: productName,
-          blockId: prefix + "-block"
-        });
-
+        if (typeof createProductGrid !== "function") return;
+        currentGridInstance = createProductGrid({ tableId: tableId, buttonId: buttonId, storageKey: GRID_STORAGE_KEY, defaultTimes: defaultTimes, productName: productName, blockId: prefix + "-block" });
         if (!window.grids) window.grids = [];
         if (currentGridInstance) {
           window.grids.push(currentGridInstance);
-          if (typeof currentGridInstance.updateIntakeStates === "function") {
-            currentGridInstance.updateIntakeStates();
-          }
+          if (typeof currentGridInstance.updateIntakeStates === "function") currentGridInstance.updateIntakeStates();
         }
       }, 0);
     }
 
-    // ============================================
-    // СЪБИТИЯ ЗА HEAD & SETTINGS
-    // ============================================
-
-    // Когато е празно (rows=0) – клик върху заглавието отваря/затваря редакцията.
     if (head) {
       head.addEventListener("click", function (e) {
-        if (settingsBtn && (e.target === settingsBtn || (settingsBtn.contains && settingsBtn.contains(e.target)))) {
-          return;
-        }
+        if (settingsBtn && (e.target === settingsBtn || (settingsBtn.contains && settingsBtn.contains(e.target)))) return;
         if (settings.rows === 0) {
-          var isHidden =
-            configDiv.style.display === "none" ||
-            configDiv.style.display === "";
+          var isHidden = configDiv.style.display === "none" || configDiv.style.display === "";
           configDiv.style.display = isHidden ? "block" : "none";
           refreshSettingsIcon();
         }
       });
     }
 
-    // Когато е конфигуриран (rows>0) – само колелцето управлява редакцията
     if (settingsBtn) {
       settingsBtn.addEventListener("click", function (e) {
         e.stopPropagation();
         if (settings.rows === 0) return;
-        var isHidden =
-          configDiv.style.display === "none" ||
-          configDiv.style.display === "";
+        var isHidden = configDiv.style.display === "none" || configDiv.style.display === "";
         configDiv.style.display = isHidden ? "block" : "none";
         refreshSettingsIcon();
       });
     }
 
     brandSelect.addEventListener("change", function () {
-      var selectedBrand = brandSelect.value;
-      if (selectedBrand === "custom") {
-        customNameField.style.display = "block";
-      } else {
-        customNameField.style.display = "none";
-      }
+      if (brandSelect.value === "custom") customNameField.style.display = "block"; else customNameField.style.display = "none";
     });
 
-    slider.addEventListener("input", function () {
-      sliderVal.textContent = slider.value;
-      updateSliderFill();
-    });
+    slider.addEventListener("input", function () { sliderVal.textContent = slider.value; updateSliderFill(); });
 
     saveBtn.addEventListener("click", function () {
       var newRows = parseInt(slider.value, 10);
       var newBrand = brandSelect.value;
       var newCustomName = newBrand === "custom" ? (nameInput.value || "").trim() : "";
-
       var rowsChanged = newRows !== settings.rows;
       var brandChanged = newBrand !== settings.brand;
       var nameChanged = newCustomName !== settings.customName;
-
-      settings.rows = newRows;
-      settings.brand = newBrand;
-      settings.customName = newCustomName;
-
-      var needsGridUpdate = rowsChanged || brandChanged || nameChanged;
-      var newRowsForGrid = rowsChanged && newRows > 0 ? newRows : null;
-
-      // след запис – скриваме редакцията (showConfig=false)
-      saveAndRerender(false, needsGridUpdate, newRowsForGrid);
+      settings.rows = newRows; settings.brand = newBrand; settings.customName = newCustomName;
+      saveAndRerender(false, rowsChanged || brandChanged || nameChanged, rowsChanged && newRows > 0 ? newRows : null);
     });
 
     deleteBtn.addEventListener("click", function () {
-      if (settings.rows === 0) {
-        configDiv.style.display = "none";
-        refreshSettingsIcon();
-        return;
-      }
-
+      if (settings.rows === 0) { configDiv.style.display = "none"; refreshSettingsIcon(); return; }
       showDeleteConfirm("Ще изтриеш ли Марката?", function () {
-        settings.rows = 0;
-        settings.customName = "";
-
-        if (intakeBtn) {
-          intakeBtn.style.display = "none";
-          intakeBtn.removeAttribute("data-row");
-          intakeBtn.removeAttribute("data-dow");
-        }
-
+        settings.rows = 0; settings.customName = "";
+        if (intakeBtn) { intakeBtn.style.display = "none"; intakeBtn.removeAttribute("data-row"); intakeBtn.removeAttribute("data-dow"); }
         saveAndRerender(false, true, null);
       });
     });
 
-    // Първоначално обновяване
     updateUI(false);
   }
-
-  // ============================================
-  // ИНИЦИАЛИЗАЦИЯ
-  // ============================================
 
   createConfigurableProduct("ber", BERBERINE_BRANDS);
   createConfigurableProduct("glu", GLUCOMANNAN_BRANDS);
