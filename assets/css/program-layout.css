@@ -97,13 +97,12 @@ select option.strong { font-weight:700; }
 
 /* СТЕК (Заглавие + Марка) */
 .prog-cap-stack {
-  position: relative;         /* Релативна позиция */
+  position: relative;         
   display: flex;
   flex-direction: column;       
-  justify-content: center;    /* Центрира целия блок вертикално спрямо картинката */
-  height: 76px;               /* Височина колкото картинката */
+  justify-content: center;    /* Центрира Марката вертикално */
+  height: 76px;               /* Фиксирана височина колкото картинката */
   min-height: 76px;
-  gap: 0;                     /* Без излишно разстояние */
 }
 
 /* Редът, съдържащ "Берберин" и зъбното колело */
@@ -113,7 +112,17 @@ select option.strong { font-weight:700; }
   gap: 4px;
   line-height: 1;
   width: 100%;
-  margin-bottom: 2px; /* Малко въздух до Марката */
+}
+
+/* МАГИЯТА: Ако редът съдържа конфигуриран елемент (малък шрифт), 
+   го вадим от потока с absolute, за да не бута Марката надолу.
+*/
+.prog-cap-row:has(.configured) {
+  position: absolute;
+  top: 0;       /* Залепваме го най-горе */
+  left: 0;
+  width: 100%;
+  padding-top: 4px; /* Малко отстояние от ръба на снимката */
 }
 
 /* Основно име (напр. Берберин) - стандартно състояние */
@@ -130,26 +139,28 @@ select option.strong { font-weight:700; }
   font-size: 11px;           
   color: var(--muted);       
   font-weight: 400;          
-  text-transform: none;      /* Без главни букви */
+  text-transform: none;      /* Изрично БЕЗ главни букви */
   margin-bottom: 0;
 }
 
-/* Име на Марката (появява се отдолу) */
+/* Име на Марката (появява се отдолу, центрирано от .prog-cap-stack) */
 .prog-cap-brand {
   display: block;
   font-size: 13px;          /* Като в Основен Пакет */
   font-weight: 700;         /* Удебелено */
   color: var(--text);       
-  line-height: 1.25;        /* Малко по-голям line-height за четимост при 2 реда */
-  text-transform: none;     /* Без главни букви */
+  line-height: 1.25;
+  text-transform: none;     /* Изрично БЕЗ главни букви */
   
   /* Защита при много дълги имена на марки */
   white-space: normal;      
   display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 2;    /* Лимит 2 реда */
+  line-clamp: 2;            /* Стандарт */
   -webkit-box-orient: vertical;
   overflow: hidden;
+  
+  margin: 0; /* Забраняваме марджини, за да е точно в центъра */
 }
 
 /* Скриваме празната марка */
@@ -299,6 +310,6 @@ select option.strong { font-weight:700; }
 @media (max-width: 380px){
   .time-row select { min-width:48px; }
   .prod-img { width:64px; height:64px; border-radius:10px; }
-  /* При малки екрани намаляваме височината, за да съвпадне с картинката */
+  /* При малки екрани намаляваме височината на стека */
   .prog-cap-stack { height: 64px; min-height: 64px; }
 }
