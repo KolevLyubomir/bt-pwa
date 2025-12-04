@@ -115,14 +115,14 @@ select option.strong { font-weight:700; }
 }
 
 /* МАГИЯТА: Ако редът съдържа конфигуриран елемент (малък шрифт), 
-   го вадим от потока с absolute, за да не бута Марката надолу.
+   го вадим от потока с absolute и го вдигаме нагоре с top: -4px
 */
 .prog-cap-row:has(.configured) {
   position: absolute;
-  top: 0;       /* Залепваме го най-горе */
+  top: -4px;        /* Повдигане нагоре, за да не застъпва текста */
   left: 0;
   width: 100%;
-  padding-top: 4px; /* Малко отстояние от ръба на снимката */
+  padding-top: 0;   /* Премахваме излишния padding */
 }
 
 /* Основно име (напр. Берберин) - стандартно състояние */
@@ -168,12 +168,12 @@ select option.strong { font-weight:700; }
   display: none;
 }
 
-/* Малко зъбно колело */
+/* Малко зъбно колело - леко намалено */
 .prog-cap-settings {
   margin-left: 2px;
   padding: 0;
-  width: 18px;
-  height: 18px;
+  width: 16px;        /* Намалено от 18px */
+  height: 16px;       /* Намалено от 18px */
   border-radius: 50%;
   border: 1px solid #334155;
   background: #020617;
@@ -189,8 +189,8 @@ select option.strong { font-weight:700; }
 }
 
 .prog-cap-settings svg {
-  width: 11px;
-  height: 11px;
+  width: 10px;        /* Намалено от 11px */
+  height: 10px;
 }
 
 /* --- Панел за Настройки --- */
