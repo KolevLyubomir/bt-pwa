@@ -97,12 +97,13 @@ select option.strong { font-weight:700; }
 
 /* СТЕК (Заглавие + Марка) */
 .prog-cap-stack {
-  position: relative;         /* Релативна позиция за абсолютните деца */
+  position: relative;         /* Релативна позиция */
   display: flex;
   flex-direction: column;       
-  justify-content: center;    /* Центрира съдържанието вертикално (Марката) */
+  justify-content: center;    /* Центрира целия блок вертикално спрямо картинката */
   height: 76px;               /* Височина колкото картинката */
   min-height: 76px;
+  gap: 0;                     /* Без излишно разстояние */
 }
 
 /* Редът, съдържащ "Берберин" и зъбното колело */
@@ -112,17 +113,8 @@ select option.strong { font-weight:700; }
   gap: 4px;
   line-height: 1;
   width: 100%;
+  margin-bottom: 2px; /* Малко въздух до Марката */
 }
-
-/* МАГИЯТА: Ако редът съдържа конфигуриран елемент (малък шрифт), 
-   го вадим от потока и го забиваме горе, за да не бута Марката */
-.prog-cap-row:has(.configured) {
-  position: absolute;
-  top: 14px;  /* Позиция над центъра */
-  left: 0;
-}
-/* Fallback за по-стари браузъри, които не поддържат :has */
-/* Марката ще бъде леко избутана надолу, но пак ще се чете */
 
 /* Основно име (напр. Берберин) - стандартно състояние */
 .prog-cap-main {
@@ -148,7 +140,7 @@ select option.strong { font-weight:700; }
   font-size: 13px;          /* Като в Основен Пакет */
   font-weight: 700;         /* Удебелено */
   color: var(--text);       
-  line-height: 1.2;
+  line-height: 1.25;        /* Малко по-голям line-height за четимост при 2 реда */
   text-transform: none;     /* Без главни букви */
   
   /* Защита при много дълги имена на марки */
