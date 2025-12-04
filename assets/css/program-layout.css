@@ -97,12 +97,12 @@ select option.strong { font-weight:700; }
 
 /* СТЕК (Заглавие + Марка) */
 .prog-cap-stack {
+  position: relative;         /* Релативна позиция за абсолютните деца */
   display: flex;
   flex-direction: column;       
-  justify-content: center;      /* Вертикално центриране */
-  align-items: flex-start;      
-  height: 76px;                 /* Фиксираме височината колкото на картинката */
-  gap: 2px;                     /* Малко разстояние между редовете */
+  justify-content: center;    /* Центрира съдържанието вертикално (Марката) */
+  height: 76px;               /* Височина колкото картинката */
+  min-height: 76px;
 }
 
 /* Редът, съдържащ "Берберин" и зъбното колело */
@@ -111,7 +111,18 @@ select option.strong { font-weight:700; }
   align-items: center;
   gap: 4px;
   line-height: 1;
+  width: 100%;
 }
+
+/* МАГИЯТА: Ако редът съдържа конфигуриран елемент (малък шрифт), 
+   го вадим от потока и го забиваме горе, за да не бута Марката */
+.prog-cap-row:has(.configured) {
+  position: absolute;
+  top: 14px;  /* Позиция над центъра */
+  left: 0;
+}
+/* Fallback за по-стари браузъри, които не поддържат :has */
+/* Марката ще бъде леко избутана надолу, но пак ще се чете */
 
 /* Основно име (напр. Берберин) - стандартно състояние */
 .prog-cap-main {
@@ -123,12 +134,11 @@ select option.strong { font-weight:700; }
 }
 
 /* Основно име - КОГАТО ИМА ИЗБРАНА МАРКА (Configured) */
-/* Става малък етикет над марката - БЕЗ главни букви, по-тънък шрифт */
 .prog-cap-main.configured {
   font-size: 11px;           
   color: var(--muted);       
-  font-weight: 400;          /* Нормален шрифт, не удебелен */
-  text-transform: none;      /* Изрично без главни букви */
+  font-weight: 400;          
+  text-transform: none;      /* Без главни букви */
   margin-bottom: 0;
 }
 
@@ -139,13 +149,13 @@ select option.strong { font-weight:700; }
   font-weight: 700;         /* Удебелено */
   color: var(--text);       
   line-height: 1.2;
-  text-transform: none;     /* Без автоматични главни букви */
+  text-transform: none;     /* Без главни букви */
   
   /* Защита при много дълги имена на марки */
   white-space: normal;      
   display: -webkit-box;
   -webkit-line-clamp: 2;
-  line-clamp: 2;            /* Compatibility fix */
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -297,6 +307,6 @@ select option.strong { font-weight:700; }
 @media (max-width: 380px){
   .time-row select { min-width:48px; }
   .prod-img { width:64px; height:64px; border-radius:10px; }
-  /* При много малки екрани, намаляваме височината на стека, за да съвпадне с по-малката картинка */
-  .prog-cap-stack { height: 64px; }
+  /* При малки екрани намаляваме височината, за да съвпадне с картинката */
+  .prog-cap-stack { height: 64px; min-height: 64px; }
 }
