@@ -23,15 +23,13 @@
   flex: 1 1 auto;
 }
 
-/* ПРОМЯНА: Ъглите на снимките (диагонално изрязване) */
 .prod-img { 
   width:76px; height:76px; 
   object-fit:contain; 
-  /* Горе-Ляво: 12px, Горе-Дясно: 0, Долу-Дясно: 12px, Долу-Ляво: 0 */
-  border-radius: 12px 0 12px 0; 
+  border-radius:12px; 
   background:#0d171b; 
   border:1px solid #254046;
-  flex-shrink: 0;
+  flex-shrink: 0; /* Картинката никога не се мачка */
 }
 
 .prog-pill {
@@ -42,49 +40,193 @@
 .prog-pill label { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .prog-pill input[type="checkbox"] { width:16px; height:16px; margin:0; }
 
-.prog-config {
-  background: #131e24;
-  border: 1px dashed #2a3e44;
-  border-radius: 12px;
-  padding: 12px;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  animation: slideDown .2s ease-out;
-}
-@keyframes slideDown { from { opacity:0; transform:translateY(-4px); } to { opacity:1; transform:translateY(0); } }
+.prog-cap { font-weight:700; font-size:13px; }
+.prog-sep { border:0; border-top:1px solid var(--border); margin:14px 0; }
 
-.prog-cap-stack { display:flex; flex-direction:column; gap:2px; min-width:0; overflow:hidden; }
-.prog-cap-row { display:flex; align-items:center; gap:6px; }
-.prog-cap-main { font-weight:700; font-size:15px; color:#e6f2ef; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+/* Бутонът за прием до името на продукта (Основен Пакет) - структура */
+.prog-intake-btn {
+  flex:0 0 auto;
+  padding:0;
+}
+.prog-intake-btn .clk-btn-icon {
+  padding:0;
+}
+.prog-intake-btn .clk-btn-icon svg {
+  width:32px;
+  height:32px;
+}
+
+.time-wrap { display:flex; align-items:center; gap:6px; }
+.time-row { display:flex; align-items:center; gap:4px; }
+.time-row select { min-width:54px; padding:6px 8px; height:36px; font-size:14px; }
+select option.strong { font-weight:700; }
+
+/* Контейнер за таблиците с часове */
+.pl-wrap {
+  overflow-x:hidden;
+  margin-bottom:14px; /* въздух под таблицата */
+}
+
+.pl-table { width:100%; border-collapse:separate; border-spacing:3px; table-layout:fixed; }
+.pl-table th, .pl-table td {
+  border:1px solid #20343a; border-radius:10px; text-align:center;
+  padding:var(--pl-pad); font-size:var(--pl-font); line-height:1.05; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  min-width:var(--pl-minw);
+  transition:border-color .15s ease, box-shadow .15s ease, background .15s ease, font-size .15s ease;
+}
+
+/* --- Стилове за Конфигуратора (Доп. Пакет) --- */
+
+.prog-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-shrink: 0; /* Бутоните не се мачкат */
+}
+
+/* ГЛАВАТА става бутон */
+.prog-head-main.clickable {
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 4px;
+  transition: background .15s ease;
+}
+.prog-head-main.clickable:hover {
+  background: #1a2a2f;
+}
+
+/* СТЕК (Заглавие + Марка) */
+.prog-cap-stack {
+  position: relative;         
+  display: flex;
+  flex-direction: column;       
+  justify-content: center;    /* Центрира Марката вертикално */
+  height: 76px;               /* Фиксирана височина колкото картинката */
+  min-height: 76px;
+}
+
+/* Редът, съдържащ "Берберин" и зъбното колело */
+.prog-cap-row {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  line-height: 1;
+  width: 100%;
+}
+
+/* МАГИЯТА: Ако редът съдържа конфигуриран елемент (малък шрифт), 
+   го вадим от потока с absolute и го вдигаме нагоре с top: -4px
+*/
+.prog-cap-row:has(.configured) {
+  position: absolute;
+  top: -4px;        /* Повдигане нагоре, за да не застъпва текста */
+  left: 0;
+  width: 100%;
+  padding-top: 0;   /* Премахваме излишния padding */
+}
+
+/* Основно име (напр. Берберин) - стандартно състояние */
+.prog-cap-main {
+  font-weight: 700;
+  font-size: 13px;          
+  color: var(--text);
+  font-family: inherit;
+  transition: all .2s ease;
+}
+
+/* Основно име - КОГАТО ИМА ИЗБРАНА МАРКА (Configured) */
+.prog-cap-main.configured {
+  font-size: 11px;           
+  color: var(--muted);       
+  font-weight: 400;          
+  text-transform: none;      /* Изрично БЕЗ главни букви */
+  margin-bottom: 0;
+}
+
+/* Име на Марката (появява се отдолу, центрирано от .prog-cap-stack) */
+.prog-cap-brand {
+  display: block;
+  font-size: 13px;          /* Като в Основен Пакет */
+  font-weight: 700;         /* Удебелено */
+  color: var(--text);       
+  line-height: 1.25;
+  text-transform: none;     /* Изрично БЕЗ главни букви */
+  
+  /* Защита при много дълги имена на марки */
+  white-space: normal;      
+  display: -webkit-box;
+  -webkit-line-clamp: 2;    /* Лимит 2 реда */
+  line-clamp: 2;            /* Стандарт */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  
+  margin: 0; /* Забраняваме марджини, за да е точно в центъра */
+}
+
+/* Скриваме празната марка */
+.prog-cap-brand:empty {
+  display: none;
+}
+
+/* Малко зъбно колело - леко намалено */
 .prog-cap-settings {
-  background:transparent; border:none; padding:4px; cursor:pointer; color:#9ca3af; display:flex; align-items:center; justify-content:center;
+  margin-left: 2px;
+  padding: 0;
+  width: 16px;        /* Намалено от 18px */
+  height: 16px;       /* Намалено от 18px */
+  border-radius: 50%;
+  border: 1px solid #334155;
+  background: #020617;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  opacity: 0.7;
 }
-.prog-cap-settings:hover { color:#e6f2ef; }
-.prog-cap-settings svg { width:18px; height:18px; }
-.prog-cap-brand { font-size:12px; color:#9fb4ad; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-
-.clickable { cursor:pointer; transition:opacity .15s; }
-.clickable:hover { opacity:0.8; }
-
-.prog-sep { border:0; height:1px; background:#1e2b30; margin:16px 0; }
-
-.pl-wrap { overflow-x:auto; margin-top:8px; padding-bottom:4px; -webkit-overflow-scrolling:touch; }
-.pl-table { border-collapse:separate; border-spacing:3px; min-width:340px; }
-.pl-table th { font-size:11px; text-transform:uppercase; color:var(--muted); padding-bottom:4px; text-align:center; }
-.pl-time-cell {
-  background:#0d171b; border:1px solid #20343a; border-radius:6px;
-  height:44px; min-width:var(--pl-minw); text-align:center; color:#e6f2ef;
-  font-size:var(--pl-font); font-weight:400; transition:background .15s, border-color .15s, box-shadow .15s;
+.prog-cap-settings:hover {
+  opacity: 1;
 }
 
-/* Настройки в конфигурационния панел */
-.brand-selector select { width: 100%; }
-.custom-brand-field { margin-top: 10px; }
-.custom-brand-field input { width: 100%; }
+.prog-cap-settings svg {
+  width: 10px;        /* Намалено от 11px */
+  height: 10px;
+}
 
+/* --- Панел за Настройки --- */
+.prog-config {
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.prog-config .field {
+  margin-bottom: 0;
+}
+.prog-config .field.brand-selector {
+  margin-bottom: 8px;
+}
+.prog-config .field.custom-brand-field {
+  margin-bottom: 8px;
+}
+
+.prog-config .field .lbl {
+  margin-bottom: 4px;
+}
+
+.prog-config select:focus,
+.prog-config input[type="text"]:focus {
+  outline: none;
+  box-shadow: none;
+  border-color: #2b6e66;
+}
+
+/* Контейнер за кръглите бутони в конфигуратора */
 .config-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   margin-top: 26px;
   margin-bottom: 26px;
@@ -143,8 +285,8 @@
   position: relative;
   z-index: 2;
   background: transparent;
-  cursor: pointer;
 }
+
 .slider-control::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -154,8 +296,8 @@
   border-radius: 50%;
   cursor: pointer;
   border: 3px solid #06241b;
-  margin-top: -8px;
 }
+
 .slider-control::-moz-range-thumb {
   width: 24px;
   height: 24px;
@@ -165,13 +307,9 @@
   border: 3px solid #06241b;
 }
 
-/* ПРОМЯНА: Стилизация на заглавията при мобилни устройства */
-@media (max-width: 480px) {
-  #pkg-core > h2,
-  #pkg-extra > h2,
-  #pkg-personal > h2 {
-    font-size: 24px !important; /* Force override if inline styles exist */
-    letter-spacing: 0.06em;
-    text-align: center;
-  }
+@media (max-width: 380px){
+  .time-row select { min-width:48px; }
+  .prod-img { width:64px; height:64px; border-radius:10px; }
+  /* При малки екрани намаляваме височината на стека */
+  .prog-cap-stack { height: 64px; min-height: 64px; }
 }
