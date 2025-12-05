@@ -21,9 +21,6 @@
     ["19:00", "19:00", "19:00", "19:00", "19:00", "19:00", "19:00"]
   ];
 
-  //
-  // ↓↓↓ ПРОМЯНА ТУК: `window.grids` се дефинира веднага ↓↓↓
-  //
   // Създаваме *глобален* масив, който `program-additional.js` ще може да допълва
   window.grids = [
     createProductGrid({
@@ -64,8 +61,23 @@
     });
   };
 
+  /**
+   * ПРОМЯНА (т.2): Синхронизира мигащите анимации (CSS animation-delay)
+   * спрямо системния часовник.
+   */
+  function syncBlinkAnimation() {
+    // Анимацията е 1000ms (1s).
+    const period = 1000;
+    const now = Date.now();
+    // Изчисляваме колко време е минало от последната "кръгла" секунда
+    // и задаваме отрицателно закъснение, за да "превъртим" анимацията до правилната фаза.
+    const offset = -((now % period) / period); // число от -0.999 до 0
+    document.documentElement.style.setProperty('--blink-offset', offset + 's');
+  }
+
   // --- Глобална функция за ъпдейт (извиква се от Модала и бутоните) ---
   window.masterUpdateAllGrids = function() {
+    syncBlinkAnimation(); // Синхронизираме при всяка интеракция
     window.grids.forEach(grid => grid.updateIntakeStates());
     checkAndScrollForOverdue();
   };
@@ -116,6 +128,7 @@
 
   // --- Глобален Интервал ---
   function masterUpdateOnInterval() {
+    syncBlinkAnimation(); // Синхронизираме и при периодичния ъпдейт
     window.grids.forEach(grid => grid.updateIntakeStates());
     checkAndScrollForOverdue();
   }

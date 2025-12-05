@@ -63,10 +63,15 @@
   background:#007500;
   border-color:#166534;
 }
+
+/* ПРОМЯНА (т.1): Добавяме animation-delay, контролиран от JS.
+   Така всички клетки ще мигат в синхрон.
+*/
 .pl-time-cell.int-overdue {
   background:#cc5500;
   border-color:#facc15;
   animation:plOverdueBlink 1s ease-in-out infinite;
+  animation-delay:var(--blink-offset, 0s);
 }
 
 /* Допълнителни състояния за текстове */
