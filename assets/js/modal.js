@@ -20,6 +20,9 @@ const ModalLogic = (function() {
   const btnSaveAll = document.getElementById('btnSaveAllDays');
   const btnIntake = document.getElementById('btnIntake');
   const btnAudio = document.getElementById('btnAudio');
+  
+  // --- НОВО: Референция към бутона за затваряне (X) ---
+  const btnClose = document.getElementById('btnCloseClk');
 
   const clkProductEl = document.getElementById('clk-product');
   const clkWeekdayEl = document.getElementById('clk-weekday');
@@ -53,8 +56,8 @@ const ModalLogic = (function() {
     const d = hour24ToDisp(H);
     const degH = (d.disp % 12) * 30 + (M / 60) * 30;
     const degM = M * 6;
-    handH.style.transform = 'translate(-50%,-100%) rotate(' + degH + 'deg)';
-    handM.style.transform = 'translate(-50%,-100%) rotate(' + degM + 'deg)';
+    if(handH) handH.style.transform = 'translate(-50%,-100%) rotate(' + degH + 'deg)';
+    if(handM) handM.style.transform = 'translate(-50%,-100%) rotate(' + degM + 'deg)';
   }
   function clear(node) { while (node.firstChild) node.removeChild(node.firstChild); }
   
@@ -98,6 +101,7 @@ const ModalLogic = (function() {
   function updateRead() { renderDigits(); }
 
   function buildHours() {
+    if(!ringH) return;
     clear(ringH);
     for (let i = 1; i <= 12; i++) {
       const el = document.createElement('div');
@@ -145,6 +149,7 @@ const ModalLogic = (function() {
   }
 
   function buildMins() {
+    if(!ringM) return;
     clear(ringM);
     for (let m = 0; m < 60; m++) {
       const isMajor = (m % 5 === 0);
@@ -252,8 +257,10 @@ const ModalLogic = (function() {
   }
   
   function hideClk() {
-    Modal.classList.remove('show');
-    Modal.setAttribute('aria-hidden', 'true');
+    if(Modal) {
+        Modal.classList.remove('show');
+        Modal.setAttribute('aria-hidden', 'true');
+    }
     document.body.style.overflow = '';
     if (activeCell) { activeCell.classList.remove('sel'); activeCell = null; }
     stopEditing();
@@ -362,12 +369,16 @@ const ModalLogic = (function() {
   function startDrag(which, e) { dragging = which; handleMove(e); }
   function endDrag() { dragging = null; }
 
-  ringH.addEventListener('pointerdown', (e) => { e.preventDefault(); startDrag('H', e); });
-  ringM.addEventListener('pointerdown', (e) => { e.preventDefault(); startDrag('M', e); });
+  if(ringH) {
+    ringH.addEventListener('pointerdown', (e) => { e.preventDefault(); startDrag('H', e); });
+    ringH.addEventListener('touchstart', (e) => { startDrag('H', e); }, { passive: false });
+  }
+  if(ringM) {
+    ringM.addEventListener('pointerdown', (e) => { e.preventDefault(); startDrag('M', e); });
+    ringM.addEventListener('touchstart', (e) => { startDrag('M', e); }, { passive: false });
+  }
   window.addEventListener('pointermove', handleMove, { passive: false });
   window.addEventListener('pointerup', endDrag);
-  ringH.addEventListener('touchstart', (e) => { startDrag('H', e); }, { passive: false });
-  ringM.addEventListener('touchstart', (e) => { startDrag('M', e); }, { passive: false });
   window.addEventListener('touchmove', handleMove, { passive: false });
   window.addEventListener('touchend', endDrag);
 
@@ -445,7 +456,7 @@ const ModalLogic = (function() {
     stopEditing();
   });
   
-  Modal.addEventListener('click', (e) => { if (e.target === Modal) hideClk(); });
+  if(Modal) Modal.addEventListener('click', (e) => { if (e.target === Modal) hideClk(); });
 
   // --- Функции, управлявани от контекст ---
 
@@ -469,8 +480,7 @@ const ModalLogic = (function() {
     const { state, saveState, renderTimes, blinkCell, row, dow } = currentContext;
     saveState(state);
     renderTimes();
-    // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
-    window.masterUpdateAllGrids();
+    if(window.masterUpdateAllGrids) window.masterUpdateAllGrids();
     blinkCell(row, dow);
     hideClk();
   }
@@ -480,8 +490,7 @@ const ModalLogic = (function() {
     const { state, saveState, renderTimes, blinkRow, row } = currentContext;
     saveState(state);
     renderTimes();
-    // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
-    window.masterUpdateAllGrids();
+    if(window.masterUpdateAllGrids) window.masterUpdateAllGrids();
     blinkRow(row);
     hideClk();
   }
@@ -497,9 +506,8 @@ const ModalLogic = (function() {
 
     saveState(state);
     renderTimes();
-    // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
-    window.masterUpdateAllGrids();
-    updateAudioButtonForCurrent(); // Обновяваме бутона в модала
+    if(window.masterUpdateAllGrids) window.masterUpdateAllGrids();
+    updateAudioButtonForCurrent(); 
     blinkCell(row, dow);
     hideClk();
   }
@@ -507,18 +515,20 @@ const ModalLogic = (function() {
   function handleIntake() {
     const { toggleIntakeAt, blinkCell, row, dow } = currentContext;
     const nowDone = toggleIntakeAt(row, dow);
-    // Извикваме *глобалния* ъпдейт, за да се проверят всички мрежи
-    window.masterUpdateAllGrids();
-    updateIntakeButtonForCurrent(); // Това обновява бутона в модала
+    if(window.masterUpdateAllGrids) window.masterUpdateAllGrids();
+    updateIntakeButtonForCurrent(); 
     if (nowDone) {
       blinkCell(row, dow);
     }
   }
   
-  btnSaveOne.addEventListener('click', handleSaveOne);
-  btnSaveAll.addEventListener('click', handleSaveAllDays);
-  btnAudio.addEventListener('click', handleAudioToggle);
-  btnIntake.addEventListener('click', handleIntake);
+  if(btnSaveOne) btnSaveOne.addEventListener('click', handleSaveOne);
+  if(btnSaveAll) btnSaveAll.addEventListener('click', handleSaveAllDays);
+  if(btnAudio) btnAudio.addEventListener('click', handleAudioToggle);
+  if(btnIntake) btnIntake.addEventListener('click', handleIntake);
+
+  // --- НОВО: Listener за затваряне от X ---
+  if(btnClose) btnClose.addEventListener('click', hideClk);
 
   function updateIntakeButtonForCurrent() {
     if (!btnIntake) return;
@@ -542,13 +552,11 @@ const ModalLogic = (function() {
 
   // --- Публичен API ---
   return {
-    // Тази функция ще бъде извикана от инстанция на мрежа
     showClk: function(row, dow, initial, cell, gridContext) {
       if (activeCell) activeCell.classList.remove('sel');
       activeCell = cell; 
       if (activeCell) activeCell.classList.add('sel');
 
-      // Запазваме контекста на мрежата, която е отворила модала
       currentContext = {
         row: row,
         dow: dow,
@@ -557,11 +565,8 @@ const ModalLogic = (function() {
       
       const { state, productName } = currentContext;
 
-      // Когато се отвори модал, синхронизираме `activeDow` за всички мрежи
-      window.syncActiveDow(dow);
-      
-      // Ръчно извикваме refreshDays за ТАЗИ мрежа (защото syncActiveDow пропуска текущата)
-      gridContext.refreshDays();
+      if(window.syncActiveDow) window.syncActiveDow(dow);
+      if(gridContext.refreshDays) gridContext.refreshDays();
 
       if (clkProductEl) {
         clkProductEl.textContent = productName;
@@ -594,10 +599,11 @@ const ModalLogic = (function() {
       updateIntakeButtonForCurrent();
       updateAudioButtonForCurrent();
 
-      Modal.classList.add('show');
-      Modal.setAttribute('aria-hidden', 'false');
+      if(Modal) {
+          Modal.classList.add('show');
+          Modal.setAttribute('aria-hidden', 'false');
+      }
       document.body.style.overflow = 'hidden';
     }
   };
 })();
-// --- КРАЙ НА МОДАЛА ---
