@@ -415,19 +415,36 @@
 
       var tableId = prefix + "-table";
       var buttonId = "btnProgIntake" + prefix.toUpperCase();
-      var rowsHtml = "";
+
+      // --- НОВА ЛОГИКА С ШАБЛОНИ (START) ---
+      gridContainer.innerHTML = ""; // Чистим контейнера
+      var tmpl = document.getElementById('tmpl-grid');
+      if (!tmpl) { console.error("Липсва шаблон #tmpl-grid"); return; }
+      
+      var clone = tmpl.content.cloneNode(true);
+      var table = clone.querySelector('table');
+      table.id = tableId;
+      var tbody = table.querySelector('tbody');
+
       for (var r = 0; r < rowCount; r++) {
-        rowsHtml += "<tr>";
+        var tr = document.createElement('tr');
         for (var day = 1; day <= 7; day++) {
           var dow = (day === 7) ? 0 : day;
           var cellTime = defaultTimes[r][(dow === 0 ? 6 : (dow - 1))];
-          rowsHtml += '<td class="pl-time-cell" data-row="' + r + '" data-dow="' + dow + '">' + cellTime + "</td>";
+          
+          var td = document.createElement('td');
+          td.className = 'pl-time-cell';
+          td.setAttribute('data-row', r);
+          td.setAttribute('data-dow', dow);
+          td.textContent = cellTime;
+          tr.appendChild(td);
         }
-        rowsHtml += "</tr>";
+        tbody.appendChild(tr);
       }
-
-      gridContainer.innerHTML = '<table class="pl-table" id="' + tableId + '"><thead><tr><th class="pl-day" data-dow="1">Пн</th><th class="pl-day" data-dow="2">Вт</th><th class="pl-day" data-dow="3">Ср</th><th class="pl-day" data-dow="4">Чт</th><th class="pl-day" data-dow="5">Пт</th><th class="pl-day weekend" data-dow="6">Сб</th><th class="pl-day weekend" data-dow="0">Нд</th></tr></thead><tbody>' + rowsHtml + "</tbody></table>";
+      
+      gridContainer.appendChild(table);
       gridContainer.style.display = "block";
+      // --- НОВА ЛОГИКА (END) ---
 
       setTimeout(function () {
         if (typeof createProductGrid !== "function") return;
