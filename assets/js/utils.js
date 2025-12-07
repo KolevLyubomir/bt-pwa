@@ -36,3 +36,27 @@ function toRoman(num) {
 
 // 4. Глобална константа за днешния ден (ползва се от data.js и product-grid.js)
 const TODAY = todayISO();
+
+// 5. Превръща "HH:MM" в минути от началото на деня (напр. "01:00" -> 60)
+function timeStrToMin(str) {
+  if (!str || typeof str !== "string") return 0;
+  var parts = str.split(":");
+  var h = parseInt(parts[0], 10);
+  var m = parseInt(parts[1], 10);
+  if (!isFinite(h)) h = 0;
+  if (!isFinite(m)) m = 0;
+  // Скобите (clamp)
+  if (h < 0) h = 0; if (h > 23) h = 23;
+  if (m < 0) m = 0; if (m > 59) m = 59;
+  return h * 60 + m;
+}
+
+// 6. Превръща минути в "HH:MM"
+function minToTimeStr(min) {
+  if (!isFinite(min) || min < 0) min = 0;
+  var h = Math.floor(min / 60);
+  var m = min % 60;
+  if (h > 23) h = 23;
+  if (m > 59) m = 59;
+  return String(h).padStart(2, "0") + ":" + String(m).padStart(2, "0");
+}
