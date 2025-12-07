@@ -19,641 +19,386 @@
   <link rel="stylesheet" href="assets/css/main.css"/>
   <link rel="stylesheet" href="assets/css/data.css"/>
 
-  <!-- Program CSS файлове v5.1.9 -->
   <link rel="stylesheet" href="assets/css/program-layout.css?v=5.1.9"/>
   <link rel="stylesheet" href="assets/css/program-states.css?v=5.1.9"/>
-
-  <!-- Модални компоненти v5.1.9 -->
-  <link rel="stylesheet" href="assets/css/program-clock.css?v=5.1.9"/>
   <link rel="stylesheet" href="assets/css/program-buttons.css?v=5.1.9"/>
+  <link rel="stylesheet" href="assets/css/program-clock.css?v=5.1.9"/>
   <link rel="stylesheet" href="assets/css/program-dialogs.css?v=5.1.9"/>
 </head>
 <body>
 
   <div class="topbar-wrap">
     <div class="topbar">
-      <div class="brand">
-        <!-- ЛОКАЛНО ЛОГО -->
-        <img src="assets/images/bt-safe-weight-logo.png" alt="Безопасно Тегло" class="main-logo"/>
-      </div>
-      <div class="version-slot">
-        <span class="badge" id="app-version-badge">v5.1.9</span>
+      <div class="app-title">Безопасно тегло</div>
+      <div class="tabs">
+        <button id="tab-data" class="tab-btn" type="button">Данни</button>
+        <button id="tab-program" class="tab-btn" type="button" aria-selected="true">Програма</button>
       </div>
     </div>
   </div>
 
-  <div class="tabs-wrap" role="navigation" aria-label="Навигация">
-    <div class="tabs" role="tablist">
-      <button id="tab-data" class="tab-btn" role="tab" aria-controls="panel-data" aria-selected="true">Данни</button>
-      <button id="tab-program" class="tab-btn" role="tab" aria-controls="panel-program" aria-selected="false">Програма</button>
+  <div id="panel-data" class="panel" aria-hidden="true">
+    <div class="data-form">
+      <div class="inputs-row">
+        <div class="field date">
+          <div class="lbl">Дата</div>
+          <div class="date-wrap">
+            <input type="text" id="dateText" readonly/>
+            <div id="cal" class="cal"></div>
+          </div>
+        </div>
+        <div class="field weight">
+          <div class="lbl">Тегло (kg)</div>
+          <input type="number" id="weight" step="0.1" inputmode="decimal"/>
+        </div>
+        <div class="field">
+          <div class="lbl">БТ</div>
+          <div class="ctl">
+            <label class="bt-only" title="Спазен режим?">
+              <input type="checkbox" id="btFlag" checked/>
+            </label>
+          </div>
+        </div>
+        <div class="field">
+          <div class="lbl">&nbsp;</div>
+          <button id="addBtn" class="primary" type="button">Запис</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="pager" id="pagerTop"></div>
+      <table id="tbl">
+        <thead>
+          <tr>
+            <th class="date">Дата</th>
+            <th class="w">Тегло</th>
+            <th class="act"></th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      <div class="pager" id="pagerBottom"></div>
+    </div>
+    
+    <div class="table-opts">
+      <label>Редове: 
+        <select id="pageSize">
+          <option value="7">7</option>
+          <option value="14">14</option>
+          <option value="28">28</option>
+          <option value="84">12 седм.</option>
+          <option value="112">16 седм.</option>
+          <option value="168">24 седм.</option>
+          <option value="336">48 седм.</option>
+          <option value="all">Всички</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="chart-section">
+      <div class="chart-head">
+        <div class="chart-title">Прогрес</div>
+        <select id="aggSel">
+          <option value="daily">Дневно</option>
+          <option value="weekly" selected>Седмично</option>
+          <option value="monthly">Месечно</option>
+        </select>
+      </div>
+      <canvas id="chart"></canvas>
+    </div>
+
+    <div class="backup-area">
+      <button id="exportBtn" type="button">Експорт JSON</button>
+      <button id="importBtn" type="button">Импорт JSON</button>
+      <input type="file" id="importFile" accept=".json" style="display:none"/>
     </div>
   </div>
 
-  <!-- PANEL: ДАННИ -->
-  <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
-    <main>
-      <!-- Запис -->
-      <section class="card">
-        <h2 style="margin:0 0 10px">Запис</h2>
-        <div class="inputs-row">
-          <div class="inputs-row" style="gap:10px">
-            <div class="field date">
-              <div class="lbl">Дата</div>
-              <div class="ctl date-wrap">
-                <input id="dateText" type="text" readonly placeholder="ДД.ММ.ГГ"/>
-                <div id="cal" class="cal" role="dialog" aria-label="Календар"></div>
-              </div>
-            </div>
-            <div class="field weight">
-              <div class="lbl">Тегло (kg)</div>
-              <div class="ctl">
-                <input id="weight" type="number" step="0.1" min="0.1" placeholder="107.7"/>
-              </div>
-            </div>
-            <div class="field" style="min-width:var(--ctl-h)">
-              <div class="lbl"></div>
-              <label class="bt-only" title="Маркиран като БТ"><input id="btFlag" type="checkbox" checked/></label>
-            </div>
-            <div class="field" style="min-width:100px">
-              <div class="lbl"></div>
-              <button id="addBtn" class="primary" type="button" style="height:var(--ctl-h); min-width:100px">Добави</button>
-            </div>
-          </div>
-          <div class="spacer"></div>
-          <div class="inputs-row" style="gap:8px">
-            <div class="field">
-              <div class="lbl"></div>
-              <button id="exportBtn" class="icon" title="Експорт" aria-label="Експорт" type="button">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M12 3v14"></path>
-                  <path d="M5 10l7-7 7 7"></path>
-                  <path d="M5 21h14"></path>
-                </svg>
-              </button>
-            </div>
-            <div class="field">
-              <div class="lbl"></div>
-              <button id="importBtn" class="icon" title="Импорт" aria-label="Импорт" type="button">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M12 21V7"></path>
-                  <path d="M5 14l7 7 7-7"></path>
-                  <path d="M5 3h14"></path>
-                </svg>
-              </button>
-              <input id="importFile" type="file" accept="application/json" style="display:none"/>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Графика -->
-      <section class="card">
-        <h2 style="margin:0 0 10px">Графика</h2>
-        <div class="inputs-row">
-          <select id="aggSel" title="Агрегация">
-            <option value="daily" selected>Дневни</option>
-            <option value="weekly">Седмични</option>
-            <option value="monthly">Месечни</option>
-          </select>
-        </div>
-        <canvas id="chart"></canvas>
-      </section>
-
-      <!-- Записи -->
-      <section class="card">
-        <h2 style="margin:0">Записи</h2>
-        <div class="recbar">
-          <label for="pageSize" style="font-size:12px;color:var(--muted)">На страница:</label>
-          <select id="pageSize">
-            <option value="7">7 (1 сед.)</option>
-            <option value="14">14 (2 сед.)</option>
-            <option value="28" selected>28 (~1 мес.)</option>
-            <option value="84">84 (~3 мес.)</option>
-            <option value="112">112 (~4 мес.)</option>
-            <option value="168">168 (~6 мес.)</option>
-            <option value="336">336 (~12 мес.)</option>
-            <option value="all">Всички</option>
-          </select>
-        </div>
-        <div class="pager" id="pagerTop"></div>
-        <table id="tbl">
-          <colgroup>
-            <col class="date">
-            <col class="w">
-            <col class="act">
-          </colgroup>
-          <thead id="theadTop">
-            <tr>
-              <th class="date">Дата</th>
-              <th class="w">Тегло (kg)</th>
-              <th class="actions">Действия</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-          <tfoot id="tfootBottom">
-            <tr>
-              <th class="date">Дата</th>
-              <th class="w">Тегло (kg)</th>
-              <th class="actions">Действия</th>
-            </tr>
-          </tfoot>
-        </table>
-        <div class="pager" id="pagerBottom"></div>
-      </section>
-    </main>
-  </div>
-
-  <!-- PANEL: ПРОГРАМА -->
-  <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
-    <main>
-      <!-- Основен Пакет -->
-      <section class="card" id="pkg-core">
-        <h2 style="margin:0 0 10px">Основен Пакет</h2>
-
-        <!-- ProLact Slim+ -->
-        <div id="prolact-block">
-          <div class="prog-head">
-            <div class="prog-head-main">
-              <img class="prod-img" src="assets/products/basic/prolact.webp" alt="ProLact Slim+"/>
-              <span class="prog-cap">ProLact Slim+</span>
-            </div>
-            <button id="btnProgIntakePL" class="clk-btn intake prog-intake-btn" type="button" title="Прием ProLact Slim+" style="display:none">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <g transform="translate(0,3)">
-                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                  </g>
-                </svg>
-              </span>
-            </button>
-          </div>
-          <div class="pl-wrap">
-            <table class="pl-table" id="pl-table">
-              <thead>
-                <tr>
-                  <th class="pl-day" data-dow="1">Пн</th>
-                  <th class="pl-day" data-dow="2">Вт</th>
-                  <th class="pl-day" data-dow="3">Ср</th>
-                  <th class="pl-day" data-dow="4">Чт</th>
-                  <th class="pl-day" data-dow="5">Пт</th>
-                  <th class="pl-day weekend" data-dow="6">Сб</th>
-                  <th class="pl-day weekend" data-dow="0">Нд</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="pl-time-cell" data-row="0" data-dow="1">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="2">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="3">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="4">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="5">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="6">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="0">08:00</td>
-                </tr>
-                <tr>
-                  <td class="pl-time-cell" data-row="1" data-dow="1">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="2">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="3">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="4">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="5">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="6">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="0">19:00</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <hr class="prog-sep"/>
-
-        <!-- OMNi-Biotic HETOX light -->
-        <div id="omni-block">
-          <div class="prog-head">
-            <div class="prog-head-main">
-              <img class="prod-img" src="assets/products/basic/omni-hetox-light.png" alt="OMNi-Biotic HETOX light"/>
-              <span class="prog-cap">OMNi-Biotic HETOX light</span>
-            </div>
-            <button id="btnProgIntakeHE" class="clk-btn intake prog-intake-btn" type="button" title="Прием OMNi-Biotic HETOX" style="display:none">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <g transform="translate(0,3)">
-                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                  </g>
-                </svg>
-              </span>
-            </button>
-          </div>
-          <div class="pl-wrap">
-            <table class="pl-table" id="he-table">
-              <thead>
-                <tr>
-                  <th class="pl-day" data-dow="1">Пн</th>
-                  <th class="pl-day" data-dow="2">Вт</th>
-                  <th class="pl-day" data-dow="3">Ср</th>
-                  <th class="pl-day" data-dow="4">Чт</th>
-                  <th class="pl-day" data-dow="5">Пт</th>
-                  <th class="pl-day weekend" data-dow="6">Сб</th>
-                  <th class="pl-day weekend" data-dow="0">Нд</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="pl-time-cell" data-row="0" data-dow="1">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="2">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="3">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="4">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="5">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="6">12:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="0">12:00</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <hr class="prog-sep"/>
-
-        <!-- Fortex Хитозан Плюс -->
-        <div id="chitosan-block">
-          <div class="prog-head">
-            <div class="prog-head-main">
-              <img class="prod-img" src="assets/products/basic/chitosan-plus.webp" alt="Fortex Хитозан Плюс"/>
-              <span class="prog-cap">Fortex Хитозан Плюс</span>
-            </div>
-            <button id="btnProgIntakeCH" class="clk-btn intake prog-intake-btn" type="button" title="Прием Fortex Хитозан Плюс" style="display:none">
-              <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <g transform="translate(0,3)">
-                    <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                    <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                    <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                    <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                  </g>
-                </svg>
-              </span>
-            </button>
-          </div>
-          <div class="pl-wrap">
-            <table class="pl-table" id="ch-table">
-              <thead>
-                <tr>
-                  <th class="pl-day" data-dow="1">Пн</th>
-                  <th class="pl-day" data-dow="2">Вт</th>
-                  <th class="pl-day" data-dow="3">Ср</th>
-                  <th class="pl-day" data-dow="4">Чт</th>
-                  <th class="pl-day" data-dow="5">Пт</th>
-                  <th class="pl-day weekend" data-dow="6">Сб</th>
-                  <th class="pl-day weekend" data-dow="0">Нд</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td class="pl-time-cell" data-row="0" data-dow="1">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="2">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="3">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="4">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="5">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="6">08:00</td>
-                  <td class="pl-time-cell" data-row="0" data-dow="0">08:00</td>
-                </tr>
-                <tr>
-                  <td class="pl-time-cell" data-row="1" data-dow="1">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="2">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="3">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="4">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="5">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="6">19:00</td>
-                  <td class="pl-time-cell" data-row="1" data-dow="0">19:00</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-      </section>
-
-      <!-- Допълнителен Пакет -->
-      <section class="card" id="pkg-extra">
-        <h2 style="margin:0 0 10px">Допълнителен Пакет</h2>
-
-        <!-- Берберин -->
-        <div class="config-block" id="ber-block">
-          <div class="prog-head">
-            <div class="prog-head-main clickable" id="ber-head" title="Редактирай Берберин">
-              <img class="prod-img" id="ber-img" src="" alt="Берберин" style="display:none;"/>
-              <div class="prog-cap-stack">
-                <div class="prog-cap-row">
-                  <span class="prog-cap-main" id="ber-cap-main">Берберин</span>
-                  <button id="ber-settings-btn" class="prog-cap-settings" type="button" title="Настройки" style="display:none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="3"></circle>
-                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33A1.65 1.65 0 0 0 14 21v.09a2 2 0 0 1-4 0V21a1.65 1.65 0 0 0-1.11-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15 1.65 1.65 0 0 0 3 13.4V13a2 2 0 0 1 0-2v-.4A1.65 1.65 0 0 0 4.6 9 1.65 1.65 0 0 0 4.93 7.18l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6 1.65 1.65 0 0 0 10.6 3H11a2 2 0 0 1 2 0h.4A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9 1.65 1.65 0 0 0 21 10.6V11a2 2 0 0 1 0 2v.4A1.65 1.65 0 0 0 19.4 15z"></path>
-                    </svg>
-                  </button>
-                </div>
-                <span class="prog-cap-brand" id="ber-cap-brand"></span>
-              </div>
-            </div>
-            <div class="prog-head-actions">
-              <button id="btnProgIntakeBER" class="clk-btn intake prog-intake-btn" type="button" title="Прием Берберин" style="display:none">
-                <span class="clk-btn-icon">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <g transform="translate(0,3)">
-                      <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                      <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                      <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                      <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                    </g>
-                  </svg>
-                </span>
-              </button>
-            </div>
-          </div>
-
-          <div class="prog-config" id="ber-config" style="display:none;">
-            <div class="field brand-selector">
-              <div class="lbl">Избери:</div>
-              <select id="ber-brand-select">
-                <option value="thorne">Thorne Research</option>
-                <option value="toniiq">Toniiq - Ultra High Strength</option>
-                <option value="it">Integrative Therapeutics</option>
-                <option value="nutricost">Nutricost</option>
-                <option value="now">NOW Foods - Berberine Glucose</option>
-                <option value="custom">Друго (въведи):</option>
-              </select>
-            </div>
-
-            <div class="field custom-brand-field" id="ber-custom-name-field" style="display:none;">
-              <div class="lbl">Име:</div>
-              <input type="text" id="ber-name" placeholder="Берберин 500mg">
-            </div>
-
-            <div class="field">
-              <div class="lbl">
-                Прием дневно:
-                <strong class="slider-val" id="ber-slider-val">3</strong>
-              </div>
-              <div class="slider-track-wrapper">
-                <div class="slider-track-fill" id="ber-slider-track-fill"></div>
-                <input type="range" id="ber-slider" min="1" max="6" value="3" class="slider-control">
-              </div>
-            </div>
-
-            <div class="config-actions">
-              <span class="lbl"></span>
-              <div class="config-buttons">
-                <button id="ber-save" class="clk-btn primary" type="button" title="Запази">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"></path></svg></span>
-                </button>
-                <button id="ber-delete" class="clk-btn danger" type="button" title="Изтрий (0 приеми)">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"></path></svg></span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="pl-wrap" id="ber-grid-container" style="display:none;"></div>
-        </div>
-
-        <hr class="prog-sep"/>
-
-        <!-- Глюкоманан -->
-        <div class="config-block" id="glu-block">
-          <div class="prog-head">
-            <div class="prog-head-main clickable" id="glu-head" title="Редактирай Глюкоманан">
-              <img class="prod-img" id="glu-img" src="" alt="Глюкоманан" style="display:none;"/>
-              <div class="prog-cap-stack">
-                <div class="prog-cap-row">
-                  <span class="prog-cap-main" id="glu-cap-main">Глюкоманан</span>
-                  <button id="glu-settings-btn" class="prog-cap-settings" type="button" title="Настройки" style="display:none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="3"></circle>
-                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33A1.65 1.65 0 0 0 14 21v.09a2 2 0 0 1-4 0V21a1.65 1.65 0 0 0-1.11-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15 1.65 1.65 0 0 0 3 13.4V13a2 2 0 0 1 0-2v-.4A1.65 1.65 0 0 0 4.6 9 1.65 1.65 0 0 0 4.93 7.18l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6 1.65 1.65 0 0 0 10.6 3H11a2 2 0 0 1 2 0h.4A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9 1.65 1.65 0 0 0 21 10.6V11a2 2 0 0 1 0 2v.4A1.65 1.65 0 0 0 19.4 15z"></path>
-                    </svg>
-                  </button>
-                </div>
-                <span class="prog-cap-brand" id="glu-cap-brand"></span>
-              </div>
-            </div>
-
-            <div class="prog-head-actions">
-              <button id="btnProgIntakeGLU" class="clk-btn intake prog-intake-btn" type="button" title="Прием Глюкоманан" style="display:none">
-                <span class="clk-btn-icon">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <g transform="translate(0,3)">
-                      <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                      <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                      <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                      <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                    </g>
-                  </svg>
-                </span>
-              </button>
-            </div>
-          </div>
-
-          <div class="prog-config" id="glu-config" style="display:none;">
-            <div class="field brand-selector">
-              <div class="lbl">Избери:</div>
-              <select id="glu-brand-select">
-                <option value="now">NOW Foods - Glucomannan</option>
-                <option value="swanson">Swanson Glucomannan</option>
-                <option value="jarrow">Jarrow Formulas Glucomannan</option>
-                <option value="lifeext">Life Extension Glucomannan</option>
-                <option value="custom">Друго (въведи):</option>
-              </select>
-            </div>
-
-            <div class="field custom-brand-field" id="glu-custom-name-field" style="display:none;">
-              <div class="lbl">Име:</div>
-              <input type="text" id="glu-name" placeholder="Глюкоманан 500mg">
-            </div>
-
-            <div class="field">
-              <div class="lbl">
-                Прием дневно:
-                <strong class="slider-val" id="glu-slider-val">3</strong>
-              </div>
-              <div class="slider-track-wrapper">
-                <div class="slider-track-fill" id="glu-slider-track-fill"></div>
-                <input type="range" id="glu-slider" min="1" max="6" value="3" class="slider-control">
-              </div>
-            </div>
-
-            <div class="config-actions">
-              <span class="lbl"></span>
-              <div class="config-buttons">
-                <button id="glu-save" class="clk-btn primary" type="button" title="Запази">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"></path></svg></span>
-                </button>
-                <button id="glu-delete" class="clk-btn danger" type="button" title="Изтрий (0 приеми)">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"></path></svg></span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="pl-wrap" id="glu-grid-container" style="display:none;"></div>
-        </div>
-
-        <hr class="prog-sep"/>
-
-        <!-- EGCg -->
-        <div class="config-block" id="egc-block">
-          <div class="prog-head">
-            <div class="prog-head-main clickable" id="egc-head" title="Редактирай EGCg">
-              <img class="prod-img" id="egc-img" src="" alt="EGCg" style="display:none;"/>
-              <div class="prog-cap-stack">
-                <div class="prog-cap-row">
-                  <span class="prog-cap-main" id="egc-cap-main">EGCg</span>
-                  <button id="egc-settings-btn" class="prog-cap-settings" type="button" title="Настройки" style="display:none;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                      <circle cx="12" cy="12" r="3"></circle>
-                      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33A1.65 1.65 0 0 0 14 21v.09a2 2 0 0 1-4 0V21a1.65 1.65 0 0 0-1.11-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15 1.65 1.65 0 0 0 3 13.4V13a2 2 0 0 1 0-2v-.4A1.65 1.65 0 0 0 4.6 9 1.65 1.65 0 0 0 4.93 7.18l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6 1.65 1.65 0 0 0 10.6 3H11a2 2 0 0 1 2 0h.4A1.65 1.65 0 0 0 15 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9 1.65 1.65 0 0 0 21 10.6V11a2 2 0 0 1 0 2v.4A1.65 1.65 0 0 0 19.4 15z"></path>
-                    </svg>
-                  </button>
-                </div>
-                <span class="prog-cap-brand" id="egc-cap-brand"></span>
-              </div>
-            </div>
-
-            <div class="prog-head-actions">
-              <button id="btnProgIntakeEGC" class="clk-btn intake prog-intake-btn" type="button" title="Прием EGCg" style="display:none">
-                <span class="clk-btn-icon">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <g transform="translate(0,3)">
-                      <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                      <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                      <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                      <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                    </g>
-                  </svg>
-                </span>
-              </button>
-            </div>
-          </div>
-
-          <div class="prog-config" id="egc-config" style="display:none;">
-            <div class="field brand-selector">
-              <div class="lbl">Избери:</div>
-              <select id="egc-brand-select">
-                <option value="now">NOW Foods - EGCg Green Tea</option>
-                <option value="lifeext">Life Extension Mega Green Tea Extract</option>
-                <option value="jarrow">Jarrow Green Tea 500mg</option>
-                <option value="swanson">Swanson Green Tea Extract</option>
-                <option value="custom">Друго (въведи):</option>
-              </select>
-            </div>
-
-            <div class="field custom-brand-field" id="egc-custom-name-field" style="display:none;">
-              <div class="lbl">Име:</div>
-              <input type="text" id="egc-name" placeholder="EGCg 400mg">
-            </div>
-
-            <div class="field">
-              <div class="lbl">
-                Прием дневно:
-                <strong class="slider-val" id="egc-slider-val">1</strong>
-              </div>
-              <div class="slider-track-wrapper">
-                <div class="slider-track-fill" id="egc-slider-track-fill"></div>
-                <input type="range" id="egc-slider" min="1" max="3" value="1" class="slider-control">
-              </div>
-            </div>
-
-            <div class="config-actions">
-              <span class="lbl"></span>
-              <div class="config-buttons">
-                <button id="egc-save" class="clk-btn primary" type="button" title="Запази">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"></path></svg></span>
-                </button>
-                <button id="egc-delete" class="clk-btn danger" type="button" title="Изтрий (0 приеми)">
-                  <span class="clk-btn-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"></path></svg></span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div class="pl-wrap" id="egc-grid-container" style="display:none;"></div>
-        </div>
-
-      </section>
-
-      <!-- Личен режим -->
-      <section class="card" id="pkg-personal">
-        <h2 style="margin:0 0 10px">Личен Режим</h2>
-        <p style="margin:0 0 8px; color:#9fb4ad">
-          Тук включваш други добавки/витамини/медикаменти извън основната програма.
-        </p>
-        <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
-          <li><em>Пример:</em> Магнезий бисглицинат</li>
-          <li><em>Пример:</em> Витамин D3 + K2</li>
-          <li><em>Пример:</em> Омега-3</li>
-        </ul>
-      </section>
-    </main>
-  </div>
-
-  <!-- Модален часовник -->
-  <div class="clk" id="clk" aria-hidden="true">
-    <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
+  <div id="panel-program" class="panel" aria-hidden="false">
+    
+    <div class="prog-content">
       
-      <!-- НОВИЯТ БУТОН ЗА ЗАТВАРЯНЕ -->
-      <button id="btnCloseClk" class="clk-close-btn" type="button" title="Затвори">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <div class="prog-section-title">Основен пакет</div>
+
+      <div id="prolact-block" class="prog-block">
+        <div class="prog-head">
+          <div class="prog-head-main">
+            <img src="assets/products/prolact-slim.webp" alt="ProLact Slim+" class="prod-img">
+            <div class="prog-pill">
+              <div class="prog-cap-main">ProLact Slim+</div>
+              <div class="prog-cap-sub">Пробиотик</div>
+            </div>
+          </div>
+          <div class="prog-head-actions">
+            <button id="btnProgIntakePL" class="clk-btn intake prog-intake-btn" type="button"></button>
+          </div>
+        </div>
+        <div class="grid-container" id="pl-grid-container">
+          <table class="pl-table" id="pl-table">
+            <thead>
+              <tr>
+                <th class="pl-day" data-dow="1">Пн</th>
+                <th class="pl-day" data-dow="2">Вт</th>
+                <th class="pl-day" data-dow="3">Ср</th>
+                <th class="pl-day" data-dow="4">Чт</th>
+                <th class="pl-day" data-dow="5">Пт</th>
+                <th class="pl-day weekend" data-dow="6">Сб</th>
+                <th class="pl-day weekend" data-dow="0">Нд</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="omni-block" class="prog-block">
+        <div class="prog-head">
+          <div class="prog-head-main">
+            <img src="assets/products/omni-hetox.webp" alt="OMNi-Biotic" class="prod-img">
+            <div class="prog-pill">
+              <div class="prog-cap-main">OMNi-Biotic</div>
+              <div class="prog-cap-sub">HETOX light</div>
+            </div>
+          </div>
+          <div class="prog-head-actions">
+            <button id="btnProgIntakeHE" class="clk-btn intake prog-intake-btn" type="button"></button>
+          </div>
+        </div>
+        <div class="grid-container" id="he-grid-container">
+          <table class="pl-table" id="he-table">
+            <thead>
+              <tr>
+                <th class="pl-day" data-dow="1">Пн</th>
+                <th class="pl-day" data-dow="2">Вт</th>
+                <th class="pl-day" data-dow="3">Ср</th>
+                <th class="pl-day" data-dow="4">Чт</th>
+                <th class="pl-day" data-dow="5">Пт</th>
+                <th class="pl-day weekend" data-dow="6">Сб</th>
+                <th class="pl-day weekend" data-dow="0">Нд</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div id="chitosan-block" class="prog-block">
+        <div class="prog-head">
+          <div class="prog-head-main">
+            <img src="assets/products/chitosan.webp" alt="Chitosan" class="prod-img">
+            <div class="prog-pill">
+              <div class="prog-cap-main">Хитозан Плюс</div>
+              <div class="prog-cap-sub">Fortex</div>
+            </div>
+          </div>
+          <div class="prog-head-actions">
+            <button id="btnProgIntakeCH" class="clk-btn intake prog-intake-btn" type="button"></button>
+          </div>
+        </div>
+        <div class="grid-container" id="ch-grid-container">
+          <table class="pl-table" id="ch-table">
+            <thead>
+              <tr>
+                <th class="pl-day" data-dow="1">Пн</th>
+                <th class="pl-day" data-dow="2">Вт</th>
+                <th class="pl-day" data-dow="3">Ср</th>
+                <th class="pl-day" data-dow="4">Чт</th>
+                <th class="pl-day" data-dow="5">Пт</th>
+                <th class="pl-day weekend" data-dow="6">Сб</th>
+                <th class="pl-day weekend" data-dow="0">Нд</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="prog-section-title">Допълнителен пакет</div>
+
+      <div id="ber-block" class="prog-block">
+        <div id="ber-head" class="prog-head">
+          <div class="prog-head-main">
+            <img id="ber-img" src="" alt="" class="prod-img" style="display:none">
+            <div class="prog-pill">
+              <div class="prog-cap-main" id="ber-cap-main">Берберин</div>
+              <div class="prog-cap-sub" id="ber-cap-brand"></div>
+            </div>
+          </div>
+          <div class="prog-head-actions">
+            <button id="btnProgIntakeBER" class="clk-btn intake prog-intake-btn" type="button" style="display:none"></button>
+            <button id="ber-settings-btn" class="clk-btn settings" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="ber-config" class="prog-config-panel" style="display:none">
+          <div class="cfg-row">
+            <label>Марка:</label>
+            <select id="ber-brand-select"></select>
+          </div>
+          <div class="cfg-row" id="ber-custom-name-field" style="display:none">
+            <label>Име:</label>
+            <input type="text" id="ber-name" placeholder="Моят продукт">
+          </div>
+          <div class="cfg-row">
+            <label>Приеми дневно: <span class="slider-val" id="ber-slider-val">3</span></label>
+            <div class="slider-track-wrapper">
+              <div class="slider-track-fill" id="ber-slider-track-fill"></div>
+              <input type="range" id="ber-slider" class="slider-control" min="0" max="6" value="3">
+            </div>
+          </div>
+          <div class="cfg-actions">
+            <button id="ber-delete" class="cfg-btn danger" type="button">Изтрий</button>
+            <button id="ber-save" class="cfg-btn primary" type="button">Запази</button>
+          </div>
+        </div>
+
+        <div id="ber-grid-container" class="grid-container" style="display:none"></div>
+      </div>
+
+      <div id="glu-block" class="prog-block">
+        <div id="glu-head" class="prog-head">
+          <div class="prog-head-main">
+            <img id="glu-img" src="" alt="" class="prod-img" style="display:none">
+            <div class="prog-pill">
+              <div class="prog-cap-main" id="glu-cap-main">Глюкоманан</div>
+              <div class="prog-cap-sub" id="glu-cap-brand"></div>
+            </div>
+          </div>
+          <div class="prog-head-actions">
+            <button id="btnProgIntakeGLU" class="clk-btn intake prog-intake-btn" type="button" style="display:none"></button>
+            <button id="glu-settings-btn" class="clk-btn settings" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="glu-config" class="prog-config-panel" style="display:none">
+          <div class="cfg-row">
+            <label>Марка:</label>
+            <select id="glu-brand-select"></select>
+          </div>
+          <div class="cfg-row" id="glu-custom-name-field" style="display:none">
+            <label>Име:</label>
+            <input type="text" id="glu-name" placeholder="Моят продукт">
+          </div>
+          <div class="cfg-row">
+            <label>Приеми дневно: <span class="slider-val" id="glu-slider-val">3</span></label>
+            <div class="slider-track-wrapper">
+              <div class="slider-track-fill" id="glu-slider-track-fill"></div>
+              <input type="range" id="glu-slider" class="slider-control" min="0" max="6" value="3">
+            </div>
+          </div>
+          <div class="cfg-actions">
+            <button id="glu-delete" class="cfg-btn danger" type="button">Изтрий</button>
+            <button id="glu-save" class="cfg-btn primary" type="button">Запази</button>
+          </div>
+        </div>
+
+        <div id="glu-grid-container" class="grid-container" style="display:none"></div>
+      </div>
+
+      <div id="egc-block" class="prog-block">
+        <div id="egc-head" class="prog-head">
+          <div class="prog-head-main">
+            <img id="egc-img" src="" alt="" class="prod-img" style="display:none">
+            <div class="prog-pill">
+              <div class="prog-cap-main" id="egc-cap-main">Зелен чай (EGCg)</div>
+              <div class="prog-cap-sub" id="egc-cap-brand"></div>
+            </div>
+          </div>
+          <div class="prog-head-actions">
+            <button id="btnProgIntakeEGC" class="clk-btn intake prog-intake-btn" type="button" style="display:none"></button>
+            <button id="egc-settings-btn" class="clk-btn settings" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div id="egc-config" class="prog-config-panel" style="display:none">
+          <div class="cfg-row">
+            <label>Марка:</label>
+            <select id="egc-brand-select"></select>
+          </div>
+          <div class="cfg-row" id="egc-custom-name-field" style="display:none">
+            <label>Име:</label>
+            <input type="text" id="egc-name" placeholder="Моят продукт">
+          </div>
+          <div class="cfg-row">
+            <label>Приеми дневно: <span class="slider-val" id="egc-slider-val">3</span></label>
+            <div class="slider-track-wrapper">
+              <div class="slider-track-fill" id="egc-slider-track-fill"></div>
+              <input type="range" id="egc-slider" class="slider-control" min="0" max="6" value="3">
+            </div>
+          </div>
+          <div class="cfg-actions">
+            <button id="egc-delete" class="cfg-btn danger" type="button">Изтрий</button>
+            <button id="egc-save" class="cfg-btn primary" type="button">Запази</button>
+          </div>
+        </div>
+
+        <div id="egc-grid-container" class="grid-container" style="display:none"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="clk" id="clk" aria-hidden="true">
+    <div class="clk-card" id="clkCard">
+      <button id="btnCloseClk" class="clk-close-btn" type="button" aria-label="Затвори">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
 
-      <div class="clk-header">
-        <div id="clk-product" class="clk-product-title"></div>
-        <div id="clk-weekday" class="clk-day"></div>
+      <div class="clk-info">
+        <div class="clk-prod-name" id="clk-product">Продукт</div>
+        <div class="clk-weekday" id="clk-weekday">Понеделник</div>
       </div>
+      
       <div class="clk-face" id="clkFace">
-        <div class="clk-ring mins" id="ringM"></div>
-        <div class="clk-ring hours" id="ringH"></div>
-        <div class="clk-hand hour" id="handH"></div>
-        <div class="clk-hand min" id="handM"></div>
-        <div class="clk-center-dot"></div>
-        <div class="clk-read" id="clkRead">
-          <div id="clkH" class="clk-read-part" data-part="H">
-            <span class="clk-digit" data-pos="1"></span>
-            <span class="clk-digit" data-pos="2"></span>
-          </div>
-          <span class="clk-read-colon">:</span>
-          <div id="clkM" class="clk-read-part" data-part="M">
-            <span class="clk-digit" data-pos="3"></span>
-            <span class="clk-digit" data-pos="4"></span>
-          </div>
-        </div>
+        <div class="clk-ring-h" id="ringH"></div>
+        <div class="clk-ring-m" id="ringM"></div>
+        <div class="clk-center"></div>
+        <div class="clk-hand h-hand" id="handH"></div>
+        <div class="clk-hand m-hand" id="handM"></div>
       </div>
-      <input id="clkKeyInput" type="tel" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-hidden="true" style="position:absolute; opacity:0; height:0; width:0; border:0; padding:0; pointer-events:none;"/>
+
+      <div class="clk-read" id="clkRead">
+        <div class="clk-part" id="clkH"></div>
+        <div class="clk-sep">:</div>
+        <div class="clk-part" id="clkM"></div>
+      </div>
+      <input type="text" id="clkKeyInput" class="clk-hidden-input" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+
       <div class="clk-actions">
         <div class="clk-actions-row">
-          <button id="btnIntake" class="clk-btn intake big" type="button" title="Прием">
-            <span class="clk-btn-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <g transform="translate(0,3)">
-                  <circle class="pill-clock-circle" cx="9" cy="9" r="5.25"></circle>
-                  <path class="pill-clock-hands" d="M9 6.5v3l2 1.5"></path>
-                  <rect class="pill-clock-pill" x="12.5" y="11" width="7" height="4" rx="2"></rect>
-                  <path class="pill-clock-pill" d="M13 11.5l5 3"></path>
-                </g>
-              </svg>
-            </span>
-          </button>
           <div class="clk-actions-group">
-            <button id="btnSaveOne" class="clk-btn primary" type="button" title="Запис за този ден">
+            <button id="btnIntake" class="clk-btn intake big" type="button" title="Статус на приема">
+               <span class="clk-btn-icon">
+                <svg viewBox="0 0 24 24" class="pill-clock-svg">
+                  <circle cx="12" cy="12" r="10" class="pill-clock-circle"></circle>
+                  <path d="M12 6v6l4 2" class="pill-clock-hands"></path>
+                  <rect x="15" y="4" width="6" height="12" rx="3" transform="rotate(30 18 10)" class="pill-clock-pill"></rect>
+                </svg>
+               </span>
+            </button>
+            <button id="btnSaveOne" class="clk-btn primary" type="button" title="Запис само за този ден">
               <span class="clk-btn-icon">
-                <svg viewBox="0 0 24 24" fill="none">
-                  <path d="M5 13l4 4L19 7"></path>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 6L9 17l-5-5"></path>
                 </svg>
               </span>
             </button>
@@ -702,15 +447,17 @@
     </table>
   </template>
 
-  <!-- JS -->
-  <script src="assets/js/utils.js"></script>
-  <script src="assets/js/brands.js"></script> 
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/data.js"></script>
-  <script src="assets/js/product-grid.js"></script>
-  <script src="assets/js/modal.js"></script>
-  <script src="assets/js/program-init.js"></script>
-  <script src="assets/js/program-additional.js"></script>
+  <script type="module" src="assets/js/main.js"></script>
+  <script type="module" src="assets/js/data.js"></script>
+  <script type="module" src="assets/js/program-init.js"></script>
+  <script type="module" src="assets/js/program-additional.js"></script>
 
+  <script>
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('SW registered', reg.scope))
+        .catch(err => console.log('SW failed', err));
+    }
+  </script>
 </body>
 </html>
