@@ -1,5 +1,4 @@
-import { two, todayISO, TODAY } from './utils.js';
-import { ModalLogic } from './modal.js';
+/* global two, todayISO, TODAY, ModalLogic */ // Информираме, че ModalLogic ще дойде от друг файл
 
 /**
  * =================================================================
@@ -7,7 +6,7 @@ import { ModalLogic } from './modal.js';
  * =================================================================
  */
 
-export function createProductGrid(options) {
+function createProductGrid(options) {
   const TABLE = document.getElementById(options.tableId);
   const INTAKE_BTN = document.getElementById(options.buttonId);
   if (!TABLE) return null;
@@ -371,9 +370,13 @@ export function createProductGrid(options) {
   renderTimes();
   updateIntakeStates();
 
+  //
+  // ↓↓↓ ДОБАВИ ТОВА ↓↓↓
+  //
   function destroy() {
     // Тази функция ще се вика, за да "убие" инстанцията
     // Засега само изчистваме event listeners, ако има нужда
+    // (В твоя случай, просто спира да съществува в `window.grids`)
   }
 
   // --- Връщаме публичния API ---
@@ -384,6 +387,7 @@ export function createProductGrid(options) {
     getBlockId: () => BLOCK_ID,
     state: state,
     saveState: saveState,
-    destroy: destroy 
+    destroy: destroy // <-- И ДОБАВИ ТОВА ТУК
   };
 }
+// --- КРАЙ НА ФАБРИКАТА ---
