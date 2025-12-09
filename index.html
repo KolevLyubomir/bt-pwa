@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 5 — v5.1.9</title>
+  <title>БТ App 5 — v5.1.10</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -19,11 +19,9 @@
   <link rel="stylesheet" href="assets/css/main.css"/>
   <link rel="stylesheet" href="assets/css/data.css"/>
 
-  <!-- Program CSS файлове v5.1.9 -->
   <link rel="stylesheet" href="assets/css/program-layout.css?v=5.1.9"/>
   <link rel="stylesheet" href="assets/css/program-states.css?v=5.1.9"/>
 
-  <!-- Модални компоненти v5.1.9 -->
   <link rel="stylesheet" href="assets/css/program-clock.css?v=5.1.9"/>
   <link rel="stylesheet" href="assets/css/program-buttons.css?v=5.1.9"/>
   <link rel="stylesheet" href="assets/css/program-dialogs.css?v=5.1.9"/>
@@ -33,11 +31,10 @@
   <div class="topbar-wrap">
     <div class="topbar">
       <div class="brand">
-        <!-- ЛОКАЛНО ЛОГО -->
         <img src="assets/images/bt-safe-weight-logo.png" alt="Безопасно Тегло" class="main-logo"/>
       </div>
       <div class="version-slot">
-        <span class="badge" id="app-version-badge">v5.1.9</span>
+        <span class="badge" id="app-version-badge">v5.1.10</span>
       </div>
     </div>
   </div>
@@ -49,10 +46,8 @@
     </div>
   </div>
 
-  <!-- PANEL: ДАННИ -->
   <div id="panel-data" class="tabpanel" role="tabpanel" aria-labelledby="tab-data" aria-hidden="false">
     <main>
-      <!-- Запис -->
       <section class="card">
         <h2 style="margin:0 0 10px">Запис</h2>
         <div class="inputs-row">
@@ -106,7 +101,6 @@
         </div>
       </section>
 
-      <!-- Графика -->
       <section class="card">
         <h2 style="margin:0 0 10px">Графика</h2>
         <div class="inputs-row">
@@ -119,7 +113,6 @@
         <canvas id="chart"></canvas>
       </section>
 
-      <!-- Записи -->
       <section class="card">
         <h2 style="margin:0">Записи</h2>
         <div class="recbar">
@@ -163,14 +156,11 @@
     </main>
   </div>
 
-  <!-- PANEL: ПРОГРАМА -->
   <div id="panel-program" class="tabpanel" role="tabpanel" aria-labelledby="tab-program" aria-hidden="true">
     <main>
-      <!-- Основен Пакет -->
       <section class="card" id="pkg-core">
         <h2 style="margin:0 0 10px">Основен Пакет</h2>
 
-        <!-- ProLact Slim+ -->
         <div id="prolact-block">
           <div class="prog-head">
             <div class="prog-head-main">
@@ -229,7 +219,6 @@
 
         <hr class="prog-sep"/>
 
-        <!-- OMNi-Biotic HETOX light -->
         <div id="omni-block">
           <div class="prog-head">
             <div class="prog-head-main">
@@ -279,7 +268,6 @@
 
         <hr class="prog-sep"/>
 
-        <!-- Fortex Хитозан Плюс -->
         <div id="chitosan-block">
           <div class="prog-head">
             <div class="prog-head-main">
@@ -338,11 +326,9 @@
 
       </section>
 
-      <!-- Допълнителен Пакет -->
       <section class="card" id="pkg-extra">
         <h2 style="margin:0 0 10px">Допълнителен Пакет</h2>
 
-        <!-- Берберин -->
         <div class="config-block" id="ber-block">
           <div class="prog-head">
             <div class="prog-head-main clickable" id="ber-head" title="Редактирай Берберин">
@@ -423,7 +409,6 @@
 
         <hr class="prog-sep"/>
 
-        <!-- Глюкоманан -->
         <div class="config-block" id="glu-block">
           <div class="prog-head">
             <div class="prog-head-main clickable" id="glu-head" title="Редактирай Глюкоманан">
@@ -504,7 +489,6 @@
 
         <hr class="prog-sep"/>
 
-        <!-- EGCg -->
         <div class="config-block" id="egc-block">
           <div class="prog-head">
             <div class="prog-head-main clickable" id="egc-head" title="Редактирай EGCg">
@@ -585,7 +569,6 @@
 
       </section>
 
-      <!-- Личен режим -->
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен Режим</h2>
         <p style="margin:0 0 8px; color:#9fb4ad">
@@ -600,11 +583,9 @@
     </main>
   </div>
 
-  <!-- Модален часовник -->
   <div class="clk" id="clk" aria-hidden="true">
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
       
-      <!-- НОВИЯТ БУТОН ЗА ЗАТВАРЯНЕ -->
       <button id="btnCloseClk" class="clk-close-btn" type="button" title="Затвори">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -702,7 +683,6 @@
     </table>
   </template>
 
-  <!-- JS -->
   <script src="assets/js/utils.js"></script>
   <script src="assets/js/brands.js"></script> 
   <script src="assets/js/main.js"></script>
