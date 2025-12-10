@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 5 — v5.1.10</title>
+  <title>БТ App 5 — v5.1.11</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -34,7 +34,7 @@
         <img src="assets/images/bt-safe-weight-logo.png" alt="Безопасно Тегло" class="main-logo"/>
       </div>
       <div class="version-slot">
-        <span class="badge" id="app-version-badge">v5.1.10</span>
+        <span class="badge" id="app-version-badge">v5.1.11</span>
       </div>
     </div>
   </div>
@@ -692,5 +692,10 @@
   <script src="assets/js/program-init.js"></script>
   <script src="assets/js/program-additional.js"></script>
 
+  <script>
+    if('serviceWorker' in navigator){
+      navigator.serviceWorker.register('sw.js').catch(console.error);
+    }
+  </script>
 </body>
 </html>

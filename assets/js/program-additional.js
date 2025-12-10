@@ -4,6 +4,138 @@
   "use strict";
 
   // ============================================
+  // БРАНДОВЕ – КАРТИ С КАРТИНКИ
+  // ============================================
+
+  const BERBERINE_BRANDS = {
+    thorne: {
+      name: "Thorne Research",
+      img: "assets/products/additional/ber-thorne.webp",
+      icon: "assets/products/additional/icons/ber-thorne-icon.webp"
+    },
+    toniiq: {
+      name: "Toniiq - Ultra High Strength",
+      img: "assets/products/additional/ber-toniiq.webp",
+      icon: "assets/products/additional/icons/ber-toniiq-icon.webp"
+    },
+    it: {
+      name: "Integrative Therapeutics",
+      img: "assets/products/additional/ber-it.webp",
+      icon: "assets/products/additional/icons/ber-it-icon.webp"
+    },
+    nutricost: {
+      name: "Nutricost",
+      img: "assets/products/additional/ber-nutricost.webp",
+      icon: "assets/products/additional/icons/ber-nutricost-icon.webp"
+    },
+    now: {
+      name: "NOW Foods - Berberine Glucose",
+      img: "assets/products/additional/ber-now.webp",
+      icon: "assets/products/additional/icons/ber-now-icon.webp"
+    },
+    custom: {
+      name: "Друго (въведи):",
+      img: "assets/products/additional/ber-custom.webp",
+      icon: "assets/products/additional/icons/ber-custom-icon.webp"
+    }
+  };
+
+  const GLUCOMANNAN_BRANDS = {
+    now: {
+      name: "NOW Foods - Glucomannan",
+      img: "assets/products/additional/glu-now.webp",
+      icon: "assets/products/additional/icons/glu-now-icon.webp"
+    },
+    swanson: {
+      name: "Swanson Glucomannan",
+      img: "assets/products/additional/glu-swanson.webp",
+      icon: "assets/products/additional/icons/glu-swanson-icon.webp"
+    },
+    jarrow: {
+      name: "Jarrow Formulas Glucomannan",
+      img: "assets/products/additional/glu-jarrow.webp",
+      icon: "assets/products/additional/icons/glu-jarrow-icon.webp"
+    },
+    lifeext: {
+      name: "Life Extension Glucomannan",
+      img: "assets/products/additional/glu-lifeext.webp",
+      icon: "assets/products/additional/icons/glu-lifeext-icon.webp"
+    },
+    custom: {
+      name: "Друго (въведи):",
+      img: "assets/products/additional/glu-custom.webp",
+      icon: "assets/products/additional/icons/glu-custom-icon.webp"
+    }
+  };
+
+  const EGCG_BRANDS = {
+    now: {
+      name: "NOW Foods - EGCg Green Tea",
+      img: "assets/products/additional/egc-now.webp",
+      icon: "assets/products/additional/icons/egc-now-icon.webp"
+    },
+    lifeext: {
+      name: "Life Extension Mega Green Tea Extract",
+      img: "assets/products/additional/egc-lifeext.webp",
+      icon: "assets/products/additional/icons/egc-lifeext-icon.webp"
+    },
+    jarrow: {
+      name: "Jarrow Green Tea 500mg",
+      img: "assets/products/additional/egc-jarrow.webp",
+      icon: "assets/products/additional/icons/egc-jarrow-icon.webp"
+    },
+    swanson: {
+      name: "Swanson Green Tea Extract",
+      img: "assets/products/additional/egc-swanson.webp",
+      icon: "assets/products/additional/icons/egc-swanson-icon.webp"
+    },
+    custom: {
+      name: "Друго (въведи):",
+      img: "assets/products/additional/egc-custom.webp",
+      icon: "assets/products/additional/icons/egc-custom-icon.webp"
+    }
+  };
+
+  // ============================================
+  // СХЕМА НА ЧАСОВЕТЕ
+  // ============================================
+
+  const DEFAULT_TIMES_MAP = [
+    [],
+    [["12:00"]],
+    [["08:00"], ["12:00"]],
+    [["08:00"], ["12:00"], ["18:00"]],
+    [["08:00"], ["12:00"], ["15:00"], ["18:00"]],
+    [["08:00"], ["10:00"], ["12:00"], ["15:00"], ["18:00"]],
+    [["08:00"], ["10:00"], ["12:00"], ["15:00"], ["18:00"], ["21:00"]]
+  ];
+
+  function timeStrToMin(str) {
+    if (!str || typeof str !== "string") return 0;
+    var parts = str.split(":");
+    var h = parseInt(parts[0], 10);
+    var m = parseInt(parts[1], 10);
+    if (!isFinite(h)) h = 0;
+    if (!isFinite(m)) m = 0;
+    if (h < 0) h = 0;
+    if (h > 23) h = 23;
+    if (m < 0) m = 0;
+    if (m > 59) m = 59;
+    return h * 60 + m;
+  }
+
+  function minToTimeStr(min) {
+    if (!isFinite(min) || min < 0) min = 0;
+    var h = Math.floor(min / 60);
+    var m = min % 60;
+    if (h > 23) h = 23;
+    if (m > 59) m = 59;
+    var hs = (h < 10 ? "0" : "") + h;
+    var ms = (m < 10 ? "0" : "") + m;
+    return hs + ":" + ms;
+  }
+
+  // ============================================
   // КОНФИГУРИРУЕМ ПРОДУКТ
   // ============================================
 
@@ -114,7 +246,6 @@
     }
 
     // -------- Модал за избор на марка --------
-
     var brandModal = null;
     var brandModalList = null;
     var brandModalTitle = null;
@@ -221,7 +352,6 @@
       document.body.appendChild(brandModal);
     }
 
-    // -------- Чип за избор на марка --------
     brandPickerBtn = document.createElement("button");
     brandPickerBtn.type = "button";
     Object.assign(brandPickerBtn.style, { display: "inline-flex", alignItems: "center", gap: "6px", padding: "6px 10px", borderRadius: "999px", border: "1px solid #4b5563", background: "#020617", fontSize: "13px", cursor: "pointer", marginBottom: "6px", color: "#e5e7eb" });
@@ -291,8 +421,6 @@
       try { localStorage.setItem(GRID_STORAGE_KEY, JSON.stringify(newState)); } catch (e2) { }
     }
 
-    // -------- UI обновяване --------
-
     function updateUI(showConfig) {
       var brandKey = settings.brand;
       if (!brandsMap[brandKey]) { brandKey = Object.keys(brandsMap)[0]; settings.brand = brandKey; }
@@ -346,7 +474,6 @@
         if (intakeBtn) intakeBtn.style.display = "inline-flex";
         if (settingsBtn) settingsBtn.style.display = "inline-flex";
       } else {
-        // --- ПРОМЯНА: Ако не е конфигуриран, показваме картинката на "custom" ---
         var defBrand = brandsMap["custom"];
         if (productImg && defBrand && defBrand.img) {
           productImg.src = defBrand.img;
@@ -393,18 +520,30 @@
       if (typeof window.masterUpdateAllGrids === "function") window.masterUpdateAllGrids();
     }
 
+    // ===============================================
+    // --- ГЕНЕРИРАНЕ С <TEMPLATE> (НОВАТА ЛОГИКА) ---
+    // ===============================================
     function generateGrid(rowCount, productName) {
+      // 1. Почистване
       if (currentGridInstance) {
         if (Array.isArray(window.grids)) window.grids = window.grids.filter(g => g !== currentGridInstance);
         if (typeof currentGridInstance.destroy === "function") currentGridInstance.destroy();
         currentGridInstance = null;
       }
+      
+      // 2. Скриване ако няма редове
       if (rowCount === 0) {
-        gridContainer.innerHTML = ""; gridContainer.style.display = "none";
-        if (intakeBtn) { intakeBtn.style.display = "none"; intakeBtn.removeAttribute("data-row"); intakeBtn.removeAttribute("data-dow"); }
+        gridContainer.innerHTML = ""; 
+        gridContainer.style.display = "none";
+        if (intakeBtn) { 
+            intakeBtn.style.display = "none"; 
+            intakeBtn.removeAttribute("data-row"); 
+            intakeBtn.removeAttribute("data-dow"); 
+        }
         return;
       }
 
+      // 3. Данни
       var defaultTimes = [];
       var timesMap = DEFAULT_TIMES_MAP[rowCount] || DEFAULT_TIMES_MAP[1];
       for (var i = 0; i < rowCount; i++) {
@@ -416,39 +555,56 @@
       var tableId = prefix + "-table";
       var buttonId = "btnProgIntake" + prefix.toUpperCase();
 
-      // --- НОВА ЛОГИКА С ШАБЛОНИ (START) ---
-      gridContainer.innerHTML = ""; // Чистим контейнера
+      // 4. ИЗПОЛЗВАНЕ НА ШАБЛОНА
+      gridContainer.innerHTML = ""; // Clean
       var tmpl = document.getElementById('tmpl-grid');
-      if (!tmpl) { console.error("Липсва шаблон #tmpl-grid"); return; }
       
-      var clone = tmpl.content.cloneNode(true);
-      var table = clone.querySelector('table');
-      table.id = tableId;
-      var tbody = table.querySelector('tbody');
-
-      for (var r = 0; r < rowCount; r++) {
-        var tr = document.createElement('tr');
-        for (var day = 1; day <= 7; day++) {
-          var dow = (day === 7) ? 0 : day;
-          var cellTime = defaultTimes[r][(dow === 0 ? 6 : (dow - 1))];
+      if (tmpl) {
+          // Клонираме съдържанието
+          var clone = tmpl.content.cloneNode(true);
+          var table = clone.querySelector('table');
+          table.id = tableId;
           
-          var td = document.createElement('td');
-          td.className = 'pl-time-cell';
-          td.setAttribute('data-row', r);
-          td.setAttribute('data-dow', dow);
-          td.textContent = cellTime;
-          tr.appendChild(td);
-        }
-        tbody.appendChild(tr);
+          var tbody = table.querySelector('tbody');
+          
+          // Генерираме редовете (TR)
+          for (var r = 0; r < rowCount; r++) {
+              var tr = document.createElement('tr');
+              var daysSeq = [1, 2, 3, 4, 5, 6, 0];
+              
+              daysSeq.forEach(function(dow) {
+                  var td = document.createElement('td');
+                  td.className = 'pl-time-cell';
+                  td.setAttribute('data-row', r);
+                  td.setAttribute('data-dow', dow);
+                  
+                  var idx = (dow === 0 ? 6 : dow - 1);
+                  td.textContent = defaultTimes[r][idx];
+                  
+                  tr.appendChild(td);
+              });
+              tbody.appendChild(tr);
+          }
+          gridContainer.appendChild(table);
+      } else {
+          console.error("Шаблонът #tmpl-grid липсва в HTML!");
+          return;
       }
       
-      gridContainer.appendChild(table);
       gridContainer.style.display = "block";
-      // --- НОВА ЛОГИКА (END) ---
 
+      // 5. Инициализация на логиката
       setTimeout(function () {
         if (typeof createProductGrid !== "function") return;
-        currentGridInstance = createProductGrid({ tableId: tableId, buttonId: buttonId, storageKey: GRID_STORAGE_KEY, defaultTimes: defaultTimes, productName: productName, blockId: prefix + "-block" });
+        currentGridInstance = createProductGrid({ 
+            tableId: tableId, 
+            buttonId: buttonId, 
+            storageKey: GRID_STORAGE_KEY, 
+            defaultTimes: defaultTimes, 
+            productName: productName, 
+            blockId: prefix + "-block" 
+        });
+        
         if (!window.grids) window.grids = [];
         if (currentGridInstance) {
           window.grids.push(currentGridInstance);
