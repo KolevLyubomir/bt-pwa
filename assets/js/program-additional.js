@@ -97,7 +97,7 @@
   };
 
   // ============================================
-  // СХЕМА НА ЧАСОВЕТЕ (ОРИГИНАЛНАТА ТИ СХЕМА)
+  // СХЕМА НА ЧАСОВЕТЕ (ТВОЯТА СХЕМА)
   // ============================================
 
   const DEFAULT_TIMES_MAP = [
@@ -380,44 +380,41 @@
       brandSelect.style.display = "none";
     }
 
+    // --- ПОПРАВКА: ВИНАГИ НАЛАГАМЕ СХЕМАТА ---
     function adjustGridStateForRowChange(newRows) {
       if (newRows <= 0) return;
+      
+      // Взимаме картата за този брой редове (напр. 5 реда -> индекс 5)
+      var mapForRows = DEFAULT_TIMES_MAP[newRows];
+      if (!mapForRows) mapForRows = DEFAULT_TIMES_MAP[1]; // fallback
+
+      var NUM_DAYS = 7;
+      var newTimes = []; 
+      var newFlags = [];
+
+      // Генерираме чисто нови времена според схемата
+      for (var r = 0; r < newRows; r++) {
+        newTimes[r] = [];
+        newFlags[r] = [0, 0, 0, 0, 0, 0, 0];
+        
+        // Взимаме часа от схемата (напр. "10:00" за втория ред при 5 реда)
+        var timeStr = (mapForRows[r] && mapForRows[r][0]) ? mapForRows[r][0] : "12:00";
+        
+        for (var d = 0; d < NUM_DAYS; d++) {
+          newTimes[r][d] = timeStr;
+        }
+      }
+
+      // Запазваме активния ден
       var raw = null; try { raw = JSON.parse(localStorage.getItem(GRID_STORAGE_KEY) || "null"); } catch (e) { raw = null; }
-      var MAX_ROWS = newRows, NUM_DAYS = 7, newTimes = [], newFlags = [];
-
-      if (!raw || !raw.times || !Array.isArray(raw.times)) {
-        for (var r = 0; r < MAX_ROWS; r++) {
-          newTimes[r] = [];
-          for (var d = 0; d < NUM_DAYS; d++) newTimes[r][d] = (DEFAULT_TIMES_MAP[MAX_ROWS] && DEFAULT_TIMES_MAP[MAX_ROWS][r]) ? DEFAULT_TIMES_MAP[MAX_ROWS][r][0] : "12:00";
-          newFlags[r] = [0, 0, 0, 0, 0, 0, 0];
-        }
-      } else {
-        var oldTimes = raw.times, oldRows = oldTimes.length;
-        for (var r2 = 0; r2 < MAX_ROWS; r2++) {
-          newTimes[r2] = []; newFlags[r2] = [0, 0, 0, 0, 0, 0, 0];
-          for (var d2 = 0; d2 < NUM_DAYS; d2++) {
-            if (r2 < oldRows && Array.isArray(oldTimes[r2]) && typeof oldTimes[r2][d2] === "string") newTimes[r2][d2] = oldTimes[r2][d2];
-            else newTimes[r2][d2] = (DEFAULT_TIMES_MAP[MAX_ROWS] && DEFAULT_TIMES_MAP[MAX_ROWS][r2]) ? DEFAULT_TIMES_MAP[MAX_ROWS][r2][0] : "12:00";
-          }
-        }
-      }
-
-      var MAX_MIN = 23 * 60 + 59;
-      for (var day = 0; day < NUM_DAYS; day++) {
-        var mins = [];
-        for (var rr = 0; rr < MAX_ROWS; rr++) mins[rr] = timeStrToMin(newTimes[rr][day]);
-        mins.sort((a, b) => a - b);
-        for (var rr2 = 0; rr2 < MAX_ROWS; rr2++) {
-          var clamped = mins[rr2]; if (clamped < 0) clamped = 0; if (clamped > MAX_MIN) clamped = MAX_MIN;
-          newTimes[rr2][day] = minToTimeStr(clamped);
-        }
-      }
-
+      
       var newState = {
-        times: newTimes, flag: newFlags,
+        times: newTimes, 
+        flag: newFlags,
         todayDow: raw && typeof raw.todayDow === "number" ? raw.todayDow : (new Date()).getDay(),
         activeDow: raw && typeof raw.activeDow === "number" ? raw.activeDow : (new Date()).getDay()
       };
+      
       try { localStorage.setItem(GRID_STORAGE_KEY, JSON.stringify(newState)); } catch (e2) { }
     }
 
@@ -521,7 +518,7 @@
     }
 
     // ===============================================
-    // --- ГЕНЕРИРАНЕ С <TEMPLATE> (НОВАТА ЛОГИКА) ---
+    // --- ГЕНЕРИРАНЕ С <TEMPLATE> ---
     // ===============================================
     function generateGrid(rowCount, productName) {
       // 1. Почистване
