@@ -9,7 +9,8 @@
   <meta http-equiv="Pragma" content="no-cache"/>
   <meta http-equiv="Expires" content="0"/>
 
-  <meta name="theme-color" content="#ef4444"/> <link rel="manifest" href="manifest.webmanifest?v=1.39"/>
+  <meta name="theme-color" content="#ef4444"/> 
+  <link rel="manifest" href="manifest.webmanifest?v=1.39"/>
   <link rel="icon" href="assets/icons/icon-192.png?v=1.39"/>
 
   <link rel="stylesheet"
@@ -17,21 +18,66 @@
 
   <link rel="stylesheet" href="assets/css/main.css"/>
   <link rel="stylesheet" href="assets/css/data.css"/>
-
   <link rel="stylesheet" href="assets/css/program-layout.css?v=5.1.9"/>
   <link rel="stylesheet" href="assets/css/program-states.css?v=5.1.9"/>
-
   <link rel="stylesheet" href="assets/css/program-clock.css?v=5.1.9"/>
   <link rel="stylesheet" href="assets/css/program-buttons.css?v=5.1.9"/>
   <link rel="stylesheet" href="assets/css/program-dialogs.css?v=5.1.9"/>
   
   <style>
-    /* Визуален маркер, че сме в ТЕСТОВ режим */
+    /* 1. Оправяме спиралата на часовника */
+    .clk-face {
+      position: relative;
+      width: 260px; 
+      height: 260px;
+      margin: 0 auto;
+      border-radius: 50%;
+    }
+    .clk-num {
+      position: absolute; /* ТОВА Е КЛЮЧЪТ */
+      left: 50%;
+      top: 50%;
+      width: 0;
+      height: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #e6f2ef;
+      font-weight: 700;
+      font-size: 18px;
+      pointer-events: none;
+    }
+    .clk-num span {
+      display: block;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+      text-align: center;
+      margin-top: -16px; 
+      margin-left: -16px;
+    }
+    .clk-num.min {
+      font-size: 14px;
+      color: #9fb4ad;
+      font-weight: 400;
+    }
+
+    /* 2. Тестов маркер */
     body { border-top: 4px solid #ef4444; }
     #app-version-badge { color: #ef4444; border: 1px solid #ef4444; padding: 2px 6px; border-radius: 4px; }
   </style>
 </head>
 <body>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function(registrations) {
+        for(let registration of registrations) {
+          registration.unregister();
+        }
+      });
+    }
+  </script>
 
   <div class="topbar-wrap">
     <div class="topbar">
@@ -590,7 +636,6 @@
 
   <div class="clk" id="clk" aria-hidden="true">
     <div class="clk-card" id="clkCard" role="dialog" aria-label="Избор на време">
-      
       <button id="btnCloseClk" class="clk-close-btn" type="button" title="Затвори">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -652,19 +697,8 @@
               </span>
             </button>
           </div>
-          <button id="btnAudio" class="clk-btn audio big" type="button" title="Аудио вкл/изкл за този час">
-            <span class="clk-btn-icon">
-              <svg viewBox="0 0 24 24" fill="none">
-                <g class="icon-sound">
-                  <path d="M5 9v6h3l4 4V5L8 9H5z"></path>
-                  <path d="M16 9a3 3 0 0 1 0 6"></path>
-                </g>
-                <g class="icon-mute">
-                  <path d="M5 9v6h3l4 4V5L8 9H5z"></path>
-                  <path d="M18 9l-4 4m0-4l4 4"></path>
-                </g>
-              </svg>
-            </span>
+          <button id="btnAudio" class="clk-btn audio big" type="button" title="Аудио">
+             <span class="clk-btn-icon">🔊</span>
           </button>
         </div>
       </div>
@@ -689,15 +723,13 @@
   </template>
 
   <script type="module">
-    import { two, todayISO } from './assets/js/modules/utils.js';
-    import { BERBERINE_BRANDS } from './assets/js/modules/brands.js';
     import { initData } from './assets/js/modules/data.js';
     import { initModal } from './assets/js/modules/modal.js';
     import { createProductGrid } from './assets/js/modules/product-grid.js';
 
     console.log("%c 🚀 TEST PHASE 2 START ", "background: #0044ff; color: #fff; padding: 4px;");
 
-    // --- 1. ВРЕМЕННА ЛОГИКА ЗА ТАБОВЕТЕ (за да можеш да кликаш) ---
+    // --- 1. ЛОГИКА ЗА ТАБОВЕТЕ ---
     const tabDataBtn = document.getElementById('tab-data');
     const tabProgBtn = document.getElementById('tab-program');
     const panelData = document.getElementById('panel-data');
@@ -724,24 +756,14 @@
     tabDataBtn.addEventListener('click', () => switchTab(false));
     tabProgBtn.addEventListener('click', () => switchTab(true));
     
-    // ОТВАРЯМЕ ДИРЕКТНО ПРОГРАМАТА ЗА ТЕСТА
+    // Отваряме Програма по подразбиране
     switchTab(true); 
 
     // --- 2. Инициализация на модулите ---
+    try { initData(); } catch(e) { console.error(e); }
+    try { initModal(); } catch(e) { console.error(e); }
 
-    // Data Module
-    try {
-      initData();
-      console.log("✅ Data module initialized.");
-    } catch(e) { console.error("❌ Data init failed:", e); }
-
-    // Modal Module
-    try {
-      initModal();
-      console.log("✅ Modal module initialized.");
-    } catch(e) { console.error("❌ Modal init failed:", e); }
-
-    // Grid Module (Закачаме ProLact таблицата)
+    // Grid Module
     const plTable = document.getElementById('pl-table');
     if(plTable) {
         createProductGrid({
@@ -754,9 +776,7 @@
             ],
             productName: 'ProLact Test'
         });
-        console.log("✅ Grid created for ProLact.");
     }
   </script>
-
 </body>
 </html>
