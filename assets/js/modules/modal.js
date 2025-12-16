@@ -1,4 +1,4 @@
-/* MODAL.JS (Module Version - RESTORED ORIGINAL LOGIC) */
+/* MODAL.JS (Fixed Formatting & Aria) */
 import { two, toRoman } from './utils.js';
 
 export function initModal() {
@@ -7,20 +7,17 @@ export function initModal() {
   const Modal = document.getElementById('clk');
   if (!Modal) return;
 
-  const face = document.getElementById('clkFace');
   const ringH = document.getElementById('ringH');
   const ringM = document.getElementById('ringM');
   const handH = document.getElementById('handH');
   const handM = document.getElementById('handM');
   const readBox = document.getElementById('clkRead');
   const keyInput = document.getElementById('clkKeyInput');
+  const face = document.getElementById('clkFace');
 
   const btnSaveOne = document.getElementById('btnSaveOne');
   const btnSaveAll = document.getElementById('btnSaveAllDays');
   const btnClose = document.getElementById('btnCloseClk');
-  const btnIntake = document.getElementById('btnIntake'); // Добавен бутон за прием
-  const btnAudio = document.getElementById('btnAudio'); // Добавен бутон за аудио
-
   const clkProductEl = document.getElementById('clk-product');
   const clkWeekdayEl = document.getElementById('clk-weekday');
 
@@ -29,41 +26,71 @@ export function initModal() {
   let focusMode = 'H';
   let isDragging = false;
 
-  // --- ВРЪЩАНЕ НА ОРИГИНАЛНАТА ЛОГИКА ЗА РИСУВАНЕ (CSS Rotate) ---
+  // --- ФУНКЦИЯ ЗА РИСУВАНЕ (С НАСИЛСТВЕНО ПОЗИЦИОНИРАНЕ) ---
   function drawClockFace() {
     if(!ringH || !ringM) return;
     ringH.innerHTML = "";
     ringM.innerHTML = "";
 
-    // Часове (1-12)
+    // Настройка на радиуса (разстояние от центъра)
+    const RADIUS = 86; 
+
+    // --- 1. ЧАСОВЕ ---
     for (let i = 1; i <= 12; i++) {
       let deg = i * 30;
       let el = document.createElement("div");
       el.className = "clk-num";
-      // Оригинална CSS ротация: завъртаме контейнера, после връщаме текста обратно
-      el.style.transform = `rotate(${deg}deg) translateY(-84px)`; 
       
+      // БРОНИРАНО ЦЕНТРИРАНЕ: Игнорираме CSS и ги заковаваме в центъра
+      Object.assign(el.style, {
+          position: 'absolute',
+          left: '50%',
+          top: '50%',
+          width: '0',
+          height: '0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transform: `rotate(${deg}deg) translateY(-${RADIUS}px)`
+      });
+
       let sp = document.createElement("span");
       sp.textContent = toRoman(i);
-      sp.style.transform = `rotate(-${deg}deg)`; // Контра-ротация за текста
+      sp.style.transform = `rotate(-${deg}deg)`; // Завъртаме текста да е прав
       sp.style.display = "block";
+      sp.style.width = "30px"; // Даваме малко въздух на цифрата
+      sp.style.textAlign = "center";
       
       el.appendChild(sp);
       ringH.appendChild(el);
     }
 
-    // Минути (0, 5, 10... 55)
+    // --- 2. МИНУТИ ---
     for (let i = 0; i < 12; i++) {
       let mVal = i * 5;
       let deg = i * 30;
       let el = document.createElement("div");
-      el.className = "clk-num min"; // Класът min е важен за CSS!
-      el.style.transform = `rotate(${deg}deg) translateY(-84px)`;
+      el.className = "clk-num min"; // Важен клас за стиловете (цвят/шрифт)
+      
+      // БРОНИРАНО ЦЕНТРИРАНЕ
+      Object.assign(el.style, {
+          position: 'absolute',
+          left: '50%',
+          top: '50%',
+          width: '0',
+          height: '0',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transform: `rotate(${deg}deg) translateY(-${RADIUS}px)`
+      });
       
       let sp = document.createElement("span");
       sp.textContent = mVal;
       sp.style.transform = `rotate(-${deg}deg)`;
       sp.style.display = "block";
+      sp.style.width = "30px";
+      sp.style.textAlign = "center";
       
       el.appendChild(sp);
       ringM.appendChild(el);
@@ -71,9 +98,7 @@ export function initModal() {
   }
 
   function updateHands() {
-    // 12 часа * 30 градуса + минути * 0.5 градуса
     let degH = (activeH % 12) * 30 + activeM * 0.5;
-    // 60 минути * 6 градуса
     let degM = activeM * 6;
 
     if(handH) handH.style.transform = `translateX(-50%) rotate(${degH}deg)`;
@@ -86,6 +111,7 @@ export function initModal() {
     const hEl = readBox.querySelector('#clkH');
     const mEl = readBox.querySelector('#clkM');
     
+    // Обновяване на текста
     if(hEl) {
         let sH = two(activeH);
         hEl.children[0].textContent = sH[0];
@@ -100,13 +126,13 @@ export function initModal() {
         if(focusMode === 'M') mEl.classList.add('active'); else mEl.classList.remove('active');
     }
     
-    // ЛОГИКА ЗА СКРИВАНЕ/ПОКАЗВАНЕ
+    // СМЯНА НА ВИДИМОСТТА (Часове vs Минути)
     if(focusMode === 'H') {
-        if(ringH) ringH.style.opacity = 1;
-        if(ringM) ringM.style.opacity = 0;
+        if(ringH) { ringH.style.opacity = 1; ringH.style.pointerEvents = "auto"; }
+        if(ringM) { ringM.style.opacity = 0; ringM.style.pointerEvents = "none"; }
     } else {
-        if(ringH) ringH.style.opacity = 0;
-        if(ringM) ringM.style.opacity = 1;
+        if(ringH) { ringH.style.opacity = 0; ringH.style.pointerEvents = "none"; }
+        if(ringM) { ringM.style.opacity = 1; ringM.style.pointerEvents = "auto"; }
     }
   }
 
@@ -117,7 +143,6 @@ export function initModal() {
     if(clkWeekdayEl) {
        const days = ['Неделя', 'Понеделник', 'Вторник', 'Сряда', 'Четвъртък', 'Петък', 'Събота'];
        let d = parseInt(data.dow, 10);
-       // data.dow идва като JS ден (0=Неделя), така че е директен индекс
        if(isNaN(d)) d = 0;
        clkWeekdayEl.textContent = days[d] || "";
     }
@@ -125,10 +150,16 @@ export function initModal() {
     let parts = (data.time || "08:00").split(":");
     activeH = parseInt(parts[0], 10) || 8;
     activeM = parseInt(parts[1], 10) || 0;
+    
+    // Ресетваме на часове при отваряне
     focusMode = 'H';
 
     updateHands();
+    
+    // ARIA FIX: Казваме на браузъра, че прозорецът е видим
     Modal.classList.add('show');
+    Modal.setAttribute('aria-hidden', 'false');
+    
     if(keyInput) keyInput.value = "";
   }
 
@@ -140,10 +171,13 @@ export function initModal() {
         detail: { ...currentContext, newTime: newTime, applyToAll: applyToAll }
     });
     document.dispatchEvent(event);
+    
+    // ARIA FIX: Скриваме го
     Modal.classList.remove('show');
+    Modal.setAttribute('aria-hidden', 'true');
   }
 
-  // --- Listeners ---
+  // --- EVENTS ---
   document.addEventListener('bt-open-modal', (e) => openModal(e.detail));
 
   if(face) {
@@ -152,16 +186,16 @@ export function initModal() {
       face.addEventListener('mousemove', (e) => {
           if(isDragging) updateFromEvent(e);
       });
-      // Click logic
       face.addEventListener('click', (e) => {
           updateFromEvent(e);
-          // Автоматично превключване: ако сме на Час -> мини на Минути
+          // Авто-смяна: Ако цъкнеш час, мини на минути
           if(focusMode === 'H') {
               focusMode = 'M';
           }
           updateHands();
       });
-      // Тъч поддръжка
+      
+      // Touch support
       face.addEventListener('touchstart', (e) => { isDragging = true; updateFromEvent(e); }, {passive:false});
       face.addEventListener('touchmove', (e) => { 
         if(isDragging) { e.preventDefault(); updateFromEvent(e); } 
@@ -183,12 +217,10 @@ export function initModal() {
       if (angle < 0) angle += 360;
 
       if(focusMode === 'H') {
-          // Snap to 12 hours (30 degrees)
           let h = Math.round(angle / 30);
           if (h === 0) h = 12;
           activeH = h; 
       } else {
-          // Snap to 60 minutes (6 degrees)
           let m = Math.round(angle / 6);
           if (m === 60) m = 0;
           activeM = m;
@@ -198,14 +230,15 @@ export function initModal() {
 
   if(btnSaveOne) btnSaveOne.addEventListener('click', () => saveAndClose(false));
   if(btnSaveAll) btnSaveAll.addEventListener('click', () => saveAndClose(true));
-  if(btnClose) btnClose.addEventListener('click', () => Modal.classList.remove('show'));
+  if(btnClose) btnClose.addEventListener('click', () => {
+      Modal.classList.remove('show');
+      Modal.setAttribute('aria-hidden', 'true');
+  });
   
-  // Клик върху цифрите горе вдясно за смяна на режима
   if(readBox) {
       readBox.querySelector('#clkH').addEventListener('click', () => { focusMode='H'; updateHands(); });
       readBox.querySelector('#clkM').addEventListener('click', () => { focusMode='M'; updateHands(); });
   }
 
-  // Init
   drawClockFace();
 }
