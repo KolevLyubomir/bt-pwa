@@ -127,17 +127,28 @@
 
   function buildPager(container,total,eff){
     container.innerHTML="";
+
+    // v6.0.0 UI: force true center for arrows/pages regardless of external CSS
+    try{
+      container.style.display = "grid";
+      container.style.gridTemplateColumns = "1fr auto 1fr";
+      container.style.alignItems = "center";
+      container.style.columnGap = "10px";
+    }catch(_){ }
+
     var start=(currentPage-1)*eff, from=total?start+1:0, to=Math.min(start+eff,total);
 
     // Left: info
     var info=document.createElement("span");
     info.className="info";
+    try{ info.style.justifySelf="start"; }catch(_){ }
     info.textContent=from+"-"+to+" от "+total;
     container.appendChild(info);
 
     // Center: buttons wrapper (so arrows/pages are truly centered in full width)
     var btnWrap=document.createElement("div");
     btnWrap.className="pager-btns";
+    try{ btnWrap.style.display="flex"; btnWrap.style.justifyContent="center"; btnWrap.style.alignItems="center"; btnWrap.style.gap="6px"; }catch(_){ }
 
     var pagesTotal=Math.max(1,Math.ceil(total/eff)), frag=document.createDocumentFragment();
     function pageBtn(n,active){
@@ -169,6 +180,7 @@
     container.appendChild(btnWrap);
     // Right spacer to balance grid (keeps center truly centered)
     var spacer=document.createElement("span"); spacer.className="pager-spacer"; spacer.textContent="";
+    try{ spacer.style.justifySelf="end"; }catch(_){ }
     container.appendChild(spacer);
   }
 
