@@ -128,7 +128,16 @@
   function buildPager(container,total,eff){
     container.innerHTML="";
     var start=(currentPage-1)*eff, from=total?start+1:0, to=Math.min(start+eff,total);
-    var info=document.createElement("span"); info.className="info"; info.textContent=from+"-"+to+" от "+total; container.appendChild(info);
+
+    // Left: info
+    var info=document.createElement("span");
+    info.className="info";
+    info.textContent=from+"-"+to+" от "+total;
+    container.appendChild(info);
+
+    // Center: buttons wrapper (so arrows/pages are truly centered in full width)
+    var btnWrap=document.createElement("div");
+    btnWrap.className="pager-btns";
 
     var pagesTotal=Math.max(1,Math.ceil(total/eff)), frag=document.createDocumentFragment();
     function pageBtn(n,active){
@@ -156,7 +165,11 @@
       next.addEventListener("click",()=>{currentPage=Math.min(pagesTotal,currentPage+1); renderTable(); renderChart();});
       frag.appendChild(next);
     }
-    container.appendChild(frag);
+    btnWrap.appendChild(frag);
+    container.appendChild(btnWrap);
+    // Right spacer to balance grid (keeps center truly centered)
+    var spacer=document.createElement("span"); spacer.className="pager-spacer"; spacer.textContent="";
+    container.appendChild(spacer);
   }
 
   function renderTable(){
