@@ -5,12 +5,13 @@
 
   // ============================
   // Personal Mode (Личен Режим)
-  // v6.0.0
+  // v6.0.3
   // ============================
 
-  var STORAGE_KEY = "bt-personal-products-v600";
+  var STORAGE_KEY = "bt-personal-products";
 
   // 1..12 default time per row (each row repeats across week)
+  // (може да се направи по-умно по-късно, но това е стабилен старт)
   var PERSONAL_DEFAULT_TIME = "08:00";
 
   function nowTs() { return Date.now(); }
@@ -121,6 +122,7 @@
   function downSvg() {
     return `<svg viewBox="0 0 24 24" fill="none"><path d="M12 19l7-7h-4V5H9v7H5l7 7z"></path></svg>`;
   }
+
   function intakeSvg() {
     return `
       <svg viewBox="0 0 24 24" fill="none">
@@ -134,26 +136,6 @@
   }
 
   // ============================
-  // Grid registry (to avoid duplicates in window.grids)
-  // ============================
-  if (!window.__personalGrids) window.__personalGrids = {}; // id -> grid instance
-
-  function removePersonalGrid(id) {
-    var g = window.__personalGrids[id];
-    if (!g) return;
-    if (Array.isArray(window.grids)) {
-      window.grids = window.grids.filter(function (x) { return x !== g; });
-    }
-    if (g && typeof g.destroy === "function") g.destroy();
-    delete window.__personalGrids[id];
-  }
-
-  function clearAllPersonalGrids() {
-    var ids = Object.keys(window.__personalGrids || {});
-    ids.forEach(removePersonalGrid);
-  }
-
-  // ============================
   // Render
   // ============================
 
@@ -161,19 +143,11 @@
     var list = document.getElementById("personal-list");
     if (!list) return;
 
-    // IMPORTANT: prevent grid duplicates on re-render
-    clearAllPersonalGrids();
-
     var items = loadAll();
     list.innerHTML = "";
 
     for (var i = 0; i < items.length; i++) {
       renderOne(list, items[i]);
-    }
-
-    // sync intake after re-render (optional)
-    if (typeof window.masterUpdateAllGrids === "function") {
-      try { window.masterUpdateAllGrids(); } catch (_) {}
     }
   }
 
@@ -185,7 +159,7 @@
     block.className = "config-block personal-block";
     block.id = prefix + "-block";
 
-    // универсална картинка (същата като "Друго" за Берберин)
+    // универсална картинка (може да я сменим по-късно)
     var imgSrc = "assets/products/additional/ber-custom.webp";
 
     block.innerHTML = `
@@ -271,32 +245,32 @@
     var btnUp = document.getElementById(prefix + "-up");
     var btnDown = document.getElementById(prefix + "-down");
 
+    // Local instance for grid (not persisted)
+    item._gridInstance = item._gridInstance || null;
+
+    function isConfigured(it) {
+      return it && Number(it.rows || 0) > 0 && Array.isArray(it.times) && it.times.length === Number(it.rows || 0);
+    }
+
     function updateHeader(it) {
       var t = (it.title || "").trim();
       capMain.textContent = t || "Нов продукт";
       capBrand.textContent = t || "";
-      if (Number(it.rows || 0) > 0) capMain.classList.add("configured");
+      if (isConfigured(it)) capMain.classList.add("configured");
       else capMain.classList.remove("configured");
     }
 
-    function openConfig(open) {
-      var show = (typeof open === "boolean") ? open : (config.style.display !== "block");
-      config.style.display = show ? "block" : "none";
-      settingsBtn.innerHTML = show ? xSvg() : gearSvg();
-    }
+    function ensureGrid(it) {
+      var cfg = isConfigured(it);
+      gridWrap.style.display = cfg ? "block" : "none";
+      intakeBtn.style.display = cfg ? "flex" : "none";
 
-    function ensureGrid(it, forceReset) {
-      var rows = Number(it.rows || 0);
-      var configured = rows > 0;
-
-      gridWrap.style.display = configured ? "block" : "none";
-      intakeBtn.style.display = configured ? "flex" : "none";
-
-      // clean old instance
-      removePersonalGrid(id);
-
-      if (!configured) {
+      if (!cfg) {
         gridWrap.innerHTML = "";
+        if (it._gridInstance && typeof it._gridInstance.destroy === "function") {
+          it._gridInstance.destroy();
+        }
+        it._gridInstance = null;
         return;
       }
 
@@ -305,53 +279,54 @@
 
       var table = document.getElementById(tableId);
       if (!table) return;
-
-      // Build tbody (rows x 7) from defaults; actual values will be rendered by createProductGrid state
       var tbody = table.querySelector("tbody");
       if (!tbody) return;
       tbody.innerHTML = "";
 
-      var defaultTimes = buildDefaultTimes(rows);
+      var rows = Number(it.rows || 1);
+
+      if (!Array.isArray(it.times) || it.times.length !== rows) {
+        it.times = buildDefaultTimes(rows);
+      }
+
+      // Build rows x 7
       for (var r = 0; r < rows; r++) {
         var tr = document.createElement("tr");
-        var daysSeq = [1, 2, 3, 4, 5, 6, 0];
-        for (var i = 0; i < daysSeq.length; i++) {
-          var dow = daysSeq[i];
+        for (var c = 0; c < 7; c++) {
           var td = document.createElement("td");
           td.className = "pl-time-cell";
           td.setAttribute("data-row", String(r));
-          td.setAttribute("data-dow", String(dow));
-          var idx = (dow === 0 ? 6 : dow - 1);
-          td.textContent = defaultTimes[r][idx];
+          td.setAttribute("data-dow", String(c === 6 ? 0 : (c + 1)));
+          td.textContent = it.times[r][c] || PERSONAL_DEFAULT_TIME;
           tr.appendChild(td);
         }
         tbody.appendChild(tr);
       }
 
-      var gridStorageKey = "bt_personal_grid_" + id + "_v600";
-      if (forceReset) {
-        try { localStorage.removeItem(gridStorageKey); } catch (_) {}
-      }
+      try {
+        var grid = createProductGrid({
+          tableId: tableId,
+          intakeBtnId: prefix + "-intake",
+          productName: (it.title || "Личен продукт"),
+          blockId: prefix + "-block"
+        });
 
-      // Create real grid logic
-      var grid = createProductGrid({
-        tableId: tableId,
-        buttonId: prefix + "-intake",
-        storageKey: gridStorageKey,
-        defaultTimes: defaultTimes,
-        productName: (it.title || "Личен продукт"),
-        blockId: prefix + "-block"
-      });
-
-      if (!window.grids) window.grids = [];
-      if (grid) {
+        if (!window.grids) window.grids = [];
         window.grids.push(grid);
-        window.__personalGrids[id] = grid;
-        if (typeof grid.updateIntakeStates === "function") grid.updateIntakeStates();
+
+        it._gridInstance = grid;
+      } catch (e) {
+        console.error("createProductGrid error", e);
       }
     }
 
-    // Head click -> open config
+    function openConfig(open) {
+      var show = (typeof open === "boolean") ? open : (config.style.display !== "block");
+      config.style.display = show ? "block" : "none";
+      settingsBtn.innerHTML = show ? xSvg() : gearSvg();
+    }
+
+    // Head click -> open config (as requested)
     head.addEventListener("click", function () { openConfig(true); });
     settingsBtn.addEventListener("click", function (e) { e.stopPropagation(); openConfig(); });
 
@@ -371,36 +346,30 @@
         return;
       }
 
-      var newRows = Number(slider.value || 1);
-      var prevRows = Number(items[idx].rows || 0);
+      var rows = Number(slider.value || 1);
 
       items[idx].title = t;
-      items[idx].rows = newRows;
+      items[idx].rows = rows;
+
+      if (!Array.isArray(items[idx].times) || items[idx].times.length !== rows) {
+        items[idx].times = buildDefaultTimes(rows);
+      }
 
       saveAll(items);
 
-      // update in-memory item
+      // update current item
       item.title = t;
-      item.rows = newRows;
+      item.rows = rows;
+      item.times = items[idx].times;
 
       updateHeader(item);
-
-      // If rows count changed, reset grid storage to the default scheme for this rows count
-      var rowsChanged = newRows !== prevRows;
-      ensureGrid(item, rowsChanged);
-
+      ensureGrid(item);
       openConfig(false);
-
-      if (typeof window.masterUpdateAllGrids === "function") {
-        try { window.masterUpdateAllGrids(); } catch (_) {}
-      }
     });
 
     // Delete
     btnDel.addEventListener("click", function () {
       if (!confirm("Да изтрия ли този продукт от Личен режим?")) return;
-      removePersonalGrid(id);
-
       var items = loadAll();
       var idx = findIndexById(items, id);
       if (idx < 0) return;
@@ -451,9 +420,9 @@
       }, 0);
     });
 
-    // initial
+    // initial state
     updateHeader(item);
-    ensureGrid(item, false);
+    ensureGrid(item);
   }
 
   // ============================
@@ -471,7 +440,8 @@
       var newItem = {
         id: uid(),
         title: "",
-        rows: 0, // start unconfigured (shows placeholder image only)
+        rows: 1,
+        times: buildDefaultTimes(1),
         createdAt: nowTs()
       };
 
