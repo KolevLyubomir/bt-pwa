@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>БТ App 6 — v6.0.1</title>
+  <title>БТ App 5 — v6.0.1</title>
 
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
   <meta http-equiv="Pragma" content="no-cache"/>
@@ -19,34 +19,36 @@
   <link rel="stylesheet" href="assets/css/main.css"/>
   <link rel="stylesheet" href="assets/css/data.css"/>
 
-  <link rel="stylesheet" href="assets/css/program-layout.css?v=6.0.1"/>
-  <link rel="stylesheet" href="assets/css/program-states.css?v=6.0.1"/>
+  <link rel="stylesheet" href="assets/css/program-layout.css?v=5.1.9"/>
+  <link rel="stylesheet" href="assets/css/program-states.css?v=5.1.9"/>
 
-  <link rel="stylesheet" href="assets/css/program-clock.css?v=6.0.1"/>
-  <link rel="stylesheet" href="assets/css/program-buttons.css?v=6.0.1"/>
-  <link rel="stylesheet" href="assets/css/program-dialogs.css?v=6.0.1"/>
+  <link rel="stylesheet" href="assets/css/program-clock.css?v=5.1.9"/>
+  <link rel="stylesheet" href="assets/css/program-buttons.css?v=5.1.9"/>
+  <link rel="stylesheet" href="assets/css/program-dialogs.css?v=5.1.9"/>
 
   <style>
-    /* v6.0.1 — Personal config: real centering for move arrows (up/down) */
-    #pkg-personal .config-buttons{
-      width: 100%;
-      display: grid;
+    /* v6.0.1: Personal mode - true centering for move arrows inside config area */
+    #pkg-personal .personal-config-buttons{
+      width:100%;
+      display:grid;
       grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      column-gap: 10px;
+      align-items:center;
+      gap:10px;
     }
-    #pkg-personal .config-buttons .config-left{
-      justify-self: start;
-      display: flex;
-      gap: 8px;
-      align-items: center;
+    #pkg-personal .personal-config-buttons .config-left{
+      display:flex;
+      align-items:center;
+      gap:8px;
+      justify-content:flex-start;
     }
-    #pkg-personal .config-buttons .config-center{ justify-self: center; }
-    #pkg-personal .config-buttons .config-right{ justify-self: end; }
-    #pkg-personal .personal-move{
-      display: flex;
-      gap: 8px;
-      align-items: center;
+    #pkg-personal .personal-config-buttons .config-center{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+    }
+    #pkg-personal .personal-config-buttons .config-right{
+      height:1px; /* spacer */
     }
   </style>
 
@@ -596,14 +598,13 @@
 
       <section class="card" id="pkg-personal">
         <h2 style="margin:0 0 10px">Личен Режим</h2>
-        <p style="margin:0 0 8px; color:#9fb4ad; text-align:center; font-family:'Great Vibes', cursive; font-size:22px; line-height:1.15">
-          Тук включваш други добавки/витамини/медикаменти извън основната програма.
-        </p>
-        <ul style="margin:8px 0 0; padding-left:1rem; line-height:1.5">
-          <li><em>Пример:</em> Магнезий бисглицинат</li>
-          <li><em>Пример:</em> Витамин D3 + K2</li>
-          <li><em>Пример:</em> Омега-3</li>
-        </ul>
+        <div class="subnote">Добавки/Витамини/Медикаменти извън основната програма.</div>
+
+        <div id="personal-list" class="personal-list"></div>
+
+        <div class="personal-add-wrap">
+          <button id="personal-add" class="primary" type="button" style="height:var(--ctl-h); min-width:140px">Добави</button>
+        </div>
       </section>
     </main>
   </div>
@@ -708,14 +709,15 @@
     </table>
   </template>
 
-  <script src="assets/js/utils.js?v=6.0.1"></script>
-  <script src="assets/js/brands.js?v=6.0.1"></script> 
-  <script src="assets/js/main.js?v=6.0.1"></script>
-  <script src="assets/js/data.js?v=6.0.1"></script>
-  <script src="assets/js/product-grid.js?v=6.0.1"></script>
-  <script src="assets/js/modal.js?v=6.0.1"></script>
-  <script src="assets/js/program-init.js?v=6.0.1"></script>
-  <script src="assets/js/program-additional.js?v=6.0.1"></script>
+  <script src="assets/js/utils.js"></script>
+  <script src="assets/js/brands.js"></script> 
+  <script src="assets/js/main.js"></script>
+  <script src="assets/js/data.js"></script>
+  <script src="assets/js/product-grid.js"></script>
+  <script src="assets/js/modal.js"></script>
+  <script src="assets/js/program-init.js"></script>
+  <script src="assets/js/program-additional.js"></script>
+  <script src="assets/js/program-personal.js"></script>
 
   <script>
     if('serviceWorker' in navigator){
