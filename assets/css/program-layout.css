@@ -84,6 +84,44 @@ select option.strong { font-weight:700; }
   background: #1a2a2f;
 }
 
+
+/* ============================
+   Настройки бутон (иконка) до името
+   Fix: да НЕ наследява глобалния button размер (42px)
+   ============================ */
+
+.prog-cap-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.prog-cap-settings{
+  width:20px !important;
+  height:20px !important;
+  min-width:20px !important;
+  padding:0 !important;
+  border:1px solid transparent !important;
+  background:transparent !important;
+  border-radius:8px !important;
+  display:inline-flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  line-height:1 !important;
+  flex:0 0 auto !important;
+}
+
+.prog-cap-settings svg{
+  width:18px;
+  height:18px;
+  display:block;
+}
+
+.prog-cap-settings:hover{
+  background:#0d171b !important;
+  border-color:#254046 !important;
+}
+
 /* Заглавие на 2 реда: Берберин / Глюкоманан / EGCg + марка */
 .prog-cap-stack {
   display: flex;
