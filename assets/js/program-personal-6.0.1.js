@@ -5,13 +5,12 @@
 
   // ============================
   // Personal Mode (Личен Режим)
-  // v6.0.0
+  // v6.0.8
   // ============================
 
-  var STORAGE_KEY = "bt-personal-products";
+  var STORAGE_KEY = "bt-personal-products-v600";
 
   // 1..12 default time per row (each row repeats across week)
-  // (може да се направи по-умно по-късно, но това е стабилен старт)
   var PERSONAL_DEFAULT_TIME = "08:00";
 
   function nowTs() { return Date.now(); }
@@ -111,7 +110,11 @@
       </svg>`;
   }
   function xSvg() {
-    return `<svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"></path></svg>`;
+    return `
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none"
+           stroke="#f97373" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 6L6 18M6 6l12 12"></path>
+      </svg>`;
   }
   function checkSvg() {
     return `<svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7"></path></svg>`;
@@ -122,7 +125,6 @@
   function downSvg() {
     return `<svg viewBox="0 0 24 24" fill="none"><path d="M12 19l7-7h-4V5H9v7H5l7 7z"></path></svg>`;
   }
-
   function intakeSvg() {
     return `
       <svg viewBox="0 0 24 24" fill="none">
@@ -136,6 +138,26 @@
   }
 
   // ============================
+  // Grid registry (to avoid duplicates in window.grids)
+  // ============================
+  if (!window.__personalGrids) window.__personalGrids = {}; // id -> grid instance
+
+  function removePersonalGrid(id) {
+    var g = window.__personalGrids[id];
+    if (!g) return;
+    if (Array.isArray(window.grids)) {
+      window.grids = window.grids.filter(function (x) { return x !== g; });
+    }
+    if (g && typeof g.destroy === "function") g.destroy();
+    delete window.__personalGrids[id];
+  }
+
+  function clearAllPersonalGrids() {
+    var ids = Object.keys(window.__personalGrids || {});
+    ids.forEach(removePersonalGrid);
+  }
+
+  // ============================
   // Render
   // ============================
 
@@ -143,11 +165,19 @@
     var list = document.getElementById("personal-list");
     if (!list) return;
 
+    // IMPORTANT: prevent grid duplicates on re-render
+    clearAllPersonalGrids();
+
     var items = loadAll();
     list.innerHTML = "";
 
     for (var i = 0; i < items.length; i++) {
       renderOne(list, items[i]);
+    }
+
+    // sync intake after re-render (optional)
+    if (typeof window.masterUpdateAllGrids === "function") {
+      try { window.masterUpdateAllGrids(); } catch (_) {}
     }
   }
 
@@ -159,7 +189,7 @@
     block.className = "config-block personal-block";
     block.id = prefix + "-block";
 
-    // универсална картинка (може да я сменим по-късно)
+    // универсална картинка (същата като "Друго" за Берберин)
     var imgSrc = "assets/products/additional/ber-custom.webp";
 
     block.innerHTML = `
@@ -204,18 +234,14 @@
         <div class="config-actions">
           <span class="lbl"></span>
           <div class="config-buttons">
-                      <div class="config-left">
-<button id="${prefix}-save" class="clk-btn primary" type="button" title="Запази">
+            <button id="${prefix}-save" class="clk-btn primary" type="button" title="Запази">
               <span class="clk-btn-icon">${checkSvg()}</span>
             </button>
             <button id="${prefix}-delete" class="clk-btn danger" type="button" title="Изтрий">
               <span class="clk-btn-icon">${xSvg()}</span>
             </button>
 
-                      </div>
-
-          <div class="config-center">
-<div class="personal-move">
+            <div class="personal-move">
               <button id="${prefix}-up" class="clk-btn secondary" type="button" title="Нагоре">
                 <span class="clk-btn-icon">${upSvg()}</span>
               </button>
@@ -223,10 +249,7 @@
                 <span class="clk-btn-icon">${downSvg()}</span>
               </button>
             </div>
-                    </div>
-
-          <div class="config-right"></div>
-</div>
+          </div>
         </div>
       </div>
 
@@ -252,79 +275,12 @@
     var btnUp = document.getElementById(prefix + "-up");
     var btnDown = document.getElementById(prefix + "-down");
 
-    // Local instance for grid (not persisted)
-    item._gridInstance = item._gridInstance || null;
-
-    function isConfigured(it) {
-      return it && Number(it.rows || 0) > 0 && Array.isArray(it.times) && it.times.length === Number(it.rows || 0);
-    }
-
     function updateHeader(it) {
       var t = (it.title || "").trim();
       capMain.textContent = t || "Нов продукт";
       capBrand.textContent = t || "";
-      if (isConfigured(it)) capMain.classList.add("configured");
+      if (Number(it.rows || 0) > 0) capMain.classList.add("configured");
       else capMain.classList.remove("configured");
-    }
-
-    function ensureGrid(it) {
-      var cfg = isConfigured(it);
-      gridWrap.style.display = cfg ? "block" : "none";
-      intakeBtn.style.display = cfg ? "flex" : "none";
-
-      if (!cfg) {
-        gridWrap.innerHTML = "";
-        if (it._gridInstance && typeof it._gridInstance.destroy === "function") {
-          it._gridInstance.destroy();
-        }
-        it._gridInstance = null;
-        return;
-      }
-
-      var tableId = prefix + "-table";
-      cloneTemplateGridInto(gridWrap, tableId);
-
-      var table = document.getElementById(tableId);
-      if (!table) return;
-      var tbody = table.querySelector("tbody");
-      if (!tbody) return;
-      tbody.innerHTML = "";
-
-      var rows = Number(it.rows || 1);
-
-      if (!Array.isArray(it.times) || it.times.length !== rows) {
-        it.times = buildDefaultTimes(rows);
-      }
-
-      // Build rows x 7
-      for (var r = 0; r < rows; r++) {
-        var tr = document.createElement("tr");
-        for (var c = 0; c < 7; c++) {
-          var td = document.createElement("td");
-          td.className = "pl-time-cell";
-          td.setAttribute("data-row", String(r));
-          td.setAttribute("data-dow", String(c === 6 ? 0 : (c + 1)));
-          td.textContent = it.times[r][c] || PERSONAL_DEFAULT_TIME;
-          tr.appendChild(td);
-        }
-        tbody.appendChild(tr);
-      }
-
-      try {
-        var grid = createProductGrid({
-          tableId: tableId,
-          intakeBtnId: prefix + "-intake",
-          productName: (it.title || "Личен продукт"),
-          blockId: prefix + "-block"
-        });
-
-        if (!window.grids) window.grids = [];
-        window.grids.push(grid);
-
-        it._gridInstance = grid;
-      } catch (e) {
-        console.error("createProductGrid error", e);
-      }
     }
 
     function openConfig(open) {
@@ -333,7 +289,73 @@
       settingsBtn.innerHTML = show ? xSvg() : gearSvg();
     }
 
-    // Head click -> open config (as requested)
+    function ensureGrid(it, forceReset) {
+      var rows = Number(it.rows || 0);
+      var configured = rows > 0;
+
+      gridWrap.style.display = configured ? "block" : "none";
+      intakeBtn.style.display = configured ? "flex" : "none";
+
+      // clean old instance
+      removePersonalGrid(id);
+
+      if (!configured) {
+        gridWrap.innerHTML = "";
+        return;
+      }
+
+      var tableId = prefix + "-table";
+      cloneTemplateGridInto(gridWrap, tableId);
+
+      var table = document.getElementById(tableId);
+      if (!table) return;
+
+      // Build tbody (rows x 7) from defaults; actual values will be rendered by createProductGrid state
+      var tbody = table.querySelector("tbody");
+      if (!tbody) return;
+      tbody.innerHTML = "";
+
+      var defaultTimes = buildDefaultTimes(rows);
+      for (var r = 0; r < rows; r++) {
+        var tr = document.createElement("tr");
+        var daysSeq = [1, 2, 3, 4, 5, 6, 0];
+        for (var i = 0; i < daysSeq.length; i++) {
+          var dow = daysSeq[i];
+          var td = document.createElement("td");
+          td.className = "pl-time-cell";
+          td.setAttribute("data-row", String(r));
+          td.setAttribute("data-dow", String(dow));
+          var idx = (dow === 0 ? 6 : dow - 1);
+          td.textContent = defaultTimes[r][idx];
+          tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+      }
+
+      var gridStorageKey = "bt_personal_grid_" + id + "_v600";
+      if (forceReset) {
+        try { localStorage.removeItem(gridStorageKey); } catch (_) {}
+      }
+
+      // Create real grid logic
+      var grid = createProductGrid({
+        tableId: tableId,
+        buttonId: prefix + "-intake",
+        storageKey: gridStorageKey,
+        defaultTimes: defaultTimes,
+        productName: (it.title || "Личен продукт"),
+        blockId: prefix + "-block"
+      });
+
+      if (!window.grids) window.grids = [];
+      if (grid) {
+        window.grids.push(grid);
+        window.__personalGrids[id] = grid;
+        if (typeof grid.updateIntakeStates === "function") grid.updateIntakeStates();
+      }
+    }
+
+    // Head click -> open config
     head.addEventListener("click", function () { openConfig(true); });
     settingsBtn.addEventListener("click", function (e) { e.stopPropagation(); openConfig(); });
 
@@ -353,30 +375,36 @@
         return;
       }
 
-      var rows = Number(slider.value || 1);
+      var newRows = Number(slider.value || 1);
+      var prevRows = Number(items[idx].rows || 0);
 
       items[idx].title = t;
-      items[idx].rows = rows;
-
-      if (!Array.isArray(items[idx].times) || items[idx].times.length !== rows) {
-        items[idx].times = buildDefaultTimes(rows);
-      }
+      items[idx].rows = newRows;
 
       saveAll(items);
 
-      // update current item
+      // update in-memory item
       item.title = t;
-      item.rows = rows;
-      item.times = items[idx].times;
+      item.rows = newRows;
 
       updateHeader(item);
-      ensureGrid(item);
+
+      // If rows count changed, reset grid storage to the default scheme for this rows count
+      var rowsChanged = newRows !== prevRows;
+      ensureGrid(item, rowsChanged);
+
       openConfig(false);
+
+      if (typeof window.masterUpdateAllGrids === "function") {
+        try { window.masterUpdateAllGrids(); } catch (_) {}
+      }
     });
 
     // Delete
     btnDel.addEventListener("click", function () {
       if (!confirm("Да изтрия ли този продукт от Личен режим?")) return;
+      removePersonalGrid(id);
+
       var items = loadAll();
       var idx = findIndexById(items, id);
       if (idx < 0) return;
@@ -427,9 +455,9 @@
       }, 0);
     });
 
-    // initial state
+    // initial
     updateHeader(item);
-    ensureGrid(item);
+    ensureGrid(item, false);
   }
 
   // ============================
@@ -447,8 +475,7 @@
       var newItem = {
         id: uid(),
         title: "",
-        rows: 1,
-        times: buildDefaultTimes(1),
+        rows: 0, // start unconfigured (shows placeholder image only)
         createdAt: nowTs()
       };
 
