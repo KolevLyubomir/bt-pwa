@@ -324,6 +324,6 @@ select option.strong { font-weight:700; }
 
 /* Settings icon a bit smaller in personal header */
 .personal-block .prog-cap-settings{
-  width: 18px;
-  height: 18px;
+  width: 14px;
+  height: 14px;
 }
